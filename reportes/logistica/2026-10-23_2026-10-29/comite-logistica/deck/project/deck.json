@@ -1,0 +1,84 @@
+{
+  "v": 4,
+  "attachments": {},
+  "cover": "portada",
+  "createdOnFiles": {
+    "at": "2026-10-29T15:40:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "faces": {
+    "ibm-plex-sans": {
+      "family": "IBM Plex Sans",
+      "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap"
+    }
+  },
+  "lists": "css",
+  "order": [
+    "portada",
+    "permanencia",
+    "resumen-planta",
+    "dia-a-dia",
+    "div-soja",
+    "tramos-r7",
+    "resumen-soja",
+    "hallazgo",
+    "plantas",
+    "cuartos",
+    "historico",
+    "div-pellet",
+    "pellet-operativo",
+    "pellet-tramos",
+    "pellet-hist",
+    "div-girasol",
+    "girasol-r12",
+    "girasol-camiones",
+    "girasol-hist",
+    "liq-semana",
+    "liq-tramos",
+    "div-sectores",
+    "calada",
+    "volcables",
+    "silos",
+    "cruces"
+  ],
+  "sections": {
+    "s1": {
+      "description": "Portada",
+      "start": "portada"
+    },
+    "s0": {
+      "description": "Tiempo en planta ponderado por viajes, por planta y producto, últimos dos meses",
+      "start": "permanencia"
+    },
+    "s1b": {
+      "description": "Resumen de la planta y la semana día por día",
+      "start": "resumen-planta"
+    },
+    "s2": {
+      "description": "Soja: tiempos por tramo de R7, resumen, día por día, por planta, por horario y en contexto",
+      "start": "div-soja"
+    },
+    "s2p": {
+      "description": "Pellet: el operativo del 27 y 29/10, tramos e histórico",
+      "start": "div-pellet"
+    },
+    "s3": {
+      "description": "Girasol: egreso desde el silo Chief (R12), tiempos por tramo e histórico desde junio",
+      "start": "div-girasol"
+    },
+    "s3b": {
+      "description": "Líquidos: la semana, el aceite que entró a Ricardone y los tiempos por tramo de carga y descarga",
+      "start": "liq-semana"
+    },
+    "s4": {
+      "description": "Sectores: calada, volcables del puerto y silos",
+      "start": "div-sectores"
+    },
+    "s5": {
+      "description": "Cierre",
+      "start": "cruces"
+    }
+  },
+  "title": "Comité de Logística Nodo Sur · 23 – 29 oct"
+}

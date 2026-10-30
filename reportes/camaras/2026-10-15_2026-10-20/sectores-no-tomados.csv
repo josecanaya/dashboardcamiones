@@ -1,0 +1,348 @@
+planta,sector,hora,patente,acoplado,circuito,pasada,anclado_sgc
+ricardone,Ingreso,10-15 07:23,UXG866,EJO025,R6,,true
+ricardone,Ingreso,10-15 08:54,CZN028,,R13,,true
+ricardone,Ingreso,10-15 15:52,FTW206,FVI125,R6,,true
+ricardone,Ingreso,10-15 16:25,ORN981,FPZ354,R7,,false
+ricardone,Ingreso,10-15 19:56,SJS686,UPX899,R7,,false
+ricardone,Ingreso,10-15 22:24,SDG641,GKU727,R7,,false
+ricardone,Ingreso,10-15 23:45,AF584EP,AF584EN,R6,,true
+ricardone,Ingreso,10-16 04:31,RKY623,HMU874,R6,,true
+ricardone,Ingreso,10-16 05:08,OEF695,,R8,,true
+ricardone,Ingreso,10-16 08:40,LKT119,,R8,,true
+ricardone,Ingreso,10-16 08:43,HPG938,ETR472,R6,,true
+ricardone,Ingreso,10-16 10:25,JSP646,,R8,,true
+ricardone,Ingreso,10-16 10:26,AA809NI,,R8,,true
+ricardone,Ingreso,10-16 17:33,LIF292,,R8,,true
+ricardone,Ingreso,10-16 20:28,OOX719,,R8,,true
+ricardone,Ingreso,10-16 21:14,HQB528,,R8,,true
+ricardone,Ingreso,10-16 21:15,FDH719,,R8,,true
+ricardone,Ingreso,10-16 22:46,MCU992,AH710HK,R7,,false
+ricardone,Ingreso,10-16 23:13,BOX621,OCT613,R6,,true
+ricardone,Ingreso,10-17 01:46,GZG893,BSI690,R6,,true
+ricardone,Ingreso,10-17 03:04,EUL359,MHN462,R7,,false
+ricardone,Ingreso,10-17 03:11,UGQ862,GJU880,R7,,false
+ricardone,Ingreso,10-17 03:21,IOJ448,AE907SY,R7,,false
+ricardone,Ingreso,10-17 04:08,GJP914,HPZ190,R6,,true
+ricardone,Ingreso,10-17 05:09,CFA967,CFA968,R7,,false
+ricardone,Ingreso,10-17 07:20,AUV770,MRJ156,R6,,true
+ricardone,Ingreso,10-17 07:21,KEO622,GVQ961,R6,,true
+ricardone,Ingreso,10-17 07:43,MYT215,AE340PT,R7,,false
+ricardone,Ingreso,10-17 10:49,AI436MN,AI401VK,R7,,false
+ricardone,Ingreso,10-17 10:49,RPW636,OWE722,R7,,false
+ricardone,Ingreso,10-17 10:51,RDH183,GZU306,R7,,false
+ricardone,Ingreso,10-17 10:53,FDN076,EDX984,R7,,false
+ricardone,Ingreso,10-17 10:54,AE461FD,AE764GW,R7,,false
+ricardone,Ingreso,10-17 10:55,ICO190,FVV716,R7,,false
+ricardone,Ingreso,10-17 10:59,VKA515,AA641XS,R6,,true
+ricardone,Ingreso,10-17 12:53,RUK692,,R8,,false
+ricardone,Ingreso,10-17 13:00,RUK692,,R8,,true
+ricardone,Ingreso,10-17 13:43,RDL151,DMG327,R7,,false
+ricardone,Ingreso,10-17 15:19,CDT243,MXT812,R7,,false
+ricardone,Ingreso,10-17 17:09,AE861LB,AG844HL,R7,,false
+ricardone,Ingreso,10-17 17:30,LOI639,ISZ934,R7,,false
+ricardone,Ingreso,10-17 21:54,AVC938,OHP744,R7,,false
+ricardone,Ingreso,10-17 21:59,BYV210,EWW057,R7,,false
+ricardone,Ingreso,10-17 22:00,AC828NH,AB050FE,R7,,false
+ricardone,Ingreso,10-17 22:10,AB892HX,AC775XB,R7,,false
+ricardone,Ingreso,10-17 22:23,HKV094,EJA444,R7,,false
+ricardone,Ingreso,10-17 22:49,DBT190,GQT564,R7,,false
+ricardone,Ingreso,10-17 22:53,BCH929,RQH113,R7,,false
+ricardone,Ingreso,10-17 23:03,RYJ781,RMT540,R7,,false
+ricardone,Ingreso,10-17 23:13,HBI340,HNM426,R7,,false
+ricardone,Ingreso,10-18 00:15,CBB219,GYL091,R7,,false
+ricardone,Ingreso,10-18 00:19,PHO788,AH132PT,R7,,false
+ricardone,Ingreso,10-18 02:09,CJL298,GZL681,R7,,false
+ricardone,Ingreso,10-18 04:54,EYP704,NDD521,R7,,false
+ricardone,Ingreso,10-18 06:04,FYH858,JIF719,R7,,false
+ricardone,Ingreso,10-18 11:24,UFH468,JYX894,R7,,false
+ricardone,Ingreso,10-18 12:19,AI453FA,AI453FB,R7,,false
+ricardone,Ingreso,10-18 14:15,SNR847,OZM596,R7,,false
+ricardone,Ingreso,10-18 17:27,SJS686,UPX899,R7,,false
+ricardone,Ingreso,10-18 17:53,MBK543,AE044US,R7,,false
+ricardone,Ingreso,10-18 23:20,GSF260,AB827AM,R7,,false
+ricardone,Ingreso,10-18 23:34,BRZ160,AB566HJ,R7,,false
+ricardone,Ingreso,10-18 23:40,AE870JF,AC194VC,R7,,false
+ricardone,Ingreso,10-19 01:38,ROH112,RGV511,R7,,false
+ricardone,Ingreso,10-19 01:50,AH288CM,JSK734,R7,,false
+ricardone,Ingreso,10-19 02:20,JWG183,AB572CG,R7,,false
+ricardone,Ingreso,10-19 02:22,NYS835,KKK321,R7,,false
+ricardone,Ingreso,10-19 03:22,LTI990,AE378TW,R7,,false
+ricardone,Ingreso,10-19 05:07,KGH346,TDP439,R8,,true
+ricardone,Ingreso,10-19 13:04,HDW264,JYB350,R7,,false
+ricardone,Ingreso,10-19 13:29,KOP385,KKA531,R8,,true
+ricardone,Ingreso,10-19 13:41,AH135DG,GDI204,R8,,true
+ricardone,Ingreso,10-20 09:48,SWE419,LGH760,R7,,false
+ricardone,Ingreso,10-20 13:42,DNM753,RIF056,R7,,false
+ricardone,Ingreso,10-20 13:46,VIA159,VIA178,R7,,false
+ricardone,Ingreso,10-20 14:02,AA528CG,AE492HX,R7,,false
+ricardone,Ingreso,10-20 14:26,DOA548,HMO096,R7,,false
+ricardone,Ingreso,10-20 16:23,AH426UK,AE843PU,R7,,false
+ricardone,Ingreso,10-20 18:49,GFQ127,NEJ751,R7,,false
+ricardone,Ingreso,10-20 19:32,KFJ723,AF261XE,R7,,false
+ricardone,Ingreso,10-20 19:38,KXJ949,VPM334,R7,,false
+ricardone,Preingreso,10-15 10:34,KDK364,AH710HL,R7,,false
+ricardone,Preingreso,10-15 10:39,AB930VZ,AF686SY,R7,,false
+ricardone,Preingreso,10-15 12:29,EWL252,OUX351,R6,,false
+ricardone,Preingreso,10-16 17:56,GKA328,AE782GT,R7,,false
+ricardone,Preingreso,10-17 05:31,RQQ167,KBG690,R7,,false
+ricardone,Preingreso,10-17 11:57,VCK738,,R8,,false
+ricardone,Preingreso,10-17 11:57,VCK738,,R8,,false
+ricardone,Preingreso,10-18 04:08,CRZ339,MER817,R7,,false
+ricardone,Preingreso,10-20 15:34,KLJ854,GKO494,R8,,false
+ricardone,Preingreso,10-20 15:49,BAS216,VLW503,R7,,false
+ricardone,Preingreso,10-20 15:50,FRJ389,LHT618,R7,,false
+ricardone,Preingreso,10-20 18:41,DXK216,AC841EQ,R7,,false
+ricardone,Calada,10-15 02:55,CJE449,ECS053,R7,,false
+ricardone,Calada,10-15 03:38,AB058QV,GLW981,R7,,false
+ricardone,Calada,10-15 07:11,GMM265,,R8,,false
+ricardone,Calada,10-15 10:59,KAD727,,R8,,false
+ricardone,Calada,10-15 12:04,IRK465,,R8,,false
+ricardone,Calada,10-15 19:47,DOX036,PMT497,R7,,false
+ricardone,Calada,10-16 02:49,AD536BQ,AD646MS,R7,,false
+ricardone,Calada,10-16 03:50,FBV155,AF892RN,R7,,false
+ricardone,Calada,10-17 03:50,CAL265,DPH646,R7,,false
+ricardone,Calada,10-17 04:15,HRS430,AD531NY,R7,,false
+ricardone,Calada,10-17 09:57,MYT215,AE340PT,R7,,false
+ricardone,Calada,10-18 04:20,AB291HC,AC202ZD,R7,,false
+ricardone,Calada,10-18 21:49,HDC112,GZU744,R7,,false
+ricardone,Calada,10-18 22:15,HDN628,HHP368,R7,,false
+ricardone,Calada,10-18 22:35,FKW267,AG850OG,R7,,false
+ricardone,Calada,10-19 03:50,AE137UN,AE219IO,R7,,false
+ricardone,Calada,10-19 04:49,LTI990,AE378TW,R7,,false
+ricardone,Calada,10-19 08:13,AG662JM,AB325BL,R8,,false
+ricardone,Balanzas,10-15 02:35,FSM599,AF070SE,R6,salida,true
+ricardone,Balanzas,10-15 03:55,GHD821,RJW760,R6,salida,true
+ricardone,Balanzas,10-15 04:24,REL854,TIY230,R6,salida,true
+ricardone,Balanzas,10-15 04:57,AB078ID,AF422OD,R6,salida,true
+ricardone,Balanzas,10-15 09:02,MWG720,IOT726,R6,salida,true
+ricardone,Balanzas,10-15 14:49,OXA363,AE639WW,R13,salida,true
+ricardone,Balanzas,10-15 19:23,AD636BO,,R13,salida,true
+ricardone,Balanzas,10-15 19:49,BBU070,UWE817,R6,salida,true
+ricardone,Balanzas,10-15 23:03,OKC311,AF499BW,R6,salida,true
+ricardone,Balanzas,10-15 23:44,AA519ER,AF050XB,R6,salida,true
+ricardone,Balanzas,10-16 00:23,AKJ989,HIA452,R6,salida,true
+ricardone,Balanzas,10-16 00:54,KWK808,ESZ049,R6,entrada,false
+ricardone,Balanzas,10-16 01:11,EWL252,OUX351,R6,salida,true
+ricardone,Balanzas,10-16 01:47,HBV999,HCY705,R6,entrada,false
+ricardone,Balanzas,10-16 03:08,KWK808,ESZ049,R6,salida,true
+ricardone,Balanzas,10-16 04:07,HBV999,HCY705,R6,salida,true
+ricardone,Balanzas,10-16 04:44,AA817CC,AE480ZQ,R6,salida,true
+ricardone,Balanzas,10-16 05:33,DPW047,UKN468,R6,salida,true
+ricardone,Balanzas,10-16 05:56,AF584EP,AF584EN,R6,salida,true
+ricardone,Balanzas,10-16 12:22,SOY202,,R8,salida,true
+ricardone,Balanzas,10-16 12:55,MCO802,,R13,salida,true
+ricardone,Balanzas,10-16 21:00,AA699TL,AA817CY,R6,entrada,false
+ricardone,Balanzas,10-17 00:11,BOX621,OCT613,R6,entrada,false
+ricardone,Balanzas,10-17 00:49,BOX621,OCT613,R6,salida,true
+ricardone,Balanzas,10-17 05:50,OOX719,,R8,entrada,false
+ricardone,Balanzas,10-17 06:14,GZG893,BSI690,R6,entrada,false
+ricardone,Balanzas,10-17 07:17,HQB528,,R8,entrada,false
+ricardone,Balanzas,10-17 10:13,PDC059,,R8,entrada,false
+ricardone,Balanzas,10-17 10:52,GYZ853,,R8,entrada,false
+ricardone,Balanzas,10-17 12:20,HIE900,AA807ZP,R6,entrada,false
+ricardone,Balanzas,10-17 12:37,VKA515,AA641XS,R6,entrada,false
+ricardone,Balanzas,10-17 12:57,VCK738,,R8,entrada,false
+ricardone,Balanzas,10-17 13:11,KEO622,GVQ961,R6,entrada,false
+ricardone,Balanzas,10-17 13:37,VKA515,AA641XS,R6,salida,true
+ricardone,Balanzas,10-17 15:03,RUK692,,R8,salida,true
+ricardone,Balanzas,10-17 15:07,OOX719,,R8,salida,true
+ricardone,Balanzas,10-19 13:06,CTU452,AXP848,R8,salida,true
+ricardone,Balanzas,10-19 13:10,KGH346,TDP439,R8,salida,true
+ricardone,Balanzas,10-19 15:07,CBF677,WHT644,R8,salida,true
+ricardone,Balanzas,10-20 17:06,NRT949,NOT350,R8,entrada,false
+ricardone,Playa 3,10-16 03:01,KWK808,ESZ049,R6,,false
+ricardone,Playa 3,10-16 06:08,OJP930,,R13,,false
+ricardone,Playa 3,10-16 06:38,AB592JA,AF453YJ,R6,,false
+ricardone,Playa 3,10-16 11:32,RKY623,HMU874,R6,,false
+ricardone,Playa 3,10-17 06:29,GZG893,BSI690,R6,,false
+ricardone,Volcable 2,10-15 08:54,BBU070,UWE817,R6,,false
+ricardone,Volcable 2,10-15 08:56,UXG866,EJO025,R6,,false
+ricardone,Volcable 2,10-15 11:07,BEY589,AA721VV,R6,,false
+ricardone,Volcable 2,10-15 11:43,AKJ989,HIA452,R6,,false
+ricardone,Volcable 2,10-15 14:00,EWL252,OUX351,R6,,false
+ricardone,Volcable 2,10-16 00:52,DPW047,UKN468,R6,,false
+ricardone,Volcable 2,10-16 08:22,GCI274,AB138HE,R6,,false
+ricardone,Volcable 2,10-16 10:39,HPG938,ETR472,R6,,false
+ricardone,Volcable 2,10-17 12:29,AUV770,MRJ156,R6,,false
+ricardone,Salida 2,10-15 04:06,CJE449,ECS053,R7,,false
+ricardone,Salida 2,10-15 20:19,ELW468,BZQ754,R7,,false
+ricardone,Salida 2,10-15 22:58,SDG641,GKU727,R7,,false
+ricardone,Salida 2,10-16 04:42,FBV155,AF892RN,R7,,false
+ricardone,Salida 2,10-16 09:11,AB297FS,AE795RN,R7,,false
+ricardone,Salida 2,10-17 02:10,EVK754,AG093IZ,R7,,false
+ricardone,Salida 2,10-17 02:43,VXF789,UIN633,R7,,false
+ricardone,Salida 2,10-17 06:48,CFA967,CFA968,R7,,false
+ricardone,Salida 2,10-17 17:51,FIV899,PJI141,R7,,false
+ricardone,Salida 2,10-18 00:01,DBP116,RQK661,R7,,false
+ricardone,Salida 2,10-18 01:50,HBI340,HNM426,R7,,false
+ricardone,Salida 2,10-19 00:32,GSF260,AB827AM,R7,,false
+ricardone,Salida 2,10-19 05:32,AH288CM,JSK734,R7,,false
+ricardone,Salida 2,10-20 21:24,GFQ127,NEJ751,R7,,false
+san_lorenzo,Ingreso,10-16 20:50,OFG785,,SL1,,false
+san_lorenzo,Ingreso,10-16 20:55,CXA592,,SL1,,false
+san_lorenzo,Ingreso,10-16 22:44,AD195CG,,SL1,,false
+san_lorenzo,Ingreso,10-17 00:39,GZI868,,SL1,,false
+san_lorenzo,Ingreso,10-17 07:20,FGJ326,OHW897,R7,,false
+san_lorenzo,Ingreso,10-17 07:33,CFA967,CFA968,R7,,false
+san_lorenzo,Ingreso,10-18 05:32,EYP704,NDD521,R7,,false
+san_lorenzo,Ingreso,10-18 20:41,REV889,KHP252,R7,,false
+san_lorenzo,Ingreso,10-19 01:00,PCK317,NFK184,R7,,false
+san_lorenzo,Balanza ingreso,10-16 00:12,AF529BM,AF529CX,R7,,false
+san_lorenzo,Balanza ingreso,10-16 05:52,AYZ915,UJQ182,R7,,false
+san_lorenzo,Balanza ingreso,10-17 01:39,VYS158,IYY451,R7,,false
+san_lorenzo,Balanza ingreso,10-17 02:30,AG090RF,AG090RG,R7,,false
+san_lorenzo,Balanza ingreso,10-17 06:53,AUV533,ELT779,R7,,false
+san_lorenzo,Balanza ingreso,10-17 23:04,AC136VO,HGJ118,R7,,false
+san_lorenzo,Balanza ingreso,10-17 23:40,AVC938,OHP744,R7,,false
+san_lorenzo,Balanza ingreso,10-17 23:45,GSE447,AG098QO,R7,,false
+san_lorenzo,Balanza ingreso,10-18 00:24,SXZ962,LIX674,R7,,false
+san_lorenzo,Balanza ingreso,10-18 00:50,LPZ577,HEC719,R7,,false
+san_lorenzo,Balanza ingreso,10-18 00:55,BIB241,CND959,R7,,false
+san_lorenzo,Balanza ingreso,10-18 01:02,BYV210,EWW057,R7,,false
+san_lorenzo,Balanza ingreso,10-18 02:11,FLN836,GLU268,R7,,false
+san_lorenzo,Balanza ingreso,10-18 17:53,OVQ091,AC731XW,R7,,false
+san_lorenzo,Balanza ingreso,10-18 20:09,JJR621,AE110XN,R7,,false
+san_lorenzo,Balanza ingreso,10-18 20:13,AE919JT,AF060BR,R7,,false
+san_lorenzo,Balanza ingreso,10-18 20:53,REV889,KHP252,R7,,false
+san_lorenzo,Balanza ingreso,10-18 22:37,SZG666,,SL1,,false
+san_lorenzo,Balanza ingreso,10-19 00:23,HZY414,AF336OQ,R7,,false
+san_lorenzo,Balanza ingreso,10-19 00:49,OSP630,AG962IM,R7,,false
+san_lorenzo,Balanza ingreso,10-19 01:27,BRZ160,AB566HJ,R7,,false
+san_lorenzo,Balanza ingreso,10-20 23:33,RXZ465,CEK907,R7,,false
+san_lorenzo,Carga OSL,10-15 13:26,AF411UI,,SL1,,false
+san_lorenzo,Carga OSL,10-16 11:11,AF411UI,,SL1,,false
+san_lorenzo,Carga OSL,10-16 15:41,LZP122,,SL1,,false
+san_lorenzo,Carga OSL,10-18 08:57,PAR121,,SL1,,false
+san_lorenzo,Carga OSL,10-18 15:01,AC275KB,,SL1,,false
+san_lorenzo,Carga OSL,10-19 00:08,PAR121,AC590MH,SL1,,false
+san_lorenzo,Carga OSL,10-19 11:20,NWZ336,AB996FZ,SL1,,false
+san_lorenzo,Carga OSL,10-20 15:57,NWZ336,AB996FZ,SL1,,false
+san_lorenzo,Volcables,10-16 06:04,AYZ915,UJQ182,R7,,false
+san_lorenzo,Volcables,10-16 23:37,ABO881,LMQ434,R7,,false
+san_lorenzo,Volcables,10-17 19:56,FBV155,AF892RN,R7,,false
+san_lorenzo,Volcables,10-18 01:27,BCH929,RQH113,R7,,false
+san_lorenzo,Volcables,10-18 20:59,REV889,KHP252,R7,,false
+san_lorenzo,Volcables,10-20 17:52,EUX026,OXG053,R7,,false
+san_lorenzo,Volcables,10-20 18:08,DYW499,JTT344,R7,,false
+san_lorenzo,Volcables,10-20 18:18,LFB955,IBG751,R7,,false
+san_lorenzo,Volcables,10-20 19:22,GZL318,AI263DD,R7,,false
+san_lorenzo,Volcables,10-20 21:30,DXK216,AC841EQ,R7,,false
+san_lorenzo,Volcables,10-20 22:01,JYY048,AH092RE,R7,,false
+san_lorenzo,Volcables,10-20 22:11,KFJ723,AF261XE,R7,,false
+san_lorenzo,Volcables,10-20 22:22,MMF568,HUW002,R7,,false
+san_lorenzo,Carga y descarga,10-16 16:01,PAR121,,SL2,,false
+san_lorenzo,Carga y descarga,10-16 17:51,KGX035,,SL2,,false
+san_lorenzo,Carga y descarga,10-17 13:00,PAR121,,SL2,,false
+san_lorenzo,Carga y descarga,10-17 23:14,PAR121,,SL2,,false
+san_lorenzo,Carga y descarga,10-18 07:50,AC275KB,,SL2,,false
+san_lorenzo,Carga y descarga,10-18 15:44,PAR121,,SL2,,false
+san_lorenzo,Balanza egreso,10-15 05:40,LWE772,AA787SY,R7,,true
+san_lorenzo,Balanza egreso,10-15 05:48,AB058QV,GLW981,R7,,true
+san_lorenzo,Balanza egreso,10-15 14:39,SPH903,UVS998,R7,,true
+san_lorenzo,Balanza egreso,10-15 21:00,GNZ601,,SL1,,true
+san_lorenzo,Balanza egreso,10-15 21:10,GMZ752,AD869ZD,R7,,true
+san_lorenzo,Balanza egreso,10-15 21:53,DOX036,PMT497,R7,,true
+san_lorenzo,Balanza egreso,10-15 23:58,AA596LV,OTN517,R7,,true
+san_lorenzo,Balanza egreso,10-16 00:30,AA323QP,AA364WC,R7,,true
+san_lorenzo,Balanza egreso,10-16 01:16,AE318UK,AE936TA,R7,,true
+san_lorenzo,Balanza egreso,10-16 01:33,JFX298,GBQ589,R7,,true
+san_lorenzo,Balanza egreso,10-16 01:59,AF529BM,AF529CX,R7,,true
+san_lorenzo,Balanza egreso,10-16 06:00,FMZ930,AF591GG,R7,,true
+san_lorenzo,Balanza egreso,10-16 06:16,AYZ915,UJQ182,R7,,true
+san_lorenzo,Balanza egreso,10-16 20:58,ROO085,,SL1,,true
+san_lorenzo,Balanza egreso,10-16 22:58,CXA592,,SL1,,true
+san_lorenzo,Balanza egreso,10-16 23:31,AD195CG,,SL1,,true
+san_lorenzo,Balanza egreso,10-16 23:45,ABO881,LMQ434,R7,,true
+san_lorenzo,Balanza egreso,10-17 00:22,OVS597,EXV464,R7,,true
+san_lorenzo,Balanza egreso,10-17 00:33,HOB560,AF236JO,R7,,true
+san_lorenzo,Balanza egreso,10-17 00:49,GZI868,,SL1,,true
+san_lorenzo,Balanza egreso,10-17 01:15,GQF081,EUF190,R7,,true
+san_lorenzo,Balanza egreso,10-17 01:29,AA323QV,AA323QZ,R7,,true
+san_lorenzo,Balanza egreso,10-17 02:28,LNT874,AH834NN,R7,,true
+san_lorenzo,Balanza egreso,10-17 02:41,EVK754,AG093IZ,R7,,true
+san_lorenzo,Balanza egreso,10-17 02:54,STN281,LVT234,R7,,true
+san_lorenzo,Balanza egreso,10-17 03:04,AF652GK,AF456NQ,R7,,true
+san_lorenzo,Balanza egreso,10-17 03:12,KVV515,IWS965,R7,,true
+san_lorenzo,Balanza egreso,10-17 03:31,TWO477,VHM355,R7,,true
+san_lorenzo,Balanza egreso,10-17 03:41,AG090RF,AG090RG,R7,,true
+san_lorenzo,Balanza egreso,10-17 03:45,AE206EF,AG758NX,R7,,true
+san_lorenzo,Balanza egreso,10-17 04:03,VXF789,UIN633,R7,,true
+san_lorenzo,Balanza egreso,10-17 05:30,CMF111,,SL1,,true
+san_lorenzo,Balanza egreso,10-17 06:06,AA624AG,AA541IE,R7,,true
+san_lorenzo,Balanza egreso,10-17 19:40,AB120XE,AF878PN,R7,,true
+san_lorenzo,Balanza egreso,10-17 20:19,AA415NJ,AF492XG,R7,,true
+san_lorenzo,Balanza egreso,10-17 20:32,CDT243,MXT812,R7,,true
+san_lorenzo,Balanza egreso,10-17 20:48,MYA819,AA394MM,R7,,true
+san_lorenzo,Balanza egreso,10-17 20:57,CJU617,NRU669,R7,,true
+san_lorenzo,Balanza egreso,10-17 21:04,CQQ052,RNM359,R7,,true
+san_lorenzo,Balanza egreso,10-17 21:18,LOI639,ISZ934,R7,,true
+san_lorenzo,Balanza egreso,10-17 21:36,FIV899,PJI141,R7,,true
+san_lorenzo,Balanza egreso,10-17 21:51,KVD290,AE926AB,R7,,true
+san_lorenzo,Balanza egreso,10-17 23:45,DBT190,GQT564,R7,,true
+san_lorenzo,Balanza egreso,10-18 00:00,AVC938,OHP744,R7,,true
+san_lorenzo,Balanza egreso,10-18 00:21,GSE447,AG098QO,R7,,true
+san_lorenzo,Balanza egreso,10-18 01:09,TUI986,HPH290,R7,,true
+san_lorenzo,Balanza egreso,10-18 01:43,HKV094,EJA444,R7,,true
+san_lorenzo,Balanza egreso,10-18 01:55,LPZ577,HEC719,R7,,true
+san_lorenzo,Balanza egreso,10-18 02:28,BHS791,EAZ134,R7,,true
+san_lorenzo,Balanza egreso,10-18 02:33,BCH929,RQH113,R7,,true
+san_lorenzo,Balanza egreso,10-18 02:39,HBI340,HNM426,R7,,true
+san_lorenzo,Balanza egreso,10-18 03:05,CBB219,GYL091,R7,,true
+san_lorenzo,Balanza egreso,10-18 03:06,RYJ781,RMT540,R7,,true
+san_lorenzo,Balanza egreso,10-18 03:39,EFG223,AB740WB,R7,,true
+san_lorenzo,Balanza egreso,10-18 03:40,PHO788,AH132PT,R7,,true
+san_lorenzo,Balanza egreso,10-18 06:07,NUX255,AG136ZS,R7,,true
+san_lorenzo,Balanza egreso,10-18 20:47,AE919JT,AF060BR,R7,,true
+san_lorenzo,Balanza egreso,10-18 21:06,REV889,KHP252,R7,,true
+san_lorenzo,Balanza egreso,10-18 23:13,SZG666,,SL1,,true
+san_lorenzo,Balanza egreso,10-18 23:59,HDC112,GZU744,R7,,true
+san_lorenzo,Balanza egreso,10-19 00:01,MTK959,AB054VF,R7,,true
+san_lorenzo,Balanza egreso,10-19 00:27,FKW267,AG850OG,R7,,true
+san_lorenzo,Balanza egreso,10-19 00:35,GUX620,JQL828,R7,,true
+san_lorenzo,Balanza egreso,10-19 01:03,AH087IX,AD841VG,R7,,true
+san_lorenzo,Balanza egreso,10-19 01:27,GIO678,AA193VY,R7,,true
+san_lorenzo,Balanza egreso,10-19 01:30,GSF260,AB827AM,R7,,true
+san_lorenzo,Balanza egreso,10-19 01:39,JTE406,AG102IP,R7,,true
+san_lorenzo,Balanza egreso,10-19 01:45,OSP630,AG962IM,R7,,true
+san_lorenzo,Balanza egreso,10-19 01:57,BRZ160,AB566HJ,R7,,true
+san_lorenzo,Balanza egreso,10-20 19:39,EUX026,OXG053,R7,,true
+san_lorenzo,Balanza egreso,10-20 19:45,AG090RF,AG090RG,R7,,true
+san_lorenzo,Balanza egreso,10-20 20:21,LFB955,IBG751,R7,,true
+san_lorenzo,Balanza egreso,10-20 20:32,AC174TR,JHD243,R7,,true
+san_lorenzo,Balanza egreso,10-20 21:22,OVQ091,AC731XW,R7,,true
+san_lorenzo,Balanza egreso,10-20 21:45,GZI868,SLV370,SL1,,true
+san_lorenzo,Balanza egreso,10-20 23:36,OKJ047,NDJ386,R7,,true
+san_lorenzo,Balanza egreso,10-20 23:42,GFQ127,NEJ751,R7,,true
+san_lorenzo,Balanza egreso,10-20 23:47,RXZ465,CEK907,R7,,true
+san_lorenzo,Egreso,10-15 05:51,AB058QV,GLW981,R7,,true
+san_lorenzo,Egreso,10-15 11:05,DBC119,,SL1,,true
+san_lorenzo,Egreso,10-15 13:47,RUF463,,SL1,,true
+san_lorenzo,Egreso,10-15 15:09,SMA331,,SL1,,true
+san_lorenzo,Egreso,10-15 16:26,FWZ795,,SL1,,true
+san_lorenzo,Egreso,10-15 16:54,SQL603,,SL2,,true
+san_lorenzo,Egreso,10-15 20:01,WPV559,,SL1,,true
+san_lorenzo,Egreso,10-15 20:03,FSR386,,SL1,,true
+san_lorenzo,Egreso,10-15 20:06,ROO085,,SL1,,true
+san_lorenzo,Egreso,10-15 20:16,VZO116,,SL1,,true
+san_lorenzo,Egreso,10-15 21:03,GNZ601,,SL1,,true
+san_lorenzo,Egreso,10-15 22:45,ESK363,,SL1,,true
+san_lorenzo,Egreso,10-16 00:43,OHL339,AB655MV,R7,,true
+san_lorenzo,Egreso,10-16 01:36,JFX298,GBQ589,R7,,true
+san_lorenzo,Egreso,10-16 15:00,DBC119,,SL1,,true
+san_lorenzo,Egreso,10-16 16:07,RUF463,,SL1,,true
+san_lorenzo,Egreso,10-16 16:16,FWZ795,,SL1,,true
+san_lorenzo,Egreso,10-16 16:33,FSR386,,SL1,,true
+san_lorenzo,Egreso,10-16 16:45,TZJ373,,SL1,,true
+san_lorenzo,Egreso,10-16 17:27,VZO116,,SL1,,true
+san_lorenzo,Egreso,10-16 18:18,SQL603,,SL1,,true
+san_lorenzo,Egreso,10-16 20:29,SMA331,,SL1,,true
+san_lorenzo,Egreso,10-16 21:01,ROO085,,SL1,,true
+san_lorenzo,Egreso,10-16 22:43,EJG271,,SL1,,true
+san_lorenzo,Egreso,10-16 22:46,ESK363,,SL1,,true
+san_lorenzo,Egreso,10-16 23:01,CXA592,,SL1,,true
+san_lorenzo,Egreso,10-16 23:27,UFB595,,SL1,,true
+san_lorenzo,Egreso,10-17 00:00,AFR797,,SL1,,true
+san_lorenzo,Egreso,10-17 02:57,STN281,LVT234,R7,,true
+san_lorenzo,Egreso,10-17 21:24,GFL692,HKF482,R7,,true
+san_lorenzo,Egreso,10-17 21:39,FIV899,PJI141,R7,,true
+san_lorenzo,Egreso,10-20 21:12,DOA548,HMO096,R7,,true

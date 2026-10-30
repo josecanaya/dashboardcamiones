@@ -1,0 +1,2773 @@
+{
+ "generado": "2026-10-23T13:48:01.135Z",
+ "periodo": {
+  "desde": "2026-10-12",
+  "hasta": "2026-10-22",
+  "dias": [
+   "2026-10-12",
+   "2026-10-13",
+   "2026-10-14",
+   "2026-10-15",
+   "2026-10-16",
+   "2026-10-17",
+   "2026-10-18",
+   "2026-10-19",
+   "2026-10-20",
+   "2026-10-21",
+   "2026-10-22"
+  ]
+ },
+ "fuentes": {
+  "camaras": [
+   "2026-10-12",
+   "2026-10-13",
+   "2026-10-14",
+   "2026-10-15",
+   "2026-10-16",
+   "2026-10-17",
+   "2026-10-18",
+   "2026-10-19",
+   "2026-10-20",
+   "2026-10-21",
+   "2026-10-22"
+  ],
+  "camarasFaltantes": [],
+  "excel": [
+   "2026-10-12",
+   "2026-10-13",
+   "2026-10-14",
+   "2026-10-15",
+   "2026-10-16",
+   "2026-10-17",
+   "2026-10-18",
+   "2026-10-19",
+   "2026-10-20",
+   "2026-10-21",
+   "2026-10-22"
+  ],
+  "excelFaltante": [],
+  "padronExcel": "15/05 al 23/10",
+  "padronPatentes": 26191,
+  "correcciones": {
+   "origen": "copia guardada",
+   "reglas": 1183,
+   "renombradas": 789,
+   "descartadas": 506
+  },
+  "lecturasPeriodo": 17684,
+  "lecturasPorDia": {
+   "2026-10-12": 372,
+   "2026-10-13": 1330,
+   "2026-10-14": 1453,
+   "2026-10-15": 1738,
+   "2026-10-16": 1722,
+   "2026-10-17": 1417,
+   "2026-10-18": 997,
+   "2026-10-19": 1787,
+   "2026-10-20": 2104,
+   "2026-10-21": 2460,
+   "2026-10-22": 2304
+  }
+ },
+ "viajeNormalRicSLmin": 12,
+ "vueltas": [
+  {
+   "patente": "BMF567",
+   "dia": "21/10",
+   "estado": "descartado_excel",
+   "minPuerto": 84,
+   "puertoTxt": "1 h 24 m",
+   "hastaTxt": "13 h 31 m",
+   "hastaLbl": "hasta salir del puerto de nuevo",
+   "balanzaSalida": false,
+   "caladasVuelta": 1,
+   "descargaPosterior": null,
+   "grupos": [
+    {
+     "planta": "ric",
+     "items": [
+      {
+       "hora": "01:16",
+       "punto": "Calada"
+      },
+      {
+       "hora": "01:37",
+       "punto": "Egreso"
+      }
+     ]
+    },
+    {
+     "planta": "sl",
+     "items": [
+      {
+       "hora": "01:49",
+       "punto": "Ingreso"
+      },
+      {
+       "hora": "02:53",
+       "punto": "Balanza"
+      },
+      {
+       "hora": "03:13",
+       "punto": "Egreso"
+      }
+     ]
+    },
+    {
+     "planta": "ric",
+     "items": [
+      {
+       "hora": "03:49",
+       "punto": "Ingreso"
+      },
+      {
+       "hora": "13:39",
+       "punto": "2.ª calada"
+      }
+     ]
+    },
+    {
+     "planta": "sl",
+     "items": [
+      {
+       "hora": "16:44",
+       "punto": "Egreso"
+      }
+     ]
+    }
+   ],
+   "excel": [
+    "Soja · VOLCABLE_PTO_SGC"
+   ],
+   "producto": "Soja",
+   "lecturas": [
+    "2026-10-21 00:07 RicPreIngInFr",
+    "2026-10-21 01:16 RicCal04",
+    "2026-10-21 01:37 RicEgrCamFrente",
+    "2026-10-21 01:49 SLZIngCamFrente",
+    "2026-10-21 02:53 SLZBalIngFte",
+    "2026-10-21 03:13 SLZSalidaC1Fte",
+    "2026-10-21 03:49 RicIngCamFrente",
+    "2026-10-21 11:45 RicEgrCamFrente",
+    "2026-10-21 13:14 RicPreIngInFr",
+    "2026-10-21 13:39 RicCal04",
+    "2026-10-21 13:58 RicEgrCamFrente",
+    "2026-10-21 14:16 SLZIngCamFrente",
+    "2026-10-21 14:20 SLZBalIngFte",
+    "2026-10-21 16:41 SLZBalSC2Fte",
+    "2026-10-21 16:44 SLZSalidaC1Fte",
+    "2026-10-21 16:44 SLZSalidaC2Fte"
+   ]
+  },
+  {
+   "patente": "JJV417",
+   "dia": "21/10",
+   "estado": "descartado_excel",
+   "minPuerto": 19,
+   "puertoTxt": "19 min",
+   "hastaTxt": "4 h 30 m",
+   "hastaLbl": "hasta descargar",
+   "balanzaSalida": true,
+   "caladasVuelta": 1,
+   "descargaPosterior": "Volcable 5",
+   "grupos": [
+    {
+     "planta": "ric",
+     "items": [
+      {
+       "hora": "08:09",
+       "punto": "Calada"
+      },
+      {
+       "hora": "08:17",
+       "punto": "Egreso"
+      }
+     ]
+    },
+    {
+     "planta": "sl",
+     "items": [
+      {
+       "hora": "08:25",
+       "punto": "Ingreso"
+      },
+      {
+       "hora": "08:39",
+       "punto": "Balanza salida"
+      },
+      {
+       "hora": "08:44",
+       "punto": "Egreso"
+      }
+     ]
+    },
+    {
+     "planta": "ric",
+     "items": [
+      {
+       "hora": "09:44",
+       "punto": "Ingreso"
+      },
+      {
+       "hora": "11:21",
+       "punto": "2.ª calada"
+      }
+     ]
+    },
+    {
+     "planta": "sl",
+     "items": [
+      {
+       "hora": "13:14",
+       "punto": "Volcable 5"
+      },
+      {
+       "hora": "13:23",
+       "punto": "Egreso"
+      }
+     ]
+    }
+   ],
+   "excel": [
+    "Soja · VOLCABLE_PTO_SGC"
+   ],
+   "producto": "Soja",
+   "lecturas": [
+    "2026-10-21 07:04 RicIngCamFrente",
+    "2026-10-21 07:06 RicPreIngInFr",
+    "2026-10-21 08:09 RicCal04",
+    "2026-10-21 08:17 RicEgrCamFrente",
+    "2026-10-21 08:25 SLZIngCamFrente",
+    "2026-10-21 08:31 SLZBalIngFte",
+    "2026-10-21 08:39 SLZBalSC2Fte",
+    "2026-10-21 08:44 SLZSalidaC1Fte",
+    "2026-10-21 09:44 RicIngCamFrente",
+    "2026-10-21 09:47 RicPreIngInFr",
+    "2026-10-21 11:21 RicCal04",
+    "2026-10-21 11:30 RicEgrCamFrente",
+    "2026-10-21 11:38 SLZIngCamFrente",
+    "2026-10-21 11:41 SLZBalIngFte",
+    "2026-10-21 13:14 SLZVolcableC5",
+    "2026-10-21 13:23 SLZSalidaC1Fte",
+    "2026-10-21 13:23 SLZSalidaC2Fte"
+   ]
+  }
+ ],
+ "interplanta": [
+  {
+   "dia": "16/10",
+   "salida": "05:36",
+   "patente": "AA807IW",
+   "min": 31,
+   "ingresoSL": "06:08",
+   "salidaSL": "09:37",
+   "tipo": "Calada en Ricardone",
+   "descarga": "Volcable 5"
+  }
+ ],
+ "interplantaCercanos": [
+  {
+   "dia": "17/10",
+   "salida": "17:56",
+   "patente": "CQQ052",
+   "min": 26,
+   "motivo": "entre 25 y 30 min"
+  },
+  {
+   "dia": "17/10",
+   "salida": "23:08",
+   "patente": "FMD184",
+   "min": 29,
+   "motivo": "entre 25 y 30 min"
+  },
+  {
+   "dia": "17/10",
+   "salida": "23:23",
+   "patente": "BIB241",
+   "min": 28,
+   "motivo": "entre 25 y 30 min"
+  }
+ ],
+ "dosCalles": [
+  {
+   "patente": "AG476BU",
+   "dia": "18/10",
+   "calles": [
+    {
+     "calle": "1",
+     "hora": "06:35"
+    },
+    {
+     "calle": "3",
+     "hora": "06:40"
+    }
+   ],
+   "involucraC5": false,
+   "excel": "Soja · Volcable 1"
+  },
+  {
+   "patente": "AE187VW",
+   "dia": "21/10",
+   "calles": [
+    {
+     "calle": "2",
+     "hora": "09:57"
+    },
+    {
+     "calle": "1",
+     "hora": "10:12"
+    }
+   ],
+   "involucraC5": false,
+   "excel": "Soja · VOLCABLE_PTO_SGC"
+  },
+  {
+   "patente": "NEU240",
+   "dia": "22/10",
+   "calles": [
+    {
+     "calle": "1",
+     "hora": "14:49"
+    },
+    {
+     "calle": "2",
+     "hora": "14:53"
+    }
+   ],
+   "involucraC5": false,
+   "excel": "Soja · VOLCABLE_PTO_SGC"
+  }
+ ],
+ "declarado": [],
+ "camionetas": {
+  "umbral": 10,
+  "lista": [
+   {
+    "patente": "AE264XY",
+    "viajes": 95,
+    "dias": 10,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "RicEgrCamFrente / SLZSalidaC2Fte / RicIngCamFrente",
+    "parecida": "",
+    "registro": true
+   },
+   {
+    "patente": "AG622BE",
+    "viajes": 81,
+    "dias": 11,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "IMH787",
+    "viajes": 70,
+    "dias": 11,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / RicB3Ingreso",
+    "parecida": "",
+    "registro": true
+   },
+   {
+    "patente": "NAH953",
+    "viajes": 69,
+    "dias": 10,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB3Egreso",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "OCB815",
+    "viajes": 58,
+    "dias": 11,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / RicB2Egreso / SLZSalidaC2Fte",
+    "parecida": "CCB815",
+    "registro": false
+   },
+   {
+    "patente": "AF778YL",
+    "viajes": 55,
+    "dias": 8,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB2Egreso",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AF529RF",
+    "viajes": 42,
+    "dias": 11,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "AF529TF AF529RI",
+    "registro": false
+   },
+   {
+    "patente": "JUE083",
+    "viajes": 42,
+    "dias": 8,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB3Ingreso",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "JLQ557",
+    "viajes": 41,
+    "dias": 8,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZTK400",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AF566OP",
+    "viajes": 40,
+    "dias": 10,
+    "zona": "San Lorenzo",
+    "camaras": "SLZTK400 / SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "LJB988",
+    "viajes": 39,
+    "dias": 7,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZBalSC1Fte",
+    "parecida": "",
+    "registro": true
+   },
+   {
+    "patente": "AB785UY",
+    "viajes": 38,
+    "dias": 8,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZTK400",
+    "parecida": "AB785NY",
+    "registro": false
+   },
+   {
+    "patente": "AE036AM",
+    "viajes": 38,
+    "dias": 11,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AG688FB",
+    "viajes": 36,
+    "dias": 10,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AA208QN",
+    "viajes": 35,
+    "dias": 10,
+    "zona": "San Lorenzo",
+    "camaras": "SLZBalSC1Fte / SLZTK400 / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AE827VZ",
+    "viajes": 35,
+    "dias": 6,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AE040HU",
+    "viajes": 33,
+    "dias": 8,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZBalSC1Fte / SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AH090IH",
+    "viajes": 33,
+    "dias": 8,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AI065WC",
+    "viajes": 32,
+    "dias": 10,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "AH065WC",
+    "registro": false
+   },
+   {
+    "patente": "IJN886",
+    "viajes": 32,
+    "dias": 7,
+    "zona": "San Lorenzo",
+    "camaras": "SLZBalSC1Fte / SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AG142JP",
+    "viajes": 29,
+    "dias": 8,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AH456NL",
+    "viajes": 29,
+    "dias": 6,
+    "zona": "San Lorenzo",
+    "camaras": "SLZTK400 / SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AC169LG",
+    "viajes": 27,
+    "dias": 9,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZTK400",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "JZW724",
+    "viajes": 27,
+    "dias": 8,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZBalSC1Fte / SLZSalidaC1Fte / RicB3Ingreso",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AG361MP",
+    "viajes": 25,
+    "dias": 10,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AF282QI",
+    "viajes": 24,
+    "dias": 10,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "HLT270",
+    "viajes": 24,
+    "dias": 8,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB3Ingreso",
+    "parecida": "HLD270 HLX270",
+    "registro": false
+   },
+   {
+    "patente": "INE931",
+    "viajes": 24,
+    "dias": 9,
+    "zona": "San Lorenzo",
+    "camaras": "SLZTK400 / SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AG294KA",
+    "viajes": 23,
+    "dias": 5,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB3Ingreso",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AH933LO",
+    "viajes": 23,
+    "dias": 8,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB3Ingreso",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AB148YJ",
+    "viajes": 22,
+    "dias": 8,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZBalSC1Fte",
+    "parecida": "AB148YV",
+    "registro": false
+   },
+   {
+    "patente": "AG428EL",
+    "viajes": 22,
+    "dias": 4,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AH700ET",
+    "viajes": 22,
+    "dias": 8,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "GCW191",
+    "viajes": 20,
+    "dias": 11,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZTK400",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AF881FZ",
+    "viajes": 19,
+    "dias": 10,
+    "zona": "San Lorenzo",
+    "camaras": "SLZTK400 / SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AG575TD",
+    "viajes": 19,
+    "dias": 8,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / SLZTK400",
+    "parecida": "AA575TD",
+    "registro": false
+   },
+   {
+    "patente": "AH763WD",
+    "viajes": 19,
+    "dias": 8,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZTK400",
+    "parecida": "AH763FD",
+    "registro": false
+   },
+   {
+    "patente": "PFA290",
+    "viajes": 19,
+    "dias": 6,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AH540BR",
+    "viajes": 18,
+    "dias": 9,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AE937SG",
+    "viajes": 17,
+    "dias": 8,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "PQK206",
+    "viajes": 17,
+    "dias": 7,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZTK400 / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AF316PR",
+    "viajes": 16,
+    "dias": 9,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AG361MX",
+    "viajes": 16,
+    "dias": 7,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AH911RJ",
+    "viajes": 16,
+    "dias": 8,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AI456GB",
+    "viajes": 16,
+    "dias": 9,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "AI456GI",
+    "registro": false
+   },
+   {
+    "patente": "AD545MJ",
+    "viajes": 15,
+    "dias": 7,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB3Ingreso",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AG275GX",
+    "viajes": 15,
+    "dias": 7,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZTK400",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "KDG543",
+    "viajes": 15,
+    "dias": 3,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZTK400 / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AE772KD",
+    "viajes": 14,
+    "dias": 7,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "AE772ID",
+    "registro": false
+   },
+   {
+    "patente": "AF211ER",
+    "viajes": 14,
+    "dias": 8,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZTK400 / SLZBalSC1Fte",
+    "parecida": "AI211ER",
+    "registro": true
+   },
+   {
+    "patente": "AG696QV",
+    "viajes": 14,
+    "dias": 4,
+    "zona": "San Lorenzo",
+    "camaras": "SLZTK400 / SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AH185MZ",
+    "viajes": 14,
+    "dias": 7,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "RicB3Ingreso / RicB3Egreso / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": true
+   },
+   {
+    "patente": "AD001TD",
+    "viajes": 13,
+    "dias": 7,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZBalSC1Fte / SLZSalidaC2Fte / SLZTK400",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AF261AQ",
+    "viajes": 13,
+    "dias": 6,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AF446TN",
+    "viajes": 13,
+    "dias": 7,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "JBF932",
+    "viajes": 13,
+    "dias": 4,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZBalSC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AA703EO",
+    "viajes": 12,
+    "dias": 5,
+    "zona": "San Lorenzo",
+    "camaras": "SLZBalSC1Fte / SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AD373WR",
+    "viajes": 12,
+    "dias": 7,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AE264AY",
+    "viajes": 12,
+    "dias": 9,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "RicIngCamFrente / RicEgrCamFrente / SLZTK400",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AF544UV",
+    "viajes": 12,
+    "dias": 7,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AG128YL",
+    "viajes": 12,
+    "dias": 3,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AG700CR",
+    "viajes": 12,
+    "dias": 6,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB3Ingreso",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AH540BL",
+    "viajes": 12,
+    "dias": 5,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AI217QP",
+    "viajes": 12,
+    "dias": 6,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / RicB3Ingreso / RicB3Egreso",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AI238IS",
+    "viajes": 12,
+    "dias": 4,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZBalSC1Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "DVT968",
+    "viajes": 12,
+    "dias": 7,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / RicB3Egreso",
+    "parecida": "DVH968",
+    "registro": false
+   },
+   {
+    "patente": "AA689GI",
+    "viajes": 11,
+    "dias": 3,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZBalSC1Fte / SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AB349QJ",
+    "viajes": 11,
+    "dias": 2,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZBalSC1Fte / SLZSalidaC1Fte",
+    "parecida": "AB349CJ AB349QT",
+    "registro": false
+   },
+   {
+    "patente": "AD468VC",
+    "viajes": 11,
+    "dias": 6,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "RicB3Ingreso / RicB3Egreso / SLZSalidaC2Fte",
+    "parecida": "AD468VV",
+    "registro": false
+   },
+   {
+    "patente": "AE040HT",
+    "viajes": 11,
+    "dias": 3,
+    "zona": "San Lorenzo",
+    "camaras": "SLZBalSC1Fte / SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AF909MM",
+    "viajes": 11,
+    "dias": 9,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AG066KT",
+    "viajes": 11,
+    "dias": 6,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AH149NK",
+    "viajes": 11,
+    "dias": 5,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "AH149NB",
+    "registro": false
+   },
+   {
+    "patente": "AA492OU",
+    "viajes": 10,
+    "dias": 8,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / RicEgrCamFrente",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AA682QZ",
+    "viajes": 10,
+    "dias": 5,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB3Ingreso",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AD686SH",
+    "viajes": 10,
+    "dias": 6,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AG408SM",
+    "viajes": 10,
+    "dias": 4,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZTK400 / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "AG692JE",
+    "viajes": 10,
+    "dias": 5,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+    "parecida": "AG692JX",
+    "registro": false
+   },
+   {
+    "patente": "AG978PR",
+    "viajes": 10,
+    "dias": 5,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / SLZTK400 / SLZSalidaC1Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "FAF824",
+    "viajes": 10,
+    "dias": 5,
+    "zona": "San Lorenzo",
+    "camaras": "SLZSalidaC1Fte / SLZBalSC1Fte / SLZSalidaC2Fte",
+    "parecida": "",
+    "registro": false
+   },
+   {
+    "patente": "ONS723",
+    "viajes": 10,
+    "dias": 7,
+    "zona": "Ricardone y San Lorenzo",
+    "camaras": "SLZSalidaC2Fte / RicB3Ingreso / RicB3Egreso",
+    "parecida": "",
+    "registro": false
+   }
+  ],
+  "sinExcelTotal": 204,
+  "parecidas": [
+   "OCB815~CCB815",
+   "AF529RF~AF529TF AF529RI",
+   "AB785UY~AB785NY",
+   "AI065WC~AH065WC",
+   "HLT270~HLD270 HLX270",
+   "AB148YJ~AB148YV",
+   "AG575TD~AA575TD",
+   "AH763WD~AH763FD",
+   "AI456GB~AI456GI",
+   "AE772KD~AE772ID",
+   "AF211ER~AI211ER",
+   "DVT968~DVH968",
+   "AB349QJ~AB349CJ AB349QT",
+   "AD468VC~AD468VV",
+   "AH149NK~AH149NB",
+   "AG692JE~AG692JX"
+  ],
+  "enRegistro": [
+   "AE264XY",
+   "IMH787",
+   "LJB988",
+   "AF211ER",
+   "AH185MZ"
+  ]
+ },
+ "balanza": {
+  "sinPesar": [
+   {
+    "patente": "AE189YW",
+    "producto": "soja",
+    "planta": "Ricardone",
+    "ingreso": "15/10 14:58",
+    "salida": "15/10 15:59",
+    "minutos": 61,
+    "brutoKg": null,
+    "nroIngreso": 14507129,
+    "adentro": "Ingreso 14:55 → Pre-ingreso 14:57 → Calada 15:26 → Egreso 16:15",
+    "destino": "No fue al puerto",
+    "alerta": false
+   },
+   {
+    "patente": "BOX621",
+    "producto": "girasol",
+    "planta": "Ricardone",
+    "ingreso": "15/10 15:57",
+    "salida": "16/10 10:40",
+    "minutos": 1122,
+    "brutoKg": null,
+    "nroIngreso": 14507147,
+    "adentro": "Ingreso 15:52 → Pre-ingreso 15:56 → Calada 20:31",
+    "destino": "No fue al puerto",
+    "alerta": false
+   },
+   {
+    "patente": "AA699TL",
+    "producto": "girasol",
+    "planta": "Ricardone",
+    "ingreso": "15/10 23:00",
+    "salida": "16/10 10:38",
+    "minutos": 698,
+    "brutoKg": null,
+    "nroIngreso": 14507221,
+    "adentro": "Pre-ingreso 22:59 → Calada 23:30 → Egreso 10:33",
+    "destino": "No fue al puerto",
+    "alerta": false
+   },
+   {
+    "patente": "AB355LC",
+    "producto": "soja",
+    "planta": "Ricardone",
+    "ingreso": "16/10 02:25",
+    "salida": "16/10 07:50",
+    "minutos": 325,
+    "brutoKg": null,
+    "nroIngreso": 14507243,
+    "adentro": "Sin lecturas de cámara",
+    "destino": "No fue al puerto",
+    "alerta": false
+   },
+   {
+    "patente": "JSP646",
+    "producto": "aceite girasol para refinar",
+    "planta": "Ricardone",
+    "ingreso": "16/10 03:13",
+    "salida": "16/10 09:30",
+    "minutos": 377,
+    "brutoKg": null,
+    "nroIngreso": 14507246,
+    "adentro": "Ingreso 03:07 → Pre-ingreso 03:12 → Calada líquidos 03:35",
+    "destino": "No fue al puerto",
+    "alerta": false
+   },
+   {
+    "patente": "AA809NI",
+    "producto": "aceite girasol para refinar",
+    "planta": "Ricardone",
+    "ingreso": "16/10 03:14",
+    "salida": "16/10 09:32",
+    "minutos": 378,
+    "brutoKg": null,
+    "nroIngreso": 14507247,
+    "adentro": "Ingreso 03:07 → Pre-ingreso 03:13 → Calada líquidos 03:44",
+    "destino": "No fue al puerto",
+    "alerta": false
+   },
+   {
+    "patente": "TOW398",
+    "producto": "soja",
+    "planta": "Ricardone",
+    "ingreso": "16/10 04:07",
+    "salida": "16/10 07:49",
+    "minutos": 223,
+    "brutoKg": null,
+    "nroIngreso": 14507257,
+    "adentro": "Ingreso 04:03 → Pre-ingreso 04:05 → Calada 05:11",
+    "destino": "No fue al puerto",
+    "alerta": false
+   },
+   {
+    "patente": "OGF364",
+    "producto": "soja",
+    "planta": "Ricardone",
+    "ingreso": "16/10 07:25",
+    "salida": "16/10 08:46",
+    "minutos": 81,
+    "brutoKg": null,
+    "nroIngreso": 14507303,
+    "adentro": "Pre-ingreso 07:24 → Calada 08:12",
+    "destino": "No fue al puerto",
+    "alerta": false
+   },
+   {
+    "patente": "NKZ824",
+    "producto": "soja",
+    "planta": "Ricardone",
+    "ingreso": "18/10 13:19",
+    "salida": "18/10 14:52",
+    "minutos": 93,
+    "brutoKg": null,
+    "nroIngreso": 14507775,
+    "adentro": "Ingreso 13:13 → Pre-ingreso 13:18 → Calada 14:26",
+    "destino": "No fue al puerto",
+    "alerta": false
+   },
+   {
+    "patente": "VFU873",
+    "producto": "soja",
+    "planta": "Ricardone",
+    "ingreso": "18/10 17:00",
+    "salida": "18/10 20:15",
+    "minutos": 195,
+    "brutoKg": null,
+    "nroIngreso": 14507792,
+    "adentro": "Ingreso 16:56 → Pre-ingreso 16:58 → Calada 17:43",
+    "destino": "No fue al puerto",
+    "alerta": false
+   },
+   {
+    "patente": "OFG785",
+    "producto": "aceite girasol refinado",
+    "planta": "Puerto",
+    "ingreso": "19/10 07:59",
+    "salida": "19/10 08:00",
+    "minutos": 1,
+    "brutoKg": null,
+    "nroIngreso": 14507915,
+    "adentro": "Sin lecturas de cámara",
+    "destino": "",
+    "alerta": false
+   },
+   {
+    "patente": "CSJ103",
+    "producto": "soja",
+    "planta": "Ricardone",
+    "ingreso": "20/10 10:14",
+    "salida": "20/10 16:16",
+    "minutos": 362,
+    "brutoKg": null,
+    "nroIngreso": 14508319,
+    "adentro": "Ingreso 10:11 → Pre-ingreso 10:13 → Calada 10:43",
+    "destino": "No fue al puerto",
+    "alerta": false
+   },
+   {
+    "patente": "DYS237",
+    "producto": "soja",
+    "planta": "Ricardone",
+    "ingreso": "20/10 10:15",
+    "salida": "20/10 13:45",
+    "minutos": 210,
+    "brutoKg": null,
+    "nroIngreso": 14508320,
+    "adentro": "Ingreso 10:11 → Pre-ingreso 10:13",
+    "destino": "No fue al puerto",
+    "alerta": false
+   },
+   {
+    "patente": "AB595RI",
+    "producto": "soja",
+    "planta": "Ricardone",
+    "ingreso": "20/10 13:19",
+    "salida": "20/10 18:15",
+    "minutos": 296,
+    "brutoKg": null,
+    "nroIngreso": 14508388,
+    "adentro": "Ingreso 13:15 → Pre-ingreso 13:18",
+    "destino": "No fue al puerto",
+    "alerta": false
+   },
+   {
+    "patente": "BMF567",
+    "producto": "soja",
+    "planta": "Puerto",
+    "ingreso": "21/10 00:09",
+    "salida": "21/10 02:57",
+    "minutos": 169,
+    "brutoKg": null,
+    "nroIngreso": 14508564,
+    "adentro": "Pre-ingreso 00:07 → Calada 01:16 → Egreso 01:37 → Ingreso puerto 01:49 → Balanza puerto 02:53 → Salida puerto 03:13",
+    "destino": "",
+    "alerta": false
+   },
+   {
+    "patente": "UMT456",
+    "producto": "soja",
+    "planta": "Puerto",
+    "ingreso": "21/10 01:07",
+    "salida": "21/10 04:34",
+    "minutos": 207,
+    "brutoKg": null,
+    "nroIngreso": 14508571,
+    "adentro": "Calada 01:27 → Egreso 01:42 → Ingreso puerto 02:04 → Balanza puerto 04:29 → Balanza salida puerto 04:39 → Salida puerto 04:45",
+    "destino": "",
+    "alerta": false
+   },
+   {
+    "patente": "KCY113",
+    "producto": "soja",
+    "planta": "Ricardone",
+    "ingreso": "21/10 01:50",
+    "salida": "21/10 10:57",
+    "minutos": 547,
+    "brutoKg": null,
+    "nroIngreso": 14508576,
+    "adentro": "Ingreso 01:46 → Pre-ingreso 01:49 → Calada 04:54",
+    "destino": "No fue al puerto",
+    "alerta": false
+   },
+   {
+    "patente": "JJV417",
+    "producto": "soja",
+    "planta": "Puerto",
+    "ingreso": "21/10 07:07",
+    "salida": "21/10 08:35",
+    "minutos": 88,
+    "brutoKg": null,
+    "nroIngreso": 14508640,
+    "adentro": "Ingreso 07:04 → Pre-ingreso 07:06 → Calada 08:09 → Egreso 08:17 → Ingreso puerto 08:25 → Balanza puerto 08:31",
+    "destino": "",
+    "alerta": false
+   },
+   {
+    "patente": "AD001RG",
+    "producto": "soja",
+    "planta": "Ricardone",
+    "ingreso": "21/10 07:47",
+    "salida": "21/10 10:12",
+    "minutos": 145,
+    "brutoKg": null,
+    "nroIngreso": 14508657,
+    "adentro": "Ingreso 07:43 → Pre-ingreso 07:46",
+    "destino": "No fue al puerto",
+    "alerta": false
+   },
+   {
+    "patente": "UEK289",
+    "producto": "soja",
+    "planta": "Ricardone",
+    "ingreso": "21/10 10:42",
+    "salida": "21/10 13:48",
+    "minutos": 186,
+    "brutoKg": null,
+    "nroIngreso": 14508744,
+    "adentro": "Ingreso 10:38 → Calada 11:34",
+    "destino": "No fue al puerto",
+    "alerta": false
+   },
+   {
+    "patente": "SPK682",
+    "producto": "soja",
+    "planta": "Ricardone",
+    "ingreso": "21/10 10:44",
+    "salida": "21/10 13:48",
+    "minutos": 184,
+    "brutoKg": null,
+    "nroIngreso": 14508745,
+    "adentro": "Ingreso 10:39 → Calada 11:36",
+    "destino": "No fue al puerto",
+    "alerta": false
+   },
+   {
+    "patente": "PEP080",
+    "producto": "soja",
+    "planta": "Puerto",
+    "ingreso": "21/10 19:12",
+    "salida": "21/10 21:25",
+    "minutos": 133,
+    "brutoKg": null,
+    "nroIngreso": 14508913,
+    "adentro": "Ingreso 18:42 → Pre-ingreso 19:11 → Balanza puerto 21:34",
+    "destino": "",
+    "alerta": false
+   },
+   {
+    "patente": "AA400OA",
+    "producto": "soja",
+    "planta": "Ricardone",
+    "ingreso": "22/10 01:47",
+    "salida": "22/10 09:19",
+    "minutos": 452,
+    "brutoKg": null,
+    "nroIngreso": 14508997,
+    "adentro": "Ingreso 01:42 → Pre-ingreso 01:45 → Calada 04:57",
+    "destino": "Fue al puerto con su ingreso de la terminal (10:05)",
+    "alerta": false
+   },
+   {
+    "patente": "FLS743",
+    "producto": "soja",
+    "planta": "Ricardone",
+    "ingreso": "22/10 03:08",
+    "salida": "22/10 10:36",
+    "minutos": 448,
+    "brutoKg": null,
+    "nroIngreso": 14509011,
+    "adentro": "Calada 05:12 → Pre-ingreso 05:20 → Calada 10:21 → Egreso 10:51",
+    "destino": "No fue al puerto",
+    "alerta": false
+   },
+   {
+    "patente": "AH663MA",
+    "producto": "soja",
+    "planta": "Ricardone",
+    "ingreso": "22/10 08:02",
+    "salida": "22/10 10:56",
+    "minutos": 173,
+    "brutoKg": null,
+    "nroIngreso": 14509098,
+    "adentro": "Ingreso 07:54 → Pre-ingreso 08:01 → Calada 09:53",
+    "destino": "No fue al puerto",
+    "alerta": false
+   }
+  ],
+  "pasadosKg": [
+   {
+    "patente": "BMF567",
+    "producto": "soja",
+    "primerIngreso": "21/10 00:09",
+    "primeraSalida": "21/10 02:57",
+    "primerViaje": "Ingreso puerto 01:49 → Balanza puerto 02:53 → Salida puerto 03:13",
+    "ricardone": "Ingreso 03:49 → Egreso 11:45 → Pre-ingreso 13:14",
+    "segundoIngreso": "21/10 13:16",
+    "segundaSalida": "21/10 16:43",
+    "brutoFinalKg": 45000,
+    "netoFinalKg": 30400,
+    "segundoViaje": "Balanza puerto 14:20 → Balanza salida puerto 16:41 → Salida puerto 16:44",
+    "estado": "volvio_a_ricardone",
+    "visitas": [
+     {
+      "planta": "ric",
+      "items": [
+       {
+        "t": 1792552059485,
+        "punto": "Pre-ingreso",
+        "hora": "00:07",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "BMF567",
+        "device": "RicPreIngInFr",
+        "at": "2026-10-21T03:07:39.485Z"
+       },
+       {
+        "t": 1792556185072,
+        "punto": "Calada",
+        "hora": "01:16",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "BMF567",
+        "device": "RicCal04",
+        "at": "2026-10-21T04:16:25.072Z"
+       },
+       {
+        "t": 1792557462720,
+        "punto": "Egreso",
+        "hora": "01:37",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "BMF567",
+        "device": "RicEgrCamFrente",
+        "at": "2026-10-21T04:37:42.720Z"
+       }
+      ]
+     },
+     {
+      "planta": "sl",
+      "items": [
+       {
+        "t": 1792558195111,
+        "punto": "Ingreso puerto",
+        "hora": "01:49",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "BMF567",
+        "device": "SLZIngCamFrente",
+        "at": "2026-10-21T04:49:55.111Z"
+       },
+       {
+        "t": 1792562039474,
+        "punto": "Balanza puerto",
+        "hora": "02:53",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "BMF567",
+        "device": "SLZBalIngFte",
+        "at": "2026-10-21T05:53:59.474Z"
+       },
+       {
+        "t": 1792562733829,
+        "punto": "Balanza salida puerto",
+        "hora": "03:05",
+        "dia": "21/10",
+        "estado": "reconstruida",
+        "leyo": "FMF56",
+        "device": "SLZBalSC2Fte",
+        "at": "2026-10-21T06:05:33.829Z"
+       },
+       {
+        "t": 1792563220820,
+        "punto": "Salida puerto",
+        "hora": "03:13",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "BMF567",
+        "device": "SLZSalidaC1Fte",
+        "at": "2026-10-21T06:13:40.820Z"
+       }
+      ]
+     },
+     {
+      "planta": "ric",
+      "items": [
+       {
+        "t": 1792565376533,
+        "punto": "Ingreso",
+        "hora": "03:49",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "BMF567",
+        "device": "RicIngCamFrente",
+        "at": "2026-10-21T06:49:36.533Z"
+       },
+       {
+        "t": 1792593916334,
+        "punto": "Egreso",
+        "hora": "11:45",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "BMF567",
+        "device": "RicEgrCamFrente",
+        "at": "2026-10-21T14:45:16.334Z"
+       },
+       {
+        "t": 1792599282886,
+        "punto": "Pre-ingreso",
+        "hora": "13:14",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "BMF567",
+        "device": "RicPreIngInFr",
+        "at": "2026-10-21T16:14:42.886Z"
+       },
+       {
+        "t": 1792600753905,
+        "punto": "Calada",
+        "hora": "13:39",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "BMF567",
+        "device": "RicCal04",
+        "at": "2026-10-21T16:39:13.905Z"
+       },
+       {
+        "t": 1792601882825,
+        "punto": "Egreso",
+        "hora": "13:58",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "BMF567",
+        "device": "RicEgrCamFrente",
+        "at": "2026-10-21T16:58:02.825Z"
+       }
+      ]
+     },
+     {
+      "planta": "sl",
+      "items": [
+       {
+        "t": 1792602997659,
+        "punto": "Ingreso puerto",
+        "hora": "14:16",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "BMF567",
+        "device": "SLZIngCamFrente",
+        "at": "2026-10-21T17:16:37.659Z"
+       },
+       {
+        "t": 1792603206022,
+        "punto": "Balanza puerto",
+        "hora": "14:20",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "BMF567",
+        "device": "SLZBalIngFte",
+        "at": "2026-10-21T17:20:06.022Z"
+       },
+       {
+        "t": 1792610687564,
+        "punto": "Volcable 5",
+        "hora": "16:24",
+        "dia": "21/10",
+        "estado": "reconstruida",
+        "leyo": "BMF56",
+        "device": "SLZVolcableC5",
+        "at": "2026-10-21T19:24:47.564Z"
+       },
+       {
+        "t": 1792611691890,
+        "punto": "Balanza salida puerto",
+        "hora": "16:41",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "BMF567",
+        "device": "SLZBalSC2Fte",
+        "at": "2026-10-21T19:41:31.890Z"
+       },
+       {
+        "t": 1792611868606,
+        "punto": "Salida puerto",
+        "hora": "16:44",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "BMF567",
+        "device": "SLZSalidaC1Fte",
+        "at": "2026-10-21T19:44:28.606Z"
+       }
+      ]
+     }
+    ],
+    "deducidos": [
+     {
+      "viaje": 1,
+      "planta": "sl",
+      "punto": "Volcable"
+     }
+    ]
+   },
+   {
+    "patente": "UMT456",
+    "producto": "soja",
+    "primerIngreso": "21/10 01:07",
+    "primeraSalida": "21/10 04:34",
+    "primerViaje": "Ingreso puerto 02:04 → Balanza puerto 04:29 → Balanza salida puerto 04:39 → Salida puerto 04:45",
+    "ricardone": "Pre-ingreso 05:03",
+    "segundoIngreso": "21/10 09:54",
+    "segundaSalida": "21/10 14:08",
+    "brutoFinalKg": 45360,
+    "netoFinalKg": 30240,
+    "segundoViaje": "Balanza puerto 11:57 → Volcable 5 13:52 → Salida puerto 14:10",
+    "estado": "volvio_a_ricardone",
+    "visitas": [
+     {
+      "planta": "ric",
+      "items": [
+       {
+        "t": 1792556128000,
+        "punto": "Pre-ingreso",
+        "hora": "01:15",
+        "dia": "21/10",
+        "estado": "reconstruida",
+        "leyo": "",
+        "device": "RicPreIngInFr",
+        "at": "2026-10-21T04:15:28.000Z"
+       },
+       {
+        "t": 1792556824008,
+        "punto": "Calada",
+        "hora": "01:27",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "UMT456",
+        "device": "RicCal04",
+        "at": "2026-10-21T04:27:04.008Z"
+       },
+       {
+        "t": 1792557738095,
+        "punto": "Egreso",
+        "hora": "01:42",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "UMT456",
+        "device": "RicEgrCamFrente",
+        "at": "2026-10-21T04:42:18.095Z"
+       }
+      ]
+     },
+     {
+      "planta": "sl",
+      "items": [
+       {
+        "t": 1792559092921,
+        "punto": "Ingreso puerto",
+        "hora": "02:04",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "UMT456",
+        "device": "SLZIngCamFrente",
+        "at": "2026-10-21T05:04:52.921Z"
+       },
+       {
+        "t": 1792567757162,
+        "punto": "Balanza puerto",
+        "hora": "04:29",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "UMT456",
+        "device": "SLZBalIngFte",
+        "at": "2026-10-21T07:29:17.162Z"
+       },
+       {
+        "t": 1792568347172,
+        "punto": "Balanza salida puerto",
+        "hora": "04:39",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "UMT456",
+        "device": "SLZBalSC2Fte",
+        "at": "2026-10-21T07:39:07.172Z"
+       },
+       {
+        "t": 1792568716754,
+        "punto": "Salida puerto",
+        "hora": "04:45",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "UMT456",
+        "device": "SLZSalidaC1Fte",
+        "at": "2026-10-21T07:45:16.754Z"
+       }
+      ]
+     },
+     {
+      "planta": "ric",
+      "items": [
+       {
+        "t": 1792569796799,
+        "punto": "Pre-ingreso",
+        "hora": "05:03",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "UMT456",
+        "device": "RicPreIngInFr",
+        "at": "2026-10-21T08:03:16.799Z"
+       },
+       {
+        "t": 1792592915943,
+        "punto": "Calada",
+        "hora": "11:28",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "UMT456",
+        "device": "RicCal03",
+        "at": "2026-10-21T14:28:35.943Z"
+       },
+       {
+        "t": 1792593733844,
+        "punto": "Egreso",
+        "hora": "11:42",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "UMT456",
+        "device": "RicEgrCamFrente",
+        "at": "2026-10-21T14:42:13.844Z"
+       }
+      ]
+     },
+     {
+      "planta": "sl",
+      "items": [
+       {
+        "t": 1792594499694,
+        "punto": "Ingreso puerto",
+        "hora": "11:54",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "UMT456",
+        "device": "SLZIngCamFrente",
+        "at": "2026-10-21T14:54:59.694Z"
+       },
+       {
+        "t": 1792594656036,
+        "punto": "Balanza puerto",
+        "hora": "11:57",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "UMT456",
+        "device": "SLZBalIngFte",
+        "at": "2026-10-21T14:57:36.036Z"
+       },
+       {
+        "t": 1792601536386,
+        "punto": "Volcable 5",
+        "hora": "13:52",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "UMT456",
+        "device": "SLZVolcableC5",
+        "at": "2026-10-21T16:52:16.386Z"
+       },
+       {
+        "t": 1792602638662,
+        "punto": "Salida puerto",
+        "hora": "14:10",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "UMT456",
+        "device": "SLZSalidaC1Fte",
+        "at": "2026-10-21T17:10:38.662Z"
+       }
+      ]
+     }
+    ],
+    "deducidos": [
+     {
+      "viaje": 1,
+      "planta": "sl",
+      "punto": "Volcable"
+     },
+     {
+      "viaje": 2,
+      "planta": "sl",
+      "punto": "Balanza salida puerto"
+     }
+    ]
+   },
+   {
+    "patente": "JJV417",
+    "producto": "soja",
+    "primerIngreso": "21/10 07:07",
+    "primeraSalida": "21/10 08:35",
+    "primerViaje": "Ingreso puerto 08:25 → Balanza puerto 08:31 → Balanza salida puerto 08:39 → Salida puerto 08:44",
+    "ricardone": "Ingreso 09:44 → Pre-ingreso 09:47",
+    "segundoIngreso": "21/10 09:48",
+    "segundaSalida": "21/10 13:23",
+    "brutoFinalKg": 44940,
+    "netoFinalKg": 29800,
+    "segundoViaje": "Balanza puerto 11:41 → Volcable 5 13:14 → Salida puerto 13:23",
+    "estado": "volvio_a_ricardone",
+    "visitas": [
+     {
+      "planta": "ric",
+      "items": [
+       {
+        "t": 1792577047840,
+        "punto": "Ingreso",
+        "hora": "07:04",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "JJV417",
+        "device": "RicIngCamFrente",
+        "at": "2026-10-21T10:04:07.840Z"
+       },
+       {
+        "t": 1792577185710,
+        "punto": "Pre-ingreso",
+        "hora": "07:06",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "JJV417",
+        "device": "RicPreIngInFr",
+        "at": "2026-10-21T10:06:25.710Z"
+       },
+       {
+        "t": 1792580988436,
+        "punto": "Calada",
+        "hora": "08:09",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "JJV417",
+        "device": "RicCal04",
+        "at": "2026-10-21T11:09:48.436Z"
+       },
+       {
+        "t": 1792581475583,
+        "punto": "Egreso",
+        "hora": "08:17",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "JJV417",
+        "device": "RicEgrCamFrente",
+        "at": "2026-10-21T11:17:55.583Z"
+       }
+      ]
+     },
+     {
+      "planta": "sl",
+      "items": [
+       {
+        "t": 1792581958944,
+        "punto": "Ingreso puerto",
+        "hora": "08:25",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "JJV417",
+        "device": "SLZIngCamFrente",
+        "at": "2026-10-21T11:25:58.944Z"
+       },
+       {
+        "t": 1792582318826,
+        "punto": "Balanza puerto",
+        "hora": "08:31",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "JJV417",
+        "device": "SLZBalIngFte",
+        "at": "2026-10-21T11:31:58.826Z"
+       },
+       {
+        "t": 1792582746429,
+        "punto": "Balanza salida puerto",
+        "hora": "08:39",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "JJV417",
+        "device": "SLZBalSC2Fte",
+        "at": "2026-10-21T11:39:06.429Z"
+       },
+       {
+        "t": 1792583069659,
+        "punto": "Salida puerto",
+        "hora": "08:44",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "JJV417",
+        "device": "SLZSalidaC1Fte",
+        "at": "2026-10-21T11:44:29.659Z"
+       }
+      ]
+     },
+     {
+      "planta": "ric",
+      "items": [
+       {
+        "t": 1792586655121,
+        "punto": "Ingreso",
+        "hora": "09:44",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "JJV417",
+        "device": "RicIngCamFrente",
+        "at": "2026-10-21T12:44:15.121Z"
+       },
+       {
+        "t": 1792586834542,
+        "punto": "Pre-ingreso",
+        "hora": "09:47",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "JJV417",
+        "device": "RicPreIngInFr",
+        "at": "2026-10-21T12:47:14.542Z"
+       },
+       {
+        "t": 1792592501758,
+        "punto": "Calada",
+        "hora": "11:21",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "JJV417",
+        "device": "RicCal04",
+        "at": "2026-10-21T14:21:41.758Z"
+       },
+       {
+        "t": 1792593014039,
+        "punto": "Egreso",
+        "hora": "11:30",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "JJV417",
+        "device": "RicEgrCamFrente",
+        "at": "2026-10-21T14:30:14.039Z"
+       }
+      ]
+     },
+     {
+      "planta": "sl",
+      "items": [
+       {
+        "t": 1792593505079,
+        "punto": "Ingreso puerto",
+        "hora": "11:38",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "JJV417",
+        "device": "SLZIngCamFrente",
+        "at": "2026-10-21T14:38:25.079Z"
+       },
+       {
+        "t": 1792593664012,
+        "punto": "Balanza puerto",
+        "hora": "11:41",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "JJV417",
+        "device": "SLZBalIngFte",
+        "at": "2026-10-21T14:41:04.012Z"
+       },
+       {
+        "t": 1792599273492,
+        "punto": "Volcable 5",
+        "hora": "13:14",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "JJV417",
+        "device": "SLZVolcableC5",
+        "at": "2026-10-21T16:14:33.492Z"
+       },
+       {
+        "t": 1792599827618,
+        "punto": "Salida puerto",
+        "hora": "13:23",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "JJV417",
+        "device": "SLZSalidaC1Fte",
+        "at": "2026-10-21T16:23:47.618Z"
+       }
+      ]
+     }
+    ],
+    "deducidos": [
+     {
+      "viaje": 2,
+      "planta": "sl",
+      "punto": "Balanza salida puerto"
+     }
+    ]
+   },
+   {
+    "patente": "PEP080",
+    "producto": "soja",
+    "primerIngreso": "21/10 19:12",
+    "primeraSalida": "21/10 21:25",
+    "primerViaje": "Balanza puerto 21:34",
+    "ricardone": "Sin lecturas en Ricardone",
+    "segundoIngreso": null,
+    "segundaSalida": null,
+    "brutoFinalKg": null,
+    "netoFinalKg": null,
+    "segundoViaje": "",
+    "estado": "sin_reingreso",
+    "visitas": [
+     {
+      "planta": "ric",
+      "items": [
+       {
+        "t": 1792618943295,
+        "punto": "Ingreso",
+        "hora": "18:42",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "PEP080",
+        "device": "RicIngCamFrente",
+        "at": "2026-10-21T21:42:23.295Z"
+       },
+       {
+        "t": 1792620682992,
+        "punto": "Pre-ingreso",
+        "hora": "19:11",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "PEP080",
+        "device": "RicPreIngInFr",
+        "at": "2026-10-21T22:11:22.992Z"
+       },
+       {
+        "t": 1792623345000,
+        "punto": "Egreso",
+        "hora": "19:55",
+        "dia": "21/10",
+        "estado": "reconstruida",
+        "leyo": "",
+        "device": "RicEgrCamFrente",
+        "at": "2026-10-21T22:55:45.000Z"
+       }
+      ]
+     },
+     {
+      "planta": "sl",
+      "items": [
+       {
+        "t": 1792626159222,
+        "punto": "Ingreso puerto",
+        "hora": "20:42",
+        "dia": "21/10",
+        "estado": "reconstruida",
+        "leyo": "PEP00",
+        "device": "SLZIngCamFrente",
+        "at": "2026-10-21T23:42:39.222Z"
+       },
+       {
+        "t": 1792629297870,
+        "punto": "Balanza puerto",
+        "hora": "21:34",
+        "dia": "21/10",
+        "estado": "camara",
+        "leyo": "PEP080",
+        "device": "SLZBalIngFte",
+        "at": "2026-10-22T00:34:57.870Z"
+       }
+      ]
+     }
+    ],
+    "deducidos": [
+     {
+      "viaje": 1,
+      "planta": "ric",
+      "punto": "Calada"
+     },
+     {
+      "viaje": 1,
+      "planta": "sl",
+      "punto": "Volcable"
+     },
+     {
+      "viaje": 1,
+      "planta": "sl",
+      "punto": "Salida puerto"
+     }
+    ]
+   }
+  ],
+  "pesados": [
+   {
+    "patente": "AA824GE",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "14/10",
+    "brutoKg": 52660,
+    "netoKg": 35960
+   },
+   {
+    "patente": "AE088HX",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "14/10",
+    "brutoKg": 59820,
+    "netoKg": 39520
+   },
+   {
+    "patente": "AB605VN",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "14/10",
+    "brutoKg": 52540,
+    "netoKg": 34900
+   },
+   {
+    "patente": "AH659WN",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "14/10",
+    "brutoKg": 52520,
+    "netoKg": 36200
+   },
+   {
+    "patente": "AD910IP",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "14/10",
+    "brutoKg": 52560,
+    "netoKg": 36820
+   },
+   {
+    "patente": "MDY035",
+    "producto": "girasol",
+    "planta": "Ricardone",
+    "dia": "15/10",
+    "brutoKg": 52640,
+    "netoKg": 35960
+   },
+   {
+    "patente": "AA510XV",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "16/10",
+    "brutoKg": 52520,
+    "netoKg": 37020
+   },
+   {
+    "patente": "FMZ930",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "16/10",
+    "brutoKg": 52740,
+    "netoKg": 36560
+   },
+   {
+    "patente": "FBV155",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "16/10",
+    "brutoKg": 52720,
+    "netoKg": 35400
+   },
+   {
+    "patente": "AC877NL",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "16/10",
+    "brutoKg": 52680,
+    "netoKg": 36380
+   },
+   {
+    "patente": "AH839RY",
+    "producto": "metanol",
+    "planta": "Puerto",
+    "dia": "16/10",
+    "brutoKg": 54160,
+    "netoKg": null
+   },
+   {
+    "patente": "AG960GH",
+    "producto": "metanol",
+    "planta": "Puerto",
+    "dia": "16/10",
+    "brutoKg": 54860,
+    "netoKg": null
+   },
+   {
+    "patente": "MBK543",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "18/10",
+    "brutoKg": 52540,
+    "netoKg": 35340
+   },
+   {
+    "patente": "JTE406",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "18/10",
+    "brutoKg": 52540,
+    "netoKg": 35720
+   },
+   {
+    "patente": "LZH220",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "19/10",
+    "brutoKg": 52520,
+    "netoKg": 35740
+   },
+   {
+    "patente": "LTI990",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "19/10",
+    "brutoKg": 52520,
+    "netoKg": 37820
+   },
+   {
+    "patente": "AD780OB",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "19/10",
+    "brutoKg": 52980,
+    "netoKg": null
+   },
+   {
+    "patente": "AI278JO",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "20/10",
+    "brutoKg": 52560,
+    "netoKg": 35360
+   },
+   {
+    "patente": "AE280BK",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "20/10",
+    "brutoKg": 52600,
+    "netoKg": 36960
+   },
+   {
+    "patente": "AH370HH",
+    "producto": "metanol",
+    "planta": "Puerto",
+    "dia": "20/10",
+    "brutoKg": 52880,
+    "netoKg": 35900
+   },
+   {
+    "patente": "ODR120",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "20/10",
+    "brutoKg": 52540,
+    "netoKg": 36700
+   },
+   {
+    "patente": "MMU730",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "20/10",
+    "brutoKg": 52700,
+    "netoKg": 37060
+   },
+   {
+    "patente": "GAS844",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "20/10",
+    "brutoKg": 52680,
+    "netoKg": 36640
+   },
+   {
+    "patente": "AE936FS",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52580,
+    "netoKg": 35480
+   },
+   {
+    "patente": "AH059DY",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52560,
+    "netoKg": 37140
+   },
+   {
+    "patente": "AH087IX",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52800,
+    "netoKg": 36320
+   },
+   {
+    "patente": "AA626NP",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52560,
+    "netoKg": 35840
+   },
+   {
+    "patente": "IAB283",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52760,
+    "netoKg": 34580
+   },
+   {
+    "patente": "AE196PC",
+    "producto": "productos varios",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 59920,
+    "netoKg": 17460
+   },
+   {
+    "patente": "AE196PC",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 59860,
+    "netoKg": 39460
+   },
+   {
+    "patente": "AH491LQ",
+    "producto": "metanol",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 53740,
+    "netoKg": 35940
+   },
+   {
+    "patente": "AE187VW",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 59300,
+    "netoKg": 38500
+   },
+   {
+    "patente": "LTI990",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52560,
+    "netoKg": null
+   },
+   {
+    "patente": "AC483GU",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 55140,
+    "netoKg": 36100
+   },
+   {
+    "patente": "KWN871",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52960,
+    "netoKg": 35860
+   },
+   {
+    "patente": "AA470BI",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52740,
+    "netoKg": 35620
+   },
+   {
+    "patente": "KUY089",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52580,
+    "netoKg": 35780
+   },
+   {
+    "patente": "AH222SF",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52700,
+    "netoKg": 34960
+   },
+   {
+    "patente": "JDI547",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52620,
+    "netoKg": 35660
+   },
+   {
+    "patente": "HDD168",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52520,
+    "netoKg": 36140
+   },
+   {
+    "patente": "AG767ID",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52540,
+    "netoKg": 35160
+   },
+   {
+    "patente": "AD208IR",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52600,
+    "netoKg": 36140
+   },
+   {
+    "patente": "FQN221",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52740,
+    "netoKg": 36280
+   },
+   {
+    "patente": "AI382KP",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52840,
+    "netoKg": 36300
+   },
+   {
+    "patente": "AC506GG",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52580,
+    "netoKg": 36880
+   },
+   {
+    "patente": "GVU042",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52600,
+    "netoKg": 37360
+   },
+   {
+    "patente": "GNS808",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52640,
+    "netoKg": 35640
+   },
+   {
+    "patente": "AA528CG",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52680,
+    "netoKg": 36040
+   },
+   {
+    "patente": "JGL647",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52680,
+    "netoKg": 35940
+   },
+   {
+    "patente": "LQR512",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52860,
+    "netoKg": 35740
+   },
+   {
+    "patente": "AF532KK",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "21/10",
+    "brutoKg": 52580,
+    "netoKg": 37040
+   },
+   {
+    "patente": "AH272OK",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "22/10",
+    "brutoKg": 52640,
+    "netoKg": 34720
+   },
+   {
+    "patente": "AF118VS",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "22/10",
+    "brutoKg": 52560,
+    "netoKg": 34380
+   },
+   {
+    "patente": "LWU594",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "22/10",
+    "brutoKg": 52680,
+    "netoKg": 35920
+   },
+   {
+    "patente": "HZA628",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "22/10",
+    "brutoKg": 52520,
+    "netoKg": 34300
+   },
+   {
+    "patente": "HCX138",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "22/10",
+    "brutoKg": 52520,
+    "netoKg": 35980
+   },
+   {
+    "patente": "AG591MX",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "22/10",
+    "brutoKg": 52720,
+    "netoKg": 35820
+   },
+   {
+    "patente": "GWC049",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "22/10",
+    "brutoKg": 52780,
+    "netoKg": 36560
+   },
+   {
+    "patente": "AD208IR",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "22/10",
+    "brutoKg": 52520,
+    "netoKg": 36000
+   },
+   {
+    "patente": "AI423TQ",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "22/10",
+    "brutoKg": 52720,
+    "netoKg": 36120
+   },
+   {
+    "patente": "PAL482",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "22/10",
+    "brutoKg": 52580,
+    "netoKg": 37060
+   },
+   {
+    "patente": "JMM759",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "22/10",
+    "brutoKg": 52700,
+    "netoKg": 36720
+   },
+   {
+    "patente": "PCF066",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "22/10",
+    "brutoKg": 52660,
+    "netoKg": 35940
+   },
+   {
+    "patente": "AH630NV",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "22/10",
+    "brutoKg": 52620,
+    "netoKg": 36360
+   },
+   {
+    "patente": "IAG155",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "22/10",
+    "brutoKg": 52560,
+    "netoKg": 36500
+   },
+   {
+    "patente": "JWS921",
+    "producto": "soja",
+    "planta": "Puerto",
+    "dia": "22/10",
+    "brutoKg": 52640,
+    "netoKg": 35160
+   }
+  ],
+  "brutoMaxKg": 52500,
+  "ingresosConPeso": 930,
+  "ingresosSgc": 1673
+ },
+ "etl": [
+  {
+   "patente": "AE260HD",
+   "dia": "13/10",
+   "motivo": "Reingreso rápido a Ricardone",
+   "circuito": "SIN_PUNTO",
+   "lecturas": "Balanza ingreso 10:05 → Ingreso 09:45 → Egreso 13:14 → Balanza ingreso 13:19 → Playa 3 14:59 → Balanza egreso 15:06 → Ingreso 15:11 → Pre-ingreso 15:12",
+   "sistema": "No figura",
+   "lote": "No está en el lote (no es camión del sistema)",
+   "enVivo": "",
+   "conclusion": "Fuera del sistema: vehículo sin movimiento de balanza, identificar",
+   "esCaso": true
+  },
+  {
+   "patente": "AB382HC",
+   "dia": "13/10",
+   "motivo": "Visita relámpago al puerto sin operar",
+   "circuito": "R7",
+   "lecturas": "Pre-ingreso 19:05 → Calada 20:13 → Egreso 20:20 → Ingreso puerto 20:29 → Salida puerto 20:48",
+   "sistema": "Puerto · Soja · 19:06–20:48 · 35.080 kg",
+   "lote": "Circuito R7: 4 pasos leídos, 2 reconstruidos, 2 deducidos, 0 faltan (reconstruyó Ingreso 20:29, volcable 20:41)",
+   "enVivo": "",
+   "conclusion": "Descargó: está en el sistema y el algoritmo le asigna la lectura de volcable 20:41",
+   "esCaso": false
+  },
+  {
+   "patente": "MSE380",
+   "dia": "14/10",
+   "motivo": "Del puerto a Ricardone en menos de 2 h (error de destino)",
+   "circuito": "SIN_PUNTO",
+   "lecturas": "Salida puerto 15:08 → Balanza ingreso 15:26 → Balanza egreso 18:43 → Balanza ingreso 08:34 → Balanza egreso 09:42 → Cámara sin punto 07:44",
+   "sistema": "No figura",
+   "lote": "No está en el lote (no es camión del sistema)",
+   "enVivo": "En vivo: auto particular / camioneta",
+   "conclusion": "Fuera del sistema · En vivo: auto particular / camioneta",
+   "esCaso": false
+  },
+  {
+   "patente": "AE260HD",
+   "dia": "15/10",
+   "motivo": "Reingreso rápido a Ricardone",
+   "circuito": "SIN_PUNTO",
+   "lecturas": "Balanza ingreso 07:36 → Balanza egreso 07:39 → Ingreso 07:47 → Egreso 08:41",
+   "sistema": "No figura",
+   "lote": "No está en el lote (no es camión del sistema)",
+   "enVivo": "",
+   "conclusion": "Fuera del sistema: vehículo sin movimiento de balanza, identificar",
+   "esCaso": true
+  },
+  {
+   "patente": "AE264AY",
+   "dia": "17/10",
+   "motivo": "Reingreso rápido a Ricardone",
+   "circuito": "R7",
+   "lecturas": "Cámara sin punto 19:24 → Ingreso 19:47 → Egreso 21:23",
+   "sistema": "No figura",
+   "lote": "No está en el lote (no es camión del sistema)",
+   "enVivo": "",
+   "conclusion": "Fuera del sistema: vehículo sin movimiento de balanza, identificar",
+   "esCaso": true
+  },
+  {
+   "patente": "KGH346",
+   "dia": "19/10",
+   "motivo": "Reingreso rápido a Ricardone",
+   "circuito": "R8",
+   "lecturas": "Pre-ingreso 05:09 → Calada líquidos 05:50 → Egreso 06:00 → Ingreso 06:03 → Egreso 11:59",
+   "sistema": "Ricardone · Acgirasol oleico · 05:11–13:10 · 28.800 kg",
+   "lote": "Circuito R16: 3 pasos leídos, 0 reconstruidos, 1 deducidos, 0 faltan",
+   "enVivo": "",
+   "conclusion": "Operación del sistema (circuito R16): el ETL cortó el recorrido",
+   "esCaso": false
+  },
+  {
+   "patente": "AA160DQ",
+   "dia": "20/10",
+   "motivo": "Reingreso rápido a Ricardone",
+   "circuito": "R7",
+   "lecturas": "Ingreso 09:40 → Egreso 12:47 → Ingreso 13:01 → Egreso 14:25",
+   "sistema": "No figura",
+   "lote": "No está en el lote (no es camión del sistema)",
+   "enVivo": "",
+   "conclusion": "Fuera del sistema: vehículo sin movimiento de balanza, identificar",
+   "esCaso": true
+  },
+  {
+   "patente": "AD549AY",
+   "dia": "21/10",
+   "motivo": "Reingreso rápido a Ricardone",
+   "circuito": "R7",
+   "lecturas": "Ingreso 21:23 → Pre-ingreso 21:30 → Calada 23:07 → Egreso 23:19 → Ingreso 23:22 → Ingreso puerto 23:42 → Balanza puerto 23:46 → Volcable 5 02:14",
+   "sistema": "Puerto · Soja · 21:28–02:30 · 34.900 kg",
+   "lote": "Circuito R7: 8 pasos leídos, 0 reconstruidos, 0 deducidos, 0 faltan",
+   "enVivo": "",
+   "conclusion": "Operación del sistema (circuito R7): el ETL cortó el recorrido",
+   "esCaso": false
+  },
+  {
+   "patente": "AA488IX",
+   "dia": "22/10",
+   "motivo": "Reingreso rápido a Ricardone",
+   "circuito": "R8",
+   "lecturas": "Ingreso 08:02 → Pre-ingreso 08:04 → Calada líquidos 08:22 → Egreso 08:29 → Playa 3 08:39 → Balanza egreso 09:20 → Ingreso 09:29 → Calada líquidos 09:32",
+   "sistema": "Ricardone · Productos varios · 08:06–09:24 · 25.680 kg",
+   "lote": "No está en el lote (no es camión del sistema)",
+   "enVivo": "",
+   "conclusion": "Operación del sistema: el ETL cortó el recorrido",
+   "esCaso": false
+  }
+ ]
+}

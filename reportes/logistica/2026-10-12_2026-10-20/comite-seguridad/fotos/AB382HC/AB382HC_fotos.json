@@ -1,0 +1,44 @@
+[
+ {
+  "plate": "AB382HC",
+  "device": "RicPreIngInFr",
+  "horaOperativa": "10-13_1905",
+  "found": false,
+  "error": "Error de red hacia DSS 192.168.4.2:443: Client network socket disconnected before secure TLS connection was established",
+  "capture": null
+ },
+ {
+  "plate": "AB382HC",
+  "device": "RicEgrCamFrente",
+  "horaOperativa": "10-13_2020",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "AB382HC",
+   "confidence": 78,
+   "color": "White",
+   "marca": "Iveco",
+   "tipo": "Medium Truck",
+   "at": "2026-10-13T23:16:42.000Z"
+  },
+  "sceneFile": "AB382HC_10-13_2020_RicEgrCamFrente_escena.jpg",
+  "plateFile": "AB382HC_10-13_2020_RicEgrCamFrente_patente.jpg"
+ },
+ {
+  "plate": "AB382HC",
+  "device": "SLZSalidaC1Fte",
+  "horaOperativa": "10-13_2048",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "AB382HC",
+   "confidence": 86,
+   "color": "White",
+   "marca": "Iveco",
+   "tipo": "Large Truck",
+   "at": "2026-10-13T23:44:36.000Z"
+  },
+  "sceneFile": "AB382HC_10-13_2048_SLZSalidaC1Fte_escena.jpg",
+  "plateFile": "AB382HC_10-13_2048_SLZSalidaC1Fte_patente.jpg"
+ }
+]

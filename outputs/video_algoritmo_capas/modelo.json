@@ -1,0 +1,958 @@
+{
+ "total": 58,
+ "c": {
+  "capa2": 43,
+  "alerta": 10,
+  "parecidas": 4,
+  "operaciones": 1
+ },
+ "capturas": [
+  {
+   "hora": "15:20:06",
+   "device": "RicCalLiq",
+   "read": "AYM824",
+   "es": "AYM824",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "permitidos",
+    "role": "chasis",
+    "chasis": "AYM824",
+    "category": "varios"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:20:14",
+   "device": "RicB3Ingreso",
+   "read": "IMH787",
+   "es": "IMH787",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "permitidos",
+    "role": "chasis",
+    "chasis": "IMH787",
+    "category": "vehiculo_particular"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:21:14",
+   "device": "RicEgrCamFrente",
+   "read": "BTS626",
+   "es": "BTS626",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "permitidos",
+    "role": "chasis",
+    "chasis": "BTS626",
+    "category": "agua"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:21:41",
+   "device": "RicCal03",
+   "read": "AE801MY",
+   "es": "AE801MY",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10135837417",
+    "role": "chasis",
+    "chasis": "AE801MY",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:22:08",
+   "device": "RicEgrCamFrente",
+   "read": "JKS063",
+   "es": "JKS063",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235841331",
+    "role": "chasis",
+    "chasis": "JKS063",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:22:37",
+   "device": "RicB2Egreso",
+   "read": "IMH787",
+   "es": "IMH787",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "permitidos",
+    "role": "chasis",
+    "chasis": "IMH787",
+    "category": "vehiculo_particular"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:22:39",
+   "device": "RicS6Playa3",
+   "read": "TAO150",
+   "es": "TAO150",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235843989",
+    "role": "chasis",
+    "chasis": "TAO150",
+    "grain": "Girasol",
+    "direction": "sale"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:23:16",
+   "device": "RicS6Playa3",
+   "read": "UKL882",
+   "es": "UKL882",
+   "rule": null,
+   "layer": null,
+   "paso": "alerta",
+   "detalle": null,
+   "fk": null
+  },
+  {
+   "hora": "15:24:17",
+   "device": "RicCal04",
+   "read": "TOE184",
+   "es": "TOE184",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235839933",
+    "role": "chasis",
+    "chasis": "TOE184",
+    "grain": "Girasol",
+    "direction": "sale"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:24:30",
+   "device": "RicEgrCamFrente",
+   "read": "AC836UR",
+   "es": "AC836UR",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235831379",
+    "role": "chasis",
+    "chasis": "AC836UR",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:25:01",
+   "device": "RicIngCamTrasera",
+   "read": "SZG937",
+   "es": "SLT958",
+   "rule": "acoplado_balanza",
+   "layer": "balanza",
+   "paso": "alerta",
+   "detalle": null,
+   "fk": "alert-602185"
+  },
+  {
+   "hora": "15:25:01",
+   "device": "RicEgrCamFrente",
+   "read": "AYM824",
+   "es": "AYM824",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "permitidos",
+    "role": "chasis",
+    "chasis": "AYM824",
+    "category": "varios"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:26:00",
+   "device": "RicCal03",
+   "read": "TAC436",
+   "es": "TAC436",
+   "rule": "carta_porte",
+   "layer": "capa2",
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235839952",
+    "role": "chasis",
+    "chasis": "TAC436",
+    "grain": "Girasol",
+    "direction": "sale"
+   },
+   "fk": "6f1bd287-a8bf-44e3-9f5e-f04f09a2c2cd"
+  },
+  {
+   "hora": "15:26:35",
+   "device": "RicPreIngInFr",
+   "read": "SIN_PATENTE",
+   "es": "SZG937",
+   "rule": "cuenta",
+   "layer": "lote",
+   "paso": "alerta",
+   "detalle": null,
+   "fk": "alert-602190"
+  },
+  {
+   "hora": "15:26:35",
+   "device": "RicPreIngInFr",
+   "read": "SIN_PATENTE",
+   "es": "SZG937",
+   "rule": "cuenta",
+   "layer": "lote",
+   "paso": "alerta",
+   "detalle": null,
+   "fk": "alert-602189"
+  },
+  {
+   "hora": "15:26:35",
+   "device": "RicPreIngInFr",
+   "read": "SLT958",
+   "es": "SLT958",
+   "rule": "fuera_sistema",
+   "layer": "sin_resolver",
+   "paso": "alerta",
+   "detalle": null,
+   "fk": "66fab63c-f7ca-4ac0-b815-035eea75a275"
+  },
+  {
+   "hora": "15:26:57",
+   "device": "RicEgrCamFrente",
+   "read": "AU327DS",
+   "es": "AD327DS",
+   "rule": "carta_parecida",
+   "layer": "capa2",
+   "paso": "parecidas",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10135830558",
+    "role": "chasis",
+    "chasis": "AD327DS",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": "45f1ecac-adb2-4f10-94c6-689ee6eb6a7b"
+  },
+  {
+   "hora": "15:27:29",
+   "device": "RicB2Egreso",
+   "read": "AE260HD",
+   "es": "AE260HD",
+   "rule": "vehiculo_permitido",
+   "layer": "capa2",
+   "paso": "capa2",
+   "detalle": {
+    "via": "permitidos",
+    "role": "chasis",
+    "chasis": "AE260HD",
+    "category": "varios"
+   },
+   "fk": "132223bf-323b-42bc-bd3e-d91f28c4835f"
+  },
+  {
+   "hora": "15:27:43",
+   "device": "RicEgrCamFrente",
+   "read": "AE801MY",
+   "es": "AE801MY",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10135837417",
+    "role": "chasis",
+    "chasis": "AE801MY",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:27:47",
+   "device": "RicS6Playa3",
+   "read": "DRF12",
+   "es": null,
+   "rule": "operaciones",
+   "layer": "operador",
+   "paso": "operaciones",
+   "detalle": null,
+   "fk": "68a7a286-a9f1-4b9e-b368-020f38cfef55"
+  },
+  {
+   "hora": "15:28:47",
+   "device": "RicB2Egreso",
+   "read": "EVL273",
+   "es": "EVL273",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235839939",
+    "role": "chasis",
+    "chasis": "EVL273",
+    "grain": "Girasol",
+    "direction": "sale"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:29:04",
+   "device": "RicEgrCamFrente",
+   "read": "SLT958",
+   "es": "SLT958",
+   "rule": "fuera_sistema",
+   "layer": "sin_resolver",
+   "paso": "alerta",
+   "detalle": null,
+   "fk": "66fab63c-f7ca-4ac0-b815-035eea75a275"
+  },
+  {
+   "hora": "15:29:29",
+   "device": "RicCalLiq",
+   "read": "UYM942",
+   "es": "UYM942",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "30035850101",
+    "role": "chasis",
+    "chasis": "UYM942",
+    "grain": "Girasol",
+    "direction": "interno"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:29:40",
+   "device": "RicEgrCamTraser",
+   "read": "SZG937",
+   "es": "SLT958",
+   "rule": "acoplado_balanza",
+   "layer": "balanza",
+   "paso": "alerta",
+   "detalle": null,
+   "fk": "alert-602200"
+  },
+  {
+   "hora": "15:30:13",
+   "device": "RicCal03",
+   "read": "RXQ997",
+   "es": "RXQ997",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235842465",
+    "role": "chasis",
+    "chasis": "RXQ997",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:30:24",
+   "device": "RicIngCamFrente",
+   "read": "AE260HD",
+   "es": "AE260HD",
+   "rule": "vehiculo_permitido",
+   "layer": "capa2",
+   "paso": "capa2",
+   "detalle": {
+    "via": "permitidos",
+    "role": "chasis",
+    "chasis": "AE260HD",
+    "category": "varios"
+   },
+   "fk": "132223bf-323b-42bc-bd3e-d91f28c4835f"
+  },
+  {
+   "hora": "15:31:40",
+   "device": "RicB2Egreso",
+   "read": "BTS626",
+   "es": "BTS626",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "permitidos",
+    "role": "chasis",
+    "chasis": "BTS626",
+    "category": "agua"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:32:00",
+   "device": "RicEgrCamFrente",
+   "read": "UYM942",
+   "es": "UYM942",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "30035850101",
+    "role": "chasis",
+    "chasis": "UYM942",
+    "grain": "Girasol",
+    "direction": "interno"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:32:17",
+   "device": "RicCal04",
+   "read": "AH437LL",
+   "es": "AH437LL",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10135840913",
+    "role": "chasis",
+    "chasis": "AH437LL",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:32:19",
+   "device": "RicIngCamFrente",
+   "read": "ECX249",
+   "es": "ECX249",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "30035850361",
+    "role": "chasis",
+    "chasis": "ECX249",
+    "grain": "Girasol",
+    "direction": "interno"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:33:18",
+   "device": "RicIngCamFrente",
+   "read": "EVL273",
+   "es": "EVL273",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235839939",
+    "role": "chasis",
+    "chasis": "EVL273",
+    "grain": "Girasol",
+    "direction": "sale"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:34:05",
+   "device": "RicPreIngInFr",
+   "read": "ECX249",
+   "es": "ECX249",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "30035850361",
+    "role": "chasis",
+    "chasis": "ECX249",
+    "grain": "Girasol",
+    "direction": "interno"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:34:14",
+   "device": "RicS6Playa3",
+   "read": "AYM824",
+   "es": "AYM824",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "permitidos",
+    "role": "chasis",
+    "chasis": "AYM824",
+    "category": "varios"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:36:06",
+   "device": "RicCal03",
+   "read": "DKW107",
+   "es": "DKW107",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235841270",
+    "role": "chasis",
+    "chasis": "DKW107",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:36:13",
+   "device": "RicCal03",
+   "read": "DK307",
+   "es": "DKW107",
+   "rule": "doble_lectura",
+   "layer": "lote",
+   "paso": "parecidas",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235841270",
+    "role": "chasis",
+    "chasis": "DKW107",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": "alert-602215"
+  },
+  {
+   "hora": "15:36:23",
+   "device": "RicCal03",
+   "read": "DKW107",
+   "es": "DKW107",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235841270",
+    "role": "chasis",
+    "chasis": "DKW107",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:37:03",
+   "device": "RicCal04",
+   "read": "CLO485",
+   "es": "CLO485",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235842575",
+    "role": "chasis",
+    "chasis": "CLO485",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:37:41",
+   "device": "RicS6Playa3",
+   "read": "UYM942",
+   "es": "UYM942",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "30035850101",
+    "role": "chasis",
+    "chasis": "UYM942",
+    "grain": "Girasol",
+    "direction": "interno"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:38:41",
+   "device": "RicCal03",
+   "read": "KAP148",
+   "es": "KAP148",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235842614",
+    "role": "chasis",
+    "chasis": "KAP148",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:38:46",
+   "device": "RicCalLiq",
+   "read": "ECX249",
+   "es": "ECX249",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "30035850361",
+    "role": "chasis",
+    "chasis": "ECX249",
+    "grain": "Girasol",
+    "direction": "interno"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:39:05",
+   "device": "RicEgrCamFrente",
+   "read": "AH437LL",
+   "es": "AH437LL",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10135840913",
+    "role": "chasis",
+    "chasis": "AH437LL",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:40:29",
+   "device": "RicEgrCamFrente",
+   "read": "ECX249",
+   "es": "ECX249",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "30035850361",
+    "role": "chasis",
+    "chasis": "ECX249",
+    "grain": "Girasol",
+    "direction": "interno"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:40:40",
+   "device": "RicCal04",
+   "read": "EVL273",
+   "es": "EVL273",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235839939",
+    "role": "chasis",
+    "chasis": "EVL273",
+    "grain": "Girasol",
+    "direction": "sale"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:40:49",
+   "device": "RicEgrCamTraser",
+   "read": "SVM42",
+   "es": "UYM942",
+   "rule": "universo",
+   "layer": "lote",
+   "paso": "parecidas",
+   "detalle": {
+    "via": "carta",
+    "ctg": "30035850101",
+    "role": "chasis",
+    "chasis": "UYM942",
+    "grain": "Girasol",
+    "direction": "interno"
+   },
+   "fk": "alert-602242"
+  },
+  {
+   "hora": "15:40:53",
+   "device": "RicEgrCamFrente",
+   "read": "RXQ997",
+   "es": "RXQ997",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235842465",
+    "role": "chasis",
+    "chasis": "RXQ997",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:42:12",
+   "device": "RicCal03",
+   "read": "NHE440",
+   "es": "NHE440",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10135825657",
+    "role": "chasis",
+    "chasis": "NHE440",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:43:32",
+   "device": "RicEgrCamFrente",
+   "read": "TOE184",
+   "es": "TOE184",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235839933",
+    "role": "chasis",
+    "chasis": "TOE184",
+    "grain": "Girasol",
+    "direction": "sale"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:44:33",
+   "device": "RicCal04",
+   "read": "AHC7ID",
+   "es": "AH677ID",
+   "rule": "cuenta",
+   "layer": "lote",
+   "paso": "parecidas",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235845449",
+    "role": "chasis",
+    "chasis": "AH677ID",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": "alert-602244"
+  },
+  {
+   "hora": "15:44:33",
+   "device": "RicEgrCamFrente",
+   "read": "TAC436",
+   "es": "TAC436",
+   "rule": "carta_porte",
+   "layer": "capa2",
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235839952",
+    "role": "chasis",
+    "chasis": "TAC436",
+    "grain": "Girasol",
+    "direction": "sale"
+   },
+   "fk": "6f1bd287-a8bf-44e3-9f5e-f04f09a2c2cd"
+  },
+  {
+   "hora": "15:44:56",
+   "device": "RicEgrCamFrente",
+   "read": "AE260HD",
+   "es": "AE260HD",
+   "rule": "vehiculo_permitido",
+   "layer": "capa2",
+   "paso": "capa2",
+   "detalle": {
+    "via": "permitidos",
+    "role": "chasis",
+    "chasis": "AE260HD",
+    "category": "varios"
+   },
+   "fk": "132223bf-323b-42bc-bd3e-d91f28c4835f"
+  },
+  {
+   "hora": "15:45:12",
+   "device": "RicEgrCamFrente",
+   "read": "DKW107",
+   "es": "DKW107",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235841270",
+    "role": "chasis",
+    "chasis": "DKW107",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:45:46",
+   "device": "RicEgrCamFrente",
+   "read": "CLO485",
+   "es": "CLO485",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235842575",
+    "role": "chasis",
+    "chasis": "CLO485",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:46:15",
+   "device": "RicS6Playa3",
+   "read": "ECX249",
+   "es": "ECX249",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "30035850361",
+    "role": "chasis",
+    "chasis": "ECX249",
+    "grain": "Girasol",
+    "direction": "interno"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:46:16",
+   "device": "RicEgrCamFrente",
+   "read": "KAP148",
+   "es": "KAP148",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10235842614",
+    "role": "chasis",
+    "chasis": "KAP148",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:46:20",
+   "device": "RicIngCamFrente",
+   "read": "UER485",
+   "es": "UER485",
+   "rule": "fuera_sistema",
+   "layer": "sin_resolver",
+   "paso": "alerta",
+   "detalle": null,
+   "fk": "d7059306-09b8-4d5e-a098-2fdf5ac148b9"
+  },
+  {
+   "hora": "15:47:56",
+   "device": "RicPreIngInFr",
+   "read": "UER485",
+   "es": "UER485",
+   "rule": "fuera_sistema",
+   "layer": "sin_resolver",
+   "paso": "alerta",
+   "detalle": null,
+   "fk": "d7059306-09b8-4d5e-a098-2fdf5ac148b9"
+  },
+  {
+   "hora": "15:49:50",
+   "device": "RicCal04",
+   "read": "HAI198",
+   "es": "HAI198",
+   "rule": null,
+   "layer": null,
+   "paso": "capa2",
+   "detalle": {
+    "via": "carta",
+    "ctg": "10135831523",
+    "role": "chasis",
+    "chasis": "HAI198",
+    "grain": "Soja",
+    "direction": "entra"
+   },
+   "fk": null
+  },
+  {
+   "hora": "15:49:52",
+   "device": "RicPreIngInTr",
+   "read": "6ILH446",
+   "es": "UER485",
+   "rule": "cuenta",
+   "layer": "lote",
+   "paso": "alerta",
+   "detalle": null,
+   "fk": "alert-602269"
+  }
+ ]
+}

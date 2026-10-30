@@ -20,6 +20,7 @@ import { createIdentificationArchive } from './identificationArchive.mjs'
 import { padronCartas } from './padronCartas.mjs'
 import { assessVehicleRelevance, excludeIrrelevantEvents, splitNonTrucks } from './vehicleRelevance.mjs'
 import { alertInstantMs, alertReadEvents, withAlertAttributes } from './alertReads.mjs'
+import { summarizeLayers } from './algorithmLayers.mjs'
 import { applyVisionVerdict, checkSeenPlate } from '../live/vision/seenPlate.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -428,7 +429,7 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
         const v = ia[it.fragmentKey]
         if (!v) return it
         const withIa = { ...it, ia: { ...v, patenteVista: checkSeenPlate(v, it, ctxSeen) } }
-        return process.env.VISION_APPLY === '0' ? withIa : applyVisionVerdict(withIa, rawEvents, { minConfidence: Number(process.env.VISION_APPLY_MIN ?? 0.4) }) ?? withIa
+        return process.env.VISION_APPLY === '0' ? withIa : applyVisionVerdict(withIa, rawEvents, { minConfidence: Number(process.env.VISION_APPLY_MIN ?? 0.4), minPhotoConfidence: Number(process.env.VISION_APPLY_PHOTO_MIN ?? 0.6) }) ?? withIa
       })
       // Varias lecturas que la IA lleva a la misma patente sin viaje en planta (TGO035 e ISD035 → TSO035):
       // se juntan en el viaje de la primera, para que sea un solo camión.
@@ -668,10 +669,14 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     if (st.events.size === 0) await refresh(key, { fullHour: true })
     const raw = [...st.history.values()]
     const nowMs = Date.now()
+    const identified = identifyRaw(key, raw, nowMs)
     return {
       site: key,
       at: new Date(nowMs).toISOString(),
-      captures: recentCaptures(raw, identifyRaw(key, raw, nowMs), nowMs, Math.min(200, Math.max(1, Number(limit) || 60))),
+      // Con las lecturas que solo llegaron como alerta: son la mayoría de las que corrige la cuenta.
+      captures: recentCaptures([...raw, ...(identified.alertReads ?? [])], identified, nowMs, Math.min(200, Math.max(1, Number(limit) || 60))),
+      /** Qué decidió cada capa del reconocedor en las últimas 24 h. */
+      layers: summarizeLayers(identified.items, nowMs),
     }
   }
 

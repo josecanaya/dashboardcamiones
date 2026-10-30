@@ -1,0 +1,907 @@
+{
+ "criterio": "camiones con 3 o más viajes desde el silo 7 (RicS7Carga) o el silo 8 (RicS8CargaLinea1/2) en un mismo día; viaje = carga sin repetir a menos de 15 min, destino = primera descarga leída antes de la carga siguiente; hora operativa = occurredAt + 206 min; cruce con data/movimientos por patente",
+ "periodo": {
+  "desde": "2026-10-23",
+  "hasta": "2026-10-29",
+  "dias": [
+   "2026-10-23",
+   "2026-10-24",
+   "2026-10-25",
+   "2026-10-26",
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29"
+  ]
+ },
+ "viajes": 0,
+ "internos": [],
+ "porDia": {
+  "2026-10-23": {
+   "viajes": 0,
+   "silo7": 0,
+   "silo8": 0,
+   "volcable2": 0,
+   "aSilo7": 0,
+   "sinLectura": 0,
+   "camiones": 0
+  },
+  "2026-10-24": {
+   "viajes": 0,
+   "silo7": 0,
+   "silo8": 0,
+   "volcable2": 0,
+   "aSilo7": 0,
+   "sinLectura": 0,
+   "camiones": 0
+  },
+  "2026-10-25": {
+   "viajes": 0,
+   "silo7": 0,
+   "silo8": 0,
+   "volcable2": 0,
+   "aSilo7": 0,
+   "sinLectura": 0,
+   "camiones": 0
+  },
+  "2026-10-26": {
+   "viajes": 0,
+   "silo7": 0,
+   "silo8": 0,
+   "volcable2": 0,
+   "aSilo7": 0,
+   "sinLectura": 0,
+   "camiones": 0
+  },
+  "2026-10-27": {
+   "viajes": 0,
+   "silo7": 0,
+   "silo8": 0,
+   "volcable2": 0,
+   "aSilo7": 0,
+   "sinLectura": 0,
+   "camiones": 0
+  },
+  "2026-10-28": {
+   "viajes": 0,
+   "silo7": 0,
+   "silo8": 0,
+   "volcable2": 0,
+   "aSilo7": 0,
+   "sinLectura": 0,
+   "camiones": 0
+  },
+  "2026-10-29": {
+   "viajes": 0,
+   "silo7": 0,
+   "silo8": 0,
+   "volcable2": 0,
+   "aSilo7": 0,
+   "sinLectura": 0,
+   "camiones": 0
+  }
+ },
+ "porHora": [
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0
+ ],
+ "cuartos": [],
+ "otros": [
+  {
+   "patente": "AA485YK",
+   "lecturas": {
+    "RicS7DescLinea2": 1
+   },
+   "excel": [
+    "I cartamo"
+   ]
+  },
+  {
+   "patente": "AAE877",
+   "lecturas": {
+    "RicS8CargaLinea1": 1
+   },
+   "excel": [
+    "E girasol"
+   ]
+  },
+  {
+   "patente": "AD001TD",
+   "lecturas": {
+    "RicB3Egreso": 3,
+    "RicC16Carga2": 1,
+    "RicB3Ingreso": 2
+   },
+   "excel": []
+  },
+  {
+   "patente": "AE307VE",
+   "lecturas": {
+    "RicS7DescLinea2": 1
+   },
+   "excel": [
+    "I cartamo"
+   ]
+  },
+  {
+   "patente": "AE666JX",
+   "lecturas": {
+    "RicS7DescLinea2": 1
+   },
+   "excel": [
+    "I cartamo"
+   ]
+  },
+  {
+   "patente": "AE852GC",
+   "lecturas": {
+    "RicS7DescLinea2": 1
+   },
+   "excel": [
+    "I cartamo"
+   ]
+  },
+  {
+   "patente": "AF000RA",
+   "lecturas": {
+    "RicS7DescLinea2": 1
+   },
+   "excel": [
+    "I cartamo"
+   ]
+  },
+  {
+   "patente": "AF443HL",
+   "lecturas": {
+    "RicS7DescLinea2": 1,
+    "RicS7Carga": 1
+   },
+   "excel": [
+    "I cartamo",
+    "I cartamo"
+   ]
+  },
+  {
+   "patente": "AG021MW",
+   "lecturas": {
+    "RicB3Egreso": 1,
+    "RicC16Carga2": 1,
+    "RicB3Ingreso": 1
+   },
+   "excel": []
+  },
+  {
+   "patente": "AG066YI",
+   "lecturas": {
+    "RicS7DescLinea2": 1
+   },
+   "excel": [
+    "I cartamo"
+   ]
+  },
+  {
+   "patente": "AG275GZ",
+   "lecturas": {
+    "RicB3Egreso": 2,
+    "RicB3Ingreso": 2,
+    "RicS7Carga": 1
+   },
+   "excel": []
+  },
+  {
+   "patente": "AG644XU",
+   "lecturas": {
+    "RicC16Carga2": 4,
+    "RicS8CargaLinea2": 1,
+    "RicB3Egreso": 5,
+    "RicB3Ingreso": 7,
+    "RicS7Carga": 1
+   },
+   "excel": []
+  },
+  {
+   "patente": "AG824WT",
+   "lecturas": {
+    "RicS7DescLinea2": 1
+   },
+   "excel": [
+    "I cartamo"
+   ]
+  },
+  {
+   "patente": "AH059DY",
+   "lecturas": {
+    "RicS7DescLinea2": 1
+   },
+   "excel": [
+    "I cartamo"
+   ]
+  },
+  {
+   "patente": "AH272OQ",
+   "lecturas": {
+    "RicS7DescLinea2": 1
+   },
+   "excel": [
+    "I cartamo"
+   ]
+  },
+  {
+   "patente": "AKJ640",
+   "lecturas": {
+    "RicS7Carga": 1
+   },
+   "excel": []
+  },
+  {
+   "patente": "AO297IX",
+   "lecturas": {
+    "RicC16Carga2": 1
+   },
+   "excel": []
+  },
+  {
+   "patente": "AYB759",
+   "lecturas": {
+    "RicS8CargaLinea1": 2,
+    "RicS8CargaLinea2": 1
+   },
+   "excel": [
+    "E girasol",
+    "I girasol",
+    "E girasol",
+    "I girasol"
+   ]
+  },
+  {
+   "patente": "AYM824",
+   "lecturas": {
+    "RicS8CargaLinea2": 1
+   },
+   "excel": [
+    "I girasol",
+    "E girasol"
+   ]
+  },
+  {
+   "patente": "AZG422",
+   "lecturas": {
+    "RicS8CargaLinea1": 2
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "E girasol",
+    "E girasol",
+    "I girasol",
+    "E girasol"
+   ]
+  },
+  {
+   "patente": "AZI817",
+   "lecturas": {
+    "RicS7DescLinea2": 1
+   },
+   "excel": [
+    "I cartamo"
+   ]
+  },
+  {
+   "patente": "BHL749",
+   "lecturas": {
+    "RicS8CargaLinea1": 1
+   },
+   "excel": [
+    "E girasol",
+    "I girasol",
+    "E girasol"
+   ]
+  },
+  {
+   "patente": "BVS300",
+   "lecturas": {
+    "RicS8CargaLinea1": 1
+   },
+   "excel": [
+    "E girasol",
+    "I girasol",
+    "I girasol",
+    "E girasol",
+    "E girasol",
+    "E pellets girasol"
+   ]
+  },
+  {
+   "patente": "CIE516",
+   "lecturas": {
+    "RicS8CargaLinea1": 1
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "E girasol"
+   ]
+  },
+  {
+   "patente": "CKQ212",
+   "lecturas": {
+    "RicS8CargaLinea1": 1
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "I girasol"
+   ]
+  },
+  {
+   "patente": "DFP716",
+   "lecturas": {
+    "RicS8CargaLinea1": 1,
+    "RicS8CargaLinea2": 2
+   },
+   "excel": [
+    "E girasol",
+    "I girasol"
+   ]
+  },
+  {
+   "patente": "DGR440",
+   "lecturas": {
+    "RicS8CargaLinea2": 1
+   },
+   "excel": [
+    "E girasol",
+    "E girasol"
+   ]
+  },
+  {
+   "patente": "DIH255",
+   "lecturas": {
+    "RicS8CargaLinea1": 2,
+    "RicS8CargaLinea2": 1
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "E girasol",
+    "I girasol",
+    "E girasol"
+   ]
+  },
+  {
+   "patente": "DRP12",
+   "lecturas": {
+    "RicS7Carga": 1
+   },
+   "excel": []
+  },
+  {
+   "patente": "DTG181",
+   "lecturas": {
+    "RicS8CargaLinea1": 4
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "E girasol",
+    "I girasol",
+    "I girasol",
+    "E girasol"
+   ]
+  },
+  {
+   "patente": "EDO876",
+   "lecturas": {
+    "RicS8CargaLinea2": 1
+   },
+   "excel": []
+  },
+  {
+   "patente": "EDQ876",
+   "lecturas": {
+    "RicS8CargaLinea1": 2,
+    "RicS8CargaLinea2": 1
+   },
+   "excel": [
+    "I girasol",
+    "E girasol",
+    "I girasol",
+    "E girasol",
+    "E pellets girasol"
+   ]
+  },
+  {
+   "patente": "EFC338",
+   "lecturas": {
+    "RicS8CargaLinea1": 1,
+    "RicS8CargaLinea2": 1
+   },
+   "excel": [
+    "E girasol",
+    "I girasol",
+    "E girasol",
+    "E girasol",
+    "E girasol"
+   ]
+  },
+  {
+   "patente": "EYH843",
+   "lecturas": {
+    "RicS8CargaLinea1": 2
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "I girasol",
+    "E girasol"
+   ]
+  },
+  {
+   "patente": "FLJ176",
+   "lecturas": {
+    "RicS7DescLinea2": 1
+   },
+   "excel": [
+    "E soja"
+   ]
+  },
+  {
+   "patente": "GES056",
+   "lecturas": {
+    "RicB3Egreso": 1,
+    "RicS8CargaLinea1": 2,
+    "RicB3Ingreso": 1
+   },
+   "excel": [
+    "E girasol",
+    "I girasol",
+    "E girasol",
+    "I girasol"
+   ]
+  },
+  {
+   "patente": "GLK802",
+   "lecturas": {
+    "RicS8CargaLinea1": 3
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "E girasol"
+   ]
+  },
+  {
+   "patente": "HCE377",
+   "lecturas": {
+    "RicS7DescLinea2": 1
+   },
+   "excel": [
+    "I cartamo"
+   ]
+  },
+  {
+   "patente": "HPM190",
+   "lecturas": {
+    "RicS7DescLinea2": 1
+   },
+   "excel": [
+    "I cartamo"
+   ]
+  },
+  {
+   "patente": "IKK083",
+   "lecturas": {
+    "RicS7DescLinea2": 1
+   },
+   "excel": [
+    "I cartamo"
+   ]
+  },
+  {
+   "patente": "KCD878",
+   "lecturas": {
+    "RicS8CargaLinea1": 1
+   },
+   "excel": []
+  },
+  {
+   "patente": "KSO701",
+   "lecturas": {
+    "RicS7DescLinea2": 1
+   },
+   "excel": [
+    "I cartamo"
+   ]
+  },
+  {
+   "patente": "LMC0B40",
+   "lecturas": {
+    "RicS8CargaLinea1": 1
+   },
+   "excel": []
+  },
+  {
+   "patente": "MWK218",
+   "lecturas": {
+    "RicS8CargaLinea1": 2
+   },
+   "excel": [
+    "I girasol",
+    "E girasol",
+    "I girasol",
+    "E girasol",
+    "E pellets girasol"
+   ]
+  },
+  {
+   "patente": "NHW477",
+   "lecturas": {
+    "RicS7DescLinea2": 1
+   },
+   "excel": [
+    "I cartamo"
+   ]
+  },
+  {
+   "patente": "OLZ492",
+   "lecturas": {
+    "RicS7DescLinea2": 1
+   },
+   "excel": [
+    "I cartamo"
+   ]
+  },
+  {
+   "patente": "PCG483",
+   "lecturas": {
+    "RicS7DescLinea2": 1
+   },
+   "excel": [
+    "I cartamo"
+   ]
+  },
+  {
+   "patente": "RAW481",
+   "lecturas": {
+    "RicS8CargaLinea1": 1,
+    "RicS8CargaLinea2": 1
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "I girasol",
+    "E girasol",
+    "I girasol",
+    "E girasol",
+    "E pellets girasol"
+   ]
+  },
+  {
+   "patente": "RDL445",
+   "lecturas": {
+    "RicS8CargaLinea1": 1,
+    "RicS8CargaLinea2": 1
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "E pellets girasol",
+    "I pellets girasol",
+    "E pellets girasol",
+    "I pellets girasol",
+    "E pellets girasol",
+    "I pellets girasol",
+    "E pellets girasol"
+   ]
+  },
+  {
+   "patente": "RHM819",
+   "lecturas": {
+    "RicS8CargaLinea1": 3
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "I girasol",
+    "E girasol",
+    "E girasol"
+   ]
+  },
+  {
+   "patente": "ROS380",
+   "lecturas": {
+    "RicS8CargaLinea1": 1
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "I girasol"
+   ]
+  },
+  {
+   "patente": "RRE349",
+   "lecturas": {
+    "RicS8CargaLinea1": 4,
+    "RicS8CargaLinea2": 1,
+    "RicB3Egreso": 1
+   },
+   "excel": [
+    "E girasol",
+    "I girasol",
+    "E girasol",
+    "E girasol",
+    "E girasol",
+    "E pellets girasol"
+   ]
+  },
+  {
+   "patente": "RXV065",
+   "lecturas": {
+    "RicS8CargaLinea1": 2
+   },
+   "excel": [
+    "E girasol",
+    "I girasol",
+    "E girasol",
+    "I girasol"
+   ]
+  },
+  {
+   "patente": "RYJ562",
+   "lecturas": {
+    "RicS8CargaLinea1": 2
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "I girasol",
+    "E girasol",
+    "E pellets girasol"
+   ]
+  },
+  {
+   "patente": "SAT582",
+   "lecturas": {
+    "RicS8CargaLinea1": 3
+   },
+   "excel": [
+    "E girasol",
+    "I girasol",
+    "I girasol"
+   ]
+  },
+  {
+   "patente": "SBY377",
+   "lecturas": {
+    "RicS8CargaLinea2": 1
+   },
+   "excel": [
+    "I girasol",
+    "E girasol",
+    "I girasol"
+   ]
+  },
+  {
+   "patente": "SNE399",
+   "lecturas": {
+    "RicS8CargaLinea1": 2
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "E girasol",
+    "E girasol",
+    "I girasol",
+    "E girasol",
+    "E girasol",
+    "I girasol"
+   ]
+  },
+  {
+   "patente": "TAC436",
+   "lecturas": {
+    "RicS8CargaLinea1": 3
+   },
+   "excel": [
+    "E girasol",
+    "I girasol",
+    "E girasol",
+    "I girasol",
+    "E girasol",
+    "E pellets girasol"
+   ]
+  },
+  {
+   "patente": "TAO150",
+   "lecturas": {
+    "RicS8CargaLinea1": 3
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "E girasol",
+    "I girasol",
+    "E girasol",
+    "E girasol",
+    "E girasol"
+   ]
+  },
+  {
+   "patente": "UER485",
+   "lecturas": {
+    "RicS8CargaLinea1": 1
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "E girasol",
+    "E girasol"
+   ]
+  },
+  {
+   "patente": "UKL882",
+   "lecturas": {
+    "RicS8CargaLinea1": 1,
+    "RicS8CargaLinea2": 1
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "E girasol",
+    "E girasol",
+    "E girasol"
+   ]
+  },
+  {
+   "patente": "UPW705",
+   "lecturas": {
+    "RicS8CargaLinea1": 3
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "E girasol",
+    "I girasol",
+    "I girasol"
+   ]
+  },
+  {
+   "patente": "UUL425",
+   "lecturas": {
+    "RicS8CargaLinea1": 1,
+    "RicS8CargaLinea2": 1
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "I girasol",
+    "E girasol",
+    "I girasol"
+   ]
+  },
+  {
+   "patente": "UUO981",
+   "lecturas": {
+    "RicS8CargaLinea1": 1
+   },
+   "excel": [
+    "E girasol",
+    "E pellets girasol",
+    "I pellets girasol",
+    "E pellets girasol",
+    "I pellets girasol",
+    "E pellets girasol",
+    "I pellets girasol",
+    "E pellets girasol",
+    "I pellets girasol",
+    "E pellets girasol"
+   ]
+  },
+  {
+   "patente": "UWR373",
+   "lecturas": {
+    "RicS7DescLinea2": 1
+   },
+   "excel": [
+    "I cartamo"
+   ]
+  },
+  {
+   "patente": "UWX998",
+   "lecturas": {
+    "RicS8CargaLinea1": 1
+   },
+   "excel": [
+    "E girasol",
+    "I girasol",
+    "E girasol",
+    "E pellets girasol"
+   ]
+  },
+  {
+   "patente": "VAJ028",
+   "lecturas": {
+    "RicS8CargaLinea1": 2
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "E girasol"
+   ]
+  },
+  {
+   "patente": "VHL423",
+   "lecturas": {
+    "RicS8CargaLinea1": 1
+   },
+   "excel": [
+    "E girasol",
+    "E girasol"
+   ]
+  },
+  {
+   "patente": "VJG112",
+   "lecturas": {
+    "RicS8CargaLinea1": 2,
+    "RicS8CargaLinea2": 1
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "E girasol",
+    "I girasol",
+    "E girasol",
+    "I girasol",
+    "E girasol",
+    "E pellets girasol"
+   ]
+  },
+  {
+   "patente": "VJS112",
+   "lecturas": {
+    "RicS8CargaLinea1": 2
+   },
+   "excel": []
+  },
+  {
+   "patente": "VRA989",
+   "lecturas": {
+    "RicS8CargaLinea1": 1
+   },
+   "excel": [
+    "E girasol",
+    "E girasol",
+    "I girasol",
+    "I girasol"
+   ]
+  },
+  {
+   "patente": "XBL711",
+   "lecturas": {
+    "RicS8CargaLinea1": 1
+   },
+   "excel": []
+  }
+ ]
+}

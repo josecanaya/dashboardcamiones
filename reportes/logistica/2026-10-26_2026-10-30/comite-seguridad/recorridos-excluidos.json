@@ -1,0 +1,19 @@
+{
+ "_nota": "Pasos que el algoritmo por lote asignó y la foto del DSS muestra otro vehículo (revisado 23/10/2026): no van en el recorrido.",
+ "pasos": [
+  {
+   "clave": "UMT456|RicPreIngInFr|2026-10-21T04:15:28.000Z",
+   "patente": "UMT456",
+   "hora": "01:15",
+   "punto": "Pre-ingreso",
+   "motivo": "la foto muestra otro camión"
+  },
+  {
+   "clave": "PEP080|RicEgrCamFrente|2026-10-21T22:55:45.000Z",
+   "patente": "PEP080",
+   "hora": "19:55",
+   "punto": "Egreso",
+   "motivo": "la foto muestra otro camión"
+  }
+ ]
+}

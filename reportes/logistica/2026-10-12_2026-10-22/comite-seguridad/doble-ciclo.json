@@ -1,0 +1,239 @@
+{
+ "criterio": "ver cabecera de scripts/estado-planta/seguridad-doble-ciclo.py",
+ "dobleCiclo": [
+  {
+   "patente": "JJV417",
+   "dia": "21/10",
+   "opsExcel": 1,
+   "producto": [
+    "SOJA"
+   ],
+   "excel": [
+    "soja · ingreso 09:48 · salida 13:23 · VOLCABLE_PTO_SGC"
+   ],
+   "minPuerto1": 19,
+   "hastaDescargar": 380,
+   "grupos": [
+    {
+     "planta": "ric",
+     "items": [
+      {
+       "hora": "07:04",
+       "punto": "Ingreso",
+       "dev": "RicIngCamFrente"
+      },
+      {
+       "hora": "07:06",
+       "punto": "Pre-ingreso",
+       "dev": "RicPreIngInFr"
+      },
+      {
+       "hora": "08:09",
+       "punto": "Calada",
+       "dev": "RicCal04"
+      },
+      {
+       "hora": "08:17",
+       "punto": "Egreso",
+       "dev": "RicEgrCamFrente"
+      }
+     ]
+    },
+    {
+     "planta": "sl",
+     "items": [
+      {
+       "hora": "08:25",
+       "punto": "Ingreso",
+       "dev": "SLZIngCamFrente"
+      },
+      {
+       "hora": "08:31",
+       "punto": "Balanza",
+       "dev": "SLZBalIngFte"
+      },
+      {
+       "hora": "08:39",
+       "punto": "Balanza salida",
+       "dev": "SLZBalSC2Fte"
+      },
+      {
+       "hora": "08:44",
+       "punto": "Egreso",
+       "dev": "SLZSalidaC1Fte"
+      }
+     ]
+    },
+    {
+     "planta": "ric",
+     "items": [
+      {
+       "hora": "09:44",
+       "punto": "Ingreso",
+       "dev": "RicIngCamFrente"
+      },
+      {
+       "hora": "09:47",
+       "punto": "Pre-ingreso",
+       "dev": "RicPreIngInFr"
+      },
+      {
+       "hora": "11:21",
+       "punto": "Calada",
+       "dev": "RicCal04"
+      },
+      {
+       "hora": "11:30",
+       "punto": "Egreso",
+       "dev": "RicEgrCamFrente"
+      }
+     ]
+    },
+    {
+     "planta": "sl",
+     "items": [
+      {
+       "hora": "11:38",
+       "punto": "Ingreso",
+       "dev": "SLZIngCamFrente"
+      },
+      {
+       "hora": "11:41",
+       "punto": "Balanza",
+       "dev": "SLZBalIngFte"
+      },
+      {
+       "hora": "13:14",
+       "punto": "Volcable 5",
+       "dev": "SLZVolcableC5"
+      },
+      {
+       "hora": "13:23",
+       "punto": "Egreso",
+       "dev": "SLZSalidaC1Fte"
+      },
+      {
+       "hora": "13:23",
+       "punto": "Egreso",
+       "dev": "SLZSalidaC2Fte"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "primerIngresoPuerto": [
+  {
+   "patente": "AE196PC",
+   "dia": "21/10",
+   "opsExcel": 2,
+   "producto": [
+    "PRODUCTOS VARIOS",
+    "SOJA"
+   ],
+   "excel": [
+    "productos varios · ingreso 05:01 · salida 05:32 · ",
+    "soja · ingreso 05:47 · salida 13:14 · VOLCABLE_PTO_SGC"
+   ],
+   "minPuerto1": 24,
+   "hastaDescargar": 498,
+   "grupos": [
+    {
+     "planta": "sl",
+     "items": [
+      {
+       "hora": "04:57",
+       "punto": "Ingreso",
+       "dev": "SLZIngCamFrente"
+      },
+      {
+       "hora": "05:05",
+       "punto": "Balanza",
+       "dev": "SLZBalIngFte"
+      },
+      {
+       "hora": "05:17",
+       "punto": "Balanza salida",
+       "dev": "SLZBalSC2Fte"
+      },
+      {
+       "hora": "05:21",
+       "punto": "Egreso",
+       "dev": "SLZSalidaC1Fte"
+      }
+     ]
+    },
+    {
+     "planta": "ric",
+     "items": [
+      {
+       "hora": "05:42",
+       "punto": "Ingreso",
+       "dev": "RicIngCamFrente"
+      },
+      {
+       "hora": "05:46",
+       "punto": "Pre-ingreso",
+       "dev": "RicPreIngInFr"
+      },
+      {
+       "hora": "07:56",
+       "punto": "Calada",
+       "dev": "RicCal04"
+      },
+      {
+       "hora": "08:32",
+       "punto": "Calada",
+       "dev": "RicCal04"
+      },
+      {
+       "hora": "08:45",
+       "punto": "Egreso",
+       "dev": "RicEgrCamFrente"
+      }
+     ]
+    },
+    {
+     "planta": "sl",
+     "items": [
+      {
+       "hora": "08:53",
+       "punto": "Ingreso",
+       "dev": "SLZIngCamFrente"
+      },
+      {
+       "hora": "09:23",
+       "punto": "Balanza",
+       "dev": "SLZBalIngFte"
+      },
+      {
+       "hora": "10:21",
+       "punto": "Balanza",
+       "dev": "SLZBalIngFte"
+      },
+      {
+       "hora": "10:55",
+       "punto": "Balanza",
+       "dev": "SLZBalIngFte"
+      },
+      {
+       "hora": "13:01",
+       "punto": "Volcable 5",
+       "dev": "SLZVolcableC5"
+      },
+      {
+       "hora": "13:15",
+       "punto": "Egreso",
+       "dev": "SLZSalidaC2Fte"
+      },
+      {
+       "hora": "13:15",
+       "punto": "Egreso",
+       "dev": "SLZSalidaC1Fte"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

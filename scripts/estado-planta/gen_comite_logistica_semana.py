@@ -335,7 +335,7 @@ section('resumen-planta', head('Planta', 'Qué entró a la planta, cuándo y cu�
     + '</div>')),
     (f'Soja: {fmtn(R7["est"])} operaciones R7 de la planilla de la semana (TERMINAL · INGRESO · SOJA por volcable, día operativo del ingreso); por cámaras se leyeron {R7["viajes"]} viajes completos. ' if PR7 else '') + f'Semana {LBL} ({N} días), {RUNTXT}. Soja por cámaras: ≈ {fmtn(round(RC["viajes"] / K7["cobertura"]))} camiones = {R7["viajes"]} viajes completos leídos por patente (calada → egreso → ingreso y salida de San Lorenzo; r7-camaras.cjs) divididos por la cobertura medida en {CAL_LBL} ({K7["camara"]} viajes contra {K7["planilla"]} operaciones R7 de la planilla, {round(K7["cobertura"] * 100)} %). '
     f'La corrida da {R7["etl"]} recorridos R7 en final_circuits, una cifra del mismo orden. Puerta a puerta {R7["total"]} min, {P2P_SRC}. Barras de soja: ' + ('operaciones R7 de la planilla' if PR7 else 'recorridos R7 de la corrida') + f' por día operativo ({", ".join(map(str, R7["dia"]))}). '
-    f'Girasol: {GI["rec"]} recorridos de la cámara de la volcable 2 (paquete del dashboard; la volcable 1 no aparece en la planilla desde el 28/09); en {CAL_LBL} esa cámara leyó 38 camiones contra 42 operaciones R6 de la planilla. Tiempo en planta = pre-ingreso → balanza de egreso, media de {GN_["total"]} camiones medidos por patente. '
+    f'Girasol: {GI["rec"]} recorridos de la cámara de la volcable 2 (paquete del dashboard; la volcable 1 no aparece en la planilla desde el 28/09); en {CAL_LBL} esa cámara leyó 38 camiones contra 42 operaciones R6 de la planilla. Tiempo en planta = pre-ingreso → balanza de egreso, media de {GN_.get("total", 0)} camiones medidos por patente. '
     f'Líquidos: visitas de camión a la zona de líquidos (liquidos-camaras.cjs), no movimientos; calibración en la sección 04. Pellet: viajes de transile leídos por patente (pellet-camaras.cjs); en {fdm(PK["planillaPorDia"] and list(PK["planillaPorDia"])[0])}–{fdm(list(PK["planillaPorDia"])[-1])} las cámaras vieron {PK["emparejados"]} de {PK["planillaEgresosPellet"]} viajes de la planilla ({round(PK["recall"] * 100)} %). '
     f'Calada sólida: {fmtn(CAL["camiones"])} recorridos en {CAL["horas"]} de {HOURS} h. Volcables puerto: camiones distintos leídos por día en cada cámara de volcable (incluye el pellet de la V4). Silos: {SIL["camiones"]} recorridos.', gap=28)
 
@@ -643,7 +643,7 @@ if GIR_OK:
         + kcard('Comparativo semana anterior', f'{sgn(gt_sum - PUB["g_total"])} min', GMID, GDK)
         + kcard('Total de camiones', fmtn(GOPS or GI['rec']), GDK, GDK) + '</div>'
         + key(f'El tramo más largo fue {gnames[gmax]} ({gv[gmax]} min). Contra la semana anterior, la descarga (Playa 3 → volcable y tara) pasó de {PUB["g_dt"]} a {GI["desc"] + GI["tara"]} min y Playa 1, de {PUB["g_p1"]} a {GI["p1"]}.' + (f' El {full[max(range(N), key=lambda i: GOPS_DIA[i])]} entraron {max(GOPS_DIA)} de los {fmtn(GOPS)} camiones.' if GOPS else '')),
-        f'Girasol, medido por patente con cámaras (metricas-camaras.cjs), suma de tramos: ingreso 3, Playa 1 {GI["p1"]} ({GN_["p1"]} camiones), pesada bruta + acceso a Playa 3 {g_pa} (calada → volcable {GI["calVolc"]} menos Playa 3 → volcable; la balanza de ingreso no se leyó por separado), descarga {GI["desc"]} ({GN_["descarga"]}), tara {GI["tara"]} ({GN_["tara"]}) = {gt_sum} min. '
+        f'Girasol, medido por patente con cámaras (metricas-camaras.cjs), suma de tramos: ingreso 3, Playa 1 {GI["p1"]} ({GN_.get("p1", 0)} camiones), pesada bruta + acceso a Playa 3 {g_pa} (calada → volcable {GI["calVolc"]} menos Playa 3 → volcable; la balanza de ingreso no se leyó por separado), descarga {GI["desc"]} ({GN_.get("descarga", 0)}), tara {GI["tara"]} ({GN_.get("tara", 0)}) = {gt_sum} min. '
         f'Comparativo contra el comité publicado ({ANT_LBL}): {PUB["g_total"]} min (Playa 1 {PUB["g_p1"]}, descarga y tara {PUB["g_dt"]}). '
         + (f'Camiones = ingresos de girasol de Ricardone según la balanza ({", ".join(map(str, GOPS_DIA))} por día); la balanza no trae la plataforma, así que incluyen las descargas a silos Kepler (R4).' if GOPS_SGC else
            f'Camiones = operaciones de girasol de la planilla ({", ".join(map(str, GOPS_DIA))} por día).' if GOPS else f'Recorridos de la cámara de la volcable 2 por día: {", ".join(map(str, GI["dia"]))}.'), gap=32)
@@ -870,7 +870,7 @@ section('calada', head('Sectores · calada', ('Calada con menos recorridos por d
     + occ('Ricardone sólida', f'{fmtn(CAL["camiones"])} recorridos en {CAL["horas"]} h', round(CAL['horas'] / HOURS * 100), GDK)
     + occ('Ricardone líquida', f'{fmtn(LIQ["camiones"])} recorridos en {LIQ["horas"]} h', round(LIQ['horas'] / HOURS * 100), VMID)
     + occ('San Lorenzo', f'{fmtn(CSL["camiones"])} recorridos en {CSL["horas"]} h', round(CSL['horas'] / HOURS * 100), VMID) + '</div></div></div>'
-    + key(f'{fmtn(cal_dia)} recorridos por día, contra {fmtn(cal_dia_prev)} en el comité anterior ({round((1 - cal_dia / cal_dia_prev) * 100)} % menos). ' + (f'Las calles 1 y 2 abrieron solo el {y_([full[iD[d]] for d in c12], last=" y el ")}.' if c12 else 'Las calles 1 y 2 no abrieron: toda la semana con la 3 y la 4.')),
+    + key(f'{fmtn(cal_dia)} recorridos por día, contra {fmtn(cal_dia_prev)} en el comité anterior ({abs(round((cal_dia / cal_dia_prev - 1) * 100))} % {"más" if cal_dia > cal_dia_prev else "menos"}). ' + (f'Las calles 1 y 2 abrieron solo el {y_([full[iD[d]] for d in c12], last=" y el ")}.' if c12 else 'Las calles 1 y 2 no abrieron: toda la semana con la 3 y la 4.')),
     f'Calada por calle, semana completa: ' + ', '.join(f'{a.lower()} {b}' for a, b in calles) + f'. Suman {fmtn(calles_tot)}, no {fmtn(CAL["camiones"])}, porque algunos recorridos pasaron por dos calles. Horas = horas con al menos una lectura, sobre {HOURS} ({N} días). '
     f'Por día: {", ".join(map(str, CAL["porDia"]))}. Pico: {CAL["pico"]} recorridos ({CAL["picoLabel"]}). Comité anterior: {fmtn(PUB["cal"])} recorridos en {ANT_N} días ({PUB["cal_h"]} h con actividad), con el transile R29 pasando por la calada. '
     f'Calada líquida {fmtn(LIQ["camiones"])} en {LIQ["horas"]} h (comité anterior {fmtn(PUB["liq_cal"])}; por día {", ".join(map(str, LIQ["porDia"]))}): cuenta también los camiones de pellet, que entran por la calle líquida rumbo a Playa 3. Fuente: paquete del dashboard sobre la {RUNTXT}.', gap=28)
@@ -1178,20 +1178,22 @@ if SC:
     sj = [sp('soja', c) for c in CS]
     lamina('sep-soja', 'soja · actividad', GDK, f'Soja: de {sj[0]} a {sj[-1]} camiones por día desde mediados de septiembre',
            legend([('Camiones de soja por día (planilla y balanza)', GDK)], f'<div style="width:24px"></div><p style="font-size:24px; color:{BODY}">Franjas: un color por comité, más oscuro el más nuevo</p>') + dlinea(serie('soja'), GDK),
-           f'El 21/10 volvió a subir a {serie("soja")[-1]} camiones, pero el período actual sigue siendo el más liviano de la serie: {sj[-1]} por día contra {sj[0]} a mediados de septiembre.',
+           f'El {dm_(DAYS[-1])} entraron {serie("soja")[-1]} camiones, pero el período actual sigue siendo el más liviano de la serie: {sj[-1]} por día contra {sj[0]} a mediados de septiembre.',
            'Ingresos de soja a la Terminal por día operativo (toneladas-periodos.cjs); abajo, camiones por día de cada comité.')
     T7, P7, S7 = TOT + [R7['total']], P1 + [R7['p1']], SLZ + [R7['slz']]
-    lamina('sep-soja-t', 'soja · tiempos', GDK, f'Soja: el ciclo bajó a {R7["total"]} min porque hay pocos camiones',
+    lamina('sep-soja-t', 'soja · tiempos', GDK, (f'Soja: el ciclo bajó a {R7["total"]} min porque hay pocos camiones' if R7['total'] <= T7[-2] else f'Soja: {R7["total"]} min, {avg(T7) - R7["total"]} debajo del promedio, porque hay pocos camiones'),
            legend([('Puerta a puerta', GDK), ('San Lorenzo', VMID), ('Espera Playa 1', '#B83A26')], PUNT)
            + historico([(T7, GDK, 5), (S7, VMID, 3), (P7, '#B83A26', 3)], H_LAB, 500, prom=[avg(T7), avg(S7), avg(P7)])
            + hcards([('Puerta a puerta', f'{T7[-1]} min', T7[-6:], GDK, f'promedio desde junio: {avg(T7)}'), ('San Lorenzo', f'{S7[-1]} min', S7[-6:], VMID, f'promedio desde junio: {avg(S7)}'), ('Espera Playa 1', f'{P7[-1]} min', P7[-6:], '#B83A26', f'{P7[-3]} en el 4/10, con el doble de camiones')]),
-           f'Con un séptimo de los camiones de mediados de septiembre, el ciclo bajó {T7[-6] - T7[-1]} min y quedó {avg(T7) - T7[-1]} min debajo del promedio desde junio; la espera en Playa 1 dejó de bajar ({P7[-3]} → {P7[-1]} min desde el 4/10).',
-           'Serie publicada de cada comité desde el 17/06 y el período actual (corrida 12–21/10). Línea punteada: promedio de la serie de cada tiempo.')
+           f'Con {sj[-1]} camiones por día contra {sj[0]} a mediados de septiembre, el ciclo bajó {T7[-6] - T7[-1]} min y quedó {avg(T7) - T7[-1]} min debajo del promedio desde junio; la espera en Playa 1 dejó de bajar ({P7[-3]} → {P7[-1]} min desde el 4/10).',
+           f'Serie publicada de cada comité desde el 17/06 y el período actual (corridas del {dm_(DAYS[0])} al {dm_(DAYS[-1])}). Línea punteada: promedio de la serie de cada tiempo.')
     # ---- girasol
+    G0 = [d for d, v in zip(MDAYS, serie('girasol')) if d >= DAYS[0] and not v]   # días del período sin girasol
+    V2D = sorted(d for d, v in (SIN.get('porDia') or {}).items() if v.get('volcable2', 0) >= 5)   # días con transile interno a la volcable 2
     GCOL = '#C98A12'
-    lamina('sep-girasol', 'girasol · actividad', '#7A5608', f'Girasol: de {sp("girasol", CS[0])} a {sp("girasol", CS[-1])} camiones por día; el 18 y 19/10 no entró girasol',
+    lamina('sep-girasol', 'girasol · actividad', '#7A5608', f'Girasol: de {sp("girasol", CS[0])} a {sp("girasol", CS[-1])} camiones por día' + (f'; {y_([dm_(d) for d in G0])} no entró girasol' if 0 < len(G0) <= 3 else ''),
            legend([('Ingresos de girasol a Ricardone por día', GCOL)], f'<div style="width:24px"></div><p style="font-size:24px; color:{BODY}">Franjas: un color por comité, más oscuro el más nuevo</p>') + dlinea(serie('girasol'), GCOL),
-           f'El girasol bajó a {sp("girasol", CS[-1])} camiones por día y tuvo días sin descargas: la volcable 2 se usó para el transile interno desde el silo 8 (16 al 20/10).',
+           f'El girasol bajó a {sp("girasol", CS[-1])} camiones por día y tuvo días sin descargas' + (f': la volcable 2 se usó para el transile interno desde el silo 8 ({dm_(V2D[0])} al {dm_(V2D[-1])}).' if V2D else '.'),
            'Ingresos de girasol a Ricardone por día operativo (planilla y balanza).')
     GT7, GP7, GD7 = GT + [GSUM], GP + [GI['p1']], GD + [(GI['desc'] or 0) + (GI['tara'] or 0)]
     lamina('sep-girasol-t', 'girasol · tiempos', '#7A5608', f'Girasol: {GT7[-1]} min en planta; la descarga, el tramo más largo',
@@ -1206,26 +1208,33 @@ if SC:
     if ops:
         shift = lambda d, n: (datetime.date.fromisoformat(d) + datetime.timedelta(days=n)).isoformat()
         cic = [o['ciclo'] for o in ops]; vij = [o['viajes'] for o in ops]
-        W_, RH, T0 = 1664, 84, 64
-        XV, WV, XC, WC = 330, 700, 1150, 480                     # viajes: barra; ciclo: punto sobre 0–450 min
-        mv = max(vij); cmx = 450
-        cx = lambda m: XC + round(m / cmx * WC)
-        sv = f'<svg aria-label="Operativos de pellet: viajes y ciclo" viewBox="0 0 {W_} {T0 + RH * len(ops) + 20}" width="{W_}" height="{T0 + RH * len(ops) + 20}" style="width:{W_}px; height:{T0 + RH * len(ops) + 20}px">'
-        sv += f'<text x="0" y="30" font-size="24" font-weight="600" fill="{BODY}" {FT}>Operativo · comité</text><text x="{XV}" y="30" font-size="24" font-weight="600" fill="{BODY}" {FT}>Viajes al puerto · camiones</text><text x="{XC}" y="30" font-size="24" font-weight="600" fill="{BODY}" {FT}>Ciclo del operativo (min)</text>'
-        for m in range(0, cmx + 1, 100):
-            sv += f'<line x1="{cx(m)}" y1="{T0 - 8}" x2="{cx(m)}" y2="{T0 + RH * len(ops)}" stroke="{LINE}" stroke-width="2"/><text x="{cx(m)}" y="{T0 + RH * len(ops) + 18}" text-anchor="middle" font-size="20" fill="{BODY}" {FT}>{m}</text>'
-        pts = []
+        W_, RH, T0 = 1040, 84, 64
+        XV, WV = 330, 700                                        # viajes: barra por operativo
+        mv = max(vij)
+        sv = f'<svg aria-label="Operativos de pellet: viajes y camiones" viewBox="0 0 {W_} {T0 + RH * len(ops)}" width="{W_}" height="{T0 + RH * len(ops)}" style="width:{W_}px; height:{T0 + RH * len(ops)}px">'
+        sv += f'<text x="0" y="30" font-size="24" font-weight="600" fill="{BODY}" {FT}>Operativo · comité</text><text x="{XV}" y="30" font-size="24" font-weight="600" fill="{BODY}" {FT}>Viajes al puerto · camiones</text>'
+        coms = []
         for r, o in enumerate(ops):
-            yc = T0 + r * RH + RH // 2; com = o.get('comite') if o.get('comite') != 'Actual' else dm_(ANT_DAYS[-1])
+            yc = T0 + r * RH + RH // 2; com = o.get('comite') if o.get('comite') != 'Actual' else dm_(ANT_DAYS[-1]); coms.append(com)
             colr = mix(PEL, 0.35 + 0.65 * r / max(1, len(ops) - 1))
             sv += f'<text x="0" y="{yc + 8}" font-size="28" font-weight="700" fill="{TEXT}" {FT}>{dm_(o["desde"])}–{dm_(o["hasta"])}</text><text x="190" y="{yc + 8}" font-size="24" fill="{BODY}" {FT}>· {com}</text>'
-            bw = max(8, round(o['viajes'] / mv * (WV - 150)))
+            bw = max(8, round(o['viajes'] / mv * (WV - 190)))
             sv += f'<rect x="{XV}" y="{yc - 22}" width="{bw}" height="44" rx="6" fill="{colr}"/><text x="{XV + bw + 12}" y="{yc + 8}" font-size="26" font-weight="700" fill="{TEXT}" {FT}>{fmtn(o["viajes"])}</text>'
             if o.get('camiones'): sv += f'<text x="{XV + bw + 90}" y="{yc + 8}" font-size="24" fill="{BODY}" {FT}>· {o["camiones"]} cam.</text>'
-            pts.append((cx(o['ciclo']), yc))
-        sv += f'<polyline fill="none" stroke="{PELM}" stroke-width="3" points="' + ' '.join(f'{x},{y}' for x, y in pts) + '"/>'
-        sv += ''.join(f'<circle cx="{x}" cy="{y}" r="11" fill="{PEL}"/><text x="{x + 20}" y="{y + 9}" font-size="26" font-weight="700" fill="{PEL}" {FT}>{o["ciclo"]}</text>' for (x, y), o in zip(pts, ops))
         sv += '</svg>'
+        # ciclo: línea horizontal, un punto por operativo (en orden), eje de minutos a la izquierda
+        CW_, CH_, CL, CT, cmx = 600, 520, 64, 56, 450
+        PW_, PH_ = CW_ - CL - 24, CH_ - CT - 64
+        px = lambda k: CL + 40 + round(k * (PW_ - 80) / max(1, len(ops) - 1)); py = lambda m: CT + round((1 - m / cmx) * PH_)
+        cs = f'<svg aria-label="Ciclo de cada operativo de pellet" viewBox="0 0 {CW_} {CH_}" width="{CW_}" height="{CH_}" style="width:{CW_}px; height:{CH_}px">'
+        cs += f'<text x="0" y="30" font-size="24" font-weight="600" fill="{BODY}" {FT}>Ciclo del operativo (min)</text>'
+        for m in range(0, cmx + 1, 100):
+            cs += f'<line x1="{CL}" y1="{py(m)}" x2="{CL + PW_}" y2="{py(m)}" stroke="{LINE}" stroke-width="2"/><text x="{CL - 12}" y="{py(m) + 7}" text-anchor="end" font-size="20" fill="{BODY}" {FT}>{m}</text>'
+        cs += f'<polyline fill="none" stroke="{PELM}" stroke-width="4" stroke-linejoin="round" points="' + ' '.join(f'{px(k)},{py(c)}' for k, c in enumerate(cic)) + '"/>'
+        cs += ''.join(f'<circle cx="{px(k)}" cy="{py(c)}" r="10" fill="{PEL}"/><text x="{px(k)}" y="{py(c) - 18}" text-anchor="middle" font-size="26" font-weight="700" fill="{PEL}" {FT}>{c}</text>'
+                      f'<text x="{px(k)}" y="{CT + PH_ + 36}" text-anchor="middle" font-size="22" font-weight="600" fill="{TEXT}" {FT}>{coms[k]}</text>' for k, c in enumerate(cic))
+        cs += '</svg>'
+        sv = f'<div style="display:flex; flex-direction:row; gap:24px; align-items:start">{sv}{cs}</div>'
         lamina('sep-pellet', 'pellet', PEL, f'Pellet: el ciclo bajó de {cic[0]} a {cic[-1]} min; sin operativo desde el {dm_(shift(ops[-1]["hasta"], 1))}',
                sv, ' '.join(SC.get('pelletConclusiones', [])),
                'Operativos de transile de pellet publicados en cada comité (pelletHistorico): viajes y camiones del operativo; ciclo = carga en Ricardone → descarga en el puerto → vuelta. '

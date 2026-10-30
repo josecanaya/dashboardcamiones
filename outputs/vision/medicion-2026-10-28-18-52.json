@@ -1,0 +1,344 @@
+{
+  "summary": {
+    "model": "sonnet",
+    "at": "2026-10-28T18:52:11.761Z",
+    "medidos": 12,
+    "errores": 0,
+    "aciertos": "11/12",
+    "mismo": "8/9",
+    "otro": "3/3",
+    "automaticas": [
+      {
+        "umbral": 0.7,
+        "decide": 8,
+        "errores": 0
+      },
+      {
+        "umbral": 0.8,
+        "decide": 8,
+        "errores": 0
+      },
+      {
+        "umbral": 0.9,
+        "decide": 3,
+        "errores": 0
+      }
+    ],
+    "costoUsd": 0.15162599999999998,
+    "segundosPromedio": 7
+  },
+  "results": [
+    {
+      "dir": "data/identification-evidence/san_lorenzo/ce30e6ed-8300-476a-8c0e-e57f46a99710/8e104f6c-4ec9-4302-9e7d-5c7b52c5689d",
+      "site": "san_lorenzo",
+      "fragmentKey": "ce30e6ed-8300-476a-8c0e-e57f46a99710",
+      "read": "AF969BJ",
+      "refPlate": "AG692JX",
+      "decided": "AF969BJ",
+      "same": false,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\san_lorenzo\\ce30e6ed-8300-476a-8c0e-e57f46a99710\\8e104f6c-4ec9-4302-9e7d-5c7b52c5689d\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\san_lorenzo\\ce30e6ed-8300-476a-8c0e-e57f46a99710\\8e104f6c-4ec9-4302-9e7d-5c7b52c5689d\\captura-patente.jpg",
+        "label": "SLZSalidaC2Fte"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\san_lorenzo\\ce30e6ed-8300-476a-8c0e-e57f46a99710\\8e104f6c-4ec9-4302-9e7d-5c7b52c5689d\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\san_lorenzo\\ce30e6ed-8300-476a-8c0e-e57f46a99710\\8e104f6c-4ec9-4302-9e7d-5c7b52c5689d\\referencia-patente.jpg",
+        "label": "SLZSalidaC2Fte"
+      },
+      "saysSame": false,
+      "confidence": 0.95,
+      "reason": "El vehículo a identificar es un sedán Toyota Corolla blanco, mientras que el Candidato A es una pick-up/camioneta con caja de carga abierta y calcos 'www.sandrigo.com.ar'; son tipos de vehículo totalmente distintos y la patente leída (AF969BJ vs AG692JX) tampoco coincide.",
+      "costUsd": 0.012656,
+      "ms": 7717,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/6c693fe5-b6b6-4d11-b660-2b95d59230ee/1770e83f-d5c5-4164-bed4-02a71e14ca9e",
+      "site": "ricardone",
+      "fragmentKey": "6c693fe5-b6b6-4d11-b660-2b95d59230ee",
+      "read": "HED501",
+      "refPlate": "EDW495",
+      "decided": "HED501",
+      "same": false,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\6c693fe5-b6b6-4d11-b660-2b95d59230ee\\1770e83f-d5c5-4164-bed4-02a71e14ca9e\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\6c693fe5-b6b6-4d11-b660-2b95d59230ee\\1770e83f-d5c5-4164-bed4-02a71e14ca9e\\captura-patente.jpg",
+        "label": "RicCal03"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\6c693fe5-b6b6-4d11-b660-2b95d59230ee\\1770e83f-d5c5-4164-bed4-02a71e14ca9e\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\6c693fe5-b6b6-4d11-b660-2b95d59230ee\\1770e83f-d5c5-4164-bed4-02a71e14ca9e\\referencia-patente.jpg",
+        "label": "RicCal04"
+      },
+      "saysSame": false,
+      "confidence": 0.1,
+      "reason": "Ambos son Mercedes-Benz blancos de cabina similar, pero el camión objetivo tiene calco 'EL CHOLI' y deflector azul en el techo, mientras el candidato A no tiene ese calco ni deflector visible; además las patentes HED501 y EOW495/EDW495 no coinciden.",
+      "costUsd": 0.012412,
+      "ms": 8678,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/23b3c556-00a3-4286-8b46-23ed7b89f433/94633155-c24a-4602-b7f7-2e1bc55e449c",
+      "site": "ricardone",
+      "fragmentKey": "23b3c556-00a3-4286-8b46-23ed7b89f433",
+      "read": "AF960DJ",
+      "refPlate": "AF041XW",
+      "decided": "AF960DJ",
+      "same": false,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\23b3c556-00a3-4286-8b46-23ed7b89f433\\94633155-c24a-4602-b7f7-2e1bc55e449c\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\23b3c556-00a3-4286-8b46-23ed7b89f433\\94633155-c24a-4602-b7f7-2e1bc55e449c\\captura-patente.jpg",
+        "label": "RicB2Egreso"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\23b3c556-00a3-4286-8b46-23ed7b89f433\\94633155-c24a-4602-b7f7-2e1bc55e449c\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\23b3c556-00a3-4286-8b46-23ed7b89f433\\94633155-c24a-4602-b7f7-2e1bc55e449c\\referencia-patente.jpg",
+        "label": "RicB2Egreso"
+      },
+      "saysSame": false,
+      "confidence": 0.1,
+      "reason": "Ambos son Mercedes-Benz Atego blancos similares, pero el vehículo objetivo lleva un equipo/bomba rojo visible y el candidato A una carrocería de caja/baranda distinta; además las patentes AF960DJ vs AF041XW difieren en todos los caracteres, no es un error de lectura plausible.",
+      "costUsd": 0.014956,
+      "ms": 11339,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/038d30d9-08ae-42da-9e1b-4d79f1f0009d/2c9b82fd-ef26-401e-9e56-8f955f41caac",
+      "site": "ricardone",
+      "fragmentKey": "038d30d9-08ae-42da-9e1b-4d79f1f0009d",
+      "read": "EUA987",
+      "refPlate": "EDA987",
+      "decided": "EDA987",
+      "same": true,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\038d30d9-08ae-42da-9e1b-4d79f1f0009d\\2c9b82fd-ef26-401e-9e56-8f955f41caac\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\038d30d9-08ae-42da-9e1b-4d79f1f0009d\\2c9b82fd-ef26-401e-9e56-8f955f41caac\\captura-patente.jpg",
+        "label": "RicCal04"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\038d30d9-08ae-42da-9e1b-4d79f1f0009d\\2c9b82fd-ef26-401e-9e56-8f955f41caac\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\038d30d9-08ae-42da-9e1b-4d79f1f0009d\\2c9b82fd-ef26-401e-9e56-8f955f41caac\\referencia-patente.jpg",
+        "label": "RicPreIngInFr"
+      },
+      "saysSame": true,
+      "confidence": 0.85,
+      "reason": "Mismo modelo Mercedes-Benz con cabina similar, parrilla y logo coincidentes; patente muy similar (EDA 9?7 vs EDA 987), posible error de lectura en el dígito central.",
+      "costUsd": 0.012272,
+      "ms": 5955,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/0b34e73f-e047-42ae-baee-4fdc48bfd588/779b3d7d-1d68-4302-a43d-dc9d8e3bb8ac",
+      "site": "ricardone",
+      "fragmentKey": "0b34e73f-e047-42ae-baee-4fdc48bfd588",
+      "read": "CFT975",
+      "refPlate": "CEI975",
+      "decided": "CEI975",
+      "same": true,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\0b34e73f-e047-42ae-baee-4fdc48bfd588\\779b3d7d-1d68-4302-a43d-dc9d8e3bb8ac\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\0b34e73f-e047-42ae-baee-4fdc48bfd588\\779b3d7d-1d68-4302-a43d-dc9d8e3bb8ac\\captura-patente.jpg",
+        "label": "RicCal03"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\0b34e73f-e047-42ae-baee-4fdc48bfd588\\779b3d7d-1d68-4302-a43d-dc9d8e3bb8ac\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\0b34e73f-e047-42ae-baee-4fdc48bfd588\\779b3d7d-1d68-4302-a43d-dc9d8e3bb8ac\\referencia-patente.jpg",
+        "label": "RicPreIngInFr"
+      },
+      "saysSame": true,
+      "confidence": 0.85,
+      "reason": "Misma patente CEI 975, cabina roja tipo Mercedes-Benz con parrilla y faros similares; coincide forma de cabina y paragolpes, aunque las fotos son de ángulos y condiciones de luz distintas.",
+      "costUsd": 0.01235,
+      "ms": 6623,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/0fd4f33b-6dbb-4bd8-a43a-967947e080dd/1d1c52c0-7b09-4e87-8055-9e336b672b4d",
+      "site": "ricardone",
+      "fragmentKey": "0fd4f33b-6dbb-4bd8-a43a-967947e080dd",
+      "read": "DQO011",
+      "refPlate": "ROQ011",
+      "decided": "ROQ011",
+      "same": true,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\0fd4f33b-6dbb-4bd8-a43a-967947e080dd\\1d1c52c0-7b09-4e87-8055-9e336b672b4d\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\0fd4f33b-6dbb-4bd8-a43a-967947e080dd\\1d1c52c0-7b09-4e87-8055-9e336b672b4d\\captura-patente.jpg",
+        "label": "RicCal03"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\0fd4f33b-6dbb-4bd8-a43a-967947e080dd\\1d1c52c0-7b09-4e87-8055-9e336b672b4d\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\0fd4f33b-6dbb-4bd8-a43a-967947e080dd\\1d1c52c0-7b09-4e87-8055-9e336b672b4d\\referencia-patente.jpg",
+        "label": "RicCal03"
+      },
+      "saysSame": true,
+      "confidence": 0.95,
+      "reason": "Mismo Scania 112H 360 blanco, franja roja idéntica, mismo deflector, espejos y posición en la misma plataforma de carga; patente coincide salvo confusión D/O en la lectura dudosa.",
+      "costUsd": 0.012012000000000002,
+      "ms": 6630,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/11d3b71b-eea1-4555-bcab-876e8ab6ce99/4787353a-1d83-46b6-873f-7b1caeef63d2",
+      "site": "ricardone",
+      "fragmentKey": "11d3b71b-eea1-4555-bcab-876e8ab6ce99",
+      "read": "ILDC259",
+      "refPlate": "COI299",
+      "decided": "COI299",
+      "same": true,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\11d3b71b-eea1-4555-bcab-876e8ab6ce99\\4787353a-1d83-46b6-873f-7b1caeef63d2\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\11d3b71b-eea1-4555-bcab-876e8ab6ce99\\4787353a-1d83-46b6-873f-7b1caeef63d2\\captura-patente.jpg",
+        "label": "RicCal03"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\11d3b71b-eea1-4555-bcab-876e8ab6ce99\\4787353a-1d83-46b6-873f-7b1caeef63d2\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\11d3b71b-eea1-4555-bcab-876e8ab6ce99\\4787353a-1d83-46b6-873f-7b1caeef63d2\\referencia-patente.jpg",
+        "label": "RicPreIngInFr"
+      },
+      "saysSame": true,
+      "confidence": 0.85,
+      "reason": "Mismo modelo de camión Mercedes-Benz con cabina similar, parrilla y faros coincidentes; patente coincide en patrón COT*299 (dígito dudoso 2/9 pero estructura y letras iguales).",
+      "costUsd": 0.012306,
+      "ms": 7170,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/14afc1ed-9eaa-4cd9-8bb5-e3b272e47a7b/abf69ddd-fe77-47ab-8a86-10322dc9f314",
+      "site": "ricardone",
+      "fragmentKey": "14afc1ed-9eaa-4cd9-8bb5-e3b272e47a7b",
+      "read": "CCT299",
+      "refPlate": "COI299",
+      "decided": "COI299",
+      "same": true,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\14afc1ed-9eaa-4cd9-8bb5-e3b272e47a7b\\abf69ddd-fe77-47ab-8a86-10322dc9f314\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\14afc1ed-9eaa-4cd9-8bb5-e3b272e47a7b\\abf69ddd-fe77-47ab-8a86-10322dc9f314\\captura-patente.jpg",
+        "label": "RicEgrCamFrente"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\14afc1ed-9eaa-4cd9-8bb5-e3b272e47a7b\\abf69ddd-fe77-47ab-8a86-10322dc9f314\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\14afc1ed-9eaa-4cd9-8bb5-e3b272e47a7b\\abf69ddd-fe77-47ab-8a86-10322dc9f314\\referencia-patente.jpg",
+        "label": "SLZVolcableC3"
+      },
+      "saysSame": true,
+      "confidence": 0.85,
+      "reason": "Mismo modelo Mercedes-Benz cabina corta con parrilla y logo idénticos, igual disposición de faros y antena en el capot; patente coincide en estructura (C_X/D 299), diferencia atribuible a mala lectura nocturna (O/D vs X).",
+      "costUsd": 0.012334,
+      "ms": 7135,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/3b1f87c7-d723-4b5f-b97a-7ae19d74524a/78c19709-8f3b-4fc6-9f4b-d2ce405389ef",
+      "site": "ricardone",
+      "fragmentKey": "3b1f87c7-d723-4b5f-b97a-7ae19d74524a",
+      "read": "AC297HX",
+      "refPlate": "AC297UX",
+      "decided": "AC297UX",
+      "same": true,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\3b1f87c7-d723-4b5f-b97a-7ae19d74524a\\78c19709-8f3b-4fc6-9f4b-d2ce405389ef\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\3b1f87c7-d723-4b5f-b97a-7ae19d74524a\\78c19709-8f3b-4fc6-9f4b-d2ce405389ef\\captura-patente.jpg",
+        "label": "RicB3Ingreso"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\3b1f87c7-d723-4b5f-b97a-7ae19d74524a\\78c19709-8f3b-4fc6-9f4b-d2ce405389ef\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\3b1f87c7-d723-4b5f-b97a-7ae19d74524a\\78c19709-8f3b-4fc6-9f4b-d2ce405389ef\\referencia-patente.jpg",
+        "label": "RicB3Ingreso"
+      },
+      "saysSame": true,
+      "confidence": 0.98,
+      "reason": "Misma Toyota Hilux blanca, idéntica posición, suciedad en el paragolpe, faros encendidos y patente coincidente; es la misma captura/escena.",
+      "costUsd": 0.012906,
+      "ms": 6953,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/3cd7a206-33b0-47c8-a6ce-ad8acfd418cd/7d3a3d92-29dd-4f55-977e-1b9bcc90510f",
+      "site": "ricardone",
+      "fragmentKey": "3cd7a206-33b0-47c8-a6ce-ad8acfd418cd",
+      "read": "LTO604",
+      "refPlate": "ETO684",
+      "decided": "ETO684",
+      "same": true,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\3cd7a206-33b0-47c8-a6ce-ad8acfd418cd\\7d3a3d92-29dd-4f55-977e-1b9bcc90510f\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\3cd7a206-33b0-47c8-a6ce-ad8acfd418cd\\7d3a3d92-29dd-4f55-977e-1b9bcc90510f\\captura-patente.jpg",
+        "label": "RicCal04"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\3cd7a206-33b0-47c8-a6ce-ad8acfd418cd\\7d3a3d92-29dd-4f55-977e-1b9bcc90510f\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\3cd7a206-33b0-47c8-a6ce-ad8acfd418cd\\7d3a3d92-29dd-4f55-977e-1b9bcc90510f\\referencia-patente.jpg",
+        "label": "RicPreIngInFr"
+      },
+      "saysSame": true,
+      "confidence": 0.85,
+      "reason": "Mismo modelo de camión VW con cabina blanca, parrilla idéntica, deflector de techo similar y disposición de faros; patente coincide en patrón CTO/ETO 684, diferencia probablemente por error de lectura OCR entre C y E.",
+      "costUsd": 0.012419999999999999,
+      "ms": 6695,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/47c7f63d-98c6-4d8b-b419-44faa285e958/47eeb04a-548f-43ca-8183-65d2b740d87b",
+      "site": "ricardone",
+      "fragmentKey": "47c7f63d-98c6-4d8b-b419-44faa285e958",
+      "read": "VN4104",
+      "refPlate": "LXO474",
+      "decided": "LXO474",
+      "same": true,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\47c7f63d-98c6-4d8b-b419-44faa285e958\\47eeb04a-548f-43ca-8183-65d2b740d87b\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\47c7f63d-98c6-4d8b-b419-44faa285e958\\47eeb04a-548f-43ca-8183-65d2b740d87b\\captura-patente.jpg",
+        "label": "RicCal04"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\47c7f63d-98c6-4d8b-b419-44faa285e958\\47eeb04a-548f-43ca-8183-65d2b740d87b\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\47c7f63d-98c6-4d8b-b419-44faa285e958\\47eeb04a-548f-43ca-8183-65d2b740d87b\\referencia-patente.jpg",
+        "label": "RicPreIngInFr"
+      },
+      "saysSame": false,
+      "confidence": 0.1,
+      "reason": "La imagen a identificar muestra cabina de camión marca Renault con faros y paragolpes distintos, mientras que el candidato A tiene patente LXD 474 visible y no corresponde a una marca Renault identificable; además la disposición de luces y paragolpes difiere claramente.",
+      "costUsd": 0.012666,
+      "ms": 6303,
+      "ok": false
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/485020ac-acfd-4619-bb0d-833f859a2843/bd50cec4-eae2-4f2b-954b-c0141b3cf62b",
+      "site": "ricardone",
+      "fragmentKey": "485020ac-acfd-4619-bb0d-833f859a2843",
+      "read": "ENN622",
+      "refPlate": "ERN622",
+      "decided": "ERN622",
+      "same": true,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\485020ac-acfd-4619-bb0d-833f859a2843\\bd50cec4-eae2-4f2b-954b-c0141b3cf62b\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\485020ac-acfd-4619-bb0d-833f859a2843\\bd50cec4-eae2-4f2b-954b-c0141b3cf62b\\captura-patente.jpg",
+        "label": "RicCal04"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\485020ac-acfd-4619-bb0d-833f859a2843\\bd50cec4-eae2-4f2b-954b-c0141b3cf62b\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\485020ac-acfd-4619-bb0d-833f859a2843\\bd50cec4-eae2-4f2b-954b-c0141b3cf62b\\referencia-patente.jpg",
+        "label": "RicPreIngInFr"
+      },
+      "saysSame": true,
+      "confidence": 0.9,
+      "reason": "Mismo Volvo cabina blanca, misma forma de parrilla, faros y paragolpes, deflector superior similar; patente coincide en patrón y números (622), diferencia solo en una letra posiblemente mal leída (EHN/ERN).",
+      "costUsd": 0.012336,
+      "ms": 6456,
+      "ok": true
+    }
+  ]
+}

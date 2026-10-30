@@ -1,0 +1,7108 @@
+{
+  "generadoEn": "2026-10-27T17:35:46.849Z",
+  "rango": {
+    "from": "2026-10-15",
+    "to": "2026-10-20",
+    "corte": "24:00"
+  },
+  "runIds": [
+    "2026-10-12_2026-10-18",
+    "2026-10-19_2026-10-25"
+  ],
+  "criterio": {
+    "paso": "Confirmado por ancla SGC (salida = pesada de egreso, ingreso Ricardone = portón) o por otra cámara antes y después en el recorrido",
+    "tomado": "Lectura de la patente (exacta u OCR) o captura sin dueño compatible con mala lectura cerca del paso",
+    "traseras": "Solo si tomaron el camión: el export no trae las lecturas buenas de las traseras, solo sus alertas",
+    "franja": "Día 6:00–18:00 · Noche 18:00–6:00"
+  },
+  "universo": {
+    "camiones": 672,
+    "descartados": {
+      "otraPlanta": 472,
+      "ficticia": 13,
+      "baja": 6,
+      "fueraDeCorte": 0
+    },
+    "pasosEsperados": 4386,
+    "pasosConfirmados": 4134
+  },
+  "sectores": [
+    {
+      "sector": "ricardone:Ingreso",
+      "planta": "ricardone",
+      "nombre": "Ingreso",
+      "camaras": [
+        "RicIngCamFrente"
+      ],
+      "camarasTraseras": [
+        "RicIngCamTrasera"
+      ],
+      "sinPruebaDePaso": 7,
+      "total": {
+        "pasaron": 439,
+        "tomados": 358,
+        "leidos": 316,
+        "noTomados": 81,
+        "pctTomados": 82,
+        "pctLeidos": 72
+      },
+      "dia": {
+        "pasaron": 215,
+        "tomados": 175,
+        "leidos": 171,
+        "noTomados": 40,
+        "pctTomados": 81,
+        "pctLeidos": 80
+      },
+      "noche": {
+        "pasaron": 224,
+        "tomados": 183,
+        "leidos": 145,
+        "noTomados": 41,
+        "pctTomados": 82,
+        "pctLeidos": 65
+      },
+      "porDia": {
+        "2026-10-15": {
+          "dia": {
+            "pasaron": 47,
+            "tomados": 43,
+            "leidos": 43,
+            "noTomados": 4,
+            "pctTomados": 91,
+            "pctLeidos": 91
+          },
+          "noche": {
+            "pasaron": 37,
+            "tomados": 34,
+            "leidos": 29,
+            "noTomados": 3,
+            "pctTomados": 92,
+            "pctLeidos": 78
+          }
+        },
+        "2026-10-16": {
+          "dia": {
+            "pasaron": 30,
+            "tomados": 25,
+            "leidos": 25,
+            "noTomados": 5,
+            "pctTomados": 83,
+            "pctLeidos": 83
+          },
+          "noche": {
+            "pasaron": 46,
+            "tomados": 39,
+            "leidos": 36,
+            "noTomados": 7,
+            "pctTomados": 85,
+            "pctLeidos": 78
+          }
+        },
+        "2026-10-17": {
+          "dia": {
+            "pasaron": 54,
+            "tomados": 38,
+            "leidos": 36,
+            "noTomados": 16,
+            "pctTomados": 70,
+            "pctLeidos": 67
+          },
+          "noche": {
+            "pasaron": 69,
+            "tomados": 54,
+            "leidos": 39,
+            "noTomados": 15,
+            "pctTomados": 78,
+            "pctLeidos": 57
+          }
+        },
+        "2026-10-18": {
+          "dia": {
+            "pasaron": 24,
+            "tomados": 18,
+            "leidos": 18,
+            "noTomados": 6,
+            "pctTomados": 75,
+            "pctLeidos": 75
+          },
+          "noche": {
+            "pasaron": 43,
+            "tomados": 36,
+            "leidos": 25,
+            "noTomados": 7,
+            "pctTomados": 84,
+            "pctLeidos": 58
+          }
+        },
+        "2026-10-19": {
+          "dia": {
+            "pasaron": 19,
+            "tomados": 16,
+            "leidos": 16,
+            "noTomados": 3,
+            "pctTomados": 84,
+            "pctLeidos": 84
+          },
+          "noche": {
+            "pasaron": 18,
+            "tomados": 12,
+            "leidos": 10,
+            "noTomados": 6,
+            "pctTomados": 67,
+            "pctLeidos": 56
+          }
+        },
+        "2026-10-20": {
+          "dia": {
+            "pasaron": 41,
+            "tomados": 35,
+            "leidos": 33,
+            "noTomados": 6,
+            "pctTomados": 85,
+            "pctLeidos": 80
+          },
+          "noche": {
+            "pasaron": 11,
+            "tomados": 8,
+            "leidos": 6,
+            "noTomados": 3,
+            "pctTomados": 73,
+            "pctLeidos": 55
+          }
+        }
+      },
+      "porHora": [
+        {
+          "h": 0,
+          "pasaron": 29,
+          "noTomados": 2
+        },
+        {
+          "h": 1,
+          "pasaron": 16,
+          "noTomados": 3
+        },
+        {
+          "h": 2,
+          "pasaron": 20,
+          "noTomados": 3
+        },
+        {
+          "h": 3,
+          "pasaron": 17,
+          "noTomados": 4
+        },
+        {
+          "h": 4,
+          "pasaron": 13,
+          "noTomados": 3
+        },
+        {
+          "h": 5,
+          "pasaron": 14,
+          "noTomados": 3
+        },
+        {
+          "h": 6,
+          "pasaron": 18,
+          "noTomados": 1
+        },
+        {
+          "h": 7,
+          "pasaron": 21,
+          "noTomados": 4
+        },
+        {
+          "h": 8,
+          "pasaron": 18,
+          "noTomados": 3
+        },
+        {
+          "h": 9,
+          "pasaron": 8,
+          "noTomados": 1
+        },
+        {
+          "h": 10,
+          "pasaron": 26,
+          "noTomados": 9
+        },
+        {
+          "h": 11,
+          "pasaron": 25,
+          "noTomados": 1
+        },
+        {
+          "h": 12,
+          "pasaron": 13,
+          "noTomados": 2
+        },
+        {
+          "h": 13,
+          "pasaron": 25,
+          "noTomados": 7
+        },
+        {
+          "h": 14,
+          "pasaron": 18,
+          "noTomados": 3
+        },
+        {
+          "h": 15,
+          "pasaron": 14,
+          "noTomados": 2
+        },
+        {
+          "h": 16,
+          "pasaron": 14,
+          "noTomados": 2
+        },
+        {
+          "h": 17,
+          "pasaron": 15,
+          "noTomados": 5
+        },
+        {
+          "h": 18,
+          "pasaron": 10,
+          "noTomados": 1
+        },
+        {
+          "h": 19,
+          "pasaron": 15,
+          "noTomados": 3
+        },
+        {
+          "h": 20,
+          "pasaron": 11,
+          "noTomados": 1
+        },
+        {
+          "h": 21,
+          "pasaron": 27,
+          "noTomados": 4
+        },
+        {
+          "h": 22,
+          "pasaron": 31,
+          "noTomados": 7
+        },
+        {
+          "h": 23,
+          "pasaron": 21,
+          "noTomados": 7
+        }
+      ],
+      "traseras": {
+        "RicIngCamTrasera": {
+          "pasaron": 439,
+          "tomados": 180,
+          "dia": {
+            "pasaron": 215,
+            "tomados": 106
+          },
+          "noche": {
+            "pasaron": 224,
+            "tomados": 74
+          }
+        }
+      },
+      "lecturasPorCamara": {
+        "RicIngCamFrente": {
+          "2026-10-15": 123,
+          "2026-10-16": 109,
+          "2026-10-17": 108,
+          "2026-10-18": 68,
+          "2026-10-19": 119,
+          "2026-10-20": 172
+        }
+      },
+      "noTomados": [
+        {
+          "hora": "10-15 07:23",
+          "patente": "UXG866",
+          "acoplado": "EJO025",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 08:54",
+          "patente": "CZN028",
+          "acoplado": "",
+          "circuito": "R13",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 15:52",
+          "patente": "FTW206",
+          "acoplado": "FVI125",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 16:25",
+          "patente": "ORN981",
+          "acoplado": "FPZ354",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-15 19:56",
+          "patente": "SJS686",
+          "acoplado": "UPX899",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-15 22:24",
+          "patente": "SDG641",
+          "acoplado": "GKU727",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-15 23:45",
+          "patente": "AF584EP",
+          "acoplado": "AF584EN",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 04:31",
+          "patente": "RKY623",
+          "acoplado": "HMU874",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 05:08",
+          "patente": "OEF695",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 08:40",
+          "patente": "LKT119",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 08:43",
+          "patente": "HPG938",
+          "acoplado": "ETR472",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 10:25",
+          "patente": "JSP646",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 10:26",
+          "patente": "AA809NI",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 17:33",
+          "patente": "LIF292",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 20:28",
+          "patente": "OOX719",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 21:14",
+          "patente": "HQB528",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 21:15",
+          "patente": "FDH719",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 22:46",
+          "patente": "MCU992",
+          "acoplado": "AH710HK",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 23:13",
+          "patente": "BOX621",
+          "acoplado": "OCT613",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 01:46",
+          "patente": "GZG893",
+          "acoplado": "BSI690",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 03:04",
+          "patente": "EUL359",
+          "acoplado": "MHN462",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 03:11",
+          "patente": "UGQ862",
+          "acoplado": "GJU880",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 03:21",
+          "patente": "IOJ448",
+          "acoplado": "AE907SY",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 04:08",
+          "patente": "GJP914",
+          "acoplado": "HPZ190",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 05:09",
+          "patente": "CFA967",
+          "acoplado": "CFA968",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 07:20",
+          "patente": "AUV770",
+          "acoplado": "MRJ156",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 07:21",
+          "patente": "KEO622",
+          "acoplado": "GVQ961",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 07:43",
+          "patente": "MYT215",
+          "acoplado": "AE340PT",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 10:49",
+          "patente": "AI436MN",
+          "acoplado": "AI401VK",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 10:49",
+          "patente": "RPW636",
+          "acoplado": "OWE722",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 10:51",
+          "patente": "RDH183",
+          "acoplado": "GZU306",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 10:53",
+          "patente": "FDN076",
+          "acoplado": "EDX984",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 10:54",
+          "patente": "AE461FD",
+          "acoplado": "AE764GW",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 10:55",
+          "patente": "ICO190",
+          "acoplado": "FVV716",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 10:59",
+          "patente": "VKA515",
+          "acoplado": "AA641XS",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 12:53",
+          "patente": "RUK692",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 13:00",
+          "patente": "RUK692",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 13:43",
+          "patente": "RDL151",
+          "acoplado": "DMG327",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 15:19",
+          "patente": "CDT243",
+          "acoplado": "MXT812",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 17:09",
+          "patente": "AE861LB",
+          "acoplado": "AG844HL",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 17:30",
+          "patente": "LOI639",
+          "acoplado": "ISZ934",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 21:54",
+          "patente": "AVC938",
+          "acoplado": "OHP744",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 21:59",
+          "patente": "BYV210",
+          "acoplado": "EWW057",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 22:00",
+          "patente": "AC828NH",
+          "acoplado": "AB050FE",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 22:10",
+          "patente": "AB892HX",
+          "acoplado": "AC775XB",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 22:23",
+          "patente": "HKV094",
+          "acoplado": "EJA444",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 22:49",
+          "patente": "DBT190",
+          "acoplado": "GQT564",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 22:53",
+          "patente": "BCH929",
+          "acoplado": "RQH113",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 23:03",
+          "patente": "RYJ781",
+          "acoplado": "RMT540",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 23:13",
+          "patente": "HBI340",
+          "acoplado": "HNM426",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 00:15",
+          "patente": "CBB219",
+          "acoplado": "GYL091",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 00:19",
+          "patente": "PHO788",
+          "acoplado": "AH132PT",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 02:09",
+          "patente": "CJL298",
+          "acoplado": "GZL681",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 04:54",
+          "patente": "EYP704",
+          "acoplado": "NDD521",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 06:04",
+          "patente": "FYH858",
+          "acoplado": "JIF719",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 11:24",
+          "patente": "UFH468",
+          "acoplado": "JYX894",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 12:19",
+          "patente": "AI453FA",
+          "acoplado": "AI453FB",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 14:15",
+          "patente": "SNR847",
+          "acoplado": "OZM596",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 17:27",
+          "patente": "SJS686",
+          "acoplado": "UPX899",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 17:53",
+          "patente": "MBK543",
+          "acoplado": "AE044US",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 23:20",
+          "patente": "GSF260",
+          "acoplado": "AB827AM",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 23:34",
+          "patente": "BRZ160",
+          "acoplado": "AB566HJ",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 23:40",
+          "patente": "AE870JF",
+          "acoplado": "AC194VC",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-19 01:38",
+          "patente": "ROH112",
+          "acoplado": "RGV511",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-19 01:50",
+          "patente": "AH288CM",
+          "acoplado": "JSK734",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-19 02:20",
+          "patente": "JWG183",
+          "acoplado": "AB572CG",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-19 02:22",
+          "patente": "NYS835",
+          "acoplado": "KKK321",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-19 03:22",
+          "patente": "LTI990",
+          "acoplado": "AE378TW",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-19 05:07",
+          "patente": "KGH346",
+          "acoplado": "TDP439",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-19 13:04",
+          "patente": "HDW264",
+          "acoplado": "JYB350",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-19 13:29",
+          "patente": "KOP385",
+          "acoplado": "KKA531",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-19 13:41",
+          "patente": "AH135DG",
+          "acoplado": "GDI204",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-20 09:48",
+          "patente": "SWE419",
+          "acoplado": "LGH760",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 13:42",
+          "patente": "DNM753",
+          "acoplado": "RIF056",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 13:46",
+          "patente": "VIA159",
+          "acoplado": "VIA178",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 14:02",
+          "patente": "AA528CG",
+          "acoplado": "AE492HX",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 14:26",
+          "patente": "DOA548",
+          "acoplado": "HMO096",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 16:23",
+          "patente": "AH426UK",
+          "acoplado": "AE843PU",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 18:49",
+          "patente": "GFQ127",
+          "acoplado": "NEJ751",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 19:32",
+          "patente": "KFJ723",
+          "acoplado": "AF261XE",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 19:38",
+          "patente": "KXJ949",
+          "acoplado": "VPM334",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        }
+      ]
+    },
+    {
+      "sector": "ricardone:Pre ingreso",
+      "planta": "ricardone",
+      "nombre": "Preingreso",
+      "camaras": [
+        "RicPreIngInFr",
+        "RicPreIngEgFr"
+      ],
+      "camarasTraseras": [
+        "RicPreIngInTr",
+        "RicPreIngEgTr"
+      ],
+      "sinPruebaDePaso": 32,
+      "total": {
+        "pasaron": 416,
+        "tomados": 404,
+        "leidos": 397,
+        "noTomados": 12,
+        "pctTomados": 97,
+        "pctLeidos": 95
+      },
+      "dia": {
+        "pasaron": 201,
+        "tomados": 192,
+        "leidos": 186,
+        "noTomados": 9,
+        "pctTomados": 96,
+        "pctLeidos": 93
+      },
+      "noche": {
+        "pasaron": 215,
+        "tomados": 212,
+        "leidos": 211,
+        "noTomados": 3,
+        "pctTomados": 99,
+        "pctLeidos": 98
+      },
+      "porDia": {
+        "2026-10-15": {
+          "dia": {
+            "pasaron": 46,
+            "tomados": 43,
+            "leidos": 40,
+            "noTomados": 3,
+            "pctTomados": 93,
+            "pctLeidos": 87
+          },
+          "noche": {
+            "pasaron": 34,
+            "tomados": 34,
+            "leidos": 34,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          }
+        },
+        "2026-10-16": {
+          "dia": {
+            "pasaron": 29,
+            "tomados": 28,
+            "leidos": 28,
+            "noTomados": 1,
+            "pctTomados": 97,
+            "pctLeidos": 97
+          },
+          "noche": {
+            "pasaron": 42,
+            "tomados": 42,
+            "leidos": 42,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          }
+        },
+        "2026-10-17": {
+          "dia": {
+            "pasaron": 51,
+            "tomados": 49,
+            "leidos": 48,
+            "noTomados": 2,
+            "pctTomados": 96,
+            "pctLeidos": 94
+          },
+          "noche": {
+            "pasaron": 63,
+            "tomados": 62,
+            "leidos": 61,
+            "noTomados": 1,
+            "pctTomados": 98,
+            "pctLeidos": 97
+          }
+        },
+        "2026-10-18": {
+          "dia": {
+            "pasaron": 20,
+            "tomados": 20,
+            "leidos": 20,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 46,
+            "tomados": 45,
+            "leidos": 45,
+            "noTomados": 1,
+            "pctTomados": 98,
+            "pctLeidos": 98
+          }
+        },
+        "2026-10-19": {
+          "dia": {
+            "pasaron": 18,
+            "tomados": 18,
+            "leidos": 17,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 94
+          },
+          "noche": {
+            "pasaron": 18,
+            "tomados": 18,
+            "leidos": 18,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          }
+        },
+        "2026-10-20": {
+          "dia": {
+            "pasaron": 37,
+            "tomados": 34,
+            "leidos": 33,
+            "noTomados": 3,
+            "pctTomados": 92,
+            "pctLeidos": 89
+          },
+          "noche": {
+            "pasaron": 12,
+            "tomados": 11,
+            "leidos": 11,
+            "noTomados": 1,
+            "pctTomados": 92,
+            "pctLeidos": 92
+          }
+        }
+      },
+      "porHora": [
+        {
+          "h": 0,
+          "pasaron": 33,
+          "noTomados": 0
+        },
+        {
+          "h": 1,
+          "pasaron": 12,
+          "noTomados": 0
+        },
+        {
+          "h": 2,
+          "pasaron": 21,
+          "noTomados": 0
+        },
+        {
+          "h": 3,
+          "pasaron": 15,
+          "noTomados": 0
+        },
+        {
+          "h": 4,
+          "pasaron": 14,
+          "noTomados": 1
+        },
+        {
+          "h": 5,
+          "pasaron": 13,
+          "noTomados": 1
+        },
+        {
+          "h": 6,
+          "pasaron": 12,
+          "noTomados": 0
+        },
+        {
+          "h": 7,
+          "pasaron": 25,
+          "noTomados": 0
+        },
+        {
+          "h": 8,
+          "pasaron": 15,
+          "noTomados": 0
+        },
+        {
+          "h": 9,
+          "pasaron": 10,
+          "noTomados": 0
+        },
+        {
+          "h": 10,
+          "pasaron": 22,
+          "noTomados": 2
+        },
+        {
+          "h": 11,
+          "pasaron": 29,
+          "noTomados": 2
+        },
+        {
+          "h": 12,
+          "pasaron": 13,
+          "noTomados": 1
+        },
+        {
+          "h": 13,
+          "pasaron": 21,
+          "noTomados": 0
+        },
+        {
+          "h": 14,
+          "pasaron": 16,
+          "noTomados": 0
+        },
+        {
+          "h": 15,
+          "pasaron": 15,
+          "noTomados": 3
+        },
+        {
+          "h": 16,
+          "pasaron": 13,
+          "noTomados": 0
+        },
+        {
+          "h": 17,
+          "pasaron": 10,
+          "noTomados": 1
+        },
+        {
+          "h": 18,
+          "pasaron": 11,
+          "noTomados": 1
+        },
+        {
+          "h": 19,
+          "pasaron": 18,
+          "noTomados": 0
+        },
+        {
+          "h": 20,
+          "pasaron": 10,
+          "noTomados": 0
+        },
+        {
+          "h": 21,
+          "pasaron": 13,
+          "noTomados": 0
+        },
+        {
+          "h": 22,
+          "pasaron": 39,
+          "noTomados": 0
+        },
+        {
+          "h": 23,
+          "pasaron": 16,
+          "noTomados": 0
+        }
+      ],
+      "traseras": {
+        "RicPreIngInTr": {
+          "pasaron": 416,
+          "tomados": 216,
+          "dia": {
+            "pasaron": 201,
+            "tomados": 95
+          },
+          "noche": {
+            "pasaron": 215,
+            "tomados": 121
+          }
+        },
+        "RicPreIngEgTr": {
+          "pasaron": 416,
+          "tomados": 1,
+          "dia": {
+            "pasaron": 201,
+            "tomados": 1
+          },
+          "noche": {
+            "pasaron": 215,
+            "tomados": 0
+          }
+        }
+      },
+      "lecturasPorCamara": {
+        "RicPreIngInFr": {
+          "2026-10-15": 113,
+          "2026-10-16": 124,
+          "2026-10-17": 164,
+          "2026-10-18": 106,
+          "2026-10-19": 136,
+          "2026-10-20": 183
+        },
+        "RicPreIngEgFr": {
+          "2026-10-15": 11,
+          "2026-10-16": 8,
+          "2026-10-17": 15,
+          "2026-10-18": 5,
+          "2026-10-19": 12,
+          "2026-10-20": 16
+        }
+      },
+      "noTomados": [
+        {
+          "hora": "10-15 10:34",
+          "patente": "KDK364",
+          "acoplado": "AH710HL",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-15 10:39",
+          "patente": "AB930VZ",
+          "acoplado": "AF686SY",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-15 12:29",
+          "patente": "EWL252",
+          "acoplado": "OUX351",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 17:56",
+          "patente": "GKA328",
+          "acoplado": "AE782GT",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 05:31",
+          "patente": "RQQ167",
+          "acoplado": "KBG690",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 11:57",
+          "patente": "VCK738",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 11:57",
+          "patente": "VCK738",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 04:08",
+          "patente": "CRZ339",
+          "acoplado": "MER817",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 15:34",
+          "patente": "KLJ854",
+          "acoplado": "GKO494",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 15:49",
+          "patente": "BAS216",
+          "acoplado": "VLW503",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 15:50",
+          "patente": "FRJ389",
+          "acoplado": "LHT618",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 18:41",
+          "patente": "DXK216",
+          "acoplado": "AC841EQ",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        }
+      ]
+    },
+    {
+      "sector": "ricardone:Calada",
+      "planta": "ricardone",
+      "nombre": "Calada",
+      "camaras": [
+        "RicCal01",
+        "RicCal02",
+        "RicCal03",
+        "RicCal04",
+        "RicCal05",
+        "RicCal06",
+        "RicCalLiq"
+      ],
+      "camarasTraseras": [],
+      "sinPruebaDePaso": 13,
+      "total": {
+        "pasaron": 436,
+        "tomados": 418,
+        "leidos": 397,
+        "noTomados": 18,
+        "pctTomados": 96,
+        "pctLeidos": 91
+      },
+      "dia": {
+        "pasaron": 205,
+        "tomados": 200,
+        "leidos": 197,
+        "noTomados": 5,
+        "pctTomados": 98,
+        "pctLeidos": 96
+      },
+      "noche": {
+        "pasaron": 231,
+        "tomados": 218,
+        "leidos": 200,
+        "noTomados": 13,
+        "pctTomados": 94,
+        "pctLeidos": 87
+      },
+      "porDia": {
+        "2026-10-15": {
+          "dia": {
+            "pasaron": 38,
+            "tomados": 35,
+            "leidos": 35,
+            "noTomados": 3,
+            "pctTomados": 92,
+            "pctLeidos": 92
+          },
+          "noche": {
+            "pasaron": 44,
+            "tomados": 41,
+            "leidos": 40,
+            "noTomados": 3,
+            "pctTomados": 93,
+            "pctLeidos": 91
+          }
+        },
+        "2026-10-16": {
+          "dia": {
+            "pasaron": 34,
+            "tomados": 34,
+            "leidos": 33,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 97
+          },
+          "noche": {
+            "pasaron": 43,
+            "tomados": 41,
+            "leidos": 39,
+            "noTomados": 2,
+            "pctTomados": 95,
+            "pctLeidos": 91
+          }
+        },
+        "2026-10-17": {
+          "dia": {
+            "pasaron": 54,
+            "tomados": 53,
+            "leidos": 51,
+            "noTomados": 1,
+            "pctTomados": 98,
+            "pctLeidos": 94
+          },
+          "noche": {
+            "pasaron": 63,
+            "tomados": 61,
+            "leidos": 54,
+            "noTomados": 2,
+            "pctTomados": 97,
+            "pctLeidos": 86
+          }
+        },
+        "2026-10-18": {
+          "dia": {
+            "pasaron": 22,
+            "tomados": 22,
+            "leidos": 22,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 47,
+            "tomados": 43,
+            "leidos": 38,
+            "noTomados": 4,
+            "pctTomados": 91,
+            "pctLeidos": 81
+          }
+        },
+        "2026-10-19": {
+          "dia": {
+            "pasaron": 19,
+            "tomados": 18,
+            "leidos": 18,
+            "noTomados": 1,
+            "pctTomados": 95,
+            "pctLeidos": 95
+          },
+          "noche": {
+            "pasaron": 21,
+            "tomados": 19,
+            "leidos": 19,
+            "noTomados": 2,
+            "pctTomados": 90,
+            "pctLeidos": 90
+          }
+        },
+        "2026-10-20": {
+          "dia": {
+            "pasaron": 38,
+            "tomados": 38,
+            "leidos": 38,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 12,
+            "tomados": 12,
+            "leidos": 9,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 75
+          }
+        }
+      },
+      "porHora": [
+        {
+          "h": 0,
+          "pasaron": 28,
+          "noTomados": 0
+        },
+        {
+          "h": 1,
+          "pasaron": 7,
+          "noTomados": 0
+        },
+        {
+          "h": 2,
+          "pasaron": 2,
+          "noTomados": 2
+        },
+        {
+          "h": 3,
+          "pasaron": 4,
+          "noTomados": 4
+        },
+        {
+          "h": 4,
+          "pasaron": 15,
+          "noTomados": 3
+        },
+        {
+          "h": 5,
+          "pasaron": 62,
+          "noTomados": 0
+        },
+        {
+          "h": 6,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 7,
+          "pasaron": 17,
+          "noTomados": 1
+        },
+        {
+          "h": 8,
+          "pasaron": 31,
+          "noTomados": 1
+        },
+        {
+          "h": 9,
+          "pasaron": 1,
+          "noTomados": 1
+        },
+        {
+          "h": 10,
+          "pasaron": 19,
+          "noTomados": 1
+        },
+        {
+          "h": 11,
+          "pasaron": 27,
+          "noTomados": 0
+        },
+        {
+          "h": 12,
+          "pasaron": 8,
+          "noTomados": 1
+        },
+        {
+          "h": 13,
+          "pasaron": 33,
+          "noTomados": 0
+        },
+        {
+          "h": 14,
+          "pasaron": 33,
+          "noTomados": 0
+        },
+        {
+          "h": 15,
+          "pasaron": 7,
+          "noTomados": 0
+        },
+        {
+          "h": 16,
+          "pasaron": 12,
+          "noTomados": 0
+        },
+        {
+          "h": 17,
+          "pasaron": 17,
+          "noTomados": 0
+        },
+        {
+          "h": 18,
+          "pasaron": 1,
+          "noTomados": 0
+        },
+        {
+          "h": 19,
+          "pasaron": 14,
+          "noTomados": 1
+        },
+        {
+          "h": 20,
+          "pasaron": 27,
+          "noTomados": 0
+        },
+        {
+          "h": 21,
+          "pasaron": 5,
+          "noTomados": 1
+        },
+        {
+          "h": 22,
+          "pasaron": 27,
+          "noTomados": 2
+        },
+        {
+          "h": 23,
+          "pasaron": 39,
+          "noTomados": 0
+        }
+      ],
+      "traseras": {},
+      "lecturasPorCamara": {
+        "RicCal01": {
+          "2026-10-15": 0,
+          "2026-10-16": 0,
+          "2026-10-17": 0,
+          "2026-10-18": 1,
+          "2026-10-19": 0,
+          "2026-10-20": 0
+        },
+        "RicCal02": {
+          "2026-10-15": 0,
+          "2026-10-16": 0,
+          "2026-10-17": 0,
+          "2026-10-18": 0,
+          "2026-10-19": 0,
+          "2026-10-20": 0
+        },
+        "RicCal03": {
+          "2026-10-15": 53,
+          "2026-10-16": 44,
+          "2026-10-17": 79,
+          "2026-10-18": 49,
+          "2026-10-19": 57,
+          "2026-10-20": 78
+        },
+        "RicCal04": {
+          "2026-10-15": 55,
+          "2026-10-16": 39,
+          "2026-10-17": 71,
+          "2026-10-18": 44,
+          "2026-10-19": 58,
+          "2026-10-20": 74
+        },
+        "RicCal05": {
+          "2026-10-15": 2,
+          "2026-10-16": 2,
+          "2026-10-17": 0,
+          "2026-10-18": 0,
+          "2026-10-19": 2,
+          "2026-10-20": 3
+        },
+        "RicCal06": {
+          "2026-10-15": 0,
+          "2026-10-16": 0,
+          "2026-10-17": 0,
+          "2026-10-18": 0,
+          "2026-10-19": 0,
+          "2026-10-20": 0
+        },
+        "RicCalLiq": {
+          "2026-10-15": 12,
+          "2026-10-16": 40,
+          "2026-10-17": 7,
+          "2026-10-18": 2,
+          "2026-10-19": 18,
+          "2026-10-20": 38
+        }
+      },
+      "noTomados": [
+        {
+          "hora": "10-15 02:55",
+          "patente": "CJE449",
+          "acoplado": "ECS053",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-15 03:38",
+          "patente": "AB058QV",
+          "acoplado": "GLW981",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-15 07:11",
+          "patente": "GMM265",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-15 10:59",
+          "patente": "KAD727",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-15 12:04",
+          "patente": "IRK465",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-15 19:47",
+          "patente": "DOX036",
+          "acoplado": "PMT497",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 02:49",
+          "patente": "AD536BQ",
+          "acoplado": "AD646MS",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 03:50",
+          "patente": "FBV155",
+          "acoplado": "AF892RN",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 03:50",
+          "patente": "CAL265",
+          "acoplado": "DPH646",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 04:15",
+          "patente": "HRS430",
+          "acoplado": "AD531NY",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 09:57",
+          "patente": "MYT215",
+          "acoplado": "AE340PT",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 04:20",
+          "patente": "AB291HC",
+          "acoplado": "AC202ZD",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 21:49",
+          "patente": "HDC112",
+          "acoplado": "GZU744",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 22:15",
+          "patente": "HDN628",
+          "acoplado": "HHP368",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 22:35",
+          "patente": "FKW267",
+          "acoplado": "AG850OG",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-19 03:50",
+          "patente": "AE137UN",
+          "acoplado": "AE219IO",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-19 04:49",
+          "patente": "LTI990",
+          "acoplado": "AE378TW",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-19 08:13",
+          "patente": "AG662JM",
+          "acoplado": "AB325BL",
+          "circuito": "R8",
+          "pasada": null,
+          "ancladoSgc": false
+        }
+      ]
+    },
+    {
+      "sector": "ricardone:Balanzas",
+      "planta": "ricardone",
+      "nombre": "Balanzas",
+      "camaras": [
+        "RicB1Ingreso",
+        "RicB2Ingreso",
+        "RicB3Ingreso",
+        "RicB1Egreso",
+        "RicB2Egreso",
+        "RicB3Egreso"
+      ],
+      "camarasTraseras": [],
+      "sinPruebaDePaso": 0,
+      "total": {
+        "pasaron": 197,
+        "tomados": 157,
+        "leidos": 105,
+        "noTomados": 40,
+        "pctTomados": 80,
+        "pctLeidos": 53
+      },
+      "dia": {
+        "pasaron": 129,
+        "tomados": 110,
+        "leidos": 77,
+        "noTomados": 19,
+        "pctTomados": 85,
+        "pctLeidos": 60
+      },
+      "noche": {
+        "pasaron": 68,
+        "tomados": 47,
+        "leidos": 28,
+        "noTomados": 21,
+        "pctTomados": 69,
+        "pctLeidos": 41
+      },
+      "pesadaEntrada": {
+        "pasaron": 92,
+        "tomados": 78,
+        "leidos": 30,
+        "noTomados": 14,
+        "pctTomados": 85,
+        "pctLeidos": 33
+      },
+      "pesadaSalida": {
+        "pasaron": 105,
+        "tomados": 79,
+        "leidos": 75,
+        "noTomados": 26,
+        "pctTomados": 75,
+        "pctLeidos": 71
+      },
+      "porDia": {
+        "2026-10-15": {
+          "dia": {
+            "pasaron": 33,
+            "tomados": 31,
+            "leidos": 21,
+            "noTomados": 2,
+            "pctTomados": 94,
+            "pctLeidos": 64
+          },
+          "noche": {
+            "pasaron": 33,
+            "tomados": 25,
+            "leidos": 17,
+            "noTomados": 8,
+            "pctTomados": 76,
+            "pctLeidos": 52
+          }
+        },
+        "2026-10-16": {
+          "dia": {
+            "pasaron": 41,
+            "tomados": 39,
+            "leidos": 23,
+            "noTomados": 2,
+            "pctTomados": 95,
+            "pctLeidos": 56
+          },
+          "noche": {
+            "pasaron": 26,
+            "tomados": 16,
+            "leidos": 10,
+            "noTomados": 10,
+            "pctTomados": 62,
+            "pctLeidos": 38
+          }
+        },
+        "2026-10-17": {
+          "dia": {
+            "pasaron": 33,
+            "tomados": 22,
+            "leidos": 20,
+            "noTomados": 11,
+            "pctTomados": 67,
+            "pctLeidos": 61
+          },
+          "noche": {
+            "pasaron": 9,
+            "tomados": 6,
+            "leidos": 1,
+            "noTomados": 3,
+            "pctTomados": 67,
+            "pctLeidos": 11
+          }
+        },
+        "2026-10-18": {
+          "dia": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          },
+          "noche": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          }
+        },
+        "2026-10-19": {
+          "dia": {
+            "pasaron": 14,
+            "tomados": 11,
+            "leidos": 8,
+            "noTomados": 3,
+            "pctTomados": 79,
+            "pctLeidos": 57
+          },
+          "noche": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          }
+        },
+        "2026-10-20": {
+          "dia": {
+            "pasaron": 8,
+            "tomados": 7,
+            "leidos": 5,
+            "noTomados": 1,
+            "pctTomados": 88,
+            "pctLeidos": 63
+          },
+          "noche": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          }
+        }
+      },
+      "porHora": [
+        {
+          "h": 0,
+          "pasaron": 8,
+          "noTomados": 4
+        },
+        {
+          "h": 1,
+          "pasaron": 6,
+          "noTomados": 2
+        },
+        {
+          "h": 2,
+          "pasaron": 5,
+          "noTomados": 1
+        },
+        {
+          "h": 3,
+          "pasaron": 9,
+          "noTomados": 2
+        },
+        {
+          "h": 4,
+          "pasaron": 10,
+          "noTomados": 4
+        },
+        {
+          "h": 5,
+          "pasaron": 12,
+          "noTomados": 3
+        },
+        {
+          "h": 6,
+          "pasaron": 4,
+          "noTomados": 1
+        },
+        {
+          "h": 7,
+          "pasaron": 8,
+          "noTomados": 1
+        },
+        {
+          "h": 8,
+          "pasaron": 12,
+          "noTomados": 0
+        },
+        {
+          "h": 9,
+          "pasaron": 6,
+          "noTomados": 1
+        },
+        {
+          "h": 10,
+          "pasaron": 7,
+          "noTomados": 2
+        },
+        {
+          "h": 11,
+          "pasaron": 14,
+          "noTomados": 0
+        },
+        {
+          "h": 12,
+          "pasaron": 18,
+          "noTomados": 5
+        },
+        {
+          "h": 13,
+          "pasaron": 21,
+          "noTomados": 4
+        },
+        {
+          "h": 14,
+          "pasaron": 14,
+          "noTomados": 1
+        },
+        {
+          "h": 15,
+          "pasaron": 10,
+          "noTomados": 3
+        },
+        {
+          "h": 16,
+          "pasaron": 5,
+          "noTomados": 0
+        },
+        {
+          "h": 17,
+          "pasaron": 10,
+          "noTomados": 1
+        },
+        {
+          "h": 18,
+          "pasaron": 2,
+          "noTomados": 0
+        },
+        {
+          "h": 19,
+          "pasaron": 4,
+          "noTomados": 2
+        },
+        {
+          "h": 20,
+          "pasaron": 3,
+          "noTomados": 0
+        },
+        {
+          "h": 21,
+          "pasaron": 4,
+          "noTomados": 1
+        },
+        {
+          "h": 22,
+          "pasaron": 2,
+          "noTomados": 0
+        },
+        {
+          "h": 23,
+          "pasaron": 3,
+          "noTomados": 2
+        }
+      ],
+      "traseras": {},
+      "lecturasPorCamara": {
+        "RicB1Ingreso": {
+          "2026-10-15": 16,
+          "2026-10-16": 13,
+          "2026-10-17": 15,
+          "2026-10-18": 6,
+          "2026-10-19": 13,
+          "2026-10-20": 20
+        },
+        "RicB2Ingreso": {
+          "2026-10-15": 33,
+          "2026-10-16": 38,
+          "2026-10-17": 9,
+          "2026-10-18": 6,
+          "2026-10-19": 24,
+          "2026-10-20": 38
+        },
+        "RicB3Ingreso": {
+          "2026-10-15": 94,
+          "2026-10-16": 101,
+          "2026-10-17": 0,
+          "2026-10-18": 0,
+          "2026-10-19": 97,
+          "2026-10-20": 77
+        },
+        "RicB1Egreso": {
+          "2026-10-15": 0,
+          "2026-10-16": 0,
+          "2026-10-17": 0,
+          "2026-10-18": 0,
+          "2026-10-19": 0,
+          "2026-10-20": 0
+        },
+        "RicB2Egreso": {
+          "2026-10-15": 89,
+          "2026-10-16": 90,
+          "2026-10-17": 67,
+          "2026-10-18": 25,
+          "2026-10-19": 58,
+          "2026-10-20": 89
+        },
+        "RicB3Egreso": {
+          "2026-10-15": 58,
+          "2026-10-16": 62,
+          "2026-10-17": 0,
+          "2026-10-18": 0,
+          "2026-10-19": 64,
+          "2026-10-20": 47
+        }
+      },
+      "noTomados": [
+        {
+          "hora": "10-15 02:35",
+          "patente": "FSM599",
+          "acoplado": "AF070SE",
+          "circuito": "R6",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 03:55",
+          "patente": "GHD821",
+          "acoplado": "RJW760",
+          "circuito": "R6",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 04:24",
+          "patente": "REL854",
+          "acoplado": "TIY230",
+          "circuito": "R6",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 04:57",
+          "patente": "AB078ID",
+          "acoplado": "AF422OD",
+          "circuito": "R6",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 09:02",
+          "patente": "MWG720",
+          "acoplado": "IOT726",
+          "circuito": "R6",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 14:49",
+          "patente": "OXA363",
+          "acoplado": "AE639WW",
+          "circuito": "R13",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 19:23",
+          "patente": "AD636BO",
+          "acoplado": "",
+          "circuito": "R13",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 19:49",
+          "patente": "BBU070",
+          "acoplado": "UWE817",
+          "circuito": "R6",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 23:03",
+          "patente": "OKC311",
+          "acoplado": "AF499BW",
+          "circuito": "R6",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 23:44",
+          "patente": "AA519ER",
+          "acoplado": "AF050XB",
+          "circuito": "R6",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 00:23",
+          "patente": "AKJ989",
+          "acoplado": "HIA452",
+          "circuito": "R6",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 00:54",
+          "patente": "KWK808",
+          "acoplado": "ESZ049",
+          "circuito": "R6",
+          "pasada": "entrada",
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 01:11",
+          "patente": "EWL252",
+          "acoplado": "OUX351",
+          "circuito": "R6",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 01:47",
+          "patente": "HBV999",
+          "acoplado": "HCY705",
+          "circuito": "R6",
+          "pasada": "entrada",
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 03:08",
+          "patente": "KWK808",
+          "acoplado": "ESZ049",
+          "circuito": "R6",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 04:07",
+          "patente": "HBV999",
+          "acoplado": "HCY705",
+          "circuito": "R6",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 04:44",
+          "patente": "AA817CC",
+          "acoplado": "AE480ZQ",
+          "circuito": "R6",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 05:33",
+          "patente": "DPW047",
+          "acoplado": "UKN468",
+          "circuito": "R6",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 05:56",
+          "patente": "AF584EP",
+          "acoplado": "AF584EN",
+          "circuito": "R6",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 12:22",
+          "patente": "SOY202",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 12:55",
+          "patente": "MCO802",
+          "acoplado": "",
+          "circuito": "R13",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 21:00",
+          "patente": "AA699TL",
+          "acoplado": "AA817CY",
+          "circuito": "R6",
+          "pasada": "entrada",
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 00:11",
+          "patente": "BOX621",
+          "acoplado": "OCT613",
+          "circuito": "R6",
+          "pasada": "entrada",
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 00:49",
+          "patente": "BOX621",
+          "acoplado": "OCT613",
+          "circuito": "R6",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 05:50",
+          "patente": "OOX719",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": "entrada",
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 06:14",
+          "patente": "GZG893",
+          "acoplado": "BSI690",
+          "circuito": "R6",
+          "pasada": "entrada",
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 07:17",
+          "patente": "HQB528",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": "entrada",
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 10:13",
+          "patente": "PDC059",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": "entrada",
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 10:52",
+          "patente": "GYZ853",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": "entrada",
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 12:20",
+          "patente": "HIE900",
+          "acoplado": "AA807ZP",
+          "circuito": "R6",
+          "pasada": "entrada",
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 12:37",
+          "patente": "VKA515",
+          "acoplado": "AA641XS",
+          "circuito": "R6",
+          "pasada": "entrada",
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 12:57",
+          "patente": "VCK738",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": "entrada",
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 13:11",
+          "patente": "KEO622",
+          "acoplado": "GVQ961",
+          "circuito": "R6",
+          "pasada": "entrada",
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 13:37",
+          "patente": "VKA515",
+          "acoplado": "AA641XS",
+          "circuito": "R6",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 15:03",
+          "patente": "RUK692",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 15:07",
+          "patente": "OOX719",
+          "acoplado": "",
+          "circuito": "R8",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-19 13:06",
+          "patente": "CTU452",
+          "acoplado": "AXP848",
+          "circuito": "R8",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-19 13:10",
+          "patente": "KGH346",
+          "acoplado": "TDP439",
+          "circuito": "R8",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-19 15:07",
+          "patente": "CBF677",
+          "acoplado": "WHT644",
+          "circuito": "R8",
+          "pasada": "salida",
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-20 17:06",
+          "patente": "NRT949",
+          "acoplado": "NOT350",
+          "circuito": "R8",
+          "pasada": "entrada",
+          "ancladoSgc": false
+        }
+      ]
+    },
+    {
+      "sector": "ricardone:Playa 3",
+      "planta": "ricardone",
+      "nombre": "Playa 3",
+      "camaras": [
+        "RicS6Playa3"
+      ],
+      "camarasTraseras": [],
+      "sinPruebaDePaso": 4,
+      "total": {
+        "pasaron": 49,
+        "tomados": 44,
+        "leidos": 43,
+        "noTomados": 5,
+        "pctTomados": 90,
+        "pctLeidos": 88
+      },
+      "dia": {
+        "pasaron": 28,
+        "tomados": 24,
+        "leidos": 23,
+        "noTomados": 4,
+        "pctTomados": 86,
+        "pctLeidos": 82
+      },
+      "noche": {
+        "pasaron": 21,
+        "tomados": 20,
+        "leidos": 20,
+        "noTomados": 1,
+        "pctTomados": 95,
+        "pctLeidos": 95
+      },
+      "porDia": {
+        "2026-10-15": {
+          "dia": {
+            "pasaron": 14,
+            "tomados": 14,
+            "leidos": 14,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 10,
+            "tomados": 10,
+            "leidos": 10,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          }
+        },
+        "2026-10-16": {
+          "dia": {
+            "pasaron": 9,
+            "tomados": 6,
+            "leidos": 5,
+            "noTomados": 3,
+            "pctTomados": 67,
+            "pctLeidos": 56
+          },
+          "noche": {
+            "pasaron": 10,
+            "tomados": 9,
+            "leidos": 9,
+            "noTomados": 1,
+            "pctTomados": 90,
+            "pctLeidos": 90
+          }
+        },
+        "2026-10-17": {
+          "dia": {
+            "pasaron": 5,
+            "tomados": 4,
+            "leidos": 4,
+            "noTomados": 1,
+            "pctTomados": 80,
+            "pctLeidos": 80
+          },
+          "noche": {
+            "pasaron": 1,
+            "tomados": 1,
+            "leidos": 1,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          }
+        },
+        "2026-10-18": {
+          "dia": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          },
+          "noche": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          }
+        },
+        "2026-10-19": {
+          "dia": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          },
+          "noche": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          }
+        },
+        "2026-10-20": {
+          "dia": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          },
+          "noche": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          }
+        }
+      },
+      "porHora": [
+        {
+          "h": 0,
+          "pasaron": 3,
+          "noTomados": 0
+        },
+        {
+          "h": 1,
+          "pasaron": 1,
+          "noTomados": 0
+        },
+        {
+          "h": 2,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 3,
+          "pasaron": 1,
+          "noTomados": 1
+        },
+        {
+          "h": 4,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 5,
+          "pasaron": 9,
+          "noTomados": 0
+        },
+        {
+          "h": 6,
+          "pasaron": 3,
+          "noTomados": 3
+        },
+        {
+          "h": 7,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 8,
+          "pasaron": 6,
+          "noTomados": 0
+        },
+        {
+          "h": 9,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 10,
+          "pasaron": 5,
+          "noTomados": 0
+        },
+        {
+          "h": 11,
+          "pasaron": 6,
+          "noTomados": 1
+        },
+        {
+          "h": 12,
+          "pasaron": 3,
+          "noTomados": 0
+        },
+        {
+          "h": 13,
+          "pasaron": 5,
+          "noTomados": 0
+        },
+        {
+          "h": 14,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 15,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 16,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 17,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 18,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 19,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 20,
+          "pasaron": 5,
+          "noTomados": 0
+        },
+        {
+          "h": 21,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 22,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 23,
+          "pasaron": 2,
+          "noTomados": 0
+        }
+      ],
+      "traseras": {},
+      "lecturasPorCamara": {
+        "RicS6Playa3": {
+          "2026-10-15": 62,
+          "2026-10-16": 64,
+          "2026-10-17": 26,
+          "2026-10-18": 18,
+          "2026-10-19": 22,
+          "2026-10-20": 29
+        }
+      },
+      "noTomados": [
+        {
+          "hora": "10-16 03:01",
+          "patente": "KWK808",
+          "acoplado": "ESZ049",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 06:08",
+          "patente": "OJP930",
+          "acoplado": "",
+          "circuito": "R13",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 06:38",
+          "patente": "AB592JA",
+          "acoplado": "AF453YJ",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 11:32",
+          "patente": "RKY623",
+          "acoplado": "HMU874",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 06:29",
+          "patente": "GZG893",
+          "acoplado": "BSI690",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": false
+        }
+      ]
+    },
+    {
+      "sector": "ricardone:Volcable 2",
+      "planta": "ricardone",
+      "nombre": "Volcable 2",
+      "camaras": [
+        "RicVolcable2"
+      ],
+      "camarasTraseras": [],
+      "sinPruebaDePaso": 0,
+      "total": {
+        "pasaron": 55,
+        "tomados": 46,
+        "leidos": 40,
+        "noTomados": 9,
+        "pctTomados": 84,
+        "pctLeidos": 73
+      },
+      "dia": {
+        "pasaron": 32,
+        "tomados": 24,
+        "leidos": 22,
+        "noTomados": 8,
+        "pctTomados": 75,
+        "pctLeidos": 69
+      },
+      "noche": {
+        "pasaron": 23,
+        "tomados": 22,
+        "leidos": 18,
+        "noTomados": 1,
+        "pctTomados": 96,
+        "pctLeidos": 78
+      },
+      "porDia": {
+        "2026-10-15": {
+          "dia": {
+            "pasaron": 14,
+            "tomados": 9,
+            "leidos": 8,
+            "noTomados": 5,
+            "pctTomados": 64,
+            "pctLeidos": 57
+          },
+          "noche": {
+            "pasaron": 12,
+            "tomados": 12,
+            "leidos": 9,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 75
+          }
+        },
+        "2026-10-16": {
+          "dia": {
+            "pasaron": 12,
+            "tomados": 10,
+            "leidos": 9,
+            "noTomados": 2,
+            "pctTomados": 83,
+            "pctLeidos": 75
+          },
+          "noche": {
+            "pasaron": 10,
+            "tomados": 9,
+            "leidos": 9,
+            "noTomados": 1,
+            "pctTomados": 90,
+            "pctLeidos": 90
+          }
+        },
+        "2026-10-17": {
+          "dia": {
+            "pasaron": 6,
+            "tomados": 5,
+            "leidos": 5,
+            "noTomados": 1,
+            "pctTomados": 83,
+            "pctLeidos": 83
+          },
+          "noche": {
+            "pasaron": 1,
+            "tomados": 1,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 0
+          }
+        },
+        "2026-10-18": {
+          "dia": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          },
+          "noche": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          }
+        },
+        "2026-10-19": {
+          "dia": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          },
+          "noche": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          }
+        },
+        "2026-10-20": {
+          "dia": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          },
+          "noche": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          }
+        }
+      },
+      "porHora": [
+        {
+          "h": 0,
+          "pasaron": 3,
+          "noTomados": 1
+        },
+        {
+          "h": 1,
+          "pasaron": 2,
+          "noTomados": 0
+        },
+        {
+          "h": 2,
+          "pasaron": 3,
+          "noTomados": 0
+        },
+        {
+          "h": 3,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 4,
+          "pasaron": 2,
+          "noTomados": 0
+        },
+        {
+          "h": 5,
+          "pasaron": 4,
+          "noTomados": 0
+        },
+        {
+          "h": 6,
+          "pasaron": 1,
+          "noTomados": 0
+        },
+        {
+          "h": 7,
+          "pasaron": 4,
+          "noTomados": 0
+        },
+        {
+          "h": 8,
+          "pasaron": 6,
+          "noTomados": 3
+        },
+        {
+          "h": 9,
+          "pasaron": 2,
+          "noTomados": 0
+        },
+        {
+          "h": 10,
+          "pasaron": 4,
+          "noTomados": 1
+        },
+        {
+          "h": 11,
+          "pasaron": 4,
+          "noTomados": 2
+        },
+        {
+          "h": 12,
+          "pasaron": 5,
+          "noTomados": 1
+        },
+        {
+          "h": 13,
+          "pasaron": 3,
+          "noTomados": 0
+        },
+        {
+          "h": 14,
+          "pasaron": 2,
+          "noTomados": 1
+        },
+        {
+          "h": 15,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 16,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 17,
+          "pasaron": 1,
+          "noTomados": 0
+        },
+        {
+          "h": 18,
+          "pasaron": 1,
+          "noTomados": 0
+        },
+        {
+          "h": 19,
+          "pasaron": 1,
+          "noTomados": 0
+        },
+        {
+          "h": 20,
+          "pasaron": 2,
+          "noTomados": 0
+        },
+        {
+          "h": 21,
+          "pasaron": 2,
+          "noTomados": 0
+        },
+        {
+          "h": 22,
+          "pasaron": 1,
+          "noTomados": 0
+        },
+        {
+          "h": 23,
+          "pasaron": 2,
+          "noTomados": 0
+        }
+      ],
+      "traseras": {},
+      "lecturasPorCamara": {
+        "RicVolcable2": {
+          "2026-10-15": 49,
+          "2026-10-16": 65,
+          "2026-10-17": 63,
+          "2026-10-18": 82,
+          "2026-10-19": 75,
+          "2026-10-20": 43
+        }
+      },
+      "noTomados": [
+        {
+          "hora": "10-15 08:54",
+          "patente": "BBU070",
+          "acoplado": "UWE817",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-15 08:56",
+          "patente": "UXG866",
+          "acoplado": "EJO025",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-15 11:07",
+          "patente": "BEY589",
+          "acoplado": "AA721VV",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-15 11:43",
+          "patente": "AKJ989",
+          "acoplado": "HIA452",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-15 14:00",
+          "patente": "EWL252",
+          "acoplado": "OUX351",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 00:52",
+          "patente": "DPW047",
+          "acoplado": "UKN468",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 08:22",
+          "patente": "GCI274",
+          "acoplado": "AB138HE",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 10:39",
+          "patente": "HPG938",
+          "acoplado": "ETR472",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 12:29",
+          "patente": "AUV770",
+          "acoplado": "MRJ156",
+          "circuito": "R6",
+          "pasada": null,
+          "ancladoSgc": false
+        }
+      ]
+    },
+    {
+      "sector": "ricardone:Salida 2",
+      "planta": "ricardone",
+      "nombre": "Salida 2",
+      "camaras": [
+        "RicEgrCamFrente"
+      ],
+      "camarasTraseras": [
+        "RicEgrCamTraser"
+      ],
+      "sinPruebaDePaso": 5,
+      "total": {
+        "pasaron": 353,
+        "tomados": 339,
+        "leidos": 315,
+        "noTomados": 14,
+        "pctTomados": 96,
+        "pctLeidos": 89
+      },
+      "dia": {
+        "pasaron": 157,
+        "tomados": 154,
+        "leidos": 153,
+        "noTomados": 3,
+        "pctTomados": 98,
+        "pctLeidos": 97
+      },
+      "noche": {
+        "pasaron": 196,
+        "tomados": 185,
+        "leidos": 162,
+        "noTomados": 11,
+        "pctTomados": 94,
+        "pctLeidos": 83
+      },
+      "porDia": {
+        "2026-10-15": {
+          "dia": {
+            "pasaron": 23,
+            "tomados": 23,
+            "leidos": 23,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 31,
+            "tomados": 28,
+            "leidos": 26,
+            "noTomados": 3,
+            "pctTomados": 90,
+            "pctLeidos": 84
+          }
+        },
+        "2026-10-16": {
+          "dia": {
+            "pasaron": 20,
+            "tomados": 19,
+            "leidos": 19,
+            "noTomados": 1,
+            "pctTomados": 95,
+            "pctLeidos": 95
+          },
+          "noche": {
+            "pasaron": 21,
+            "tomados": 20,
+            "leidos": 20,
+            "noTomados": 1,
+            "pctTomados": 95,
+            "pctLeidos": 95
+          }
+        },
+        "2026-10-17": {
+          "dia": {
+            "pasaron": 45,
+            "tomados": 43,
+            "leidos": 42,
+            "noTomados": 2,
+            "pctTomados": 96,
+            "pctLeidos": 93
+          },
+          "noche": {
+            "pasaron": 62,
+            "tomados": 60,
+            "leidos": 52,
+            "noTomados": 2,
+            "pctTomados": 97,
+            "pctLeidos": 84
+          }
+        },
+        "2026-10-18": {
+          "dia": {
+            "pasaron": 21,
+            "tomados": 21,
+            "leidos": 21,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 48,
+            "tomados": 46,
+            "leidos": 37,
+            "noTomados": 2,
+            "pctTomados": 96,
+            "pctLeidos": 77
+          }
+        },
+        "2026-10-19": {
+          "dia": {
+            "pasaron": 15,
+            "tomados": 15,
+            "leidos": 15,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 19,
+            "tomados": 17,
+            "leidos": 16,
+            "noTomados": 2,
+            "pctTomados": 89,
+            "pctLeidos": 84
+          }
+        },
+        "2026-10-20": {
+          "dia": {
+            "pasaron": 33,
+            "tomados": 33,
+            "leidos": 33,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 15,
+            "tomados": 14,
+            "leidos": 11,
+            "noTomados": 1,
+            "pctTomados": 93,
+            "pctLeidos": 73
+          }
+        }
+      },
+      "porHora": [
+        {
+          "h": 0,
+          "pasaron": 21,
+          "noTomados": 2
+        },
+        {
+          "h": 1,
+          "pasaron": 7,
+          "noTomados": 1
+        },
+        {
+          "h": 2,
+          "pasaron": 3,
+          "noTomados": 2
+        },
+        {
+          "h": 3,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 4,
+          "pasaron": 5,
+          "noTomados": 2
+        },
+        {
+          "h": 5,
+          "pasaron": 56,
+          "noTomados": 1
+        },
+        {
+          "h": 6,
+          "pasaron": 5,
+          "noTomados": 1
+        },
+        {
+          "h": 7,
+          "pasaron": 6,
+          "noTomados": 0
+        },
+        {
+          "h": 8,
+          "pasaron": 18,
+          "noTomados": 0
+        },
+        {
+          "h": 9,
+          "pasaron": 4,
+          "noTomados": 1
+        },
+        {
+          "h": 10,
+          "pasaron": 10,
+          "noTomados": 0
+        },
+        {
+          "h": 11,
+          "pasaron": 18,
+          "noTomados": 0
+        },
+        {
+          "h": 12,
+          "pasaron": 11,
+          "noTomados": 0
+        },
+        {
+          "h": 13,
+          "pasaron": 21,
+          "noTomados": 0
+        },
+        {
+          "h": 14,
+          "pasaron": 20,
+          "noTomados": 0
+        },
+        {
+          "h": 15,
+          "pasaron": 18,
+          "noTomados": 0
+        },
+        {
+          "h": 16,
+          "pasaron": 4,
+          "noTomados": 0
+        },
+        {
+          "h": 17,
+          "pasaron": 22,
+          "noTomados": 1
+        },
+        {
+          "h": 18,
+          "pasaron": 1,
+          "noTomados": 0
+        },
+        {
+          "h": 19,
+          "pasaron": 9,
+          "noTomados": 0
+        },
+        {
+          "h": 20,
+          "pasaron": 17,
+          "noTomados": 1
+        },
+        {
+          "h": 21,
+          "pasaron": 9,
+          "noTomados": 1
+        },
+        {
+          "h": 22,
+          "pasaron": 21,
+          "noTomados": 1
+        },
+        {
+          "h": 23,
+          "pasaron": 47,
+          "noTomados": 0
+        }
+      ],
+      "traseras": {
+        "RicEgrCamTraser": {
+          "pasaron": 353,
+          "tomados": 177,
+          "dia": {
+            "pasaron": 157,
+            "tomados": 85
+          },
+          "noche": {
+            "pasaron": 196,
+            "tomados": 92
+          }
+        }
+      },
+      "lecturasPorCamara": {
+        "RicEgrCamFrente": {
+          "2026-10-15": 160,
+          "2026-10-16": 127,
+          "2026-10-17": 169,
+          "2026-10-18": 105,
+          "2026-10-19": 173,
+          "2026-10-20": 246
+        }
+      },
+      "noTomados": [
+        {
+          "hora": "10-15 04:06",
+          "patente": "CJE449",
+          "acoplado": "ECS053",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-15 20:19",
+          "patente": "ELW468",
+          "acoplado": "BZQ754",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-15 22:58",
+          "patente": "SDG641",
+          "acoplado": "GKU727",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 04:42",
+          "patente": "FBV155",
+          "acoplado": "AF892RN",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 09:11",
+          "patente": "AB297FS",
+          "acoplado": "AE795RN",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 02:10",
+          "patente": "EVK754",
+          "acoplado": "AG093IZ",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 02:43",
+          "patente": "VXF789",
+          "acoplado": "UIN633",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 06:48",
+          "patente": "CFA967",
+          "acoplado": "CFA968",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 17:51",
+          "patente": "FIV899",
+          "acoplado": "PJI141",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 00:01",
+          "patente": "DBP116",
+          "acoplado": "RQK661",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 01:50",
+          "patente": "HBI340",
+          "acoplado": "HNM426",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-19 00:32",
+          "patente": "GSF260",
+          "acoplado": "AB827AM",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-19 05:32",
+          "patente": "AH288CM",
+          "acoplado": "JSK734",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 21:24",
+          "patente": "GFQ127",
+          "acoplado": "NEJ751",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        }
+      ]
+    },
+    {
+      "sector": "san_lorenzo:Ingreso",
+      "planta": "san_lorenzo",
+      "nombre": "Ingreso",
+      "camaras": [
+        "SLZIngCamFrente"
+      ],
+      "camarasTraseras": [
+        "SLZIngCamTrasera"
+      ],
+      "sinPruebaDePaso": 12,
+      "total": {
+        "pasaron": 447,
+        "tomados": 438,
+        "leidos": 428,
+        "noTomados": 9,
+        "pctTomados": 98,
+        "pctLeidos": 96
+      },
+      "dia": {
+        "pasaron": 238,
+        "tomados": 236,
+        "leidos": 234,
+        "noTomados": 2,
+        "pctTomados": 99,
+        "pctLeidos": 98
+      },
+      "noche": {
+        "pasaron": 209,
+        "tomados": 202,
+        "leidos": 194,
+        "noTomados": 7,
+        "pctTomados": 97,
+        "pctLeidos": 93
+      },
+      "porDia": {
+        "2026-10-15": {
+          "dia": {
+            "pasaron": 52,
+            "tomados": 52,
+            "leidos": 51,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 98
+          },
+          "noche": {
+            "pasaron": 34,
+            "tomados": 34,
+            "leidos": 34,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          }
+        },
+        "2026-10-16": {
+          "dia": {
+            "pasaron": 42,
+            "tomados": 42,
+            "leidos": 42,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 27,
+            "tomados": 24,
+            "leidos": 23,
+            "noTomados": 3,
+            "pctTomados": 89,
+            "pctLeidos": 85
+          }
+        },
+        "2026-10-17": {
+          "dia": {
+            "pasaron": 55,
+            "tomados": 53,
+            "leidos": 52,
+            "noTomados": 2,
+            "pctTomados": 96,
+            "pctLeidos": 95
+          },
+          "noche": {
+            "pasaron": 56,
+            "tomados": 55,
+            "leidos": 53,
+            "noTomados": 1,
+            "pctTomados": 98,
+            "pctLeidos": 95
+          }
+        },
+        "2026-10-18": {
+          "dia": {
+            "pasaron": 25,
+            "tomados": 25,
+            "leidos": 25,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 57,
+            "tomados": 55,
+            "leidos": 52,
+            "noTomados": 2,
+            "pctTomados": 96,
+            "pctLeidos": 91
+          }
+        },
+        "2026-10-19": {
+          "dia": {
+            "pasaron": 19,
+            "tomados": 19,
+            "leidos": 19,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 18,
+            "tomados": 17,
+            "leidos": 17,
+            "noTomados": 1,
+            "pctTomados": 94,
+            "pctLeidos": 94
+          }
+        },
+        "2026-10-20": {
+          "dia": {
+            "pasaron": 45,
+            "tomados": 45,
+            "leidos": 45,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 17,
+            "tomados": 17,
+            "leidos": 15,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 88
+          }
+        }
+      },
+      "porHora": [
+        {
+          "h": 0,
+          "pasaron": 23,
+          "noTomados": 1
+        },
+        {
+          "h": 1,
+          "pasaron": 15,
+          "noTomados": 1
+        },
+        {
+          "h": 2,
+          "pasaron": 2,
+          "noTomados": 0
+        },
+        {
+          "h": 3,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 4,
+          "pasaron": 2,
+          "noTomados": 0
+        },
+        {
+          "h": 5,
+          "pasaron": 49,
+          "noTomados": 1
+        },
+        {
+          "h": 6,
+          "pasaron": 20,
+          "noTomados": 0
+        },
+        {
+          "h": 7,
+          "pasaron": 7,
+          "noTomados": 2
+        },
+        {
+          "h": 8,
+          "pasaron": 32,
+          "noTomados": 0
+        },
+        {
+          "h": 9,
+          "pasaron": 8,
+          "noTomados": 0
+        },
+        {
+          "h": 10,
+          "pasaron": 16,
+          "noTomados": 0
+        },
+        {
+          "h": 11,
+          "pasaron": 15,
+          "noTomados": 0
+        },
+        {
+          "h": 12,
+          "pasaron": 23,
+          "noTomados": 0
+        },
+        {
+          "h": 13,
+          "pasaron": 22,
+          "noTomados": 0
+        },
+        {
+          "h": 14,
+          "pasaron": 36,
+          "noTomados": 0
+        },
+        {
+          "h": 15,
+          "pasaron": 27,
+          "noTomados": 0
+        },
+        {
+          "h": 16,
+          "pasaron": 10,
+          "noTomados": 0
+        },
+        {
+          "h": 17,
+          "pasaron": 22,
+          "noTomados": 0
+        },
+        {
+          "h": 18,
+          "pasaron": 9,
+          "noTomados": 0
+        },
+        {
+          "h": 19,
+          "pasaron": 10,
+          "noTomados": 0
+        },
+        {
+          "h": 20,
+          "pasaron": 19,
+          "noTomados": 3
+        },
+        {
+          "h": 21,
+          "pasaron": 13,
+          "noTomados": 0
+        },
+        {
+          "h": 22,
+          "pasaron": 19,
+          "noTomados": 1
+        },
+        {
+          "h": 23,
+          "pasaron": 48,
+          "noTomados": 0
+        }
+      ],
+      "traseras": {
+        "SLZIngCamTrasera": {
+          "pasaron": 447,
+          "tomados": 194,
+          "dia": {
+            "pasaron": 238,
+            "tomados": 104
+          },
+          "noche": {
+            "pasaron": 209,
+            "tomados": 90
+          }
+        }
+      },
+      "lecturasPorCamara": {
+        "SLZIngCamFrente": {
+          "2026-10-15": 118,
+          "2026-10-16": 98,
+          "2026-10-17": 135,
+          "2026-10-18": 96,
+          "2026-10-19": 147,
+          "2026-10-20": 188
+        }
+      },
+      "noTomados": [
+        {
+          "hora": "10-16 20:50",
+          "patente": "OFG785",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 20:55",
+          "patente": "CXA592",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 22:44",
+          "patente": "AD195CG",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 00:39",
+          "patente": "GZI868",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 07:20",
+          "patente": "FGJ326",
+          "acoplado": "OHW897",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 07:33",
+          "patente": "CFA967",
+          "acoplado": "CFA968",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 05:32",
+          "patente": "EYP704",
+          "acoplado": "NDD521",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 20:41",
+          "patente": "REV889",
+          "acoplado": "KHP252",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-19 01:00",
+          "patente": "PCK317",
+          "acoplado": "NFK184",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        }
+      ]
+    },
+    {
+      "sector": "san_lorenzo:Balanza Ingreso",
+      "planta": "san_lorenzo",
+      "nombre": "Balanza ingreso",
+      "camaras": [
+        "SLZBalIngFte"
+      ],
+      "camarasTraseras": [
+        "SLZBalIngTras"
+      ],
+      "sinPruebaDePaso": 24,
+      "total": {
+        "pasaron": 435,
+        "tomados": 413,
+        "leidos": 401,
+        "noTomados": 22,
+        "pctTomados": 95,
+        "pctLeidos": 92
+      },
+      "dia": {
+        "pasaron": 244,
+        "tomados": 242,
+        "leidos": 240,
+        "noTomados": 2,
+        "pctTomados": 99,
+        "pctLeidos": 98
+      },
+      "noche": {
+        "pasaron": 191,
+        "tomados": 171,
+        "leidos": 161,
+        "noTomados": 20,
+        "pctTomados": 90,
+        "pctLeidos": 84
+      },
+      "porDia": {
+        "2026-10-15": {
+          "dia": {
+            "pasaron": 55,
+            "tomados": 55,
+            "leidos": 54,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 98
+          },
+          "noche": {
+            "pasaron": 27,
+            "tomados": 27,
+            "leidos": 25,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 93
+          }
+        },
+        "2026-10-16": {
+          "dia": {
+            "pasaron": 45,
+            "tomados": 45,
+            "leidos": 45,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 20,
+            "tomados": 18,
+            "leidos": 18,
+            "noTomados": 2,
+            "pctTomados": 90,
+            "pctLeidos": 90
+          }
+        },
+        "2026-10-17": {
+          "dia": {
+            "pasaron": 49,
+            "tomados": 48,
+            "leidos": 47,
+            "noTomados": 1,
+            "pctTomados": 98,
+            "pctLeidos": 96
+          },
+          "noche": {
+            "pasaron": 53,
+            "tomados": 48,
+            "leidos": 47,
+            "noTomados": 5,
+            "pctTomados": 91,
+            "pctLeidos": 89
+          }
+        },
+        "2026-10-18": {
+          "dia": {
+            "pasaron": 33,
+            "tomados": 32,
+            "leidos": 32,
+            "noTomados": 1,
+            "pctTomados": 97,
+            "pctLeidos": 97
+          },
+          "noche": {
+            "pasaron": 51,
+            "tomados": 42,
+            "leidos": 40,
+            "noTomados": 9,
+            "pctTomados": 82,
+            "pctLeidos": 78
+          }
+        },
+        "2026-10-19": {
+          "dia": {
+            "pasaron": 26,
+            "tomados": 26,
+            "leidos": 26,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 15,
+            "tomados": 12,
+            "leidos": 10,
+            "noTomados": 3,
+            "pctTomados": 80,
+            "pctLeidos": 67
+          }
+        },
+        "2026-10-20": {
+          "dia": {
+            "pasaron": 36,
+            "tomados": 36,
+            "leidos": 36,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 25,
+            "tomados": 24,
+            "leidos": 21,
+            "noTomados": 1,
+            "pctTomados": 96,
+            "pctLeidos": 84
+          }
+        }
+      },
+      "porHora": [
+        {
+          "h": 0,
+          "pasaron": 21,
+          "noTomados": 6
+        },
+        {
+          "h": 1,
+          "pasaron": 23,
+          "noTomados": 3
+        },
+        {
+          "h": 2,
+          "pasaron": 8,
+          "noTomados": 2
+        },
+        {
+          "h": 3,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 4,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 5,
+          "pasaron": 26,
+          "noTomados": 1
+        },
+        {
+          "h": 6,
+          "pasaron": 29,
+          "noTomados": 1
+        },
+        {
+          "h": 7,
+          "pasaron": 15,
+          "noTomados": 0
+        },
+        {
+          "h": 8,
+          "pasaron": 36,
+          "noTomados": 0
+        },
+        {
+          "h": 9,
+          "pasaron": 10,
+          "noTomados": 0
+        },
+        {
+          "h": 10,
+          "pasaron": 16,
+          "noTomados": 0
+        },
+        {
+          "h": 11,
+          "pasaron": 15,
+          "noTomados": 0
+        },
+        {
+          "h": 12,
+          "pasaron": 17,
+          "noTomados": 0
+        },
+        {
+          "h": 13,
+          "pasaron": 13,
+          "noTomados": 0
+        },
+        {
+          "h": 14,
+          "pasaron": 23,
+          "noTomados": 0
+        },
+        {
+          "h": 15,
+          "pasaron": 31,
+          "noTomados": 0
+        },
+        {
+          "h": 16,
+          "pasaron": 34,
+          "noTomados": 0
+        },
+        {
+          "h": 17,
+          "pasaron": 5,
+          "noTomados": 1
+        },
+        {
+          "h": 18,
+          "pasaron": 8,
+          "noTomados": 0
+        },
+        {
+          "h": 19,
+          "pasaron": 24,
+          "noTomados": 0
+        },
+        {
+          "h": 20,
+          "pasaron": 18,
+          "noTomados": 3
+        },
+        {
+          "h": 21,
+          "pasaron": 14,
+          "noTomados": 0
+        },
+        {
+          "h": 22,
+          "pasaron": 9,
+          "noTomados": 1
+        },
+        {
+          "h": 23,
+          "pasaron": 40,
+          "noTomados": 4
+        }
+      ],
+      "traseras": {
+        "SLZBalIngTras": {
+          "pasaron": 435,
+          "tomados": 252,
+          "dia": {
+            "pasaron": 244,
+            "tomados": 134
+          },
+          "noche": {
+            "pasaron": 191,
+            "tomados": 118
+          }
+        }
+      },
+      "lecturasPorCamara": {
+        "SLZBalIngFte": {
+          "2026-10-15": 179,
+          "2026-10-16": 164,
+          "2026-10-17": 203,
+          "2026-10-18": 160,
+          "2026-10-19": 193,
+          "2026-10-20": 269
+        }
+      },
+      "noTomados": [
+        {
+          "hora": "10-16 00:12",
+          "patente": "AF529BM",
+          "acoplado": "AF529CX",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 05:52",
+          "patente": "AYZ915",
+          "acoplado": "UJQ182",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 01:39",
+          "patente": "VYS158",
+          "acoplado": "IYY451",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 02:30",
+          "patente": "AG090RF",
+          "acoplado": "AG090RG",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 06:53",
+          "patente": "AUV533",
+          "acoplado": "ELT779",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 23:04",
+          "patente": "AC136VO",
+          "acoplado": "HGJ118",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 23:40",
+          "patente": "AVC938",
+          "acoplado": "OHP744",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 23:45",
+          "patente": "GSE447",
+          "acoplado": "AG098QO",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 00:24",
+          "patente": "SXZ962",
+          "acoplado": "LIX674",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 00:50",
+          "patente": "LPZ577",
+          "acoplado": "HEC719",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 00:55",
+          "patente": "BIB241",
+          "acoplado": "CND959",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 01:02",
+          "patente": "BYV210",
+          "acoplado": "EWW057",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 02:11",
+          "patente": "FLN836",
+          "acoplado": "GLU268",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 17:53",
+          "patente": "OVQ091",
+          "acoplado": "AC731XW",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 20:09",
+          "patente": "JJR621",
+          "acoplado": "AE110XN",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 20:13",
+          "patente": "AE919JT",
+          "acoplado": "AF060BR",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 20:53",
+          "patente": "REV889",
+          "acoplado": "KHP252",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 22:37",
+          "patente": "SZG666",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-19 00:23",
+          "patente": "HZY414",
+          "acoplado": "AF336OQ",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-19 00:49",
+          "patente": "OSP630",
+          "acoplado": "AG962IM",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-19 01:27",
+          "patente": "BRZ160",
+          "acoplado": "AB566HJ",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 23:33",
+          "patente": "RXZ465",
+          "acoplado": "CEK907",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        }
+      ]
+    },
+    {
+      "sector": "san_lorenzo:Carga / Descarga OSL",
+      "planta": "san_lorenzo",
+      "nombre": "Carga OSL",
+      "camaras": [
+        "RenCargFte",
+        "RenDescFte"
+      ],
+      "camarasTraseras": [
+        "RenCargTras",
+        "RenDescTras"
+      ],
+      "sinPruebaDePaso": 5,
+      "total": {
+        "pasaron": 62,
+        "tomados": 54,
+        "leidos": 54,
+        "noTomados": 8,
+        "pctTomados": 87,
+        "pctLeidos": 87
+      },
+      "dia": {
+        "pasaron": 45,
+        "tomados": 38,
+        "leidos": 38,
+        "noTomados": 7,
+        "pctTomados": 84,
+        "pctLeidos": 84
+      },
+      "noche": {
+        "pasaron": 17,
+        "tomados": 16,
+        "leidos": 16,
+        "noTomados": 1,
+        "pctTomados": 94,
+        "pctLeidos": 94
+      },
+      "porDia": {
+        "2026-10-15": {
+          "dia": {
+            "pasaron": 25,
+            "tomados": 24,
+            "leidos": 24,
+            "noTomados": 1,
+            "pctTomados": 96,
+            "pctLeidos": 96
+          },
+          "noche": {
+            "pasaron": 4,
+            "tomados": 4,
+            "leidos": 4,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          }
+        },
+        "2026-10-16": {
+          "dia": {
+            "pasaron": 10,
+            "tomados": 8,
+            "leidos": 8,
+            "noTomados": 2,
+            "pctTomados": 80,
+            "pctLeidos": 80
+          },
+          "noche": {
+            "pasaron": 9,
+            "tomados": 9,
+            "leidos": 9,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          }
+        },
+        "2026-10-17": {
+          "dia": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          },
+          "noche": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          }
+        },
+        "2026-10-18": {
+          "dia": {
+            "pasaron": 2,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 2,
+            "pctTomados": 0,
+            "pctLeidos": 0
+          },
+          "noche": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          }
+        },
+        "2026-10-19": {
+          "dia": {
+            "pasaron": 1,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 1,
+            "pctTomados": 0,
+            "pctLeidos": 0
+          },
+          "noche": {
+            "pasaron": 1,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 1,
+            "pctTomados": 0,
+            "pctLeidos": 0
+          }
+        },
+        "2026-10-20": {
+          "dia": {
+            "pasaron": 7,
+            "tomados": 6,
+            "leidos": 6,
+            "noTomados": 1,
+            "pctTomados": 86,
+            "pctLeidos": 86
+          },
+          "noche": {
+            "pasaron": 3,
+            "tomados": 3,
+            "leidos": 3,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          }
+        }
+      },
+      "porHora": [
+        {
+          "h": 0,
+          "pasaron": 1,
+          "noTomados": 1
+        },
+        {
+          "h": 1,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 2,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 3,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 4,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 5,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 6,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 7,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 8,
+          "pasaron": 3,
+          "noTomados": 1
+        },
+        {
+          "h": 9,
+          "pasaron": 2,
+          "noTomados": 0
+        },
+        {
+          "h": 10,
+          "pasaron": 3,
+          "noTomados": 0
+        },
+        {
+          "h": 11,
+          "pasaron": 4,
+          "noTomados": 2
+        },
+        {
+          "h": 12,
+          "pasaron": 2,
+          "noTomados": 0
+        },
+        {
+          "h": 13,
+          "pasaron": 6,
+          "noTomados": 1
+        },
+        {
+          "h": 14,
+          "pasaron": 6,
+          "noTomados": 0
+        },
+        {
+          "h": 15,
+          "pasaron": 10,
+          "noTomados": 3
+        },
+        {
+          "h": 16,
+          "pasaron": 5,
+          "noTomados": 0
+        },
+        {
+          "h": 17,
+          "pasaron": 4,
+          "noTomados": 0
+        },
+        {
+          "h": 18,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 19,
+          "pasaron": 4,
+          "noTomados": 0
+        },
+        {
+          "h": 20,
+          "pasaron": 6,
+          "noTomados": 0
+        },
+        {
+          "h": 21,
+          "pasaron": 3,
+          "noTomados": 0
+        },
+        {
+          "h": 22,
+          "pasaron": 3,
+          "noTomados": 0
+        },
+        {
+          "h": 23,
+          "pasaron": 0,
+          "noTomados": 0
+        }
+      ],
+      "traseras": {
+        "RenCargTras": {
+          "pasaron": 62,
+          "tomados": 15,
+          "dia": {
+            "pasaron": 45,
+            "tomados": 10
+          },
+          "noche": {
+            "pasaron": 17,
+            "tomados": 5
+          }
+        },
+        "RenDescTras": {
+          "pasaron": 62,
+          "tomados": 9,
+          "dia": {
+            "pasaron": 45,
+            "tomados": 1
+          },
+          "noche": {
+            "pasaron": 17,
+            "tomados": 8
+          }
+        }
+      },
+      "lecturasPorCamara": {
+        "RenCargFte": {
+          "2026-10-15": 25,
+          "2026-10-16": 3,
+          "2026-10-17": 2,
+          "2026-10-18": 0,
+          "2026-10-19": 6,
+          "2026-10-20": 32
+        },
+        "RenDescFte": {
+          "2026-10-15": 22,
+          "2026-10-16": 26,
+          "2026-10-17": 1,
+          "2026-10-18": 0,
+          "2026-10-19": 0,
+          "2026-10-20": 0
+        }
+      },
+      "noTomados": [
+        {
+          "hora": "10-15 13:26",
+          "patente": "AF411UI",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 11:11",
+          "patente": "AF411UI",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 15:41",
+          "patente": "LZP122",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 08:57",
+          "patente": "PAR121",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 15:01",
+          "patente": "AC275KB",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-19 00:08",
+          "patente": "PAR121",
+          "acoplado": "AC590MH",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-19 11:20",
+          "patente": "NWZ336",
+          "acoplado": "AB996FZ",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 15:57",
+          "patente": "NWZ336",
+          "acoplado": "AB996FZ",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": false
+        }
+      ]
+    },
+    {
+      "sector": "san_lorenzo:Plataformas Volcables",
+      "planta": "san_lorenzo",
+      "nombre": "Volcables",
+      "camaras": [
+        "SLZVolcableC1",
+        "SLZVolcableC2",
+        "SLZVolcableC3",
+        "SLZVolcableC4",
+        "SLZVolcableC5",
+        "SLZDescCam"
+      ],
+      "camarasTraseras": [],
+      "sinPruebaDePaso": 26,
+      "total": {
+        "pasaron": 327,
+        "tomados": 314,
+        "leidos": 276,
+        "noTomados": 13,
+        "pctTomados": 96,
+        "pctLeidos": 84
+      },
+      "dia": {
+        "pasaron": 168,
+        "tomados": 166,
+        "leidos": 164,
+        "noTomados": 2,
+        "pctTomados": 99,
+        "pctLeidos": 98
+      },
+      "noche": {
+        "pasaron": 159,
+        "tomados": 148,
+        "leidos": 112,
+        "noTomados": 11,
+        "pctTomados": 93,
+        "pctLeidos": 70
+      },
+      "porDia": {
+        "2026-10-15": {
+          "dia": {
+            "pasaron": 22,
+            "tomados": 22,
+            "leidos": 22,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 13,
+            "tomados": 13,
+            "leidos": 7,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 54
+          }
+        },
+        "2026-10-16": {
+          "dia": {
+            "pasaron": 25,
+            "tomados": 24,
+            "leidos": 23,
+            "noTomados": 1,
+            "pctTomados": 96,
+            "pctLeidos": 92
+          },
+          "noche": {
+            "pasaron": 16,
+            "tomados": 15,
+            "leidos": 13,
+            "noTomados": 1,
+            "pctTomados": 94,
+            "pctLeidos": 81
+          }
+        },
+        "2026-10-17": {
+          "dia": {
+            "pasaron": 49,
+            "tomados": 49,
+            "leidos": 48,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 98
+          },
+          "noche": {
+            "pasaron": 36,
+            "tomados": 35,
+            "leidos": 27,
+            "noTomados": 1,
+            "pctTomados": 97,
+            "pctLeidos": 75
+          }
+        },
+        "2026-10-18": {
+          "dia": {
+            "pasaron": 27,
+            "tomados": 27,
+            "leidos": 27,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 51,
+            "tomados": 49,
+            "leidos": 37,
+            "noTomados": 2,
+            "pctTomados": 96,
+            "pctLeidos": 73
+          }
+        },
+        "2026-10-19": {
+          "dia": {
+            "pasaron": 28,
+            "tomados": 28,
+            "leidos": 28,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 14,
+            "tomados": 14,
+            "leidos": 9,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 64
+          }
+        },
+        "2026-10-20": {
+          "dia": {
+            "pasaron": 17,
+            "tomados": 16,
+            "leidos": 16,
+            "noTomados": 1,
+            "pctTomados": 94,
+            "pctLeidos": 94
+          },
+          "noche": {
+            "pasaron": 29,
+            "tomados": 22,
+            "leidos": 19,
+            "noTomados": 7,
+            "pctTomados": 76,
+            "pctLeidos": 66
+          }
+        }
+      },
+      "porHora": [
+        {
+          "h": 0,
+          "pasaron": 24,
+          "noTomados": 0
+        },
+        {
+          "h": 1,
+          "pasaron": 18,
+          "noTomados": 1
+        },
+        {
+          "h": 2,
+          "pasaron": 20,
+          "noTomados": 0
+        },
+        {
+          "h": 3,
+          "pasaron": 8,
+          "noTomados": 0
+        },
+        {
+          "h": 4,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 5,
+          "pasaron": 13,
+          "noTomados": 0
+        },
+        {
+          "h": 6,
+          "pasaron": 14,
+          "noTomados": 1
+        },
+        {
+          "h": 7,
+          "pasaron": 16,
+          "noTomados": 0
+        },
+        {
+          "h": 8,
+          "pasaron": 14,
+          "noTomados": 0
+        },
+        {
+          "h": 9,
+          "pasaron": 15,
+          "noTomados": 0
+        },
+        {
+          "h": 10,
+          "pasaron": 15,
+          "noTomados": 0
+        },
+        {
+          "h": 11,
+          "pasaron": 18,
+          "noTomados": 0
+        },
+        {
+          "h": 12,
+          "pasaron": 10,
+          "noTomados": 0
+        },
+        {
+          "h": 13,
+          "pasaron": 12,
+          "noTomados": 0
+        },
+        {
+          "h": 14,
+          "pasaron": 10,
+          "noTomados": 0
+        },
+        {
+          "h": 15,
+          "pasaron": 10,
+          "noTomados": 0
+        },
+        {
+          "h": 16,
+          "pasaron": 20,
+          "noTomados": 0
+        },
+        {
+          "h": 17,
+          "pasaron": 14,
+          "noTomados": 1
+        },
+        {
+          "h": 18,
+          "pasaron": 9,
+          "noTomados": 2
+        },
+        {
+          "h": 19,
+          "pasaron": 9,
+          "noTomados": 2
+        },
+        {
+          "h": 20,
+          "pasaron": 19,
+          "noTomados": 1
+        },
+        {
+          "h": 21,
+          "pasaron": 16,
+          "noTomados": 1
+        },
+        {
+          "h": 22,
+          "pasaron": 9,
+          "noTomados": 3
+        },
+        {
+          "h": 23,
+          "pasaron": 14,
+          "noTomados": 1
+        }
+      ],
+      "traseras": {},
+      "lecturasPorCamara": {
+        "SLZVolcableC1": {
+          "2026-10-15": 1,
+          "2026-10-16": 3,
+          "2026-10-17": 0,
+          "2026-10-18": 1,
+          "2026-10-19": 3,
+          "2026-10-20": 0
+        },
+        "SLZVolcableC2": {
+          "2026-10-15": 6,
+          "2026-10-16": 5,
+          "2026-10-17": 0,
+          "2026-10-18": 0,
+          "2026-10-19": 3,
+          "2026-10-20": 0
+        },
+        "SLZVolcableC3": {
+          "2026-10-15": 0,
+          "2026-10-16": 7,
+          "2026-10-17": 43,
+          "2026-10-18": 65,
+          "2026-10-19": 5,
+          "2026-10-20": 0
+        },
+        "SLZVolcableC4": {
+          "2026-10-15": 0,
+          "2026-10-16": 3,
+          "2026-10-17": 1,
+          "2026-10-18": 0,
+          "2026-10-19": 0,
+          "2026-10-20": 1
+        },
+        "SLZVolcableC5": {
+          "2026-10-15": 44,
+          "2026-10-16": 41,
+          "2026-10-17": 71,
+          "2026-10-18": 23,
+          "2026-10-19": 88,
+          "2026-10-20": 115
+        },
+        "SLZDescCam": {
+          "2026-10-15": 0,
+          "2026-10-16": 0,
+          "2026-10-17": 0,
+          "2026-10-18": 0,
+          "2026-10-19": 0,
+          "2026-10-20": 0
+        }
+      },
+      "noTomados": [
+        {
+          "hora": "10-16 06:04",
+          "patente": "AYZ915",
+          "acoplado": "UJQ182",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 23:37",
+          "patente": "ABO881",
+          "acoplado": "LMQ434",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 19:56",
+          "patente": "FBV155",
+          "acoplado": "AF892RN",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 01:27",
+          "patente": "BCH929",
+          "acoplado": "RQH113",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 20:59",
+          "patente": "REV889",
+          "acoplado": "KHP252",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 17:52",
+          "patente": "EUX026",
+          "acoplado": "OXG053",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 18:08",
+          "patente": "DYW499",
+          "acoplado": "JTT344",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 18:18",
+          "patente": "LFB955",
+          "acoplado": "IBG751",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 19:22",
+          "patente": "GZL318",
+          "acoplado": "AI263DD",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 21:30",
+          "patente": "DXK216",
+          "acoplado": "AC841EQ",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 22:01",
+          "patente": "JYY048",
+          "acoplado": "AH092RE",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 22:11",
+          "patente": "KFJ723",
+          "acoplado": "AF261XE",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-20 22:22",
+          "patente": "MMF568",
+          "acoplado": "HUW002",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": false
+        }
+      ]
+    },
+    {
+      "sector": "san_lorenzo:Carga/descarga",
+      "planta": "san_lorenzo",
+      "nombre": "Carga y descarga",
+      "camaras": [
+        "SLZBalLiq1a",
+        "SLZBalLiq1b",
+        "SLZBalLiq2a",
+        "SLZBalLiq2b"
+      ],
+      "camarasTraseras": [],
+      "sinPruebaDePaso": 2,
+      "total": {
+        "pasaron": 9,
+        "tomados": 3,
+        "leidos": 0,
+        "noTomados": 6,
+        "pctTomados": 33,
+        "pctLeidos": 0
+      },
+      "dia": {
+        "pasaron": 8,
+        "tomados": 3,
+        "leidos": 0,
+        "noTomados": 5,
+        "pctTomados": 38,
+        "pctLeidos": 0
+      },
+      "noche": {
+        "pasaron": 1,
+        "tomados": 0,
+        "leidos": 0,
+        "noTomados": 1,
+        "pctTomados": 0,
+        "pctLeidos": 0
+      },
+      "porDia": {
+        "2026-10-15": {
+          "dia": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          },
+          "noche": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          }
+        },
+        "2026-10-16": {
+          "dia": {
+            "pasaron": 4,
+            "tomados": 2,
+            "leidos": 0,
+            "noTomados": 2,
+            "pctTomados": 50,
+            "pctLeidos": 0
+          },
+          "noche": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          }
+        },
+        "2026-10-17": {
+          "dia": {
+            "pasaron": 2,
+            "tomados": 1,
+            "leidos": 0,
+            "noTomados": 1,
+            "pctTomados": 50,
+            "pctLeidos": 0
+          },
+          "noche": {
+            "pasaron": 1,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 1,
+            "pctTomados": 0,
+            "pctLeidos": 0
+          }
+        },
+        "2026-10-18": {
+          "dia": {
+            "pasaron": 2,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 2,
+            "pctTomados": 0,
+            "pctLeidos": 0
+          },
+          "noche": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          }
+        },
+        "2026-10-19": {
+          "dia": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          },
+          "noche": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          }
+        },
+        "2026-10-20": {
+          "dia": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          },
+          "noche": {
+            "pasaron": 0,
+            "tomados": 0,
+            "leidos": 0,
+            "noTomados": 0,
+            "pctTomados": null,
+            "pctLeidos": null
+          }
+        }
+      },
+      "porHora": [
+        {
+          "h": 0,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 1,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 2,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 3,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 4,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 5,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 6,
+          "pasaron": 1,
+          "noTomados": 0
+        },
+        {
+          "h": 7,
+          "pasaron": 1,
+          "noTomados": 1
+        },
+        {
+          "h": 8,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 9,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 10,
+          "pasaron": 1,
+          "noTomados": 0
+        },
+        {
+          "h": 11,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 12,
+          "pasaron": 1,
+          "noTomados": 0
+        },
+        {
+          "h": 13,
+          "pasaron": 1,
+          "noTomados": 1
+        },
+        {
+          "h": 14,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 15,
+          "pasaron": 1,
+          "noTomados": 1
+        },
+        {
+          "h": 16,
+          "pasaron": 1,
+          "noTomados": 1
+        },
+        {
+          "h": 17,
+          "pasaron": 1,
+          "noTomados": 1
+        },
+        {
+          "h": 18,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 19,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 20,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 21,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 22,
+          "pasaron": 0,
+          "noTomados": 0
+        },
+        {
+          "h": 23,
+          "pasaron": 1,
+          "noTomados": 1
+        }
+      ],
+      "traseras": {},
+      "lecturasPorCamara": {
+        "SLZBalLiq1a": {
+          "2026-10-15": 7,
+          "2026-10-16": 1,
+          "2026-10-17": 0,
+          "2026-10-18": 0,
+          "2026-10-19": 0,
+          "2026-10-20": 0
+        },
+        "SLZBalLiq1b": {
+          "2026-10-15": 4,
+          "2026-10-16": 8,
+          "2026-10-17": 0,
+          "2026-10-18": 0,
+          "2026-10-19": 2,
+          "2026-10-20": 2
+        },
+        "SLZBalLiq2a": {
+          "2026-10-15": 1,
+          "2026-10-16": 7,
+          "2026-10-17": 4,
+          "2026-10-18": 2,
+          "2026-10-19": 7,
+          "2026-10-20": 3
+        },
+        "SLZBalLiq2b": {
+          "2026-10-15": 6,
+          "2026-10-16": 11,
+          "2026-10-17": 4,
+          "2026-10-18": 8,
+          "2026-10-19": 5,
+          "2026-10-20": 9
+        }
+      },
+      "noTomados": [
+        {
+          "hora": "10-16 16:01",
+          "patente": "PAR121",
+          "acoplado": "",
+          "circuito": "SL2",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-16 17:51",
+          "patente": "KGX035",
+          "acoplado": "",
+          "circuito": "SL2",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 13:00",
+          "patente": "PAR121",
+          "acoplado": "",
+          "circuito": "SL2",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-17 23:14",
+          "patente": "PAR121",
+          "acoplado": "",
+          "circuito": "SL2",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 07:50",
+          "patente": "AC275KB",
+          "acoplado": "",
+          "circuito": "SL2",
+          "pasada": null,
+          "ancladoSgc": false
+        },
+        {
+          "hora": "10-18 15:44",
+          "patente": "PAR121",
+          "acoplado": "",
+          "circuito": "SL2",
+          "pasada": null,
+          "ancladoSgc": false
+        }
+      ]
+    },
+    {
+      "sector": "san_lorenzo:Balanza Egreso",
+      "planta": "san_lorenzo",
+      "nombre": "Balanza egreso",
+      "camaras": [
+        "SLZBalSC1Fte",
+        "SLZBalSC2Fte"
+      ],
+      "camarasTraseras": [
+        "SLZBalSC1Tras",
+        "SLZBalSC2Tras"
+      ],
+      "sinPruebaDePaso": 0,
+      "total": {
+        "pasaron": 448,
+        "tomados": 370,
+        "leidos": 309,
+        "noTomados": 78,
+        "pctTomados": 83,
+        "pctLeidos": 69
+      },
+      "dia": {
+        "pasaron": 228,
+        "tomados": 223,
+        "leidos": 212,
+        "noTomados": 5,
+        "pctTomados": 98,
+        "pctLeidos": 93
+      },
+      "noche": {
+        "pasaron": 220,
+        "tomados": 147,
+        "leidos": 97,
+        "noTomados": 73,
+        "pctTomados": 67,
+        "pctLeidos": 44
+      },
+      "porDia": {
+        "2026-10-15": {
+          "dia": {
+            "pasaron": 50,
+            "tomados": 49,
+            "leidos": 46,
+            "noTomados": 1,
+            "pctTomados": 98,
+            "pctLeidos": 92
+          },
+          "noche": {
+            "pasaron": 24,
+            "tomados": 18,
+            "leidos": 15,
+            "noTomados": 6,
+            "pctTomados": 75,
+            "pctLeidos": 63
+          }
+        },
+        "2026-10-16": {
+          "dia": {
+            "pasaron": 39,
+            "tomados": 37,
+            "leidos": 37,
+            "noTomados": 2,
+            "pctTomados": 95,
+            "pctLeidos": 95
+          },
+          "noche": {
+            "pasaron": 30,
+            "tomados": 22,
+            "leidos": 16,
+            "noTomados": 8,
+            "pctTomados": 73,
+            "pctLeidos": 53
+          }
+        },
+        "2026-10-17": {
+          "dia": {
+            "pasaron": 52,
+            "tomados": 51,
+            "leidos": 49,
+            "noTomados": 1,
+            "pctTomados": 98,
+            "pctLeidos": 94
+          },
+          "noche": {
+            "pasaron": 50,
+            "tomados": 25,
+            "leidos": 16,
+            "noTomados": 25,
+            "pctTomados": 50,
+            "pctLeidos": 32
+          }
+        },
+        "2026-10-18": {
+          "dia": {
+            "pasaron": 33,
+            "tomados": 32,
+            "leidos": 30,
+            "noTomados": 1,
+            "pctTomados": 97,
+            "pctLeidos": 91
+          },
+          "noche": {
+            "pasaron": 55,
+            "tomados": 39,
+            "leidos": 23,
+            "noTomados": 16,
+            "pctTomados": 71,
+            "pctLeidos": 42
+          }
+        },
+        "2026-10-19": {
+          "dia": {
+            "pasaron": 33,
+            "tomados": 33,
+            "leidos": 30,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 91
+          },
+          "noche": {
+            "pasaron": 19,
+            "tomados": 10,
+            "leidos": 6,
+            "noTomados": 9,
+            "pctTomados": 53,
+            "pctLeidos": 32
+          }
+        },
+        "2026-10-20": {
+          "dia": {
+            "pasaron": 21,
+            "tomados": 21,
+            "leidos": 20,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 95
+          },
+          "noche": {
+            "pasaron": 42,
+            "tomados": 33,
+            "leidos": 21,
+            "noTomados": 9,
+            "pctTomados": 79,
+            "pctLeidos": 50
+          }
+        }
+      },
+      "porHora": [
+        {
+          "h": 0,
+          "pasaron": 27,
+          "noTomados": 9
+        },
+        {
+          "h": 1,
+          "pasaron": 24,
+          "noTomados": 14
+        },
+        {
+          "h": 2,
+          "pasaron": 26,
+          "noTomados": 6
+        },
+        {
+          "h": 3,
+          "pasaron": 18,
+          "noTomados": 9
+        },
+        {
+          "h": 4,
+          "pasaron": 1,
+          "noTomados": 1
+        },
+        {
+          "h": 5,
+          "pasaron": 7,
+          "noTomados": 3
+        },
+        {
+          "h": 6,
+          "pasaron": 23,
+          "noTomados": 4
+        },
+        {
+          "h": 7,
+          "pasaron": 15,
+          "noTomados": 0
+        },
+        {
+          "h": 8,
+          "pasaron": 12,
+          "noTomados": 0
+        },
+        {
+          "h": 9,
+          "pasaron": 17,
+          "noTomados": 0
+        },
+        {
+          "h": 10,
+          "pasaron": 23,
+          "noTomados": 0
+        },
+        {
+          "h": 11,
+          "pasaron": 23,
+          "noTomados": 0
+        },
+        {
+          "h": 12,
+          "pasaron": 14,
+          "noTomados": 0
+        },
+        {
+          "h": 13,
+          "pasaron": 20,
+          "noTomados": 0
+        },
+        {
+          "h": 14,
+          "pasaron": 11,
+          "noTomados": 1
+        },
+        {
+          "h": 15,
+          "pasaron": 22,
+          "noTomados": 0
+        },
+        {
+          "h": 16,
+          "pasaron": 24,
+          "noTomados": 0
+        },
+        {
+          "h": 17,
+          "pasaron": 24,
+          "noTomados": 0
+        },
+        {
+          "h": 18,
+          "pasaron": 11,
+          "noTomados": 0
+        },
+        {
+          "h": 19,
+          "pasaron": 8,
+          "noTomados": 3
+        },
+        {
+          "h": 20,
+          "pasaron": 34,
+          "noTomados": 8
+        },
+        {
+          "h": 21,
+          "pasaron": 27,
+          "noTomados": 10
+        },
+        {
+          "h": 22,
+          "pasaron": 16,
+          "noTomados": 1
+        },
+        {
+          "h": 23,
+          "pasaron": 21,
+          "noTomados": 9
+        }
+      ],
+      "traseras": {
+        "SLZBalSC1Tras": {
+          "pasaron": 448,
+          "tomados": 8,
+          "dia": {
+            "pasaron": 228,
+            "tomados": 8
+          },
+          "noche": {
+            "pasaron": 220,
+            "tomados": 0
+          }
+        },
+        "SLZBalSC2Tras": {
+          "pasaron": 448,
+          "tomados": 163,
+          "dia": {
+            "pasaron": 228,
+            "tomados": 78
+          },
+          "noche": {
+            "pasaron": 220,
+            "tomados": 85
+          }
+        }
+      },
+      "lecturasPorCamara": {
+        "SLZBalSC1Fte": {
+          "2026-10-15": 73,
+          "2026-10-16": 86,
+          "2026-10-17": 37,
+          "2026-10-18": 27,
+          "2026-10-19": 56,
+          "2026-10-20": 53
+        },
+        "SLZBalSC2Fte": {
+          "2026-10-15": 106,
+          "2026-10-16": 100,
+          "2026-10-17": 106,
+          "2026-10-18": 91,
+          "2026-10-19": 124,
+          "2026-10-20": 166
+        }
+      },
+      "noTomados": [
+        {
+          "hora": "10-15 05:40",
+          "patente": "LWE772",
+          "acoplado": "AA787SY",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 05:48",
+          "patente": "AB058QV",
+          "acoplado": "GLW981",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 14:39",
+          "patente": "SPH903",
+          "acoplado": "UVS998",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 21:00",
+          "patente": "GNZ601",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 21:10",
+          "patente": "GMZ752",
+          "acoplado": "AD869ZD",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 21:53",
+          "patente": "DOX036",
+          "acoplado": "PMT497",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 23:58",
+          "patente": "AA596LV",
+          "acoplado": "OTN517",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 00:30",
+          "patente": "AA323QP",
+          "acoplado": "AA364WC",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 01:16",
+          "patente": "AE318UK",
+          "acoplado": "AE936TA",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 01:33",
+          "patente": "JFX298",
+          "acoplado": "GBQ589",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 01:59",
+          "patente": "AF529BM",
+          "acoplado": "AF529CX",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 06:00",
+          "patente": "FMZ930",
+          "acoplado": "AF591GG",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 06:16",
+          "patente": "AYZ915",
+          "acoplado": "UJQ182",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 20:58",
+          "patente": "ROO085",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 22:58",
+          "patente": "CXA592",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 23:31",
+          "patente": "AD195CG",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 23:45",
+          "patente": "ABO881",
+          "acoplado": "LMQ434",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 00:22",
+          "patente": "OVS597",
+          "acoplado": "EXV464",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 00:33",
+          "patente": "HOB560",
+          "acoplado": "AF236JO",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 00:49",
+          "patente": "GZI868",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 01:15",
+          "patente": "GQF081",
+          "acoplado": "EUF190",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 01:29",
+          "patente": "AA323QV",
+          "acoplado": "AA323QZ",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 02:28",
+          "patente": "LNT874",
+          "acoplado": "AH834NN",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 02:41",
+          "patente": "EVK754",
+          "acoplado": "AG093IZ",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 02:54",
+          "patente": "STN281",
+          "acoplado": "LVT234",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 03:04",
+          "patente": "AF652GK",
+          "acoplado": "AF456NQ",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 03:12",
+          "patente": "KVV515",
+          "acoplado": "IWS965",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 03:31",
+          "patente": "TWO477",
+          "acoplado": "VHM355",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 03:41",
+          "patente": "AG090RF",
+          "acoplado": "AG090RG",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 03:45",
+          "patente": "AE206EF",
+          "acoplado": "AG758NX",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 04:03",
+          "patente": "VXF789",
+          "acoplado": "UIN633",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 05:30",
+          "patente": "CMF111",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 06:06",
+          "patente": "AA624AG",
+          "acoplado": "AA541IE",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 19:40",
+          "patente": "AB120XE",
+          "acoplado": "AF878PN",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 20:19",
+          "patente": "AA415NJ",
+          "acoplado": "AF492XG",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 20:32",
+          "patente": "CDT243",
+          "acoplado": "MXT812",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 20:48",
+          "patente": "MYA819",
+          "acoplado": "AA394MM",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 20:57",
+          "patente": "CJU617",
+          "acoplado": "NRU669",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 21:04",
+          "patente": "CQQ052",
+          "acoplado": "RNM359",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 21:18",
+          "patente": "LOI639",
+          "acoplado": "ISZ934",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 21:36",
+          "patente": "FIV899",
+          "acoplado": "PJI141",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 21:51",
+          "patente": "KVD290",
+          "acoplado": "AE926AB",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 23:45",
+          "patente": "DBT190",
+          "acoplado": "GQT564",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-18 00:00",
+          "patente": "AVC938",
+          "acoplado": "OHP744",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-18 00:21",
+          "patente": "GSE447",
+          "acoplado": "AG098QO",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-18 01:09",
+          "patente": "TUI986",
+          "acoplado": "HPH290",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-18 01:43",
+          "patente": "HKV094",
+          "acoplado": "EJA444",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-18 01:55",
+          "patente": "LPZ577",
+          "acoplado": "HEC719",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-18 02:28",
+          "patente": "BHS791",
+          "acoplado": "EAZ134",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-18 02:33",
+          "patente": "BCH929",
+          "acoplado": "RQH113",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-18 02:39",
+          "patente": "HBI340",
+          "acoplado": "HNM426",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-18 03:05",
+          "patente": "CBB219",
+          "acoplado": "GYL091",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-18 03:06",
+          "patente": "RYJ781",
+          "acoplado": "RMT540",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-18 03:39",
+          "patente": "EFG223",
+          "acoplado": "AB740WB",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-18 03:40",
+          "patente": "PHO788",
+          "acoplado": "AH132PT",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-18 06:07",
+          "patente": "NUX255",
+          "acoplado": "AG136ZS",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-18 20:47",
+          "patente": "AE919JT",
+          "acoplado": "AF060BR",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-18 21:06",
+          "patente": "REV889",
+          "acoplado": "KHP252",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-18 23:13",
+          "patente": "SZG666",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-18 23:59",
+          "patente": "HDC112",
+          "acoplado": "GZU744",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-19 00:01",
+          "patente": "MTK959",
+          "acoplado": "AB054VF",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-19 00:27",
+          "patente": "FKW267",
+          "acoplado": "AG850OG",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-19 00:35",
+          "patente": "GUX620",
+          "acoplado": "JQL828",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-19 01:03",
+          "patente": "AH087IX",
+          "acoplado": "AD841VG",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-19 01:27",
+          "patente": "GIO678",
+          "acoplado": "AA193VY",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-19 01:30",
+          "patente": "GSF260",
+          "acoplado": "AB827AM",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-19 01:39",
+          "patente": "JTE406",
+          "acoplado": "AG102IP",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-19 01:45",
+          "patente": "OSP630",
+          "acoplado": "AG962IM",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-19 01:57",
+          "patente": "BRZ160",
+          "acoplado": "AB566HJ",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-20 19:39",
+          "patente": "EUX026",
+          "acoplado": "OXG053",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-20 19:45",
+          "patente": "AG090RF",
+          "acoplado": "AG090RG",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-20 20:21",
+          "patente": "LFB955",
+          "acoplado": "IBG751",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-20 20:32",
+          "patente": "AC174TR",
+          "acoplado": "JHD243",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-20 21:22",
+          "patente": "OVQ091",
+          "acoplado": "AC731XW",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-20 21:45",
+          "patente": "GZI868",
+          "acoplado": "SLV370",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-20 23:36",
+          "patente": "OKJ047",
+          "acoplado": "NDJ386",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-20 23:42",
+          "patente": "GFQ127",
+          "acoplado": "NEJ751",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-20 23:47",
+          "patente": "RXZ465",
+          "acoplado": "CEK907",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        }
+      ]
+    },
+    {
+      "sector": "san_lorenzo:Egreso",
+      "planta": "san_lorenzo",
+      "nombre": "Egreso",
+      "camaras": [
+        "SLZSalidaC1Fte",
+        "SLZSalidaC2Fte"
+      ],
+      "camarasTraseras": [
+        "SLZSalidaC1Tras",
+        "SLZSalidaC2Tras"
+      ],
+      "sinPruebaDePaso": 0,
+      "total": {
+        "pasaron": 461,
+        "tomados": 429,
+        "leidos": 395,
+        "noTomados": 32,
+        "pctTomados": 93,
+        "pctLeidos": 86
+      },
+      "dia": {
+        "pasaron": 237,
+        "tomados": 226,
+        "leidos": 219,
+        "noTomados": 11,
+        "pctTomados": 95,
+        "pctLeidos": 92
+      },
+      "noche": {
+        "pasaron": 224,
+        "tomados": 203,
+        "leidos": 176,
+        "noTomados": 21,
+        "pctTomados": 91,
+        "pctLeidos": 79
+      },
+      "porDia": {
+        "2026-10-15": {
+          "dia": {
+            "pasaron": 52,
+            "tomados": 47,
+            "leidos": 44,
+            "noTomados": 5,
+            "pctTomados": 90,
+            "pctLeidos": 85
+          },
+          "noche": {
+            "pasaron": 24,
+            "tomados": 17,
+            "leidos": 15,
+            "noTomados": 7,
+            "pctTomados": 71,
+            "pctLeidos": 63
+          }
+        },
+        "2026-10-16": {
+          "dia": {
+            "pasaron": 43,
+            "tomados": 37,
+            "leidos": 36,
+            "noTomados": 6,
+            "pctTomados": 86,
+            "pctLeidos": 84
+          },
+          "noche": {
+            "pasaron": 30,
+            "tomados": 21,
+            "leidos": 18,
+            "noTomados": 9,
+            "pctTomados": 70,
+            "pctLeidos": 60
+          }
+        },
+        "2026-10-17": {
+          "dia": {
+            "pasaron": 54,
+            "tomados": 54,
+            "leidos": 53,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 98
+          },
+          "noche": {
+            "pasaron": 51,
+            "tomados": 47,
+            "leidos": 35,
+            "noTomados": 4,
+            "pctTomados": 92,
+            "pctLeidos": 69
+          }
+        },
+        "2026-10-18": {
+          "dia": {
+            "pasaron": 35,
+            "tomados": 35,
+            "leidos": 33,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 94
+          },
+          "noche": {
+            "pasaron": 56,
+            "tomados": 56,
+            "leidos": 54,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 96
+          }
+        },
+        "2026-10-19": {
+          "dia": {
+            "pasaron": 33,
+            "tomados": 33,
+            "leidos": 33,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 20,
+            "tomados": 20,
+            "leidos": 16,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 80
+          }
+        },
+        "2026-10-20": {
+          "dia": {
+            "pasaron": 20,
+            "tomados": 20,
+            "leidos": 20,
+            "noTomados": 0,
+            "pctTomados": 100,
+            "pctLeidos": 100
+          },
+          "noche": {
+            "pasaron": 42,
+            "tomados": 41,
+            "leidos": 37,
+            "noTomados": 1,
+            "pctTomados": 98,
+            "pctLeidos": 88
+          }
+        }
+      },
+      "porHora": [
+        {
+          "h": 0,
+          "pasaron": 35,
+          "noTomados": 2
+        },
+        {
+          "h": 1,
+          "pasaron": 22,
+          "noTomados": 1
+        },
+        {
+          "h": 2,
+          "pasaron": 28,
+          "noTomados": 1
+        },
+        {
+          "h": 3,
+          "pasaron": 18,
+          "noTomados": 0
+        },
+        {
+          "h": 4,
+          "pasaron": 1,
+          "noTomados": 0
+        },
+        {
+          "h": 5,
+          "pasaron": 6,
+          "noTomados": 1
+        },
+        {
+          "h": 6,
+          "pasaron": 25,
+          "noTomados": 0
+        },
+        {
+          "h": 7,
+          "pasaron": 13,
+          "noTomados": 0
+        },
+        {
+          "h": 8,
+          "pasaron": 14,
+          "noTomados": 0
+        },
+        {
+          "h": 9,
+          "pasaron": 18,
+          "noTomados": 0
+        },
+        {
+          "h": 10,
+          "pasaron": 20,
+          "noTomados": 0
+        },
+        {
+          "h": 11,
+          "pasaron": 28,
+          "noTomados": 1
+        },
+        {
+          "h": 12,
+          "pasaron": 15,
+          "noTomados": 0
+        },
+        {
+          "h": 13,
+          "pasaron": 20,
+          "noTomados": 1
+        },
+        {
+          "h": 14,
+          "pasaron": 9,
+          "noTomados": 0
+        },
+        {
+          "h": 15,
+          "pasaron": 23,
+          "noTomados": 2
+        },
+        {
+          "h": 16,
+          "pasaron": 28,
+          "noTomados": 6
+        },
+        {
+          "h": 17,
+          "pasaron": 24,
+          "noTomados": 1
+        },
+        {
+          "h": 18,
+          "pasaron": 13,
+          "noTomados": 1
+        },
+        {
+          "h": 19,
+          "pasaron": 6,
+          "noTomados": 0
+        },
+        {
+          "h": 20,
+          "pasaron": 32,
+          "noTomados": 5
+        },
+        {
+          "h": 21,
+          "pasaron": 30,
+          "noTomados": 5
+        },
+        {
+          "h": 22,
+          "pasaron": 16,
+          "noTomados": 3
+        },
+        {
+          "h": 23,
+          "pasaron": 17,
+          "noTomados": 2
+        }
+      ],
+      "traseras": {
+        "SLZSalidaC1Tras": {
+          "pasaron": 461,
+          "tomados": 192,
+          "dia": {
+            "pasaron": 237,
+            "tomados": 113
+          },
+          "noche": {
+            "pasaron": 224,
+            "tomados": 79
+          }
+        },
+        "SLZSalidaC2Tras": {
+          "pasaron": 461,
+          "tomados": 31,
+          "dia": {
+            "pasaron": 237,
+            "tomados": 24
+          },
+          "noche": {
+            "pasaron": 224,
+            "tomados": 7
+          }
+        }
+      },
+      "lecturasPorCamara": {
+        "SLZSalidaC1Fte": {
+          "2026-10-15": 461,
+          "2026-10-16": 445,
+          "2026-10-17": 338,
+          "2026-10-18": 235,
+          "2026-10-19": 511,
+          "2026-10-20": 575
+        },
+        "SLZSalidaC2Fte": {
+          "2026-10-15": 469,
+          "2026-10-16": 437,
+          "2026-10-17": 255,
+          "2026-10-18": 138,
+          "2026-10-19": 366,
+          "2026-10-20": 407
+        }
+      },
+      "noTomados": [
+        {
+          "hora": "10-15 05:51",
+          "patente": "AB058QV",
+          "acoplado": "GLW981",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 11:05",
+          "patente": "DBC119",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 13:47",
+          "patente": "RUF463",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 15:09",
+          "patente": "SMA331",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 16:26",
+          "patente": "FWZ795",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 16:54",
+          "patente": "SQL603",
+          "acoplado": "",
+          "circuito": "SL2",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 20:01",
+          "patente": "WPV559",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 20:03",
+          "patente": "FSR386",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 20:06",
+          "patente": "ROO085",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 20:16",
+          "patente": "VZO116",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 21:03",
+          "patente": "GNZ601",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-15 22:45",
+          "patente": "ESK363",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 00:43",
+          "patente": "OHL339",
+          "acoplado": "AB655MV",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 01:36",
+          "patente": "JFX298",
+          "acoplado": "GBQ589",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 15:00",
+          "patente": "DBC119",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 16:07",
+          "patente": "RUF463",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 16:16",
+          "patente": "FWZ795",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 16:33",
+          "patente": "FSR386",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 16:45",
+          "patente": "TZJ373",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 17:27",
+          "patente": "VZO116",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 18:18",
+          "patente": "SQL603",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 20:29",
+          "patente": "SMA331",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 21:01",
+          "patente": "ROO085",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 22:43",
+          "patente": "EJG271",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 22:46",
+          "patente": "ESK363",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 23:01",
+          "patente": "CXA592",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-16 23:27",
+          "patente": "UFB595",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 00:00",
+          "patente": "AFR797",
+          "acoplado": "",
+          "circuito": "SL1",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 02:57",
+          "patente": "STN281",
+          "acoplado": "LVT234",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 21:24",
+          "patente": "GFL692",
+          "acoplado": "HKF482",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-17 21:39",
+          "patente": "FIV899",
+          "acoplado": "PJI141",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        },
+        {
+          "hora": "10-20 21:12",
+          "patente": "DOA548",
+          "acoplado": "HMO096",
+          "circuito": "R7",
+          "pasada": null,
+          "ancladoSgc": true
+        }
+      ]
+    }
+  ]
+}

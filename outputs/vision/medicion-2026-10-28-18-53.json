@@ -1,0 +1,344 @@
+{
+  "summary": {
+    "model": "opus",
+    "at": "2026-10-28T18:53:51.397Z",
+    "medidos": 12,
+    "errores": 0,
+    "aciertos": "12/12",
+    "mismo": "9/9",
+    "otro": "3/3",
+    "automaticas": [
+      {
+        "umbral": 0.7,
+        "decide": 6,
+        "errores": 0
+      },
+      {
+        "umbral": 0.8,
+        "decide": 6,
+        "errores": 0
+      },
+      {
+        "umbral": 0.9,
+        "decide": 2,
+        "errores": 0
+      }
+    ],
+    "costoUsd": 0.43056500000000003,
+    "segundosPromedio": 10
+  },
+  "results": [
+    {
+      "dir": "data/identification-evidence/san_lorenzo/ce30e6ed-8300-476a-8c0e-e57f46a99710/8e104f6c-4ec9-4302-9e7d-5c7b52c5689d",
+      "site": "san_lorenzo",
+      "fragmentKey": "ce30e6ed-8300-476a-8c0e-e57f46a99710",
+      "read": "AF969BJ",
+      "refPlate": "AG692JX",
+      "decided": "AF969BJ",
+      "same": false,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\san_lorenzo\\ce30e6ed-8300-476a-8c0e-e57f46a99710\\8e104f6c-4ec9-4302-9e7d-5c7b52c5689d\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\san_lorenzo\\ce30e6ed-8300-476a-8c0e-e57f46a99710\\8e104f6c-4ec9-4302-9e7d-5c7b52c5689d\\captura-patente.jpg",
+        "label": "SLZSalidaC2Fte"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\san_lorenzo\\ce30e6ed-8300-476a-8c0e-e57f46a99710\\8e104f6c-4ec9-4302-9e7d-5c7b52c5689d\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\san_lorenzo\\ce30e6ed-8300-476a-8c0e-e57f46a99710\\8e104f6c-4ec9-4302-9e7d-5c7b52c5689d\\referencia-patente.jpg",
+        "label": "SLZSalidaC2Fte"
+      },
+      "saysSame": false,
+      "confidence": 0.95,
+      "reason": "El vehículo a identificar es un sedán Toyota Corolla blanco con spoiler y luces traseras tipo LED, mientras que el candidato A es una pick-up/chasis con caja de estacas y rotulación 'www.sandrigo.com.ar'. Además las patentes difieren (AF 969 BJ vs AG 692 JX).",
+      "costUsd": 0.030875,
+      "ms": 8313,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/6c693fe5-b6b6-4d11-b660-2b95d59230ee/1770e83f-d5c5-4164-bed4-02a71e14ca9e",
+      "site": "ricardone",
+      "fragmentKey": "6c693fe5-b6b6-4d11-b660-2b95d59230ee",
+      "read": "HED501",
+      "refPlate": "EDW495",
+      "decided": "HED501",
+      "same": false,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\6c693fe5-b6b6-4d11-b660-2b95d59230ee\\1770e83f-d5c5-4164-bed4-02a71e14ca9e\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\6c693fe5-b6b6-4d11-b660-2b95d59230ee\\1770e83f-d5c5-4164-bed4-02a71e14ca9e\\captura-patente.jpg",
+        "label": "RicCal03"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\6c693fe5-b6b6-4d11-b660-2b95d59230ee\\1770e83f-d5c5-4164-bed4-02a71e14ca9e\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\6c693fe5-b6b6-4d11-b660-2b95d59230ee\\1770e83f-d5c5-4164-bed4-02a71e14ca9e\\referencia-patente.jpg",
+        "label": "RicCal04"
+      },
+      "saysSame": false,
+      "confidence": 0.88,
+      "reason": "El vehículo a identificar es un Mercedes-Benz con visera/deflector de techo con logo 'VIESG' y leyenda 'EL CHOLI' en el frente de cabina, espejos dobles y paragolpes con cuatro faros auxiliares, mientras que el candidato A es un Mercedes-Benz L de cabina lisa sin visera ni calcos y con otro frente; además la patente leída (HED 501) no guarda relación con EDW 495.",
+      "costUsd": 0.03506,
+      "ms": 10616,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/23b3c556-00a3-4286-8b46-23ed7b89f433/94633155-c24a-4602-b7f7-2e1bc55e449c",
+      "site": "ricardone",
+      "fragmentKey": "23b3c556-00a3-4286-8b46-23ed7b89f433",
+      "read": "AF960DJ",
+      "refPlate": "AF041XW",
+      "decided": "AF960DJ",
+      "same": false,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\23b3c556-00a3-4286-8b46-23ed7b89f433\\94633155-c24a-4602-b7f7-2e1bc55e449c\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\23b3c556-00a3-4286-8b46-23ed7b89f433\\94633155-c24a-4602-b7f7-2e1bc55e449c\\captura-patente.jpg",
+        "label": "RicB2Egreso"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\23b3c556-00a3-4286-8b46-23ed7b89f433\\94633155-c24a-4602-b7f7-2e1bc55e449c\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\23b3c556-00a3-4286-8b46-23ed7b89f433\\94633155-c24a-4602-b7f7-2e1bc55e449c\\referencia-patente.jpg",
+        "label": "RicB2Egreso"
+      },
+      "saysSame": false,
+      "confidence": 0.8,
+      "reason": "Ambos son Mercedes-Benz Atego blancos vistos en la misma cámara de portería, pero el recorte de patente del vehículo a identificar se lee nítido como AF 960 DJ frente a AF 041 XW del candidato A, y difiere la carga (equipo/grúa roja sobre chasis vs. acoplado con caja roja) y el detalle del paragolpes y faros auxiliares.",
+      "costUsd": 0.03692,
+      "ms": 12640,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/038d30d9-08ae-42da-9e1b-4d79f1f0009d/2c9b82fd-ef26-401e-9e56-8f955f41caac",
+      "site": "ricardone",
+      "fragmentKey": "038d30d9-08ae-42da-9e1b-4d79f1f0009d",
+      "read": "EUA987",
+      "refPlate": "EDA987",
+      "decided": "EDA987",
+      "same": true,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\038d30d9-08ae-42da-9e1b-4d79f1f0009d\\2c9b82fd-ef26-401e-9e56-8f955f41caac\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\038d30d9-08ae-42da-9e1b-4d79f1f0009d\\2c9b82fd-ef26-401e-9e56-8f955f41caac\\captura-patente.jpg",
+        "label": "RicCal04"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\038d30d9-08ae-42da-9e1b-4d79f1f0009d\\2c9b82fd-ef26-401e-9e56-8f955f41caac\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\038d30d9-08ae-42da-9e1b-4d79f1f0009d\\2c9b82fd-ef26-401e-9e56-8f955f41caac\\referencia-patente.jpg",
+        "label": "RicPreIngInFr"
+      },
+      "saysSame": true,
+      "confidence": 0.84,
+      "reason": "La patente recortada muestra 'EDA 987', coincidente con el candidato A; además ambos son Mercedes-Benz Atego/Axor de cabina blanca con paragolpes blanco de doble juego de faros redondos y parrilla con estrella central, compatible con el mismo camión.",
+      "costUsd": 0.030635000000000003,
+      "ms": 6494,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/0b34e73f-e047-42ae-baee-4fdc48bfd588/779b3d7d-1d68-4302-a43d-dc9d8e3bb8ac",
+      "site": "ricardone",
+      "fragmentKey": "0b34e73f-e047-42ae-baee-4fdc48bfd588",
+      "read": "CFT975",
+      "refPlate": "CEI975",
+      "decided": "CEI975",
+      "same": true,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\0b34e73f-e047-42ae-baee-4fdc48bfd588\\779b3d7d-1d68-4302-a43d-dc9d8e3bb8ac\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\0b34e73f-e047-42ae-baee-4fdc48bfd588\\779b3d7d-1d68-4302-a43d-dc9d8e3bb8ac\\captura-patente.jpg",
+        "label": "RicCal03"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\0b34e73f-e047-42ae-baee-4fdc48bfd588\\779b3d7d-1d68-4302-a43d-dc9d8e3bb8ac\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\0b34e73f-e047-42ae-baee-4fdc48bfd588\\779b3d7d-1d68-4302-a43d-dc9d8e3bb8ac\\referencia-patente.jpg",
+        "label": "RicPreIngInFr"
+      },
+      "saysSame": true,
+      "confidence": 0.82,
+      "reason": "La patente coincide carácter por carácter (CEI 975, con el punto/guión central y formato argentino viejo) y en ambos casos se trata de un camión mediano de trompa recta con paragolpes bajo, faros rectangulares y antiniebla redondos en los extremos; la diferencia de color aparente se explica por la captura en infrarrojo/escala de grises nocturna.",
+      "costUsd": 0.034335,
+      "ms": 8250,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/0fd4f33b-6dbb-4bd8-a43a-967947e080dd/1d1c52c0-7b09-4e87-8055-9e336b672b4d",
+      "site": "ricardone",
+      "fragmentKey": "0fd4f33b-6dbb-4bd8-a43a-967947e080dd",
+      "read": "DQO011",
+      "refPlate": "ROQ011",
+      "decided": "ROQ011",
+      "same": true,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\0fd4f33b-6dbb-4bd8-a43a-967947e080dd\\1d1c52c0-7b09-4e87-8055-9e336b672b4d\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\0fd4f33b-6dbb-4bd8-a43a-967947e080dd\\1d1c52c0-7b09-4e87-8055-9e336b672b4d\\captura-patente.jpg",
+        "label": "RicCal03"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\0fd4f33b-6dbb-4bd8-a43a-967947e080dd\\1d1c52c0-7b09-4e87-8055-9e336b672b4d\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\0fd4f33b-6dbb-4bd8-a43a-967947e080dd\\1d1c52c0-7b09-4e87-8055-9e336b672b4d\\referencia-patente.jpg",
+        "label": "RicCal03"
+      },
+      "saysSame": true,
+      "confidence": 0.93,
+      "reason": "Mismo Scania 112H 360 de cabina blanca con franja roja y logo SCANIA idéntico, misma parrilla, mismos faros auxiliares y espejos, y el overlay de la cámara muestra ROQ·011 en ambas capturas.",
+      "costUsd": 0.030815000000000002,
+      "ms": 6697,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/11d3b71b-eea1-4555-bcab-876e8ab6ce99/4787353a-1d83-46b6-873f-7b1caeef63d2",
+      "site": "ricardone",
+      "fragmentKey": "11d3b71b-eea1-4555-bcab-876e8ab6ce99",
+      "read": "ILDC259",
+      "refPlate": "COI299",
+      "decided": "COI299",
+      "same": true,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\11d3b71b-eea1-4555-bcab-876e8ab6ce99\\4787353a-1d83-46b6-873f-7b1caeef63d2\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\11d3b71b-eea1-4555-bcab-876e8ab6ce99\\4787353a-1d83-46b6-873f-7b1caeef63d2\\captura-patente.jpg",
+        "label": "RicCal03"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\11d3b71b-eea1-4555-bcab-876e8ab6ce99\\4787353a-1d83-46b6-873f-7b1caeef63d2\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\11d3b71b-eea1-4555-bcab-876e8ab6ce99\\4787353a-1d83-46b6-873f-7b1caeef63d2\\referencia-patente.jpg",
+        "label": "RicPreIngInFr"
+      },
+      "saysSame": true,
+      "confidence": 0.82,
+      "reason": "La patente coincide en los caracteres legibles (COL 299) y ambos son camiones Mercedes-Benz de cabina blanca con paragolpes claro, franjas reflectivas blancas a los lados de la chapa y faros redondos dobles. La diferencia de ángulo y luz no aporta contradicciones.",
+      "costUsd": 0.035230000000000004,
+      "ms": 9193,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/3b1f87c7-d723-4b5f-b97a-7ae19d74524a/78c19709-8f3b-4fc6-9f4b-d2ce405389ef",
+      "site": "ricardone",
+      "fragmentKey": "3b1f87c7-d723-4b5f-b97a-7ae19d74524a",
+      "read": "AC297HX",
+      "refPlate": "AC297UX",
+      "decided": "AC297UX",
+      "same": true,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\3b1f87c7-d723-4b5f-b97a-7ae19d74524a\\78c19709-8f3b-4fc6-9f4b-d2ce405389ef\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\3b1f87c7-d723-4b5f-b97a-7ae19d74524a\\78c19709-8f3b-4fc6-9f4b-d2ce405389ef\\captura-patente.jpg",
+        "label": "RicB3Ingreso"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\3b1f87c7-d723-4b5f-b97a-7ae19d74524a\\78c19709-8f3b-4fc6-9f4b-d2ce405389ef\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\3b1f87c7-d723-4b5f-b97a-7ae19d74524a\\78c19709-8f3b-4fc6-9f4b-d2ce405389ef\\referencia-patente.jpg",
+        "label": "RicB3Ingreso"
+      },
+      "saysSame": true,
+      "confidence": 0.95,
+      "reason": "Misma Toyota Hilux blanca en la misma báscula y cámara, con idéntica patente deteriorada AC 297 UX, parrilla negra, llantas de chapa y las mismas marcas de barro/abolladuras en el paragolpes y guardabarros derecho.",
+      "costUsd": 0.032375,
+      "ms": 7200,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/14afc1ed-9eaa-4cd9-8bb5-e3b272e47a7b/abf69ddd-fe77-47ab-8a86-10322dc9f314",
+      "site": "ricardone",
+      "fragmentKey": "14afc1ed-9eaa-4cd9-8bb5-e3b272e47a7b",
+      "read": "CCT299",
+      "refPlate": "COI299",
+      "decided": "COI299",
+      "same": true,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\14afc1ed-9eaa-4cd9-8bb5-e3b272e47a7b\\abf69ddd-fe77-47ab-8a86-10322dc9f314\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\14afc1ed-9eaa-4cd9-8bb5-e3b272e47a7b\\abf69ddd-fe77-47ab-8a86-10322dc9f314\\captura-patente.jpg",
+        "label": "RicEgrCamFrente"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\14afc1ed-9eaa-4cd9-8bb5-e3b272e47a7b\\abf69ddd-fe77-47ab-8a86-10322dc9f314\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\14afc1ed-9eaa-4cd9-8bb5-e3b272e47a7b\\abf69ddd-fe77-47ab-8a86-10322dc9f314\\referencia-patente.jpg",
+        "label": "SLZVolcableC3"
+      },
+      "saysSame": true,
+      "confidence": 0.6,
+      "reason": "Ambos son Mercedes-Benz trompudos (L/Atron) con parrilla cromada de barras horizontales, estrella central, faros redondos dobles en caja oscura y paragolpes claro con faros antiniebla, y la patente coincide en el patrón CO_ 29_ (COI 299 del candidato). La diferencia de color (crema vs blanco) se explica por la iluminación nocturna y la carga/lona distinta por ser otro viaje, pero no es certeza total.",
+      "costUsd": 0.050725,
+      "ms": 19431,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/3cd7a206-33b0-47c8-a6ce-ad8acfd418cd/7d3a3d92-29dd-4f55-977e-1b9bcc90510f",
+      "site": "ricardone",
+      "fragmentKey": "3cd7a206-33b0-47c8-a6ce-ad8acfd418cd",
+      "read": "LTO604",
+      "refPlate": "ETO684",
+      "decided": "ETO684",
+      "same": true,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\3cd7a206-33b0-47c8-a6ce-ad8acfd418cd\\7d3a3d92-29dd-4f55-977e-1b9bcc90510f\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\3cd7a206-33b0-47c8-a6ce-ad8acfd418cd\\7d3a3d92-29dd-4f55-977e-1b9bcc90510f\\captura-patente.jpg",
+        "label": "RicCal04"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\3cd7a206-33b0-47c8-a6ce-ad8acfd418cd\\7d3a3d92-29dd-4f55-977e-1b9bcc90510f\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\3cd7a206-33b0-47c8-a6ce-ad8acfd418cd\\7d3a3d92-29dd-4f55-977e-1b9bcc90510f\\referencia-patente.jpg",
+        "label": "RicPreIngInFr"
+      },
+      "saysSame": true,
+      "confidence": 0.45,
+      "reason": "Ambos son VW (Worker/Constellation) de cabina blanca con parrilla de franjas negras y la patente borrosa del objetivo es compatible con el formato y trazos de 'ETO 684' (el último grupo se lee 6_4). Sin embargo, la foto del candidato A no muestra techo ni laterales, por lo que no se puede confirmar el equipo VIESA sobre la cabina ni el estado del paragolpes (A tiene daño en el lateral derecho del paragolpes que no se aprecia en el objetivo).",
+      "costUsd": 0.042225,
+      "ms": 14370,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/47c7f63d-98c6-4d8b-b419-44faa285e958/47eeb04a-548f-43ca-8183-65d2b740d87b",
+      "site": "ricardone",
+      "fragmentKey": "47c7f63d-98c6-4d8b-b419-44faa285e958",
+      "read": "VN4104",
+      "refPlate": "LXO474",
+      "decided": "LXO474",
+      "same": true,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\47c7f63d-98c6-4d8b-b419-44faa285e958\\47eeb04a-548f-43ca-8183-65d2b740d87b\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\47c7f63d-98c6-4d8b-b419-44faa285e958\\47eeb04a-548f-43ca-8183-65d2b740d87b\\captura-patente.jpg",
+        "label": "RicCal04"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\47c7f63d-98c6-4d8b-b419-44faa285e958\\47eeb04a-548f-43ca-8183-65d2b740d87b\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\47c7f63d-98c6-4d8b-b419-44faa285e958\\47eeb04a-548f-43ca-8183-65d2b740d87b\\referencia-patente.jpg",
+        "label": "RicPreIngInFr"
+      },
+      "saysSame": true,
+      "confidence": 0.55,
+      "reason": "Coincide la cabina blanca Renault con el par de faros LED rectangulares auxiliares montados al centro del paragolpes flanqueando la patente y las luces de posición ámbar junto a los faros principales; el recorte de 'patente' del vehículo a identificar es en realidad el logotipo RENAULT del frente, por lo que no hay caracteres para confirmar y la confianza queda media.",
+      "costUsd": 0.04138,
+      "ms": 12212,
+      "ok": true
+    },
+    {
+      "dir": "data/identification-evidence/ricardone/485020ac-acfd-4619-bb0d-833f859a2843/bd50cec4-eae2-4f2b-954b-c0141b3cf62b",
+      "site": "ricardone",
+      "fragmentKey": "485020ac-acfd-4619-bb0d-833f859a2843",
+      "read": "ENN622",
+      "refPlate": "ERN622",
+      "decided": "ERN622",
+      "same": true,
+      "ambiguous": false,
+      "capture": {
+        "scene": "data\\identification-evidence\\ricardone\\485020ac-acfd-4619-bb0d-833f859a2843\\bd50cec4-eae2-4f2b-954b-c0141b3cf62b\\captura-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\485020ac-acfd-4619-bb0d-833f859a2843\\bd50cec4-eae2-4f2b-954b-c0141b3cf62b\\captura-patente.jpg",
+        "label": "RicCal04"
+      },
+      "reference": {
+        "scene": "data\\identification-evidence\\ricardone\\485020ac-acfd-4619-bb0d-833f859a2843\\bd50cec4-eae2-4f2b-954b-c0141b3cf62b\\referencia-escena.jpg",
+        "plate": "data\\identification-evidence\\ricardone\\485020ac-acfd-4619-bb0d-833f859a2843\\bd50cec4-eae2-4f2b-954b-c0141b3cf62b\\referencia-patente.jpg",
+        "label": "RicPreIngInFr"
+      },
+      "saysSame": true,
+      "confidence": 0.82,
+      "reason": "Ambos son Volvo FM de cabina blanca con parrilla negra de tres franjas y faros rectangulares iguales; la patente del recorte se lee ERN 622, coincidente con la lectura anterior del candidato A.",
+      "costUsd": 0.029989999999999996,
+      "ms": 6351,
+      "ok": true
+    }
+  ]
+}

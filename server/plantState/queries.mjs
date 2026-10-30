@@ -22,7 +22,7 @@ import {
   sectorToLogical,
 } from './circuitPrefix.mjs'
 import { PlantStateError } from './service.mjs'
-import { deduceSkippedSteps, nodeModelCatalog, withDeducedSequence } from './plateIdentification.mjs'
+import { deduceSkippedSteps, nodeModelCatalog, remainingByNodeModel, withDeducedSequence } from './plateIdentification.mjs'
 import { pointOfSector, pointOfLogical, resolveZone, zonesOfSite } from './plantGraph.mjs'
 
 const TWELVE_H_MS = 12 * 60 * 60 * 1000
@@ -438,6 +438,8 @@ export function createPlantStateQueries(service) {
       }
     })
     const timeline = withDeducedSteps(read)
+    // Pasos que faltan: el modelo de nodos (cruza de planta); si no encaja, el resto del circuito por prefijo.
+    const route = remainingByNodeModel(timeline.map((r) => r.logicalSector))
 
     return {
       site: String(site || 'ricardone').toLowerCase(),
@@ -452,6 +454,8 @@ export function createPlantStateQueries(service) {
       provisional: true,
       nextExpectedPoint: truck.match.nextExpectedPoint,
       nextExpectedLabel: truck.match.nextExpectedLabel,
+      /** Pasos del circuito que faltan, en orden; el primero es el próximo que se muestra sobre el camión. */
+      remainingSteps: (route?.rest ?? truck.match.remainingSequence ?? []).map((l) => ({ logicalSector: l, label: logicalLabel(l) })),
       dwellSectorMin: round1(truck.dwellSectorMin),
       dwellPlantMin: round1(truck.dwellPlantMin),
       minutesSinceLastDetection: round1(truck.minutesSinceLastDetection),

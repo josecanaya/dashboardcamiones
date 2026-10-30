@@ -1,0 +1,103 @@
+{
+  "summary": {
+    "medidos": 8,
+    "correctos": "8/8",
+    "erroresAutomaticos": [
+      {
+        "umbral": 0.7,
+        "errores": 0
+      },
+      {
+        "umbral": 0.8,
+        "errores": 0
+      },
+      {
+        "umbral": 0.9,
+        "errores": 0
+      }
+    ],
+    "costoUsd": 0.29208500000000004
+  },
+  "results": [
+    {
+      "a": "AB349QJ",
+      "b": "AG169JJ",
+      "sim": 0.9152253761578846,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.93,
+      "reason": "El vehículo a identificar es una Fiat Strada/Toro roja, cabina y caja chicas sin rotulación, mientras que el candidato A es una Ford Ranger blanca y azul con calco 'RAICOS' y patente AG 169 JJ; no coinciden ni color, ni marca/modelo, ni caracteres de la patente.",
+      "costUsd": 0.03075
+    },
+    {
+      "a": "GQW349",
+      "b": "EFA323",
+      "sim": 0.899787381686712,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.85,
+      "reason": "Ambos son Iveco EuroCargo blancos, pero el de la captura es un camión rígido con caja de estacas y lona verde, luces de techo azules y espejo/soporte distinto, mientras que el candidato A es un tractor con semirremolque portacontenedor y patente EFA 323, sin coincidencia de caracteres con GQW 349.",
+      "costUsd": 0.035635
+    },
+    {
+      "a": "FKZ258",
+      "b": "FEA810",
+      "sim": 0.9126972160738286,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.35,
+      "reason": "Ambos son Ford Cargo 1722 blancos con calco azul tipo ola, pero el vehículo a identificar tiene un gran calco azul decorativo sobre la trompa/panel frontal y remolque con barandas rojas, mientras que el candidato A no presenta ese calco frontal y lleva plataforma lisa; además la patente leída (FKZ 258) no es confundible con FEA 810.",
+      "costUsd": 0.039165
+    },
+    {
+      "a": "AG688FB",
+      "b": "MFY738",
+      "sim": 0.899383362886553,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.93,
+      "reason": "El vehículo a identificar es una Ford Transit blanca (furgón alto, parrilla Ford, patente AG 688 FB), mientras que el candidato A es una Chevrolet Trailblazer/S10 celeste con patente tipo HFY-738; difieren en tipo de vehículo, color, marca y patente.",
+      "costUsd": 0.03074
+    },
+    {
+      "a": "AA528MD",
+      "b": "AB785UY",
+      "sim": 0.8888788504227649,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.93,
+      "reason": "El vehículo a identificar es una pickup Ford Ranger blanca (parrilla alta, óvalo Ford, caja), mientras el candidato A es un furgón Renault Kangoo blanco con rombo Renault; patentes distintas (AA528MI vs AB785UY).",
+      "costUsd": 0.0306
+    },
+    {
+      "a": "AD449JK",
+      "b": "AA528RN",
+      "sim": 0.8945083812722225,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.74,
+      "reason": "Ambas son Ford Ranger blancas de la misma flota, pero difieren en detalles: el vehículo a identificar lleva logo 'Dellarossa' y doble franja roja en el portón con el '110' en el parabrisas trasero, mientras el candidato A tiene una sola franja roja lisa sin logo y el '110' pintado en el lateral de la caja; además la patente del candidato A empieza 'AA 528' y no coincide con AB 449 JK.",
+      "costUsd": 0.042895
+    },
+    {
+      "a": "AB394QZ",
+      "b": "AI195ZN",
+      "sim": 0.8884846170452809,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.72,
+      "reason": "Ambos son VW Constellation blancos con volcable, pero el candidato A tiene techo/deflector rojo sobre la cabina y caja clara con borde rojo, mientras el vehículo a identificar tiene techo blanco con barra de luces y caja oscura; además la patente leída (AI 394 QL) no coincide con AI 195 ZD salvo las dos primeras letras.",
+      "costUsd": 0.039585
+    },
+    {
+      "a": "COI299",
+      "b": "HED501",
+      "sim": 0.8874602344566631,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.78,
+      "reason": "El camión a identificar es un Mercedes-Benz de cabina más baja y moderna, sin rotulación, con caja de techo y carrocería de barandas/estacas de madera, y la patente termina en 233; el candidato A es un MB cabinado más alto con leyenda 'EL CHOLI', equipo VIESA en el techo, carga con lona y patente HED 501. Frente, grilla, espejos y carga no coinciden.",
+      "costUsd": 0.042715
+    }
+  ]
+}

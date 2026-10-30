@@ -21,7 +21,7 @@ Formato: **fichas** (una lámina por caso de ejemplo) + una lámina por camión 
 ## 2. Dónde está todo
 
 ### Deck publicado (fuente de verdad, el usuario edita en la página)
-- Artifact Slides: https://claude.ai/artifact/5H4nBStd4rRjnzVaHF7zZG (versión 1793022997-6e3a al cierre).
+- Artifact Slides: https://claude.ai/artifact/JqJZTMYcPwSvPHzAnEzKUM (versión 1793022997-6e3a al cierre).
 - Copia local de esa versión: `reportes/logistica/2026-10-12_2026-10-25/comite-seguridad/deck-publicado/project/` (deck.json + slides/*.html).
 - Orden actual: cover, ficha-vuelta, ficha-calles, div-vuelta, v-bmf567-2110, v-umt456-2110, v-jjv417-2110, v-tcd135-2310,
   v-gxu312-2310, v-gvw791-2310, div-interplanta, interplanta, camionetas, ficha-permitido, servicio (servicio figura en el orden pero no tiene archivo).
@@ -112,10 +112,14 @@ Formato: **fichas** (una lámina por caso de ejemplo) + una lámina por camión 
 - Tablas canónicas y reglas del analista en `CLAUDE.md` del repo; memorias en `C:\Users\Usuario\.claude\projects\C--Users-Usuario-Desktop-Dashboard-camiones\memory\`.
 
 ## 5. Pendientes
-1. **TCD135 (lámina v-tcd135-2310)**: la píldora dice «Sin volver todavía» pero el título dice que volvió y el sistema muestra que descargó el 24/10 05:41. Corregir la píldora y, si se puede, sumar el viaje del 24/10 con fotos.
+1. **TCD135 (lámina v-tcd135-2310)**: hecho en `deck-publicado` (26/10): píldora «21 h 13 m hasta entrar de nuevo al puerto» (salida puerto 23/10 12:45 → ingreso 24/10 09:58) y viaje del 24/10 en la línea de tiempo con descarga en el Volcable 5 10:54 (cámara con la patente leída; SGC 14509839 05:41–11:07, SILO 5). Faltan las fotos de ese viaje (`fotos-recorridos.cjs` + subirlas como asset). El generador no produce este viaje: está a mano en el HTML.
 2. Pedir a Vicentin: peso del ingreso 14509528 (GVW791) y si tuvo descarga; calle declarada del ingreso 14510024 (LUE562); Excel del 19, 20 y 25/10.
    A futuro: sumar a la vista la plataforma declarada y hora/peso de cada pesada (así una baja no borra el peso).
 3. Buscar con `listVehicleCaptures` las descargas sin lectura de TCD135 (24/10) y de los otros rechazados, igual que GVW791.
-4. Pies de página: algunas láminas dicen «12/10 al 22/10» (div-vuelta, v-bmf567, v-umt456, v-jjv417) y los números de página no siguen el orden actual.
+4. Pies de página: hecho en `deck-publicado` (26/10), todas dicen «12/10 al 25/10/2026» y numeran según `deck.json` (portada = 1).
 5. Ficha «Vehículos Permitidos» en línea (página con base compartida para que cada sector complete): el usuario la pausó («no la necesito ahora»). Ojo: un artifact con base solo lo abren personas de la organización en claude.ai.
 6. Commit de los scripts cambiados (comite-seguridad-deteccion.ts, gen_comite_seguridad.py, fotos-recorridos.cjs) y de esta carpeta. No commitear sin que el usuario lo pida.
+
+
+## Deck nuevo (26/10/2026)
+El deck se volvió a publicar en https://claude.ai/artifact/JqJZTMYcPwSvPHzAnEzKUM (el link anterior no abría desde la cuenta de Claude Code). La versión publicada está en `deck-artifact/project` (ids de imagen nuevos); `deck-publicado` conserva los ids del deck anterior. `fotos/recorridos/blobs.json` apunta a los assets nuevos y solo lista las 82 fotos que usan las láminas (23 sin usar quedaron afuera). Logos, fotos aéreas de la portada y las dos fotos de GVW791 (02:17 y 02:27) salieron del PPTX descargado.

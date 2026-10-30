@@ -1,0 +1,916 @@
+[
+ {
+  "patente": "OVK247",
+  "fotos": [
+   {
+    "camara": "RicCal02",
+    "lugar": "RicCal02",
+    "hora": "2026-09-29 00:59:47",
+    "leida": "OVK247",
+    "tipo": "Medium Truck",
+    "color": "White",
+    "marca": "Mercedes-Benz",
+    "archivo": "fotos/OVK247_0059_RicCal02.jpg"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "lugar": "Egreso Ric",
+    "hora": "2026-09-29 10:27:40",
+    "leida": "OVK247",
+    "tipo": "Medium Truck",
+    "color": "White",
+    "marca": "Mercedes-Benz",
+    "archivo": "fotos/OVK247_1027_RicEgrCamFrente.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "RSW086",
+  "fotos": [
+   {
+    "camara": "SLZTK400",
+    "lugar": "TK400 SL",
+    "hora": "2026-09-29 13:56:21",
+    "leida": "RSW086",
+    "tipo": "Medium Truck",
+    "color": "Yellow",
+    "marca": "Mercedes-Benz",
+    "archivo": "fotos/RSW086_1356_SLZTK400.jpg"
+   },
+   {
+    "camara": "SLZTK400",
+    "lugar": "TK400 SL",
+    "hora": "2026-09-29 18:35:22",
+    "leida": "RSW086",
+    "tipo": "Small Truck",
+    "color": "Black",
+    "marca": "BAIC Motor",
+    "archivo": "fotos/RSW086_1835_SLZTK400.jpg"
+   },
+   {
+    "camara": "SLZSalidaC2Fte",
+    "lugar": "Portería SL 2",
+    "hora": "2026-09-29 06:57:50",
+    "leida": "RSW086",
+    "tipo": "Small Truck",
+    "color": "Blue",
+    "marca": "MG",
+    "archivo": "fotos/RSW086_0657_SLZSalidaC2Fte.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AH831XA",
+  "fotos": [
+   {
+    "camara": "RicS6Playa3",
+    "lugar": "Playa 3 Ric",
+    "hora": "2026-09-29 07:15:14",
+    "leida": "AH831XA",
+    "tipo": "Large Truck",
+    "color": "White",
+    "marca": "Iveco",
+    "archivo": "fotos/AH831XA_0715_RicS6Playa3.jpg"
+   },
+   {
+    "camara": "RicB3Egreso",
+    "lugar": "Balanza 3 Ric (sal.)",
+    "hora": "2026-09-29 07:20:40",
+    "leida": "AH831XA",
+    "tipo": "Large Truck",
+    "color": null,
+    "marca": "Iveco",
+    "archivo": "fotos/AH831XA_0720_RicB3Egreso.jpg"
+   },
+   {
+    "camara": "RicB3Ingreso",
+    "lugar": "Balanza 3 Ric",
+    "hora": "2026-09-29 15:41:20",
+    "leida": "AH831XA",
+    "tipo": "SUV",
+    "color": "White",
+    "marca": null,
+    "archivo": "fotos/AH831XA_1541_RicB3Ingreso.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AE260HD",
+  "fotos": [
+   {
+    "camara": "RicB3Egreso",
+    "lugar": "Balanza 3 Ric (sal.)",
+    "hora": "2026-09-29 07:39:10",
+    "leida": "AE260HD",
+    "tipo": "Large Truck",
+    "color": "White",
+    "marca": "Iveco",
+    "archivo": "fotos/AE260HD_0739_RicB3Egreso.jpg"
+   },
+   {
+    "camara": "RicB3Ingreso",
+    "lugar": "Balanza 3 Ric",
+    "hora": "2026-09-29 07:54:09",
+    "leida": "AE260HD",
+    "tipo": "Medium Truck",
+    "color": "Black",
+    "marca": null,
+    "archivo": "fotos/AE260HD_0754_RicB3Ingreso.jpg"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "lugar": "Preingreso Ric",
+    "hora": "2026-09-29 07:42:26",
+    "leida": "AE260HD",
+    "tipo": "Medium Truck",
+    "color": "Brown",
+    "marca": "Iveco",
+    "archivo": "fotos/AE260HD_0742_RicPreIngInFr.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AF277LC",
+  "fotos": [
+   {
+    "camara": "SLZTK400",
+    "lugar": "TK400 SL",
+    "hora": "2026-09-29 09:42:43",
+    "leida": "AF277LC",
+    "tipo": "Large Truck",
+    "color": "White",
+    "marca": "Nissan",
+    "archivo": "fotos/AF277LC_0942_SLZTK400.jpg"
+   },
+   {
+    "camara": "SLZTK400",
+    "lugar": "TK400 SL",
+    "hora": "2026-09-29 14:31:15",
+    "leida": "AF277LC",
+    "tipo": "Large Truck",
+    "color": "White",
+    "marca": null,
+    "archivo": "fotos/AF277LC_1431_SLZTK400.jpg"
+   },
+   {
+    "camara": "SLZTK400",
+    "lugar": "TK400 SL",
+    "hora": "2026-09-29 18:08:48",
+    "leida": "AF277LC",
+    "tipo": "Large Truck",
+    "color": "White",
+    "marca": "Nissan",
+    "archivo": "fotos/AF277LC_1808_SLZTK400.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AF411UI",
+  "fotos": [
+   {
+    "camara": "RicS6Playa3",
+    "lugar": "Playa 3 Ric",
+    "hora": "2026-09-29 15:42:36",
+    "leida": "AF411UI",
+    "tipo": "Large Truck",
+    "color": "White",
+    "marca": "Mercedes-Benz",
+    "archivo": "fotos/AF411UI_1542_RicS6Playa3.jpg"
+   },
+   {
+    "camara": "RicB2Egreso",
+    "lugar": "Balanza 2 Ric",
+    "hora": "2026-09-29 15:45:12",
+    "leida": "AF411UI",
+    "tipo": "Medium Truck",
+    "color": "Black",
+    "marca": "Mercedes-Benz",
+    "archivo": "fotos/AF411UI_1545_RicB2Egreso.jpg"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "lugar": "Preingreso Ric",
+    "hora": "2026-09-29 08:07:48",
+    "leida": "AF411UI",
+    "tipo": "Medium Truck",
+    "color": "White",
+    "marca": "Mercedes-Benz",
+    "archivo": "fotos/AF411UI_0807_RicPreIngInFr.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "JCT961",
+  "fotos": [
+   {
+    "camara": "RicB3Ingreso",
+    "lugar": "Balanza 3 Ric",
+    "hora": "2026-09-29 08:09:49",
+    "leida": "JCT961",
+    "tipo": "Medium Truck",
+    "color": "White",
+    "marca": "Ford",
+    "archivo": "fotos/JCT961_0809_RicB3Ingreso.jpg"
+   },
+   {
+    "camara": "RicB3Egreso",
+    "lugar": "Balanza 3 Ric (sal.)",
+    "hora": "2026-09-29 08:09:58",
+    "leida": "JCT961",
+    "tipo": "Sedan",
+    "color": "Red",
+    "marca": null,
+    "archivo": "fotos/JCT961_0809_RicB3Egreso.jpg"
+   },
+   {
+    "camara": "RicB2Egreso",
+    "lugar": "Balanza 2 Ric",
+    "hora": "2026-09-29 18:18:47",
+    "leida": "JCT961",
+    "tipo": "Medium Truck",
+    "color": "White",
+    "marca": "Ford",
+    "archivo": "fotos/JCT961_1818_RicB2Egreso.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AD545MJ",
+  "fotos": [
+   {
+    "camara": "SLZTK400",
+    "lugar": "TK400 SL",
+    "hora": "2026-09-29 09:24:29",
+    "leida": "AD545MJ",
+    "tipo": "Small Truck",
+    "color": "White",
+    "marca": null,
+    "archivo": "fotos/AD545MJ_0924_SLZTK400.jpg"
+   },
+   {
+    "camara": "SLZTK400",
+    "lugar": "TK400 SL",
+    "hora": "2026-09-29 11:24:16",
+    "leida": "AD545MJ",
+    "tipo": "Small Truck",
+    "color": "White",
+    "marca": null,
+    "archivo": "fotos/AD545MJ_1124_SLZTK400.jpg"
+   },
+   {
+    "camara": "SLZTK400",
+    "lugar": "TK400 SL",
+    "hora": "2026-09-29 13:51:05",
+    "leida": "AD545MJ",
+    "tipo": "Small Truck",
+    "color": "White",
+    "marca": null,
+    "archivo": "fotos/AD545MJ_1351_SLZTK400.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "VNA879",
+  "fotos": [
+   {
+    "camara": "RicS6Playa3",
+    "lugar": "Playa 3 Ric",
+    "hora": "2026-09-29 08:30:19",
+    "leida": "VNA879",
+    "tipo": "Medium Truck",
+    "color": "Red",
+    "marca": "Chevrolet",
+    "archivo": "fotos/VNA879_0830_RicS6Playa3.jpg"
+   },
+   {
+    "camara": "RicS6Playa3",
+    "lugar": "Playa 3 Ric",
+    "hora": "2026-09-29 09:36:52",
+    "leida": "VNA879",
+    "tipo": "Small Truck",
+    "color": "White",
+    "marca": "Kia",
+    "archivo": "fotos/VNA879_0936_RicS6Playa3.jpg"
+   },
+   {
+    "camara": "RicS6Playa3",
+    "lugar": "Playa 3 Ric",
+    "hora": "2026-09-29 12:25:53",
+    "leida": "VNA879",
+    "tipo": "Pickup",
+    "color": null,
+    "marca": "Chevrolet",
+    "archivo": "fotos/VNA879_1225_RicS6Playa3.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "LPZ703",
+  "fotos": [
+   {
+    "camara": "RicB1Ingreso",
+    "lugar": "Balanza 1 Ric",
+    "hora": "2026-09-29 08:38:30",
+    "leida": "LPZ703",
+    "tipo": "Large Truck",
+    "color": "White",
+    "marca": "Ford",
+    "archivo": "fotos/LPZ703_0838_RicB1Ingreso.jpg"
+   },
+   {
+    "camara": "RicB2Egreso",
+    "lugar": "Balanza 2 Ric",
+    "hora": "2026-09-29 13:03:41",
+    "leida": "LPZ703",
+    "tipo": "SUV",
+    "color": "White",
+    "marca": null,
+    "archivo": "fotos/LPZ703_1303_RicB2Egreso.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "KQO037",
+  "fotos": [
+   {
+    "camara": "RicB1Egreso",
+    "lugar": "RicB1Egreso",
+    "hora": "2026-09-29 12:37:28",
+    "leida": "KQO037",
+    "tipo": "Sedan",
+    "color": "White",
+    "marca": null,
+    "archivo": "fotos/KQO037_1237_RicB1Egreso.jpg"
+   },
+   {
+    "camara": "RicB2Egreso",
+    "lugar": "Balanza 2 Ric",
+    "hora": "2026-09-29 12:41:33",
+    "leida": "KQO037",
+    "tipo": "Sedan",
+    "color": "White",
+    "marca": null,
+    "archivo": "fotos/KQO037_1241_RicB2Egreso.jpg"
+   },
+   {
+    "camara": "SLZSalidaC2Fte",
+    "lugar": "Portería SL 2",
+    "hora": "2026-09-29 08:43:41",
+    "leida": "KQO037",
+    "tipo": "Small Truck",
+    "color": "White",
+    "marca": null,
+    "archivo": "fotos/KQO037_0843_SLZSalidaC2Fte.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AE882UD",
+  "fotos": [
+   {
+    "camara": "RicB3Ingreso",
+    "lugar": "Balanza 3 Ric",
+    "hora": "2026-09-29 09:11:46",
+    "leida": "AE882UD",
+    "tipo": "Small Truck",
+    "color": "White",
+    "marca": "Kia",
+    "archivo": "fotos/AE882UD_0911_RicB3Ingreso.jpg"
+   },
+   {
+    "camara": "RicB3Egreso",
+    "lugar": "Balanza 3 Ric (sal.)",
+    "hora": "2026-09-29 10:01:25",
+    "leida": "AE882UD",
+    "tipo": "Small Truck",
+    "color": "White",
+    "marca": "Kia",
+    "archivo": "fotos/AE882UD_1001_RicB3Egreso.jpg"
+   },
+   {
+    "camara": "SLZSalidaC2Fte",
+    "lugar": "Portería SL 2",
+    "hora": "2026-09-29 08:46:41",
+    "leida": "AE882UD",
+    "tipo": "Small Truck",
+    "color": "White",
+    "marca": "Mitsubishi",
+    "archivo": "fotos/AE882UD_0846_SLZSalidaC2Fte.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AE817FH",
+  "fotos": [
+   {
+    "camara": "RicB3Ingreso",
+    "lugar": "Balanza 3 Ric",
+    "hora": "2026-09-29 08:50:00",
+    "leida": "AE817FH",
+    "tipo": "Pickup",
+    "color": "Black",
+    "marca": "Ford",
+    "archivo": "fotos/AE817FH_0850_RicB3Ingreso.jpg"
+   },
+   {
+    "camara": "RicB3Egreso",
+    "lugar": "Balanza 3 Ric (sal.)",
+    "hora": "2026-09-29 09:05:31",
+    "leida": "AE817FH",
+    "tipo": "Van",
+    "color": "White",
+    "marca": "Ford",
+    "archivo": "fotos/AE817FH_0905_RicB3Egreso.jpg"
+   },
+   {
+    "camara": "SLZSalidaC2Fte",
+    "lugar": "Portería SL 2",
+    "hora": "2026-09-29 09:30:19",
+    "leida": "AE817FH",
+    "tipo": "Van",
+    "color": "White",
+    "marca": "Ford",
+    "archivo": "fotos/AE817FH_0930_SLZSalidaC2Fte.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "VUZ771",
+  "fotos": [
+   {
+    "camara": "SLZTK400",
+    "lugar": "TK400 SL",
+    "hora": "2026-09-29 08:59:23",
+    "leida": "VUZ771",
+    "tipo": "Van",
+    "color": "White",
+    "marca": null,
+    "archivo": "fotos/VUZ771_0859_SLZTK400.jpg"
+   },
+   {
+    "camara": "SLZTK400",
+    "lugar": "TK400 SL",
+    "hora": "2026-09-29 15:08:54",
+    "leida": "VUZ771",
+    "tipo": "Large Truck",
+    "color": "White",
+    "marca": null,
+    "archivo": "fotos/VUZ771_1508_SLZTK400.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AC656IE",
+  "fotos": [
+   {
+    "camara": "RicB3Ingreso",
+    "lugar": "Balanza 3 Ric",
+    "hora": "2026-09-29 08:59:21",
+    "leida": "AC656IE",
+    "tipo": "Pickup",
+    "color": "Black",
+    "marca": "Ford",
+    "archivo": "fotos/AC656IE_0859_RicB3Ingreso.jpg"
+   },
+   {
+    "camara": "RicB2Egreso",
+    "lugar": "Balanza 2 Ric",
+    "hora": "2026-09-29 17:43:38",
+    "leida": "AC656IE",
+    "tipo": "SUV",
+    "color": "Black",
+    "marca": "Ford",
+    "archivo": "fotos/AC656IE_1743_RicB2Egreso.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AH461XD",
+  "fotos": [
+   {
+    "camara": "RicB3Ingreso",
+    "lugar": "Balanza 3 Ric",
+    "hora": "2026-09-29 09:32:21",
+    "leida": "AH461XD",
+    "tipo": "Pickup",
+    "color": "Black",
+    "marca": "Toyota",
+    "archivo": "fotos/AH461XD_0932_RicB3Ingreso.jpg"
+   },
+   {
+    "camara": "RicB3Egreso",
+    "lugar": "Balanza 3 Ric (sal.)",
+    "hora": "2026-09-29 09:47:28",
+    "leida": "AH461XD",
+    "tipo": "Pickup",
+    "color": "Black",
+    "marca": "Toyota",
+    "archivo": "fotos/AH461XD_0947_RicB3Egreso.jpg"
+   },
+   {
+    "camara": "RicB3Ingreso",
+    "lugar": "Balanza 3 Ric",
+    "hora": "2026-09-29 10:30:53",
+    "leida": "AH461XD",
+    "tipo": "SUV",
+    "color": "Black",
+    "marca": "Toyota",
+    "archivo": "fotos/AH461XD_1030_RicB3Ingreso.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AI217QP",
+  "fotos": [
+   {
+    "camara": "RicB3Ingreso",
+    "lugar": "Balanza 3 Ric",
+    "hora": "2026-09-29 10:16:19",
+    "leida": "AI217QP",
+    "tipo": "SUV",
+    "color": "Black",
+    "marca": "Fiat",
+    "archivo": "fotos/AI217QP_1016_RicB3Ingreso.jpg"
+   },
+   {
+    "camara": "RicB2Egreso",
+    "lugar": "Balanza 2 Ric",
+    "hora": "2026-09-29 17:00:53",
+    "leida": "AI217QP",
+    "tipo": "SUV",
+    "color": "Gray",
+    "marca": "Fiat",
+    "archivo": "fotos/AI217QP_1700_RicB2Egreso.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AH733KN",
+  "fotos": [
+   {
+    "camara": "SLZTK400",
+    "lugar": "TK400 SL",
+    "hora": "2026-09-29 11:41:22",
+    "leida": "AH733KN",
+    "tipo": "Large Truck",
+    "color": "Blue",
+    "marca": "Mercedes-Benz",
+    "archivo": "fotos/AH733KN_1141_SLZTK400.jpg"
+   },
+   {
+    "camara": "RicB3Ingreso",
+    "lugar": "Balanza 3 Ric",
+    "hora": "2026-09-29 12:46:42",
+    "leida": "AH733KN",
+    "tipo": "Medium Truck",
+    "color": "Blue",
+    "marca": "Mercedes-Benz",
+    "archivo": "fotos/AH733KN_1246_RicB3Ingreso.jpg"
+   },
+   {
+    "camara": "RicB3Egreso",
+    "lugar": "Balanza 3 Ric (sal.)",
+    "hora": "2026-09-29 13:27:57",
+    "leida": "AH733KN",
+    "tipo": "Medium Truck",
+    "color": "Blue",
+    "marca": "Mercedes-Benz",
+    "archivo": "fotos/AH733KN_1327_RicB3Egreso.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "DOK500",
+  "fotos": [
+   {
+    "camara": "SLZTK400",
+    "lugar": "TK400 SL",
+    "hora": "2026-09-29 12:26:51",
+    "leida": "DOK500",
+    "tipo": "Large Truck",
+    "color": "White",
+    "marca": "Iveco",
+    "archivo": "fotos/DOK500_1226_SLZTK400.jpg"
+   },
+   {
+    "camara": "SLZSalidaC2Fte",
+    "lugar": "Portería SL 2",
+    "hora": "2026-09-29 11:50:54",
+    "leida": "DOK500",
+    "tipo": "Small Truck",
+    "color": "Blue",
+    "marca": "Honda",
+    "archivo": "fotos/DOK500_1150_SLZSalidaC2Fte.jpg"
+   },
+   {
+    "camara": "SLZSalidaC1Fte",
+    "lugar": "Portería SL 1",
+    "hora": "2026-09-29 12:31:01",
+    "leida": "DOK500",
+    "tipo": "Bus",
+    "color": "White",
+    "marca": "Toyota",
+    "archivo": "fotos/DOK500_1231_SLZSalidaC1Fte.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "HIR922",
+  "fotos": [
+   {
+    "camara": "SLZTK400",
+    "lugar": "TK400 SL",
+    "hora": "2026-09-29 12:31:00",
+    "leida": "HIR922",
+    "tipo": "Large Truck",
+    "color": "White",
+    "marca": "GMC",
+    "archivo": "fotos/HIR922_1231_SLZTK400.jpg"
+   },
+   {
+    "camara": "SLZSalidaC2Fte",
+    "lugar": "Portería SL 2",
+    "hora": "2026-09-29 12:13:46",
+    "leida": "HIR922",
+    "tipo": "Large Truck",
+    "color": "White",
+    "marca": "Toyota",
+    "archivo": "fotos/HIR922_1213_SLZSalidaC2Fte.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "OTV765",
+  "fotos": [
+   {
+    "camara": "SLZBalLiq1a",
+    "lugar": "Balanza líquidos SL",
+    "hora": "2026-09-29 12:39:34",
+    "leida": "OTV765",
+    "tipo": "MPV",
+    "color": "White",
+    "marca": "Renault",
+    "archivo": "fotos/OTV765_1239_SLZBalLiq1a.jpg"
+   },
+   {
+    "camara": "RicB2Egreso",
+    "lugar": "Balanza 2 Ric",
+    "hora": "2026-09-29 20:53:19",
+    "leida": "OTV765",
+    "tipo": "Pickup",
+    "color": "Blue",
+    "marca": "Renault",
+    "archivo": "fotos/OTV765_2053_RicB2Egreso.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "OOI074",
+  "fotos": [
+   {
+    "camara": "SLZTK400",
+    "lugar": "TK400 SL",
+    "hora": "2026-09-29 13:23:24",
+    "leida": "OOI074",
+    "tipo": "Large Truck",
+    "color": "White",
+    "marca": null,
+    "archivo": "fotos/OOI074_1323_SLZTK400.jpg"
+   },
+   {
+    "camara": "SLZTK400",
+    "lugar": "TK400 SL",
+    "hora": "2026-09-29 17:40:56",
+    "leida": "OOI074",
+    "tipo": "Large Truck",
+    "color": "White",
+    "marca": "Audi",
+    "archivo": "fotos/OOI074_1740_SLZTK400.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "CKY837",
+  "fotos": []
+ },
+ {
+  "patente": "AH967NF",
+  "fotos": [
+   {
+    "camara": "RicEgrCamFrente",
+    "lugar": "Egreso Ric",
+    "hora": "2026-09-29 10:36:10",
+    "leida": "AH967NF",
+    "tipo": "MPV",
+    "color": "Silver",
+    "marca": "Toyota",
+    "archivo": "fotos/AH967NF_1036_RicEgrCamFrente.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "CRJ139",
+  "fotos": [
+   {
+    "camara": "RicPreIngInFr",
+    "lugar": "Preingreso Ric",
+    "hora": "2026-09-29 11:18:40",
+    "leida": "CRJ139",
+    "tipo": "Medium Truck",
+    "color": "White",
+    "marca": null,
+    "archivo": "fotos/CRJ139_1118_RicPreIngInFr.jpg"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "lugar": "Egreso Ric",
+    "hora": "2026-09-29 12:24:23",
+    "leida": "CRJ139",
+    "tipo": "Large Truck",
+    "color": "Blue",
+    "marca": "Scania",
+    "archivo": "fotos/CRJ139_1224_RicEgrCamFrente.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "KZS251",
+  "fotos": [
+   {
+    "camara": "SLZSalidaC1Fte",
+    "lugar": "Portería SL 1",
+    "hora": "2026-09-29 04:42:58",
+    "leida": "KZS251",
+    "tipo": "Medium Truck",
+    "color": "Black",
+    "marca": "Dongfeng",
+    "archivo": "fotos/KZS251_0442_SLZSalidaC1Fte.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "WWR002",
+  "fotos": [
+   {
+    "camara": "SLZSalidaC2Fte",
+    "lugar": "Portería SL 2",
+    "hora": "2026-09-29 17:56:57",
+    "leida": "WWR002",
+    "tipo": "Medium Truck",
+    "color": "Blue",
+    "marca": null,
+    "archivo": "fotos/WWR002_1756_SLZSalidaC2Fte.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AB934GV",
+  "fotos": [
+   {
+    "camara": "SLZSalidaC1Fte",
+    "lugar": "Portería SL 1",
+    "hora": "2026-09-29 11:02:29",
+    "leida": "AB934GV",
+    "tipo": "Medium Truck",
+    "color": null,
+    "marca": "King Long",
+    "archivo": "fotos/AB934GV_1102_SLZSalidaC1Fte.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "ONS723",
+  "fotos": [
+   {
+    "camara": "SLZSalidaC2Fte",
+    "lugar": "Portería SL 2",
+    "hora": "2026-09-29 10:09:53",
+    "leida": "ONS723",
+    "tipo": "Small Truck",
+    "color": "Blue",
+    "marca": null,
+    "archivo": "fotos/ONS723_1009_SLZSalidaC2Fte.jpg"
+   },
+   {
+    "camara": "SLZSalidaC1Fte",
+    "lugar": "Portería SL 1",
+    "hora": "2026-09-29 12:13:13",
+    "leida": "ONS723",
+    "tipo": "Medium Bus",
+    "color": "White",
+    "marca": "Iveco",
+    "archivo": "fotos/ONS723_1213_SLZSalidaC1Fte.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "OLM970",
+  "fotos": [
+   {
+    "camara": "SLZSalidaC1Fte",
+    "lugar": "Portería SL 1",
+    "hora": "2026-09-29 11:39:48",
+    "leida": "OLM970",
+    "tipo": "Medium Truck",
+    "color": "White",
+    "marca": "Iveco",
+    "archivo": "fotos/OLM970_1139_SLZSalidaC1Fte.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "GCW191",
+  "fotos": [
+   {
+    "camara": "SLZSalidaC2Fte",
+    "lugar": "Portería SL 2",
+    "hora": "2026-09-29 10:56:23",
+    "leida": "GCW191",
+    "tipo": "Medium Truck",
+    "color": "White",
+    "marca": null,
+    "archivo": "fotos/GCW191_1056_SLZSalidaC2Fte.jpg"
+   },
+   {
+    "camara": "SLZSalidaC1Fte",
+    "lugar": "Portería SL 1",
+    "hora": "2026-09-29 11:13:11",
+    "leida": "GCW191",
+    "tipo": "Pickup",
+    "color": "White",
+    "marca": "Ford",
+    "archivo": "fotos/GCW191_1113_SLZSalidaC1Fte.jpg"
+   },
+   {
+    "camara": "SLZSalidaC2Fte",
+    "lugar": "Portería SL 2",
+    "hora": "2026-09-29 11:30:12",
+    "leida": "GCW191",
+    "tipo": "Medium Truck",
+    "color": "White",
+    "marca": null,
+    "archivo": "fotos/GCW191_1130_SLZSalidaC2Fte.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AC169LG",
+  "fotos": [
+   {
+    "camara": "SLZSalidaC2Fte",
+    "lugar": "Portería SL 2",
+    "hora": "2026-09-29 11:54:28",
+    "leida": "AC169LG",
+    "tipo": "Small Truck",
+    "color": "White",
+    "marca": null,
+    "archivo": "fotos/AC169LG_1154_SLZSalidaC2Fte.jpg"
+   },
+   {
+    "camara": "SLZSalidaC2Fte",
+    "lugar": "Portería SL 2",
+    "hora": "2026-09-29 14:52:03",
+    "leida": "AC169LG",
+    "tipo": "Small Truck",
+    "color": "White",
+    "marca": null,
+    "archivo": "fotos/AC169LG_1452_SLZSalidaC2Fte.jpg"
+   },
+   {
+    "camara": "SLZSalidaC1Fte",
+    "lugar": "Portería SL 1",
+    "hora": "2026-09-29 14:58:38",
+    "leida": "AC169LG",
+    "tipo": "Small Truck",
+    "color": "White",
+    "marca": null,
+    "archivo": "fotos/AC169LG_1458_SLZSalidaC1Fte.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AG761RU",
+  "fotos": [
+   {
+    "camara": "SLZSalidaC2Fte",
+    "lugar": "Portería SL 2",
+    "hora": "2026-09-29 16:24:45",
+    "leida": "AG761RU",
+    "tipo": "Sedan",
+    "color": "Yellow",
+    "marca": null,
+    "archivo": "fotos/AG761RU_1624_SLZSalidaC2Fte.jpg"
+   },
+   {
+    "camara": "SLZSalidaC1Fte",
+    "lugar": "Portería SL 1",
+    "hora": "2026-09-29 17:10:00",
+    "leida": "AG761RU",
+    "tipo": "Large Truck",
+    "color": "White",
+    "marca": "Volkswagen",
+    "archivo": "fotos/AG761RU_1710_SLZSalidaC1Fte.jpg"
+   }
+  ]
+ }
+]

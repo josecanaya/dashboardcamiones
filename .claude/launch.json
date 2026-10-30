@@ -2,6 +2,33 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "fotos-vinculo",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "C:\\Users\\Usuario\\Desktop\\Dashboard_camiones\\.claude\\worktrees\\dss-vinculo-e5702c\\scripts\\vinculo\\simulador-server.mjs",
+        "2026-10-27",
+        "2026-10-28",
+        "8820"
+      ],
+      "port": 8820
+    },
+    {
+      "name": "truckflow-server-8797",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "set TRUCKFLOW_LOCAL_SERVER_PORT=8797&& node server/truckflow-local-server.mjs"],
+      "port": 8797
+    },
+    {
+      "name": "vite-route-5197",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "node_modules/vite/bin/vite.js",
+        "--config",
+        "C:/Users/Usuario/AppData/Local/Temp/claude/C--Users-Usuario-Desktop-Dashboard-camiones/3051a596-ca50-401d-9aff-20d1785d97ef/scratchpad/vite.verify.config.mjs"
+      ],
+      "port": 5197
+    },
+    {
       "name": "vite-dev",
       "runtimeExecutable": "npm",
       "runtimeArgs": [
@@ -77,6 +104,63 @@
         "C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Desktop-Dashboard-camiones\\51b24ff6-e69d-4437-9997-87a0c9af8d59\\scratchpad\\a4"
       ],
       "port": 8812
+    },
+    {
+      "name": "comite-preview",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8821",
+        "--directory",
+        "C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Desktop-Dashboard-camiones\\74d8e881-73aa-4f16-ab1f-c3d67efe4737\\scratchpad"
+      ],
+      "port": 8821
+    },
+    {
+      "name": "barrera-preview",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8831",
+        "--directory",
+        "C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Desktop-Dashboard-camiones\\3c5dc629-65af-4852-8fc0-f9fb85c623c1\\scratchpad\\barrera"
+      ],
+      "port": 8831
+    },
+    {
+      "name": "mi-semana-nva",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": [
+        "/c",
+        "C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Desktop-Dashboard-camiones\\5357afbe-ad2c-4d60-b197-ec2134e7b1d5\\scratchpad\\run-nva.cmd"
+      ],
+      "port": 5191
+    },
+    {
+      "name": "backoffice-preview",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8841",
+        "--directory",
+        "C:/Users/Usuario/AppData/Local/Temp/claude/C--Users-Usuario-Desktop-Dashboard-camiones/9fe6dd9b-f144-4bb6-9dfd-0910bdc8417d/scratchpad/bo-preview"
+      ],
+      "port": 8841
+    },
+    {
+      "name": "deck-camaras",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8801",
+        "--directory",
+        "C:/Users/Usuario/AppData/Local/Temp/claude/C--Users-Usuario-Desktop-Dashboard-camiones/b76c310e-4d98-467f-853a-7e807d0c2d3f/scratchpad"
+      ],
+      "port": 8801
     }
   ]
 }

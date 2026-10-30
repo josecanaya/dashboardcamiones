@@ -1,0 +1,401 @@
+[
+  {
+    "patente": "UUD981",
+    "clase": "sospechoso",
+    "enGrano": [
+      "19:30 SLZVolcableC4",
+      "21:28 SLZVolcableC4"
+    ],
+    "visita": {
+      "desde": "2026-10-05 19:30",
+      "hasta": "2026-10-06 17:57",
+      "camaras": [
+        "SLZVolcableC4",
+        "RicS6Playa3"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "sin_sgc_para_verificar"
+  },
+  {
+    "patente": "WKB259",
+    "clase": "sospechoso",
+    "enGrano": [
+      "05:25 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-07 05:25",
+      "hasta": "2026-10-07 15:36",
+      "camaras": [
+        "RicCal03",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "sin_sgc_para_verificar"
+  },
+  {
+    "patente": "HHU866",
+    "clase": "sospechoso",
+    "enGrano": [
+      "05:27 RicCal04"
+    ],
+    "visita": {
+      "desde": "2026-10-07 05:27",
+      "hasta": "2026-10-07 09:50",
+      "camaras": [
+        "RicCal04",
+        "RicEgrCamFrente",
+        "SLZIngCamFrente",
+        "SLZBalIngFte",
+        "SLZBalSC2Fte",
+        "SLZSalidaC1Fte"
+      ]
+    },
+    "tipo": "MidTruck",
+    "marca": "Naveco",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "sin_sgc_para_verificar"
+  },
+  {
+    "patente": "AB078CF",
+    "clase": "sospechoso",
+    "enGrano": [
+      "11:00 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-07 10:53",
+      "hasta": "2026-10-07 11:00",
+      "camaras": [
+        "RicPreIngInFr",
+        "RicCal03"
+      ]
+    },
+    "tipo": "MidTruck",
+    "marca": "Benz",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "sin_sgc_para_verificar"
+  },
+  {
+    "patente": "AI395VW",
+    "clase": "sospechoso",
+    "enGrano": [
+      "15:11 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-07 14:25",
+      "hasta": "2026-10-07 15:11",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal03"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "sin_sgc_para_verificar"
+  },
+  {
+    "patente": "CST874",
+    "clase": "sospechoso",
+    "enGrano": [
+      "23:13 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-07 23:13",
+      "hasta": "2026-10-07 23:41",
+      "camaras": [
+        "RicCal03",
+        "SLZBalIngFte"
+      ]
+    },
+    "tipo": "LargeTruck",
+    "marca": "Benz",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "sin_sgc_para_verificar"
+  },
+  {
+    "patente": "AC463RB",
+    "clase": "sospechoso",
+    "enGrano": [
+      "14:14 RicCal04"
+    ],
+    "visita": {
+      "desde": "2026-10-08 10:11",
+      "hasta": "2026-10-08 14:14",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal04"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "sin_sgc_para_verificar"
+  },
+  {
+    "patente": "AD656ZT",
+    "clase": "sospechoso",
+    "enGrano": [
+      "11:46 RicCal04",
+      "16:54 RicCal04"
+    ],
+    "visita": {
+      "desde": "2026-10-08 11:30",
+      "hasta": "2026-10-08 18:15",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal04",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "LargeTruck",
+    "marca": "Scania",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "sin_sgc_para_verificar"
+  },
+  {
+    "patente": "AE124ZA",
+    "clase": "sospechoso",
+    "enGrano": [
+      "13:42 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-08 13:10",
+      "hasta": "2026-10-08 15:50",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal03",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "altaGemela": [
+      {
+        "patente": "JFB793",
+        "ingreso": "2026-10-08 13:05",
+        "producto": "RESIDUOS ASIMILABLES A DOMICILIARIOS",
+        "mov": "EGRESO"
+      },
+      {
+        "patente": "JFB793",
+        "ingreso": "2026-10-08 13:06",
+        "producto": "RESIDUOS ASIMILABLES A DOMICILIARIOS",
+        "mov": "DESPACHO"
+      }
+    ],
+    "sgc": null,
+    "explicacion": "sin_sgc_para_verificar"
+  },
+  {
+    "patente": "EUC092",
+    "clase": "sospechoso",
+    "enGrano": [
+      "14:40 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-08 14:27",
+      "hasta": "2026-10-08 14:40",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal03"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "sin_sgc_para_verificar"
+  },
+  {
+    "patente": "ROQ011",
+    "clase": "sospechoso",
+    "enGrano": [
+      "17:08 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-08 16:11",
+      "hasta": "2026-10-08 21:34",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal03",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "sin_sgc_para_verificar"
+  },
+  {
+    "patente": "JUQ710",
+    "clase": "sospechoso",
+    "enGrano": [
+      "17:13 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-08 16:35",
+      "hasta": "2026-10-08 19:07",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal03",
+        "RicEgrCamFrente",
+        "RicEgrCamTraser"
+      ]
+    },
+    "tipo": "Unknown",
+    "marca": "Unknown",
+    "sistema": null,
+    "notas": "tiene cartas de otros viajes",
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "sin_sgc_para_verificar"
+  },
+  {
+    "patente": "MGF766",
+    "clase": "sospechoso",
+    "enGrano": [
+      "18:19 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-08 18:00",
+      "hasta": "2026-10-08 21:58",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal03",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "LargeTruck",
+    "marca": "Volvo",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "sin_sgc_para_verificar"
+  },
+  {
+    "patente": "AB047DG",
+    "clase": "sospechoso",
+    "enGrano": [
+      "00:07 RicCal04",
+      "00:14 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-08 23:51",
+      "hasta": "2026-10-09 15:31",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal04",
+        "RicCal03",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "LargeTruck",
+    "marca": "Naveco",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "sin_sgc_para_verificar"
+  },
+  {
+    "patente": "LFS282",
+    "clase": "sospechoso",
+    "enGrano": [
+      "01:27 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-10 01:05",
+      "hasta": "2026-10-10 09:24",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal03",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "LargeTruck",
+    "marca": "Volkswagen",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "sin_sgc_para_verificar"
+  },
+  {
+    "patente": "IPL878",
+    "clase": "sospechoso",
+    "enGrano": [
+      "17:10 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-10 14:43",
+      "hasta": "2026-10-10 17:10",
+      "camaras": [
+        "RicPreIngInFr",
+        "RicCal03"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "sin_sgc_para_verificar"
+  },
+  {
+    "patente": "JMS908",
+    "clase": "sospechoso",
+    "enGrano": [
+      "20:09 RicCal04"
+    ],
+    "visita": {
+      "desde": "2026-10-10 19:15",
+      "hasta": "2026-10-11 13:32",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal04",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "MidTruck",
+    "marca": "Benz",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "sin_sgc_para_verificar"
+  }
+]

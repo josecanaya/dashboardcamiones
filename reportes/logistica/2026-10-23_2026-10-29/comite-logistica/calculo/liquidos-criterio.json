@@ -1,0 +1,686 @@
+{
+ "desde": "2026-10-23",
+ "hasta": "2026-10-29",
+ "dias": [
+  "2026-10-23",
+  "2026-10-24",
+  "2026-10-25",
+  "2026-10-26",
+  "2026-10-27",
+  "2026-10-28",
+  "2026-10-29"
+ ],
+ "criterio": "producto líquido a granel (aceites, borras, glicerina, insumos químicos, biodiésel, lecitina); Ricardone y Terminal; ingresos y egresos por separado; día operativo del ingreso; sin patentes ficticias",
+ "total": {
+  "n": 261,
+  "conTiempo": 260,
+  "media": 315,
+  "mediana": 239
+ },
+ "porPlantaSentido": {
+  "TERMINAL_EMBARQUE · EGRESO": {
+   "n": 225,
+   "conTiempo": 225,
+   "media": 275,
+   "mediana": 220
+  },
+  "TERMINAL_EMBARQUE · INGRESO": {
+   "n": 31,
+   "conTiempo": 30,
+   "media": 614,
+   "mediana": 479
+  },
+  "RICARDONE · INGRESO": {
+   "n": 5,
+   "conTiempo": 5,
+   "media": 333,
+   "mediana": 327
+  }
+ },
+ "porPlantaFamiliaSentido": {
+  "TERMINAL_EMBARQUE · aceite · EGRESO": {
+   "n": 156,
+   "conTiempo": 156,
+   "media": 278,
+   "mediana": 218
+  },
+  "TERMINAL_EMBARQUE · glicerina · EGRESO": {
+   "n": 42,
+   "conTiempo": 42,
+   "media": 308,
+   "mediana": 307
+  },
+  "TERMINAL_EMBARQUE · borras · EGRESO": {
+   "n": 24,
+   "conTiempo": 24,
+   "media": 173,
+   "mediana": 124
+  },
+  "TERMINAL_EMBARQUE · aceite · INGRESO": {
+   "n": 19,
+   "conTiempo": 19,
+   "media": 834,
+   "mediana": 1055
+  },
+  "TERMINAL_EMBARQUE · insumos químicos · INGRESO": {
+   "n": 8,
+   "conTiempo": 8,
+   "media": 293,
+   "mediana": 286
+  },
+  "RICARDONE · aceite · INGRESO": {
+   "n": 5,
+   "conTiempo": 5,
+   "media": 333,
+   "mediana": 327
+  },
+  "TERMINAL_EMBARQUE · glicerina · INGRESO": {
+   "n": 4,
+   "conTiempo": 3,
+   "media": 81,
+   "mediana": 93
+  },
+  "TERMINAL_EMBARQUE · lecitina · EGRESO": {
+   "n": 2,
+   "conTiempo": 2,
+   "media": 219,
+   "mediana": 255
+  },
+  "TERMINAL_EMBARQUE · insumos químicos · EGRESO": {
+   "n": 1,
+   "conTiempo": 1,
+   "media": 1044,
+   "mediana": 1044
+  }
+ },
+ "porProducto": {
+  "TERMINAL_EMBARQUE · EGRESO · ACEITE GIRASOL REFINADO": {
+   "n": 98,
+   "conTiempo": 98,
+   "media": 301,
+   "mediana": 230
+  },
+  "TERMINAL_EMBARQUE · EGRESO · ACEITE SOJA CRUDO DESGOMADO": {
+   "n": 58,
+   "conTiempo": 58,
+   "media": 239,
+   "mediana": 180
+  },
+  "TERMINAL_EMBARQUE · EGRESO · GLICERINA REFINADA": {
+   "n": 31,
+   "conTiempo": 31,
+   "media": 354,
+   "mediana": 345
+  },
+  "TERMINAL_EMBARQUE · INGRESO · ACEITE GIRASOL PARA REFINAR": {
+   "n": 19,
+   "conTiempo": 19,
+   "media": 834,
+   "mediana": 1055
+  },
+  "TERMINAL_EMBARQUE · EGRESO · BORRA DE ACSOJA REFINADO": {
+   "n": 15,
+   "conTiempo": 15,
+   "media": 161,
+   "mediana": 101
+  },
+  "TERMINAL_EMBARQUE · EGRESO · BORRA ACEITE GIRASOL REFINADO": {
+   "n": 9,
+   "conTiempo": 9,
+   "media": 193,
+   "mediana": 167
+  },
+  "TERMINAL_EMBARQUE · EGRESO · GLICERINA": {
+   "n": 7,
+   "conTiempo": 7,
+   "media": 156,
+   "mediana": 108
+  },
+  "RICARDONE · INGRESO · ACGIRASOL OLEICO": {
+   "n": 5,
+   "conTiempo": 5,
+   "media": 333,
+   "mediana": 327
+  },
+  "TERMINAL_EMBARQUE · INGRESO · GLICERINA": {
+   "n": 4,
+   "conTiempo": 3,
+   "media": 81,
+   "mediana": 93
+  },
+  "TERMINAL_EMBARQUE · INGRESO · METANOL": {
+   "n": 4,
+   "conTiempo": 4,
+   "media": 185,
+   "mediana": 212
+  },
+  "TERMINAL_EMBARQUE · EGRESO · GLICERINA SUBSTANDARD": {
+   "n": 4,
+   "conTiempo": 4,
+   "media": 214,
+   "mediana": 247
+  },
+  "TERMINAL_EMBARQUE · INGRESO · ACIDO CLORHIDRICO": {
+   "n": 2,
+   "conTiempo": 2,
+   "media": 523,
+   "mediana": 649
+  },
+  "TERMINAL_EMBARQUE · INGRESO · SODA CAUSTICA LIQUIDA": {
+   "n": 2,
+   "conTiempo": 2,
+   "media": 279,
+   "mediana": 390
+  },
+  "TERMINAL_EMBARQUE · EGRESO · LECITINA DE SOJA": {
+   "n": 2,
+   "conTiempo": 2,
+   "media": 219,
+   "mediana": 255
+  },
+  "TERMINAL_EMBARQUE · EGRESO · ACIDOS GRASOS GIRASOL": {
+   "n": 1,
+   "conTiempo": 1,
+   "media": 1044,
+   "mediana": 1044
+  }
+ },
+ "porDia": {
+  "2026-10-23": {
+   "RICARDONE": {
+    "INGRESO": 4,
+    "EGRESO": 0
+   },
+   "TERMINAL_EMBARQUE": {
+    "INGRESO": 2,
+    "EGRESO": 44
+   }
+  },
+  "2026-10-24": {
+   "RICARDONE": {
+    "INGRESO": 1,
+    "EGRESO": 0
+   },
+   "TERMINAL_EMBARQUE": {
+    "INGRESO": 0,
+    "EGRESO": 4
+   }
+  },
+  "2026-10-25": {
+   "RICARDONE": {
+    "INGRESO": 0,
+    "EGRESO": 0
+   },
+   "TERMINAL_EMBARQUE": {
+    "INGRESO": 1,
+    "EGRESO": 3
+   }
+  },
+  "2026-10-26": {
+   "RICARDONE": {
+    "INGRESO": 0,
+    "EGRESO": 0
+   },
+   "TERMINAL_EMBARQUE": {
+    "INGRESO": 5,
+    "EGRESO": 37
+   }
+  },
+  "2026-10-27": {
+   "RICARDONE": {
+    "INGRESO": 0,
+    "EGRESO": 0
+   },
+   "TERMINAL_EMBARQUE": {
+    "INGRESO": 2,
+    "EGRESO": 45
+   }
+  },
+  "2026-10-28": {
+   "RICARDONE": {
+    "INGRESO": 0,
+    "EGRESO": 0
+   },
+   "TERMINAL_EMBARQUE": {
+    "INGRESO": 14,
+    "EGRESO": 41
+   }
+  },
+  "2026-10-29": {
+   "RICARDONE": {
+    "INGRESO": 0,
+    "EGRESO": 0
+   },
+   "TERMINAL_EMBARQUE": {
+    "INGRESO": 7,
+    "EGRESO": 51
+   }
+  }
+ },
+ "porFamiliaDia": {
+  "TERMINAL_EMBARQUE · aceite · EGRESO": [
+   29,
+   0,
+   0,
+   32,
+   37,
+   25,
+   33
+  ],
+  "TERMINAL_EMBARQUE · glicerina · EGRESO": [
+   11,
+   0,
+   0,
+   1,
+   3,
+   12,
+   15
+  ],
+  "TERMINAL_EMBARQUE · borras · EGRESO": [
+   4,
+   4,
+   3,
+   4,
+   3,
+   3,
+   3
+  ],
+  "TERMINAL_EMBARQUE · aceite · INGRESO": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   12,
+   7
+  ],
+  "TERMINAL_EMBARQUE · insumos químicos · INGRESO": [
+   1,
+   0,
+   1,
+   4,
+   1,
+   1,
+   0
+  ],
+  "RICARDONE · aceite · INGRESO": [
+   4,
+   1,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "TERMINAL_EMBARQUE · glicerina · INGRESO": [
+   1,
+   0,
+   0,
+   1,
+   1,
+   1,
+   0
+  ],
+  "TERMINAL_EMBARQUE · lecitina · EGRESO": [
+   0,
+   0,
+   0,
+   0,
+   2,
+   0,
+   0
+  ],
+  "TERMINAL_EMBARQUE · insumos químicos · EGRESO": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   1,
+   0
+  ]
+ },
+ "cuartos": [
+  {
+   "dia": "2026-10-23",
+   "q": "Q1",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 4,
+    "TERMINAL_EMBARQUE · INGRESO": 0,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-23",
+   "q": "Q2",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 15,
+    "TERMINAL_EMBARQUE · INGRESO": 0,
+    "RICARDONE · INGRESO": 2,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-23",
+   "q": "Q3",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 19,
+    "TERMINAL_EMBARQUE · INGRESO": 0,
+    "RICARDONE · INGRESO": 2,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-23",
+   "q": "Q4",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 6,
+    "TERMINAL_EMBARQUE · INGRESO": 2,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-24",
+   "q": "Q1",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 1,
+    "TERMINAL_EMBARQUE · INGRESO": 0,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-24",
+   "q": "Q2",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 0,
+    "TERMINAL_EMBARQUE · INGRESO": 0,
+    "RICARDONE · INGRESO": 1,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-24",
+   "q": "Q3",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 1,
+    "TERMINAL_EMBARQUE · INGRESO": 0,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-24",
+   "q": "Q4",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 2,
+    "TERMINAL_EMBARQUE · INGRESO": 0,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-25",
+   "q": "Q1",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 0,
+    "TERMINAL_EMBARQUE · INGRESO": 0,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-25",
+   "q": "Q2",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 1,
+    "TERMINAL_EMBARQUE · INGRESO": 1,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-25",
+   "q": "Q3",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 0,
+    "TERMINAL_EMBARQUE · INGRESO": 0,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-25",
+   "q": "Q4",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 2,
+    "TERMINAL_EMBARQUE · INGRESO": 0,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-26",
+   "q": "Q1",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 2,
+    "TERMINAL_EMBARQUE · INGRESO": 0,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-26",
+   "q": "Q2",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 15,
+    "TERMINAL_EMBARQUE · INGRESO": 0,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-26",
+   "q": "Q3",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 10,
+    "TERMINAL_EMBARQUE · INGRESO": 2,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-26",
+   "q": "Q4",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 10,
+    "TERMINAL_EMBARQUE · INGRESO": 3,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-27",
+   "q": "Q1",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 2,
+    "TERMINAL_EMBARQUE · INGRESO": 0,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-27",
+   "q": "Q2",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 14,
+    "TERMINAL_EMBARQUE · INGRESO": 0,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-27",
+   "q": "Q3",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 18,
+    "TERMINAL_EMBARQUE · INGRESO": 0,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-27",
+   "q": "Q4",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 11,
+    "TERMINAL_EMBARQUE · INGRESO": 2,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-28",
+   "q": "Q1",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 4,
+    "TERMINAL_EMBARQUE · INGRESO": 0,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-28",
+   "q": "Q2",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 23,
+    "TERMINAL_EMBARQUE · INGRESO": 0,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-28",
+   "q": "Q3",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 7,
+    "TERMINAL_EMBARQUE · INGRESO": 3,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-28",
+   "q": "Q4",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 7,
+    "TERMINAL_EMBARQUE · INGRESO": 11,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-29",
+   "q": "Q1",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 2,
+    "TERMINAL_EMBARQUE · INGRESO": 1,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-29",
+   "q": "Q2",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 28,
+    "TERMINAL_EMBARQUE · INGRESO": 1,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-29",
+   "q": "Q3",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 17,
+    "TERMINAL_EMBARQUE · INGRESO": 4,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  },
+  {
+   "dia": "2026-10-29",
+   "q": "Q4",
+   "porPlantaSentido": {
+    "TERMINAL_EMBARQUE · EGRESO": 4,
+    "TERMINAL_EMBARQUE · INGRESO": 1,
+    "RICARDONE · INGRESO": 0,
+    "RICARDONE · EGRESO": 0
+   }
+  }
+ ],
+ "renopack": {
+  "INGRESO · ACEITE SOJA REFINADO": {
+   "n": 12,
+   "conTiempo": 12,
+   "media": 205,
+   "mediana": 159
+  },
+  "INGRESO · ACEITE GIRASOL REFINADO": {
+   "n": 9,
+   "conTiempo": 9,
+   "media": 301,
+   "mediana": 202
+  }
+ },
+ "otrasPlantas": {},
+ "otrosSentidos": {},
+ "excluidos": {
+  "excluido:agua · TERMINAL_EMBARQUE · AGUA INDUSTRIAL": {
+   "n": 40,
+   "conTiempo": 40,
+   "media": 83,
+   "mediana": 73
+  },
+  "excluido:alcohol (Avellaneda) · AVELLANEDA · ALCOHOL ETILICO ANHIDRO P/ BIOCOMB ORIG CEREAL": {
+   "n": 39,
+   "conTiempo": 39,
+   "media": 87,
+   "mediana": 85
+  },
+  "excluido:envasado · RENOPACK · ACEITE GIRASOL ENVASADO": {
+   "n": 26,
+   "conTiempo": 26,
+   "media": 283,
+   "mediana": 272
+  },
+  "excluido:envasado · RENOPACK · ACEITE MEZCLA ENVASADO": {
+   "n": 22,
+   "conTiempo": 22,
+   "media": 197,
+   "mediana": 216
+  },
+  "excluido:envasado · RENOPACK · ACEITE SOJA ENVASADO": {
+   "n": 12,
+   "conTiempo": 12,
+   "media": 459,
+   "mediana": 485
+  },
+  "excluido:alcohol (Avellaneda) · AVELLANEDA · ALCOHOL ETILICO BUEN GUSTO/POTABLE DE CEREAL": {
+   "n": 2,
+   "conTiempo": 2,
+   "media": 81,
+   "mediana": 81
+  },
+  "excluido:gas industrial · RENOPACK · NITROGENO LIQUIDO": {
+   "n": 1,
+   "conTiempo": 1,
+   "media": 132,
+   "mediana": 132
+  }
+ },
+ "ficticias": 0
+}

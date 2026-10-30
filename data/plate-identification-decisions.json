@@ -1837,6 +1837,59 @@
         "attributeErrors": []
       },
       "updatedAt": "2026-10-19T15:36:20.618Z"
+    },
+    "link:9995e78e-5ab5-4210-9faf-27f6e8035e5c": {
+      "action": "link",
+      "plate": "OIO494",
+      "journeyUid": null,
+      "readPlate": "DIO494",
+      "operator": null,
+      "updatedAt": "2026-10-26T13:00:20.385Z"
+    },
+    "c144e9a4-f01f-4be7-a1df-d8673e32d834": {
+      "action": "confirm",
+      "plate": "UMX998",
+      "journeyUid": null,
+      "reason": "alerta: corregida a UMX998",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-10-29T17:31:32.425Z"
+    },
+    "650f4207-1030-4dfe-9e1f-9d03d21a5b4a": {
+      "action": "confirm",
+      "plate": "JHE188",
+      "journeyUid": null,
+      "reason": "alerta: la cámara leyó bien",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-10-29T17:32:24.253Z"
+    },
+    "alert-601903": {
+      "action": "confirm",
+      "plate": "OYO513",
+      "journeyUid": null,
+      "reason": "alerta: la cámara leyó bien",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-10-29T17:32:29.523Z"
+    },
+    "70f45198-dcf8-47d0-9f20-6891ab51b405": {
+      "action": "confirm",
+      "plate": "RYJ562",
+      "journeyUid": null,
+      "reason": "alerta: la cámara leyó bien",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-10-29T17:32:17.986Z"
+    },
+    "alert-601545": {
+      "action": "confirm",
+      "plate": "DYZ615",
+      "journeyUid": null,
+      "reason": "alerta: corregida a DYZ615",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-10-29T17:36:13.229Z"
     }
   },
   "san_lorenzo": {
@@ -11973,6 +12026,3333 @@
         },
         "historyAvailable": true,
         "checkedAt": "2026-10-19T19:22:22.657Z"
+      }
+    },
+    "f630651a-64e3-4d67-9752-e58c4c5835b3": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-21T18:47:11.324Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG066KT",
+          "at": "2026-10-20T18:36:10.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 209
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-21T18:47:11.323Z"
+      }
+    },
+    "a51452f3-84b9-4394-acb3-52df7cedb680": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Sedan) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-21T18:49:24.556Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG066KT",
+          "at": "2026-10-20T18:36:14.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Sedan",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 701
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-21T18:49:24.556Z"
+      }
+    },
+    "f0262985-8774-4298-beaa-99e0cd3bfa94": {
+      "action": "reject",
+      "reason": "Vehículo no camión (MPV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-21T18:50:05.300Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AA70360",
+          "at": "2026-10-20T20:12:51.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "MPV",
+          "vehicleBrand": "Toyota",
+          "vehicleColor": "White",
+          "diffMs": 801
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-21T18:50:05.299Z"
+      }
+    },
+    "ea021a62-946e-406f-bdb7-47b3260a2600": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Medium Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-21T18:53:16.844Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF529RF",
+          "at": "2026-10-20T21:39:51.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Medium Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 513
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-21T18:53:16.843Z"
+      }
+    },
+    "84a91faa-35c6-4fcb-9b00-b1c9a156e764": {
+      "action": "reject",
+      "reason": "Vehículo no camión (MPV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-21T18:55:50.136Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF529RF",
+          "at": "2026-10-20T21:39:53.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "MPV",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 1227
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-21T18:55:50.135Z"
+      }
+    },
+    "8e558c7a-1aa1-4304-a613-97261fb7b03e": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Sedan) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-21T19:32:06.215Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "OCB8150",
+          "at": "2026-10-20T22:08:37.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Sedan",
+          "vehicleBrand": "Chevrolet",
+          "vehicleColor": "White",
+          "diffMs": 1698
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-21T19:32:06.214Z"
+      }
+    },
+    "5654b588-18e9-42cf-b420-8d2c1e9e406e": {
+      "action": "reject",
+      "reason": "Vehículo no camión (MPV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-21T19:33:10.579Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF529RF",
+          "at": "2026-10-20T22:11:24.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "MPV",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 1551
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-21T19:33:10.578Z"
+      }
+    },
+    "35c280f9-be5f-41c2-ba48-acade06da065": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-21T19:36:20.541Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AD0137",
+          "at": "2026-10-20T21:38:15.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 1146
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-21T19:36:20.540Z"
+      }
+    },
+    "9a22411d-0883-4f26-b55e-5711a98586ba": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T14:55:08.642Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AL3820",
+          "at": "2026-10-21T09:26:58.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Chevrolet",
+          "vehicleColor": "White",
+          "diffMs": 1920
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T14:55:08.642Z"
+      }
+    },
+    "802c3e1d-2c74-4b99-aca9-da8b1c2eb168": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T14:55:34.736Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG142JP",
+          "at": "2026-10-21T09:35:04.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 2566
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T14:55:34.736Z"
+      }
+    },
+    "6ec6c112-82db-484d-95af-d659cc99beca": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T14:56:06.197Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AC027CV",
+          "at": "2026-10-21T10:55:27.000Z",
+          "deviceCode": "SLZTK400",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 61
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T14:56:06.197Z"
+      }
+    },
+    "0cce9ae6-f6da-4b77-9cb5-9683d953f4f3": {
+      "action": "reject",
+      "reason": "Vehículo no camión (MPV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T14:56:36.421Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG4220",
+          "at": "2026-10-21T11:19:56.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "MPV",
+          "vehicleBrand": null,
+          "vehicleColor": "Black",
+          "diffMs": 543
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T14:56:36.421Z"
+      }
+    },
+    "55506cac-aa9a-416e-a045-c2e5ae425aad": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Sedan) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T14:56:57.259Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "PCG5187",
+          "at": "2026-10-21T11:28:44.000Z",
+          "deviceCode": "SLZTK400",
+          "vehicleCategory": "Sedan",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 709
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T14:56:57.259Z"
+      }
+    },
+    "7901491c-b7ca-482c-a692-62bc40bf7db9": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T14:57:47.273Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "JZW20",
+          "at": "2026-10-21T12:49:13.000Z",
+          "deviceCode": "SLZTK400",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": "Volkswagen",
+          "vehicleColor": "Silver",
+          "diffMs": 163
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T14:57:47.273Z"
+      }
+    },
+    "c9063d1c-4c94-492c-a338-466ef9578475": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T14:58:18.926Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AD0137",
+          "at": "2026-10-21T18:45:46.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Volvo",
+          "vehicleColor": "White",
+          "diffMs": 2627
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T14:58:18.926Z"
+      }
+    },
+    "2024a786-019c-4926-984f-e81c94d945e5": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T14:58:46.765Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AD0137",
+          "at": "2026-10-21T18:45:45.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 90
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T14:58:46.765Z"
+      }
+    },
+    "635449cb-d359-4b2d-9af8-a7fa94243afa": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T14:59:07.701Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AD0137",
+          "at": "2026-10-21T21:35:43.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Mitsubishi",
+          "vehicleColor": "White",
+          "diffMs": 3408
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T14:59:07.701Z"
+      }
+    },
+    "811f7328-5d5f-401d-8e65-e57b48125aa2": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:01:32.312Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "DTO494",
+          "at": "2026-10-22T03:45:16.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 3829
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:01:32.312Z"
+      }
+    },
+    "9af4c378-056f-4184-99bb-248c293a8e0a": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:02:30.325Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AB22032",
+          "at": "2026-10-22T09:42:28.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 3288
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:02:30.325Z"
+      }
+    },
+    "5eea9ae7-7ecc-4060-a381-058cd57b393e": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:02:52.366Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AD1137",
+          "at": "2026-10-22T09:42:38.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 3284
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:02:52.366Z"
+      }
+    },
+    "04d608c0-8389-4d9c-859c-16d707ba1ed0": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:03:48.534Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG528CO",
+          "at": "2026-10-22T09:47:30.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 113
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:03:48.534Z"
+      }
+    },
+    "bca83419-cafa-4844-ba53-a775f2de16a0": {
+      "action": "reject",
+      "reason": "Vehículo no camión (MPV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:04:09.282Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AE282QI",
+          "at": "2026-10-22T10:12:58.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "MPV",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 4141
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:04:09.282Z"
+      }
+    },
+    "cc399a95-0d2d-482c-b96b-6f80fb19a727": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Sedan) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:04:29.594Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH049ID",
+          "at": "2026-10-22T10:23:07.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Sedan",
+          "vehicleBrand": "Fiat",
+          "vehicleColor": "White",
+          "diffMs": 400
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:04:29.594Z"
+      }
+    },
+    "f051a317-ab1b-41ea-aaa6-9df64a7de4aa": {
+      "action": "reject",
+      "reason": "Vehículo no camión (MPV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:05:06.955Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH049ID",
+          "at": "2026-10-22T10:23:44.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "MPV",
+          "vehicleBrand": "Fiat",
+          "vehicleColor": "White",
+          "diffMs": 4042
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:05:06.955Z"
+      }
+    },
+    "3895002d-9a2d-4fa3-9790-4cac56b369a4": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:06:29.358Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH933LO",
+          "at": "2026-10-22T11:33:08.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Toyota",
+          "vehicleColor": "White",
+          "diffMs": 3644
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:06:29.358Z"
+      }
+    },
+    "febc8c26-c08b-441a-afea-e397b42cdfde": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:07:26.070Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH456NL",
+          "at": "2026-10-22T13:02:17.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 175
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:07:26.070Z"
+      }
+    },
+    "9ae2f580-cf10-421f-9f2b-a543b7fce6a0": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:07:48.260Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AI456GB",
+          "at": "2026-10-22T13:55:52.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "SEAT",
+          "vehicleColor": "White",
+          "diffMs": 613
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:07:48.260Z"
+      }
+    },
+    "f2693d2b-c3ce-48e4-816a-4bac5af2d767": {
+      "action": "reject",
+      "reason": "Vehículo no camión (MPV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:08:50.628Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AI456GB",
+          "at": "2026-10-22T14:04:24.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "MPV",
+          "vehicleBrand": "Fiat",
+          "vehicleColor": "White",
+          "diffMs": 4441
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:08:50.628Z"
+      }
+    },
+    "4056771f-e08c-4276-acae-62b929566a41": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:09:28.708Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AI217IT",
+          "at": "2026-10-22T14:19:04.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": "Toyota",
+          "vehicleColor": "Black",
+          "diffMs": 3879
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:09:28.708Z"
+      }
+    },
+    "30b93b58-7e6b-4951-984d-259a10aa3554": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:09:58.348Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "BO1224",
+          "at": "2026-10-22T14:25:02.000Z",
+          "deviceCode": "SLZTK400",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 16
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:09:58.348Z"
+      }
+    },
+    "bdd52a94-fefe-4830-8614-87d4f7fd3b43": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Sedan) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:16:47.100Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "MTM450",
+          "at": "2026-10-22T14:38:17.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Sedan",
+          "vehicleBrand": null,
+          "vehicleColor": "Red",
+          "diffMs": 392
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:16:47.100Z"
+      }
+    },
+    "a7467f06-8f2b-4a29-ab1c-a80389fc8188": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:17:17.557Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "HVH138",
+          "at": "2026-10-22T14:43:06.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": null,
+          "vehicleColor": "Blue",
+          "diffMs": 538
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:17:17.557Z"
+      }
+    },
+    "dda7242f-c489-4fba-9c6d-a85fa0de1808": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:17:41.857Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH456NL",
+          "at": "2026-10-22T15:06:09.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Renault",
+          "vehicleColor": "White",
+          "diffMs": 779
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:17:41.857Z"
+      }
+    },
+    "3a4ee3e7-bb7a-4a7b-acb3-5dad510beac1": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:25:43.611Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AE827VZ",
+          "at": "2026-10-21T21:36:59.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 47
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:25:43.611Z"
+      }
+    },
+    "ef083a36-70cf-4e37-878f-baed38e69e4d": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:26:10.354Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AE827VZ",
+          "at": "2026-10-21T21:37:28.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 2646
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:26:10.354Z"
+      }
+    },
+    "ad687438-67ea-491c-b720-9497d17dd009": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:26:36.800Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AE036AM",
+          "at": "2026-10-21T21:52:29.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 30
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:26:36.800Z"
+      }
+    },
+    "7bc26c19-60ec-48cc-b2bc-e77546f418ad": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Medium Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:27:15.692Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AE036AM",
+          "at": "2026-10-21T21:52:50.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Medium Bus",
+          "vehicleBrand": "Renault",
+          "vehicleColor": "White",
+          "diffMs": 2677
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:27:15.692Z"
+      }
+    },
+    "19a723e8-3404-4ff9-9142-8e3cb778e5c5": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:27:41.630Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AE827VZ",
+          "at": "2026-10-21T22:20:53.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 54
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:27:41.630Z"
+      }
+    },
+    "ea3077cb-234c-437a-b54e-cf019002f239": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:29:24.004Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AE827VZ",
+          "at": "2026-10-21T22:21:15.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 2784
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:29:24.004Z"
+      }
+    },
+    "3d86e0ab-222f-4d47-8eb1-50d9a8468274": {
+      "action": "reject",
+      "reason": "Vehículo no camión (SUV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:30:01.860Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH933LO",
+          "at": "2026-10-22T15:17:47.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "SUV",
+          "vehicleBrand": "BMW",
+          "vehicleColor": "White",
+          "diffMs": 3750
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:30:01.860Z"
+      }
+    },
+    "7f2d427a-b3af-42fc-8158-2efc5d4dee38": {
+      "action": "reject",
+      "reason": "Vehículo no camión (SUV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T15:56:35.462Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "HVH138",
+          "at": "2026-10-22T15:44:37.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "SUV",
+          "vehicleBrand": "Dodge Caliber",
+          "vehicleColor": "Silver",
+          "diffMs": 3847
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T15:56:35.462Z"
+      }
+    },
+    "33156566-64cd-4c59-8d41-d2202946dc5b": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T16:05:05.724Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG361MX",
+          "at": "2026-10-22T15:58:55.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 724
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T16:05:05.724Z"
+      }
+    },
+    "c35835c7-d136-4157-bd80-2b67efa4e914": {
+      "action": "reject",
+      "reason": "Vehículo no camión (MPV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T17:55:33.294Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG361MX",
+          "at": "2026-10-22T17:21:13.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "MPV",
+          "vehicleBrand": "Toyota",
+          "vehicleColor": "White",
+          "diffMs": 3995
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T17:55:33.293Z"
+      }
+    },
+    "f2330829-eef5-40fc-9be7-e7778e9fd8a0": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T17:56:03.238Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH933LO",
+          "at": "2026-10-22T17:43:36.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "BMW",
+          "vehicleColor": "White",
+          "diffMs": 4178
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T17:56:03.237Z"
+      }
+    },
+    "9c02cb3e-b941-47ce-9fd9-155df98f0b51": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T18:48:15.356Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG066KT",
+          "at": "2026-10-22T18:40:37.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 148
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T18:48:15.356Z"
+      }
+    },
+    "684f349e-10fb-4b51-a2b9-0c740edff818": {
+      "action": "reject",
+      "reason": "Vehículo no camión (MPV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T18:50:27.956Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG066KT",
+          "at": "2026-10-22T18:41:00.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "MPV",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 3910
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T18:50:27.956Z"
+      }
+    },
+    "4a189da9-da38-4b7e-8efb-50159734e266": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T18:59:10.677Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AD0137",
+          "at": "2026-10-22T18:52:29.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Mitsubishi",
+          "vehicleColor": "White",
+          "diffMs": 4635
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T18:59:10.676Z"
+      }
+    },
+    "4960bb52-7d88-44c1-9292-9eb39389d344": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T19:00:13.490Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH456NL",
+          "at": "2026-10-22T18:53:30.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Renault",
+          "vehicleColor": "White",
+          "diffMs": 391
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T19:00:13.490Z"
+      }
+    },
+    "96381b2b-def0-48c3-b259-6ca55c6b80d6": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T19:01:58.280Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AD686SH",
+          "at": "2026-10-22T18:55:23.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 693
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T19:01:58.279Z"
+      }
+    },
+    "39379f44-4cff-47a7-86d4-033441c2e82a": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T19:12:33.265Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH456NL",
+          "at": "2026-10-22T19:06:35.000Z",
+          "deviceCode": "SLZTK400",
+          "vehicleCategory": "Van",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 251
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T19:12:33.265Z"
+      }
+    },
+    "c887e560-bbc1-416d-b556-0020f4cbfa48": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T20:21:04.956Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG622BE",
+          "at": "2026-10-14T21:32:41.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 1181
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T20:21:04.955Z"
+      }
+    },
+    "5be892c4-e94e-49bf-a18b-48969c19b750": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T20:22:09.573Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG622BE",
+          "at": "2026-10-14T21:32:18.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 101
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T20:22:09.573Z"
+      }
+    },
+    "3f0e1f5d-6b77-46c7-b869-16174b0e9ac9": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T20:22:42.749Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG622BE",
+          "at": "2026-10-14T22:23:29.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Fiat",
+          "vehicleColor": "Gray",
+          "diffMs": 94
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T20:22:42.749Z"
+      }
+    },
+    "9c9c3e33-fea5-4a74-ae5b-2ac1963b7c9f": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T20:23:59.898Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG622BE",
+          "at": "2026-10-14T22:23:52.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 901
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T20:23:59.898Z"
+      }
+    },
+    "3d3c02f8-f2ff-41b1-a1b3-b1e10981990a": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T20:24:45.534Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG622BE",
+          "at": "2026-10-15T09:31:27.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Fiat",
+          "vehicleColor": "White",
+          "diffMs": 22
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T20:24:45.534Z"
+      }
+    },
+    "f63770b0-8638-414b-b4f4-324757d197ec": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T20:25:30.542Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG622BE",
+          "at": "2026-10-15T09:31:54.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 2399
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T20:25:30.542Z"
+      }
+    },
+    "2c9e6ea5-370f-4ba4-82d0-c9041bf41284": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Medium Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-22T20:26:17.704Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AB2206",
+          "at": "2026-10-15T09:39:39.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Medium Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 501
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-22T20:26:17.704Z"
+      }
+    },
+    "a11403fb-3b39-4789-abce-f77fde1ed1e9": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-23T12:45:46.075Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AE772KD",
+          "at": "2026-10-22T18:17:14.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 904
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-23T12:45:46.074Z"
+      }
+    },
+    "4a97a7c2-92f4-4604-8a8d-f242e7781a8e": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-23T12:46:18.918Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AE772KD",
+          "at": "2026-10-22T18:17:50.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Mitsubishi",
+          "vehicleColor": "White",
+          "diffMs": 4387
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-23T12:46:18.918Z"
+      }
+    },
+    "17319b35-c3f6-4e57-92f3-799370491d12": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Sedan) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-23T12:57:26.495Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG518YT",
+          "at": "2026-10-22T18:51:56.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Sedan",
+          "vehicleBrand": "Fiat",
+          "vehicleColor": "White",
+          "diffMs": 69
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-23T12:57:26.494Z"
+      }
+    },
+    "c73d69aa-027e-4bf4-94c4-28418a805f8b": {
+      "action": "reject",
+      "reason": "Vehículo no camión (SUV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-23T12:58:00.192Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG518YT",
+          "at": "2026-10-22T19:05:44.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "SUV",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 4317
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-23T12:58:00.192Z"
+      }
+    },
+    "69acda7f-98e0-4268-ac9c-77e269029a86": {
+      "action": "reject",
+      "reason": "Vehículo no camión (MPV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-23T14:15:38.093Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH456NL",
+          "at": "2026-10-22T14:03:03.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "MPV",
+          "vehicleBrand": "Renault",
+          "vehicleColor": "Silver",
+          "diffMs": 3916
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-23T14:15:38.092Z"
+      }
+    },
+    "df9af15c-0497-4970-917c-1df71548f440": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-23T14:24:41.462Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG361MX",
+          "at": "2026-10-22T21:33:51.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": "Toyota",
+          "vehicleColor": "Black",
+          "diffMs": 4972
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-23T14:24:41.462Z"
+      }
+    },
+    "b758beac-0eb8-49d2-ac9b-a7e2478f5fd4": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-23T14:29:46.559Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG361MX",
+          "at": "2026-10-22T21:07:21.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": null,
+          "vehicleColor": "Red",
+          "diffMs": 856
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-23T14:29:46.559Z"
+      }
+    },
+    "3a0cd65d-afd7-4316-bdb7-eaabed97972a": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-23T14:52:20.368Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF185YF",
+          "at": "2026-10-23T09:38:24.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Volkswagen",
+          "vehicleColor": "White",
+          "diffMs": 321
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-23T14:52:20.367Z"
+      }
+    },
+    "98e0efee-a538-4118-98aa-2c7ee34f8345": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-23T14:52:51.602Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF185YF",
+          "at": "2026-10-23T10:23:05.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 177
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-23T14:52:51.602Z"
+      }
+    },
+    "65307d23-aff1-400d-b4e8-bfefb370c7f4": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-23T15:22:08.706Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "JLQ55",
+          "at": "2026-10-23T15:15:24.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": "Ford",
+          "vehicleColor": "White",
+          "diffMs": 829
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-23T15:22:08.705Z"
+      }
+    },
+    "5be9719a-bd85-4999-81b2-77fb29362718": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Sedan) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-26T12:43:41.527Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF277LC",
+          "at": "2026-10-23T10:50:30.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Sedan",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 499
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-26T12:43:41.526Z"
+      }
+    },
+    "a0539693-c4d2-404c-9133-83a3228ea07d": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-26T12:45:16.301Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AB2203",
+          "at": "2026-10-25T21:23:48.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 882
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-26T12:45:16.301Z"
+      }
+    },
+    "35f48a26-f646-452d-b1ba-35c249112ce4": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-26T12:45:25.732Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF529RF",
+          "at": "2026-10-25T22:09:58.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 516
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-26T12:45:25.732Z"
+      }
+    },
+    "dcc7bb65-35dc-484e-9fcd-afa12c384374": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Medium Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-26T12:45:54.948Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF529RF",
+          "at": "2026-10-25T22:10:13.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Medium Bus",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 769
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-26T12:45:54.948Z"
+      }
+    },
+    "9d054fba-bcd7-4fe9-8529-53b310fa5952": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Sedan) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-26T12:46:02.000Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "DDE815",
+          "at": "2026-10-26T02:00:42.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Sedan",
+          "vehicleBrand": "Chevrolet",
+          "vehicleColor": "Silver",
+          "diffMs": 86
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-26T12:46:02.000Z"
+      }
+    },
+    "fbfe9baf-c591-4f86-a9b1-2877d45978b6": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-26T12:46:42.992Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AL3287",
+          "at": "2026-10-26T09:27:03.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 712
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-26T12:46:42.992Z"
+      }
+    },
+    "5572cd52-aaa7-407f-b7ce-ffbc2e7e694e": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-26T12:46:50.033Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AB2203",
+          "at": "2026-10-26T09:37:52.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Chevrolet",
+          "vehicleColor": "White",
+          "diffMs": 1133
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-26T12:46:50.033Z"
+      }
+    },
+    "5a03295e-b2a6-41c4-a73e-24dee0d51f4c": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-26T12:46:56.990Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF529RF",
+          "at": "2026-10-26T09:38:45.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 538
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-26T12:46:56.990Z"
+      }
+    },
+    "de6b67d4-e3fb-4f5c-8782-ebef4ddc8a3a": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Sedan) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-26T12:47:43.380Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH049ID",
+          "at": "2026-10-26T11:24:54.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Sedan",
+          "vehicleBrand": "Fiat",
+          "vehicleColor": "White",
+          "diffMs": 535
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-26T12:47:43.380Z"
+      }
+    },
+    "22dd55b2-2711-487f-a4ba-ad6c9655df81": {
+      "action": "reject",
+      "reason": "Vehículo no camión (MPV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-26T12:47:52.337Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH049ID",
+          "at": "2026-10-26T11:26:43.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "MPV",
+          "vehicleBrand": "Fiat",
+          "vehicleColor": "White",
+          "diffMs": 1473
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-26T12:47:52.337Z"
+      }
+    },
+    "ebf121ef-ccf8-4d72-bcd7-64c32f28e3fc": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-26T14:34:17.714Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AA5281",
+          "at": "2026-10-26T14:26:57.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": "Ford",
+          "vehicleColor": "White",
+          "diffMs": 142
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-26T14:34:17.714Z"
+      }
+    },
+    "00b2a80e-5b2e-4b2b-a2a0-cbb5e778ea89": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-26T16:39:14.720Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AC2082",
+          "at": "2026-10-26T16:25:21.000Z",
+          "deviceCode": "SLZTK400",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 692
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-26T16:39:14.720Z"
+      }
+    },
+    "c4dddc33-449c-48d7-ab05-1c46189ab63e": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-26T16:54:44.193Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AB2882",
+          "at": "2026-10-26T16:48:02.000Z",
+          "deviceCode": "SLZTK400",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 305
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-26T16:54:44.193Z"
+      }
+    },
+    "d8a6baa8-0afb-48a7-8dae-853e180ef238": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-26T18:48:40.932Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG066KT",
+          "at": "2026-10-26T18:39:28.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 589
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-26T18:48:40.932Z"
+      }
+    },
+    "2e37db89-d2d7-4bf0-927c-14ada7aa2c7d": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-27T13:45:33.591Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AD01377",
+          "at": "2026-10-26T21:35:49.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 2005
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-27T13:45:33.591Z"
+      }
+    },
+    "93590bb6-f062-454c-adf5-2105112e2871": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-27T13:46:03.547Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF778YL",
+          "at": "2026-10-26T22:13:05.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 347
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-27T13:46:03.547Z"
+      }
+    },
+    "72a810db-97a7-4c28-8856-f0990a220283": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-27T13:46:29.917Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF778YL",
+          "at": "2026-10-26T22:13:26.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "DAF",
+          "vehicleColor": "White",
+          "diffMs": 2014
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-27T13:46:29.917Z"
+      }
+    },
+    "68c86985-938b-4d29-b0b0-c9cf9b15776e": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Sedan) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-27T13:46:48.493Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "PLQ6842",
+          "at": "2026-10-26T22:16:23.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Sedan",
+          "vehicleBrand": "Chevrolet",
+          "vehicleColor": "Silver",
+          "diffMs": 94
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-27T13:46:48.493Z"
+      }
+    },
+    "8bc5ad6c-ec92-439b-af43-4186ca05062b": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-27T13:47:33.984Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "BDR23",
+          "at": "2026-10-27T05:32:00.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "Black",
+          "diffMs": 67
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-27T13:47:33.984Z"
+      }
+    },
+    "0b5c79a7-2ca9-4758-b041-9c384f34e9bf": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-27T13:48:50.506Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AC33517",
+          "at": "2026-10-27T09:28:20.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 119
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-27T13:48:50.505Z"
+      }
+    },
+    "f47d2968-89b2-4709-8ae2-f9caae8d973d": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-27T13:49:52.314Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AE827VZ",
+          "at": "2026-10-27T09:28:38.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 695
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-27T13:49:52.313Z"
+      }
+    },
+    "4f0100f4-92be-480f-8c53-96f6c86132d6": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-27T13:50:12.603Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AE827VZ",
+          "at": "2026-10-27T09:29:07.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 362
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-27T13:50:12.603Z"
+      }
+    },
+    "b477ea67-95b2-42ee-bf70-09574cf9eb40": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-27T13:50:42.386Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF446TN",
+          "at": "2026-10-27T09:16:01.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Iveco",
+          "vehicleColor": "White",
+          "diffMs": 690
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-27T13:50:42.386Z"
+      }
+    },
+    "c1342622-57af-4c7d-9970-bc649558f058": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-27T13:51:09.212Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF778YL",
+          "at": "2026-10-27T09:33:08.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 177
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-27T13:51:09.212Z"
+      }
+    },
+    "95041193-991c-4826-b825-678c6062ac00": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-27T13:51:26.396Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF778YL",
+          "at": "2026-10-27T09:33:34.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Opel",
+          "vehicleColor": "White",
+          "diffMs": 229
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-27T13:51:26.396Z"
+      }
+    },
+    "64e71e14-f0a4-437b-94ed-94f17f91ba29": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-27T13:51:56.337Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG688FB",
+          "at": "2026-10-27T09:33:37.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 348
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-27T13:51:56.337Z"
+      }
+    },
+    "b5a153ae-e3e2-4e7d-82c7-72265c725f4a": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-27T13:52:33.012Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AD8137",
+          "at": "2026-10-27T09:35:53.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "Blue",
+          "diffMs": 84
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-27T13:52:33.012Z"
+      }
+    },
+    "65519ab3-ab51-4a90-a8c0-3147828b61b2": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-27T14:12:22.393Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AB2207",
+          "at": "2026-10-27T09:37:50.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "Blue",
+          "diffMs": 211
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-27T14:12:22.392Z"
+      }
+    },
+    "59999d0c-f420-4395-8bde-43012c8d39a0": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-27T14:12:59.341Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF778YL",
+          "at": "2026-10-27T10:13:50.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 42
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-27T14:12:59.341Z"
+      }
+    },
+    "249dc79d-a271-4837-b808-d707e3f0a61a": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-27T14:13:32.058Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF778YL",
+          "at": "2026-10-27T10:14:11.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 237
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-27T14:13:32.058Z"
+      }
+    },
+    "d7e25612-be7e-44bc-8f51-6f419103b9ed": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-27T14:52:06.163Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AE827VZ",
+          "at": "2026-10-27T10:22:01.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 191
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-27T14:52:06.163Z"
+      }
+    },
+    "04603556-e022-493a-b571-a2dd4b8274ec": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Sedan) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-27T14:52:55.788Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG005KX",
+          "at": "2026-10-27T13:02:29.000Z",
+          "deviceCode": "SLZTK400",
+          "vehicleCategory": "Sedan",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 202
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-27T14:52:55.788Z"
+      }
+    },
+    "6a6c46f7-6990-4f93-bb0f-5b7ef2945330": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-27T19:14:26.222Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG688FB",
+          "at": "2026-10-27T18:56:16.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Ford",
+          "vehicleColor": "White",
+          "diffMs": 162
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-27T19:14:26.222Z"
+      }
+    },
+    "ee802f65-a8f7-4559-9a27-cbbc8d544a9a": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-28T13:11:09.229Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG696QV",
+          "at": "2026-10-27T17:47:03.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": "Ford",
+          "vehicleColor": "White",
+          "diffMs": 312
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-28T13:11:09.228Z"
+      }
+    },
+    "be915b1d-c101-463b-8e45-8ca0af6e80f2": {
+      "action": "reject",
+      "reason": "Vehículo no camión (SUV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-28T13:11:32.971Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG696QV",
+          "at": "2026-10-27T20:59:48.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "SUV",
+          "vehicleBrand": "Ford",
+          "vehicleColor": "Black",
+          "diffMs": 868
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-28T13:11:32.971Z"
+      }
+    },
+    "25d0dace-765e-4a1f-ae1e-b19d41a503bf": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-28T13:11:56.533Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AD0137",
+          "at": "2026-10-27T21:38:50.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 711
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-28T13:11:56.533Z"
+      }
+    },
+    "3ecca07d-4059-4ffa-b30e-b85b228b4493": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-28T13:12:12.111Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG688FB",
+          "at": "2026-10-27T21:52:57.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Ford",
+          "vehicleColor": "White",
+          "diffMs": 686
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-28T13:12:12.111Z"
+      }
+    },
+    "c0f0d9ac-87f5-49ee-9b00-82331af0e3f6": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-28T13:12:41.746Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AE772KD",
+          "at": "2026-10-27T21:53:43.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 487
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-28T13:12:41.746Z"
+      }
+    },
+    "bae42a7a-7a20-48c1-9f35-afa7e65856d7": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-28T13:12:53.971Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AE772KD",
+          "at": "2026-10-27T21:54:11.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 675
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-28T13:12:53.971Z"
+      }
+    },
+    "a30b7416-257f-40d3-9e77-9b432bd0be44": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Sedan) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-28T13:13:07.214Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "OCB8150",
+          "at": "2026-10-27T22:13:55.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Sedan",
+          "vehicleBrand": "Chevrolet",
+          "vehicleColor": "White",
+          "diffMs": 961
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-28T13:13:07.214Z"
+      }
+    },
+    "3d463506-d185-41fe-a4ee-6035c0d86456": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-28T13:13:25.406Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "SEY0991",
+          "at": "2026-10-28T02:48:57.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "Silver",
+          "diffMs": 1013
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-28T13:13:25.406Z"
+      }
+    },
+    "b9ff4328-e2fe-41a5-9b8b-79a1349fb6fc": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-28T13:13:41.426Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AI31945",
+          "at": "2026-10-28T04:36:21.000Z",
+          "deviceCode": "SLZTK400",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": "Chevrolet",
+          "vehicleColor": "White",
+          "diffMs": 455
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-28T13:13:41.426Z"
+      }
+    },
+    "5d32748f-9d03-4219-9140-a55d4926dce5": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-28T13:13:54.970Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG688FB",
+          "at": "2026-10-28T09:34:26.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Ford",
+          "vehicleColor": "White",
+          "diffMs": 512
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-28T13:13:54.970Z"
+      }
+    },
+    "b2b8b7ad-2a43-499c-abab-76e4a2a251bd": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-28T13:14:24.614Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AB2203",
+          "at": "2026-10-28T09:39:55.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Chevrolet",
+          "vehicleColor": "White",
+          "diffMs": 1446
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-28T13:14:24.614Z"
+      }
+    },
+    "1dabda58-4a67-4f09-961d-c3849a15fa7f": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-28T19:47:15.705Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AD0137",
+          "at": "2026-10-28T18:36:37.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 2164
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-28T19:47:15.705Z"
+      }
+    },
+    "1f667ac1-9fd9-4b21-a0ce-dd9513f5d139": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T13:02:15.698Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF544UV",
+          "at": "2026-10-28T09:43:47.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 193
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T13:02:15.698Z"
+      }
+    },
+    "e50448dd-0604-4ee9-9cd9-27b8a91492e6": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Medium Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T13:02:27.971Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF544UV",
+          "at": "2026-10-28T09:44:15.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Medium Bus",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 1743
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T13:02:27.971Z"
+      }
+    },
+    "a24a2177-0d2a-4e30-be5c-89d8e088645f": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T13:03:34.927Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AD0137",
+          "at": "2026-10-28T21:44:06.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 2538
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T13:03:34.926Z"
+      }
+    },
+    "1ee375ed-b30f-4e48-b93e-b71eddeb695b": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T13:03:46.806Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG361MP",
+          "at": "2026-10-28T22:38:41.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Toyota",
+          "vehicleColor": "Gray",
+          "diffMs": 904
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T13:03:46.806Z"
+      }
+    },
+    "ecb78729-e473-4071-a6b2-a88d986d4602": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T13:04:09.441Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG361MP",
+          "at": "2026-10-28T22:39:06.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Toyota",
+          "vehicleColor": "White",
+          "diffMs": 3324
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T13:04:09.441Z"
+      }
+    },
+    "71dc57c3-a42c-468a-bec7-4a15afbe1438": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T13:05:16.822Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AE937SG",
+          "at": "2026-10-29T09:27:12.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 569
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T13:05:16.822Z"
+      }
+    },
+    "e2f2554b-698d-45ec-adc0-67ef7bfd14a4": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T13:05:30.019Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AE937SG",
+          "at": "2026-10-29T09:27:37.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 793
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T13:05:30.019Z"
+      }
+    },
+    "6c8cc4c6-5e02-4928-b9d6-6fcd1f311796": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T13:05:47.653Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AB2203",
+          "at": "2026-10-29T09:35:34.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 63
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T13:05:47.653Z"
+      }
+    },
+    "a628ddfe-6975-4c03-834e-dfa4ba9cde70": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T13:49:38.214Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG622BE",
+          "at": "2026-10-28T22:23:24.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 67
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T13:49:38.213Z"
+      }
+    },
+    "a6cb7331-8e68-49c8-98b6-a0e208700fa9": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T13:49:48.808Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG622BE",
+          "at": "2026-10-28T22:23:59.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 2366
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T13:49:48.808Z"
+      }
+    },
+    "751fd42a-98a9-4310-84be-dc46ddfa09fd": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T14:48:55.703Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF211ER",
+          "at": "2026-10-15T12:24:55.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": null,
+          "vehicleColor": "Silver",
+          "diffMs": 78
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T14:48:55.703Z"
+      }
+    },
+    "ad5851a5-9ec7-4b86-94e3-cb9824aaac6a": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T14:56:00.200Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF042JP",
+          "at": "2026-10-21T09:29:25.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 1781
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T14:56:00.200Z"
+      }
+    },
+    "1294997e-c11c-49dd-b3b5-0fd1cdcff5e0": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Sedan) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T14:56:09.685Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF042JP",
+          "at": "2026-10-21T09:29:24.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Sedan",
+          "vehicleBrand": "Daihatsu",
+          "vehicleColor": "Silver",
+          "diffMs": 417
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T14:56:09.685Z"
+      }
+    },
+    "0608ff89-614a-4b85-b0a8-3c0e41b080e9": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T14:56:30.105Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AB2203",
+          "at": "2026-10-21T09:38:56.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 2393
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T14:56:30.105Z"
+      }
+    },
+    "7a1a0a19-caf7-4629-a873-eafbc709f4a2": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T14:59:29.089Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF282QI",
+          "at": "2026-10-22T09:38:54.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 288
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T14:59:29.089Z"
+      }
+    },
+    "8c05f83d-5be4-4769-adc4-a3244ab54137": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T15:05:29.224Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "KGY149",
+          "at": "2026-10-26T12:56:40.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": "Ford",
+          "vehicleColor": "Black",
+          "diffMs": 1138
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T15:05:29.224Z"
+      }
+    },
+    "24bf6b87-29d5-4102-862a-bedebac43179": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T15:07:39.400Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "DYC256",
+          "at": "2026-10-28T04:36:02.000Z",
+          "deviceCode": "SLZTK400",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 438
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T15:07:39.399Z"
+      }
+    },
+    "a616b50d-0969-4c89-b090-04fb04ad4cbb": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T15:07:54.473Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF042JP",
+          "at": "2026-10-28T09:29:22.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 395
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T15:07:54.473Z"
+      }
+    },
+    "a41e09df-2efb-40aa-af12-cf4cba3f3d03": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Sedan) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T15:08:04.700Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF042JP",
+          "at": "2026-10-28T09:29:57.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Sedan",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 1526
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T15:08:04.700Z"
+      }
+    },
+    "b2d6e7b9-2d39-4b9c-9bf5-d25610d511a3": {
+      "action": "reject",
+      "reason": "Vehículo no camión (MPV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T15:08:34.765Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF282QI",
+          "at": "2026-10-28T09:39:47.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "MPV",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 1610
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T15:08:34.765Z"
+      }
+    },
+    "c9e7e21a-9a06-4ccf-a7cf-72b75c84e154": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T15:08:44.581Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF282QI",
+          "at": "2026-10-28T10:10:55.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 160
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T15:08:44.581Z"
+      }
+    },
+    "4ef225da-e6f7-47a5-b22e-7f75011f2879": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T15:10:04.723Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "IRK465",
+          "at": "2026-10-28T19:07:59.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 2571
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T15:10:04.723Z"
+      }
+    },
+    "8bf7c5cc-32ed-4a86-88f9-e0b93f451526": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Medium Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T15:10:14.233Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF282QI",
+          "at": "2026-10-28T19:14:56.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Medium Bus",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 2325
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T15:10:14.233Z"
+      }
+    },
+    "0590012a-a8a5-47b1-b82d-84b606c96f01": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T15:40:21.212Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AD001TD",
+          "at": "2026-10-28T17:16:32.000Z",
+          "deviceCode": "SLZTK400",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": "Fiat",
+          "vehicleColor": "White",
+          "diffMs": 136
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T15:40:21.212Z"
+      }
+    },
+    "29d03230-5b9f-4e02-948f-6834117bcb80": {
+      "action": "reject",
+      "reason": "Vehículo de servicio",
+      "operator": null,
+      "updatedAt": "2026-10-29T17:44:46.888Z"
+    },
+    "5789a873-8323-47a3-9810-fb0111dd2f13": {
+      "action": "reject",
+      "reason": "Vehículo de servicio",
+      "operator": null,
+      "updatedAt": "2026-10-29T17:45:00.787Z"
+    },
+    "c4b9493a-09e2-48cd-ad05-1c23afbe71b9": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T17:50:00.837Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG066KT",
+          "at": "2026-10-28T18:35:28.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 239
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T17:50:00.836Z"
+      }
+    },
+    "423d770b-5b42-4824-b58a-5ddd7baf8641": {
+      "action": "reject",
+      "reason": "Vehículo no camión (MPV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T17:50:12.562Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG066KT",
+          "at": "2026-10-28T18:36:48.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "MPV",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 2719
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T17:50:12.562Z"
+      }
+    },
+    "2e7325cf-b1b5-4d8c-ad4e-33cf7b5d5521": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T17:50:25.567Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF282QI",
+          "at": "2026-10-28T19:14:36.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 8
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T17:50:25.567Z"
+      }
+    },
+    "1318cb69-cee6-442e-b149-ffe167757dd5": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T17:50:40.289Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH185MZ",
+          "at": "2026-10-28T20:24:12.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": null,
+          "vehicleColor": "Pink",
+          "diffMs": 158
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T17:50:40.289Z"
+      }
+    },
+    "725750c8-d015-4c4e-b46d-f54a67b46c0e": {
+      "action": "reject",
+      "reason": "Vehículo no camión (SUV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T17:50:59.227Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH185MZ",
+          "at": "2026-10-28T20:39:45.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "SUV",
+          "vehicleBrand": "Renault",
+          "vehicleColor": "Red",
+          "diffMs": 3141
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T17:50:59.227Z"
+      }
+    },
+    "22a9ca2d-1464-42b5-88d6-de8f9e005946": {
+      "action": "confirm",
+      "plate": "NWZ336",
+      "journeyUid": null,
+      "reason": "alerta: corregida a NWZ336",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-10-29T17:55:16.966Z"
+    },
+    "7f7f7fc5-e077-48d8-82b3-e4a34d1e5bb2": {
+      "action": "confirm",
+      "plate": "IXB766",
+      "journeyUid": null,
+      "reason": "alerta: corregida a IXB766",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-10-29T17:58:35.394Z"
+    },
+    "2e6b61d5-b30c-4ee3-8af0-43e55953cce5": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-29T19:48:44.659Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "LLHL558",
+          "at": "2026-10-29T19:34:32.000Z",
+          "deviceCode": "SLZTK400",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 65
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-29T19:48:44.658Z"
+      }
+    },
+    "bd3f6b88-a6c1-4af4-b97c-4824763aa524": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Sedan) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-30T12:13:59.460Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF778YL",
+          "at": "2026-10-29T09:36:36.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Sedan",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 240
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-30T12:13:59.459Z"
+      }
+    },
+    "75a4965c-a8c9-4526-b901-6fe2617777af": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-30T12:14:12.655Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF778YL",
+          "at": "2026-10-29T09:37:00.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 618
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-30T12:14:12.655Z"
+      }
+    },
+    "cd773bc5-5367-40f6-a0fb-09734567719f": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-30T12:14:29.047Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF544UV",
+          "at": "2026-10-29T09:50:46.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 364
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-30T12:14:29.047Z"
+      }
+    },
+    "cc4c2519-96ba-4be3-b696-c53c3c38e54e": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-30T12:14:39.593Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF778YL",
+          "at": "2026-10-29T10:11:47.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Chevrolet",
+          "vehicleColor": "White",
+          "diffMs": 455
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-30T12:14:39.593Z"
+      }
+    },
+    "7dd27994-3e56-4785-9410-682d18486dba": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-30T12:15:31.307Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH700ET",
+          "at": "2026-10-29T13:45:51.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Renault",
+          "vehicleColor": "White",
+          "diffMs": 788
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-30T12:15:31.307Z"
+      }
+    },
+    "eba0027b-7aad-4366-b61f-7cbd6d4da5cf": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-30T12:21:23.102Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AC054WA",
+          "at": "2026-10-29T14:28:23.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 333
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-30T12:21:23.102Z"
+      }
+    },
+    "6af2f416-fce0-4e90-941c-7a85e1855ee7": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-30T12:22:12.312Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AB143DW",
+          "at": "2026-10-29T14:39:34.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": "Volkswagen",
+          "vehicleColor": "White",
+          "diffMs": 539
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-30T12:22:12.312Z"
+      }
+    },
+    "f6e139c4-1a53-4398-961f-fed1705a6142": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-30T12:22:29.062Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AC054WA",
+          "at": "2026-10-29T15:03:11.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": "Toyota",
+          "vehicleColor": "White",
+          "diffMs": 477
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-30T12:22:29.062Z"
+      }
+    },
+    "a0ba5ed0-ad04-490a-9ae4-d2bad905e217": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Van) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-30T12:33:44.327Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF809MM",
+          "at": "2026-10-29T21:37:43.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Van",
+          "vehicleBrand": "Mercedes-Benz",
+          "vehicleColor": "White",
+          "diffMs": 831
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-30T12:33:44.326Z"
+      }
+    },
+    "065a90e5-5cff-4bbd-8c4d-f439d22e10da": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-30T12:44:44.479Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AD1137",
+          "at": "2026-10-29T21:44:10.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 495
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-30T12:44:44.479Z"
+      }
+    },
+    "80d2a259-de18-48b8-8067-cce43da96845": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-30T12:48:14.941Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AB2200",
+          "at": "2026-10-30T09:25:59.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Fiat",
+          "vehicleColor": "White",
+          "diffMs": 77
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-30T12:48:14.940Z"
+      }
+    },
+    "f6e50b74-3ba8-4778-98ca-e8e1ca9a7b54": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-30T12:50:14.654Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AD0137",
+          "at": "2026-10-30T09:39:53.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Citroën",
+          "vehicleColor": "White",
+          "diffMs": 1193
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-30T12:50:14.654Z"
+      }
+    },
+    "d13ad15c-1bd1-449a-bb54-4c8e3624b4d2": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-30T15:44:32.066Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF881FY",
+          "at": "2026-10-29T16:42:29.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": "Volkswagen",
+          "vehicleColor": "White",
+          "diffMs": 286
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-30T15:44:32.066Z"
+      }
+    },
+    "827c4430-0dd1-4ebc-9cc5-783211987678": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-30T15:53:22.450Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "OGH1539",
+          "at": "2026-10-30T14:57:16.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": "Tata Motors",
+          "vehicleColor": "White",
+          "diffMs": 1768
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-30T15:53:22.450Z"
+      }
+    },
+    "1d4f0b99-9444-4b60-9ef4-493655d4c9c7": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Sedan) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-10-30T15:53:34.846Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "IA6870",
+          "at": "2026-10-30T15:25:02.000Z",
+          "deviceCode": "SLZTK400",
+          "vehicleCategory": "Sedan",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 439
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-10-30T15:53:34.846Z"
       }
     }
   }

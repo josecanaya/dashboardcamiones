@@ -1,0 +1,1272 @@
+[
+  {
+    "patente": "OVK247",
+    "tipo": "",
+    "marca": "",
+    "color": "",
+    "primera": "2026-09-29 01:03",
+    "ultima": "2026-09-29 10:31",
+    "permanenciaMin": 568,
+    "plantas": [
+      "Ricardone"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "RicCal02",
+        "lugar": "RicCal02",
+        "zona": "operativa",
+        "hora": "01:03",
+        "gemelo": null
+      },
+      {
+        "camara": "RicEgrCamFrente",
+        "lugar": "Egreso Ric",
+        "zona": "acceso",
+        "hora": "10:31",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "RSW086",
+    "tipo": "MicroTruck",
+    "marca": "MG",
+    "color": "Blue",
+    "primera": "2026-09-29 07:01",
+    "ultima": "2026-09-29 18:43",
+    "permanenciaMin": 701,
+    "plantas": [
+      "SL"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "SLZSalidaC2Fte",
+        "lugar": "Portería SL 2",
+        "zona": "porteria",
+        "hora": "07:01",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZTK400",
+        "lugar": "TK400 SL",
+        "zona": "operativa",
+        "hora": "14:00",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZTK400",
+        "lugar": "TK400 SL",
+        "zona": "operativa",
+        "hora": "18:39",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC1Fte",
+        "lugar": "Portería SL 1",
+        "zona": "porteria",
+        "hora": "18:43",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "AH831XA",
+    "tipo": "",
+    "marca": "",
+    "color": "",
+    "primera": "2026-09-29 07:19",
+    "ultima": "2026-09-29 15:45",
+    "permanenciaMin": 506,
+    "plantas": [
+      "Ricardone"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "RicS6Playa3",
+        "lugar": "Playa 3 Ric",
+        "zona": "operativa",
+        "hora": "07:19",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB3Egreso",
+        "lugar": "Balanza 3 Ric (sal.)",
+        "zona": "operativa",
+        "hora": "07:24",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB3Ingreso",
+        "lugar": "Balanza 3 Ric",
+        "zona": "operativa",
+        "hora": "15:45",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "AE260HD",
+    "tipo": "",
+    "marca": "",
+    "color": "",
+    "primera": "2026-09-29 07:43",
+    "ultima": "2026-09-29 07:58",
+    "permanenciaMin": 15,
+    "plantas": [
+      "Ricardone"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "RicB3Egreso",
+        "lugar": "Balanza 3 Ric (sal.)",
+        "zona": "operativa",
+        "hora": "07:43",
+        "gemelo": null
+      },
+      {
+        "camara": "RicPreIngInFr",
+        "lugar": "Preingreso Ric",
+        "zona": "acceso",
+        "hora": "07:46",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB3Ingreso",
+        "lugar": "Balanza 3 Ric",
+        "zona": "operativa",
+        "hora": "07:58",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "AF277LC",
+    "tipo": "LargeTruck",
+    "marca": "Nissan",
+    "color": "White",
+    "primera": "2026-09-29 08:06",
+    "ultima": "2026-09-29 18:12",
+    "permanenciaMin": 607,
+    "plantas": [
+      "SL"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "SLZSalidaC2Fte",
+        "lugar": "Portería SL 2",
+        "zona": "porteria",
+        "hora": "08:06",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZTK400",
+        "lugar": "TK400 SL",
+        "zona": "operativa",
+        "hora": "09:46",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZTK400",
+        "lugar": "TK400 SL",
+        "zona": "operativa",
+        "hora": "14:35",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZTK400",
+        "lugar": "TK400 SL",
+        "zona": "operativa",
+        "hora": "18:12",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "AF411UI",
+    "tipo": "MidTruck",
+    "marca": "Benz",
+    "color": "White",
+    "primera": "2026-09-29 08:11",
+    "ultima": "2026-09-29 15:49",
+    "permanenciaMin": 457,
+    "plantas": [
+      "Ricardone"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "RicPreIngInFr",
+        "lugar": "Preingreso Ric",
+        "zona": "acceso",
+        "hora": "08:11",
+        "gemelo": null
+      },
+      {
+        "camara": "RicS6Playa3",
+        "lugar": "Playa 3 Ric",
+        "zona": "operativa",
+        "hora": "15:46",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB2Egreso",
+        "lugar": "Balanza 2 Ric",
+        "zona": "operativa",
+        "hora": "15:49",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "JCT961",
+    "tipo": "",
+    "marca": "",
+    "color": "",
+    "primera": "2026-09-29 08:13",
+    "ultima": "2026-09-29 18:22",
+    "permanenciaMin": 609,
+    "plantas": [
+      "Ricardone"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "RicB3Ingreso",
+        "lugar": "Balanza 3 Ric",
+        "zona": "operativa",
+        "hora": "08:13",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB3Egreso",
+        "lugar": "Balanza 3 Ric (sal.)",
+        "zona": "operativa",
+        "hora": "08:13",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB2Egreso",
+        "lugar": "Balanza 2 Ric",
+        "zona": "operativa",
+        "hora": "18:22",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "AD545MJ",
+    "tipo": "MicroTruck",
+    "marca": "Toyota",
+    "color": "White",
+    "primera": "2026-09-29 08:22",
+    "ultima": "2026-09-29 18:41",
+    "permanenciaMin": 619,
+    "plantas": [
+      "SL"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "SLZSalidaC2Fte",
+        "lugar": "Portería SL 2",
+        "zona": "porteria",
+        "hora": "08:22",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZTK400",
+        "lugar": "TK400 SL",
+        "zona": "operativa",
+        "hora": "09:28",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZTK400",
+        "lugar": "TK400 SL",
+        "zona": "operativa",
+        "hora": "11:28",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZTK400",
+        "lugar": "TK400 SL",
+        "zona": "operativa",
+        "hora": "13:55",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC1Fte",
+        "lugar": "Portería SL 1",
+        "zona": "porteria",
+        "hora": "13:57",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC2Fte",
+        "lugar": "Portería SL 2",
+        "zona": "porteria",
+        "hora": "15:46",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZTK400",
+        "lugar": "TK400 SL",
+        "zona": "operativa",
+        "hora": "18:09",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC1Fte",
+        "lugar": "Portería SL 1",
+        "zona": "porteria",
+        "hora": "18:41",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "VNA879",
+    "tipo": "",
+    "marca": "",
+    "color": "",
+    "primera": "2026-09-29 08:34",
+    "ultima": "2026-09-29 12:43",
+    "permanenciaMin": 249,
+    "plantas": [
+      "Ricardone"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "RicS6Playa3",
+        "lugar": "Playa 3 Ric",
+        "zona": "operativa",
+        "hora": "08:34",
+        "gemelo": null
+      },
+      {
+        "camara": "RicS6Playa3",
+        "lugar": "Playa 3 Ric",
+        "zona": "operativa",
+        "hora": "09:40",
+        "gemelo": null
+      },
+      {
+        "camara": "RicS6Playa3",
+        "lugar": "Playa 3 Ric",
+        "zona": "operativa",
+        "hora": "12:29",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB2Egreso",
+        "lugar": "Balanza 2 Ric",
+        "zona": "operativa",
+        "hora": "12:43",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "LPZ703",
+    "tipo": "LargeTruck",
+    "marca": "Ford",
+    "color": "White",
+    "primera": "2026-09-29 08:42",
+    "ultima": "2026-09-29 13:07",
+    "permanenciaMin": 265,
+    "plantas": [
+      "Ricardone"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "RicB1Ingreso",
+        "lugar": "Balanza 1 Ric",
+        "zona": "operativa",
+        "hora": "08:42",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB2Egreso",
+        "lugar": "Balanza 2 Ric",
+        "zona": "operativa",
+        "hora": "13:07",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "KQO037",
+    "tipo": "MicroTruck",
+    "marca": "Unknown",
+    "color": "White",
+    "primera": "2026-09-29 08:47",
+    "ultima": "2026-09-29 16:32",
+    "permanenciaMin": 465,
+    "plantas": [
+      "SL",
+      "Ricardone"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "SLZSalidaC2Fte",
+        "lugar": "Portería SL 2",
+        "zona": "porteria",
+        "hora": "08:47",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC1Fte",
+        "lugar": "Portería SL 1",
+        "zona": "porteria",
+        "hora": "09:56",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB1Egreso",
+        "lugar": "RicB1Egreso",
+        "zona": "operativa",
+        "hora": "12:41",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB2Egreso",
+        "lugar": "Balanza 2 Ric",
+        "zona": "operativa",
+        "hora": "12:45",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC2Fte",
+        "lugar": "Portería SL 2",
+        "zona": "porteria",
+        "hora": "14:46",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC1Fte",
+        "lugar": "Portería SL 1",
+        "zona": "porteria",
+        "hora": "16:32",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "AE882UD",
+    "tipo": "MicroTruck",
+    "marca": "Mitsubishi",
+    "color": "White",
+    "primera": "2026-09-29 08:50",
+    "ultima": "2026-09-29 10:05",
+    "permanenciaMin": 75,
+    "plantas": [
+      "SL",
+      "Ricardone"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "SLZSalidaC2Fte",
+        "lugar": "Portería SL 2",
+        "zona": "porteria",
+        "hora": "08:50",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC1Fte",
+        "lugar": "Portería SL 1",
+        "zona": "porteria",
+        "hora": "09:00",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB3Ingreso",
+        "lugar": "Balanza 3 Ric",
+        "zona": "operativa",
+        "hora": "09:15",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB3Egreso",
+        "lugar": "Balanza 3 Ric (sal.)",
+        "zona": "operativa",
+        "hora": "10:05",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "AE817FH",
+    "tipo": "MicroTruck",
+    "marca": "Ford",
+    "color": "Black",
+    "primera": "2026-09-29 08:54",
+    "ultima": "2026-09-29 09:43",
+    "permanenciaMin": 50,
+    "plantas": [
+      "Ricardone",
+      "SL"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "RicB3Ingreso",
+        "lugar": "Balanza 3 Ric",
+        "zona": "operativa",
+        "hora": "08:54",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB3Egreso",
+        "lugar": "Balanza 3 Ric (sal.)",
+        "zona": "operativa",
+        "hora": "09:09",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC2Fte",
+        "lugar": "Portería SL 2",
+        "zona": "porteria",
+        "hora": "09:34",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC1Fte",
+        "lugar": "Portería SL 1",
+        "zona": "porteria",
+        "hora": "09:43",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "VUZ771",
+    "tipo": "",
+    "marca": "",
+    "color": "",
+    "primera": "2026-09-29 09:03",
+    "ultima": "2026-09-29 15:12",
+    "permanenciaMin": 370,
+    "plantas": [
+      "SL"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "SLZTK400",
+        "lugar": "TK400 SL",
+        "zona": "operativa",
+        "hora": "09:03",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZTK400",
+        "lugar": "TK400 SL",
+        "zona": "operativa",
+        "hora": "15:12",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "AC656IE",
+    "tipo": "",
+    "marca": "",
+    "color": "",
+    "primera": "2026-09-29 09:03",
+    "ultima": "2026-09-29 17:47",
+    "permanenciaMin": 524,
+    "plantas": [
+      "Ricardone"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "RicB3Ingreso",
+        "lugar": "Balanza 3 Ric",
+        "zona": "operativa",
+        "hora": "09:03",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB2Egreso",
+        "lugar": "Balanza 2 Ric",
+        "zona": "operativa",
+        "hora": "17:47",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "AH461XD",
+    "tipo": "",
+    "marca": "",
+    "color": "",
+    "primera": "2026-09-29 09:36",
+    "ultima": "2026-09-29 16:28",
+    "permanenciaMin": 412,
+    "plantas": [
+      "Ricardone"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "RicB3Ingreso",
+        "lugar": "Balanza 3 Ric",
+        "zona": "operativa",
+        "hora": "09:36",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB3Egreso",
+        "lugar": "Balanza 3 Ric (sal.)",
+        "zona": "operativa",
+        "hora": "09:51",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB3Ingreso",
+        "lugar": "Balanza 3 Ric",
+        "zona": "operativa",
+        "hora": "10:34",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB2Egreso",
+        "lugar": "Balanza 2 Ric",
+        "zona": "operativa",
+        "hora": "16:28",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "AI217QP",
+    "tipo": "",
+    "marca": "",
+    "color": "",
+    "primera": "2026-09-29 10:20",
+    "ultima": "2026-09-29 17:04",
+    "permanenciaMin": 405,
+    "plantas": [
+      "Ricardone"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "RicB3Ingreso",
+        "lugar": "Balanza 3 Ric",
+        "zona": "operativa",
+        "hora": "10:20",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB2Egreso",
+        "lugar": "Balanza 2 Ric",
+        "zona": "operativa",
+        "hora": "17:04",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "AH733KN",
+    "tipo": "LargeTruck",
+    "marca": "Benz",
+    "color": "Blue",
+    "primera": "2026-09-29 10:53",
+    "ultima": "2026-09-29 13:57",
+    "permanenciaMin": 184,
+    "plantas": [
+      "SL",
+      "Ricardone"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "SLZSalidaC2Fte",
+        "lugar": "Portería SL 2",
+        "zona": "porteria",
+        "hora": "10:53",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZTK400",
+        "lugar": "TK400 SL",
+        "zona": "operativa",
+        "hora": "11:45",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC1Fte",
+        "lugar": "Portería SL 1",
+        "zona": "porteria",
+        "hora": "12:30",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB3Ingreso",
+        "lugar": "Balanza 3 Ric",
+        "zona": "operativa",
+        "hora": "12:50",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB3Egreso",
+        "lugar": "Balanza 3 Ric (sal.)",
+        "zona": "operativa",
+        "hora": "13:31",
+        "gemelo": null
+      },
+      {
+        "camara": "RicPreIngInFr",
+        "lugar": "Preingreso Ric",
+        "zona": "acceso",
+        "hora": "13:42",
+        "gemelo": null
+      },
+      {
+        "camara": "RicEgrCamFrente",
+        "lugar": "Egreso Ric",
+        "zona": "acceso",
+        "hora": "13:57",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "DOK500",
+    "tipo": "LargeTruck",
+    "marca": "Naveco",
+    "color": "White",
+    "primera": "2026-09-29 11:54",
+    "ultima": "2026-09-29 12:35",
+    "permanenciaMin": 40,
+    "plantas": [
+      "SL"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "SLZSalidaC2Tras",
+        "lugar": "Portería SL 2 (tras.)",
+        "zona": "porteria",
+        "hora": "11:54",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC2Fte",
+        "lugar": "Portería SL 2",
+        "zona": "porteria",
+        "hora": "11:54",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZTK400",
+        "lugar": "TK400 SL",
+        "zona": "operativa",
+        "hora": "12:30",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC1Fte",
+        "lugar": "Portería SL 1",
+        "zona": "porteria",
+        "hora": "12:35",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC1Tras",
+        "lugar": "Portería SL 1 (tras.)",
+        "zona": "porteria",
+        "hora": "12:35",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "HIR922",
+    "tipo": "LargeTruck",
+    "marca": "Toyota",
+    "color": "White",
+    "primera": "2026-09-29 12:17",
+    "ultima": "2026-09-29 12:35",
+    "permanenciaMin": 17,
+    "plantas": [
+      "SL"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "SLZSalidaC2Fte",
+        "lugar": "Portería SL 2",
+        "zona": "porteria",
+        "hora": "12:17",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZTK400",
+        "lugar": "TK400 SL",
+        "zona": "operativa",
+        "hora": "12:35",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "OTV765",
+    "tipo": "",
+    "marca": "",
+    "color": "",
+    "primera": "2026-09-29 12:43",
+    "ultima": "2026-09-29 20:57",
+    "permanenciaMin": 494,
+    "plantas": [
+      "SL",
+      "Ricardone"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "SLZBalLiq1a",
+        "lugar": "Balanza líquidos SL",
+        "zona": "operativa",
+        "hora": "12:43",
+        "gemelo": null
+      },
+      {
+        "camara": "RicB2Egreso",
+        "lugar": "Balanza 2 Ric",
+        "zona": "operativa",
+        "hora": "20:57",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "OOI074",
+    "tipo": "",
+    "marca": "",
+    "color": "",
+    "primera": "2026-09-29 13:27",
+    "ultima": "2026-09-29 17:44",
+    "permanenciaMin": 258,
+    "plantas": [
+      "SL"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "SLZTK400",
+        "lugar": "TK400 SL",
+        "zona": "operativa",
+        "hora": "13:27",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZTK400",
+        "lugar": "TK400 SL",
+        "zona": "operativa",
+        "hora": "17:44",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "CKY837",
+    "tipo": "Unknown",
+    "marca": "Unknown",
+    "color": "White",
+    "primera": "2026-09-29 13:36",
+    "ultima": "2026-09-29 17:32",
+    "permanenciaMin": 236,
+    "plantas": [
+      "Ricardone",
+      "Renopack",
+      "SL"
+    ],
+    "alcance": "operativa",
+    "veredicto": "sospechoso_zona_operativa",
+    "pasadas": [
+      {
+        "camara": "RicPreIngInTr",
+        "lugar": "Preingreso Ric (tras.)",
+        "zona": "acceso",
+        "hora": "13:36",
+        "gemelo": null
+      },
+      {
+        "camara": "RenDescTras",
+        "lugar": "Renopack descarga (tras.)",
+        "zona": "operativa",
+        "hora": "17:05",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZBalIngTras",
+        "lugar": "Balanza ingreso SL (tras.)",
+        "zona": "acceso",
+        "hora": "17:32",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "AH967NF",
+    "tipo": "Unknown",
+    "marca": "Unknown",
+    "color": "White",
+    "primera": "2026-09-29 10:27",
+    "ultima": "2026-09-29 10:40",
+    "permanenciaMin": 13,
+    "plantas": [
+      "Ricardone"
+    ],
+    "alcance": "acceso",
+    "veredicto": "sospechoso_acceso",
+    "pasadas": [
+      {
+        "camara": "RicIngCamTrasera",
+        "lugar": "Ingreso Ric (tras.)",
+        "zona": "acceso",
+        "hora": "10:27",
+        "gemelo": null
+      },
+      {
+        "camara": "RicEgrCamFrente",
+        "lugar": "Egreso Ric",
+        "zona": "acceso",
+        "hora": "10:40",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "CRJ139",
+    "tipo": "",
+    "marca": "",
+    "color": "",
+    "primera": "2026-09-29 11:22",
+    "ultima": "2026-09-29 12:28",
+    "permanenciaMin": 66,
+    "plantas": [
+      "Ricardone"
+    ],
+    "alcance": "acceso",
+    "veredicto": "sospechoso_acceso",
+    "pasadas": [
+      {
+        "camara": "RicPreIngInFr",
+        "lugar": "Preingreso Ric",
+        "zona": "acceso",
+        "hora": "11:22",
+        "gemelo": null
+      },
+      {
+        "camara": "RicEgrCamFrente",
+        "lugar": "Egreso Ric",
+        "zona": "acceso",
+        "hora": "12:28",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "KZS251",
+    "tipo": "MidTruck",
+    "marca": "DF",
+    "color": "Black",
+    "primera": "2026-09-29 04:46",
+    "ultima": "2026-09-29 17:59",
+    "permanenciaMin": 793,
+    "plantas": [
+      "SL"
+    ],
+    "alcance": "porteria",
+    "veredicto": "solo_porteria",
+    "pasadas": [
+      {
+        "camara": "SLZSalidaC1Fte",
+        "lugar": "Portería SL 1",
+        "zona": "porteria",
+        "hora": "04:46",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC2Tras",
+        "lugar": "Portería SL 2 (tras.)",
+        "zona": "porteria",
+        "hora": "17:59",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "WWR002",
+    "tipo": "MicroTruck",
+    "marca": "Fiat",
+    "color": "White",
+    "primera": "2026-09-29 04:49",
+    "ultima": "2026-09-29 18:00",
+    "permanenciaMin": 792,
+    "plantas": [
+      "SL"
+    ],
+    "alcance": "porteria",
+    "veredicto": "solo_porteria",
+    "pasadas": [
+      {
+        "camara": "SLZSalidaC1Tras",
+        "lugar": "Portería SL 1 (tras.)",
+        "zona": "porteria",
+        "hora": "04:49",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC2Fte",
+        "lugar": "Portería SL 2",
+        "zona": "porteria",
+        "hora": "18:00",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "AB934GV",
+    "tipo": "MidTruck",
+    "marca": "Hino",
+    "color": "DarkOrange",
+    "primera": "2026-09-29 10:11",
+    "ultima": "2026-09-29 11:06",
+    "permanenciaMin": 55,
+    "plantas": [
+      "SL"
+    ],
+    "alcance": "porteria",
+    "veredicto": "solo_porteria",
+    "pasadas": [
+      {
+        "camara": "SLZSalidaC2Tras",
+        "lugar": "Portería SL 2 (tras.)",
+        "zona": "porteria",
+        "hora": "10:11",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC1Fte",
+        "lugar": "Portería SL 1",
+        "zona": "porteria",
+        "hora": "11:06",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC1Tras",
+        "lugar": "Portería SL 1 (tras.)",
+        "zona": "porteria",
+        "hora": "11:06",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "ONS723",
+    "tipo": "MicroTruck",
+    "marca": "Unknown",
+    "color": "Blue",
+    "primera": "2026-09-29 10:13",
+    "ultima": "2026-09-29 12:17",
+    "permanenciaMin": 123,
+    "plantas": [
+      "SL"
+    ],
+    "alcance": "porteria",
+    "veredicto": "solo_porteria",
+    "pasadas": [
+      {
+        "camara": "SLZSalidaC2Fte",
+        "lugar": "Portería SL 2",
+        "zona": "porteria",
+        "hora": "10:13",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC1Fte",
+        "lugar": "Portería SL 1",
+        "zona": "porteria",
+        "hora": "12:17",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "OLM970",
+    "tipo": "MidTruck",
+    "marca": "Naveco",
+    "color": "Blue",
+    "primera": "2026-09-29 10:40",
+    "ultima": "2026-09-29 11:43",
+    "permanenciaMin": 63,
+    "plantas": [
+      "SL"
+    ],
+    "alcance": "porteria",
+    "veredicto": "solo_porteria",
+    "pasadas": [
+      {
+        "camara": "SLZSalidaC2Tras",
+        "lugar": "Portería SL 2 (tras.)",
+        "zona": "porteria",
+        "hora": "10:40",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC1Fte",
+        "lugar": "Portería SL 1",
+        "zona": "porteria",
+        "hora": "11:43",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "GCW191",
+    "tipo": "MidTruck",
+    "marca": "Unknown",
+    "color": "White",
+    "primera": "2026-09-29 11:00",
+    "ultima": "2026-09-29 11:34",
+    "permanenciaMin": 34,
+    "plantas": [
+      "SL"
+    ],
+    "alcance": "porteria",
+    "veredicto": "solo_porteria",
+    "pasadas": [
+      {
+        "camara": "SLZSalidaC2Fte",
+        "lugar": "Portería SL 2",
+        "zona": "porteria",
+        "hora": "11:00",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC1Fte",
+        "lugar": "Portería SL 1",
+        "zona": "porteria",
+        "hora": "11:17",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC2Fte",
+        "lugar": "Portería SL 2",
+        "zona": "porteria",
+        "hora": "11:34",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "AC169LG",
+    "tipo": "MicroTruck",
+    "marca": "Unknown",
+    "color": "White",
+    "primera": "2026-09-29 11:58",
+    "ultima": "2026-09-29 15:02",
+    "permanenciaMin": 184,
+    "plantas": [
+      "SL"
+    ],
+    "alcance": "porteria",
+    "veredicto": "solo_porteria",
+    "pasadas": [
+      {
+        "camara": "SLZSalidaC2Fte",
+        "lugar": "Portería SL 2",
+        "zona": "porteria",
+        "hora": "11:58",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC2Fte",
+        "lugar": "Portería SL 2",
+        "zona": "porteria",
+        "hora": "14:56",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC1Fte",
+        "lugar": "Portería SL 1",
+        "zona": "porteria",
+        "hora": "15:02",
+        "gemelo": null
+      }
+    ]
+  },
+  {
+    "patente": "AG761RU",
+    "tipo": "LargeTruck",
+    "marca": "Volkswagen",
+    "color": "White",
+    "primera": "2026-09-29 16:28",
+    "ultima": "2026-09-29 17:13",
+    "permanenciaMin": 46,
+    "plantas": [
+      "SL"
+    ],
+    "alcance": "porteria",
+    "veredicto": "solo_porteria",
+    "pasadas": [
+      {
+        "camara": "SLZSalidaC2Tras",
+        "lugar": "Portería SL 2 (tras.)",
+        "zona": "porteria",
+        "hora": "16:28",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC2Fte",
+        "lugar": "Portería SL 2",
+        "zona": "porteria",
+        "hora": "16:28",
+        "gemelo": null
+      },
+      {
+        "camara": "SLZSalidaC1Fte",
+        "lugar": "Portería SL 1",
+        "zona": "porteria",
+        "hora": "17:13",
+        "gemelo": null
+      }
+    ]
+  }
+]

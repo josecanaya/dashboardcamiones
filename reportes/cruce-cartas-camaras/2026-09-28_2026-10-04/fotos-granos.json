@@ -1,0 +1,433 @@
+[
+ {
+  "patente": "LUJ549",
+  "clase": "sospechoso",
+  "enGrano": [
+   "22:32 RicCal03"
+  ],
+  "visita": {
+   "desde": "2026-10-02 22:06",
+   "hasta": "2026-10-02 22:32",
+   "camaras": [
+    "RicPreIngInFr",
+    "RicCal03"
+   ]
+  },
+  "tipo": "MidTruck",
+  "marca": "Unknown",
+  "sistema": null,
+  "foto": {
+   "archivo": "fotos-granos/LUJ549_10022228_RicCal03.jpg",
+   "hora": "2026-10-02 22:28:06",
+   "camara": "RicCal03",
+   "leida": "LUJ549"
+  }
+ },
+ {
+  "patente": "GGY082",
+  "clase": "sospechoso",
+  "enGrano": [
+   "16:35 RicCal01"
+  ],
+  "visita": {
+   "desde": "2026-09-28 13:38",
+   "hasta": "2026-09-28 18:04",
+   "camaras": [
+    "RicPreIngInFr",
+    "RicCal01",
+    "RicEgrCamFrente"
+   ]
+  },
+  "tipo": "MidTruck",
+  "marca": "Unknown",
+  "sistema": null,
+  "foto": {
+   "archivo": "fotos-granos/GGY082_09281631_RicCal01.jpg",
+   "hora": "2026-09-28 16:31:07",
+   "camara": "RicCal01",
+   "leida": "GGY082"
+  }
+ },
+ {
+  "patente": "AC993CK",
+  "clase": "sospechoso",
+  "enGrano": [
+   "17:58 RicCal01"
+  ],
+  "visita": {
+   "desde": "2026-09-28 17:25",
+   "hasta": "2026-09-29 11:54",
+   "camaras": [
+    "RicPreIngInFr",
+    "RicCal01",
+    "RicEgrCamFrente"
+   ]
+  },
+  "tipo": "Unknown",
+  "marca": "Unknown",
+  "sistema": null,
+  "foto": {
+   "archivo": "fotos-granos/AC993CK_09281754_RicCal01.jpg",
+   "hora": "2026-09-28 17:54:36",
+   "camara": "RicCal01",
+   "leida": "AC993CK"
+  }
+ },
+ {
+  "patente": "OVK247",
+  "clase": "sospechoso",
+  "enGrano": [
+   "20:09 RicCal02",
+   "01:03 RicCal02"
+  ],
+  "visita": {
+   "desde": "2026-09-28 18:45",
+   "hasta": "2026-09-29 10:31",
+   "camaras": [
+    "RicPreIngInFr",
+    "RicCal02",
+    "RicEgrCamFrente"
+   ]
+  },
+  "tipo": "MidTruck",
+  "marca": "Benz",
+  "sistema": null,
+  "foto": {
+   "archivo": "fotos-granos/OVK247_09282005_RicCal02.jpg",
+   "hora": "2026-09-28 20:05:31",
+   "camara": "RicCal02",
+   "leida": "OVK247"
+  }
+ },
+ {
+  "patente": "LZP122",
+  "clase": "sospechoso",
+  "enGrano": [
+   "10:45 SLZVolcableC3",
+   "11:36 SLZVolcableC3"
+  ],
+  "visita": {
+   "desde": "2026-09-29 10:59",
+   "hasta": "2026-09-30 17:15",
+   "camaras": [
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZSalidaC1Fte",
+    "SLZIngCamFrente",
+    "SLZVolcableC3",
+    "SLZBalSC1Fte",
+    "SLZSalidaC2Fte",
+    "SLZTK400"
+   ]
+  },
+  "tipo": "MidTruck",
+  "marca": "Benz",
+  "sistema": null,
+  "foto": {
+   "archivo": "fotos-granos/LZP122_09301041_SLZVolcableC3.jpg",
+   "hora": "2026-09-30 10:41:54",
+   "camara": "SLZVolcableC3",
+   "leida": "LZP122"
+  }
+ },
+ {
+  "patente": "TPC499",
+  "clase": "sospechoso",
+  "enGrano": [
+   "11:09 RicCal04",
+   "13:24 RicCal04"
+  ],
+  "visita": {
+   "desde": "2026-09-30 08:42",
+   "hasta": "2026-09-30 14:23",
+   "camaras": [
+    "RicPreIngInFr",
+    "RicCal04",
+    "RicEgrCamFrente"
+   ]
+  },
+  "tipo": "",
+  "marca": "",
+  "sistema": null,
+  "foto": {
+   "archivo": "fotos-granos/TPC499_09301105_RicCal04.jpg",
+   "hora": "2026-09-30 11:05:29",
+   "camara": "RicCal04",
+   "leida": "TPC499"
+  }
+ },
+ {
+  "patente": "CSC234",
+  "clase": "sospechoso",
+  "enGrano": [
+   "16:59 RicCal04"
+  ],
+  "visita": {
+   "desde": "2026-09-30 14:53",
+   "hasta": "2026-09-30 16:59",
+   "camaras": [
+    "RicPreIngInFr",
+    "RicCal04"
+   ]
+  },
+  "tipo": "MidTruck",
+  "marca": "Unknown",
+  "sistema": null,
+  "foto": {
+   "archivo": "fotos-granos/CSC234_09301655_RicCal04.jpg",
+   "hora": "2026-09-30 16:55:11",
+   "camara": "RicCal04",
+   "leida": "CSC234"
+  }
+ },
+ {
+  "patente": "KMT334",
+  "clase": "sospechoso",
+  "enGrano": [
+   "13:16 RicCal03"
+  ],
+  "visita": {
+   "desde": "2026-10-01 11:22",
+   "hasta": "2026-10-01 17:32",
+   "camaras": [
+    "RicPreIngInFr",
+    "RicCal03",
+    "RicEgrCamFrente"
+   ]
+  },
+  "tipo": "",
+  "marca": "",
+  "sistema": null,
+  "foto": {
+   "archivo": "fotos-granos/KMT334_10011312_RicCal03.jpg",
+   "hora": "2026-10-01 13:12:55",
+   "camara": "RicCal03",
+   "leida": "KMT334"
+  }
+ },
+ {
+  "patente": "AG746EI",
+  "clase": "sospechoso",
+  "enGrano": [
+   "13:37 RicCal03",
+   "15:12 RicCal03"
+  ],
+  "visita": {
+   "desde": "2026-10-01 12:56",
+   "hasta": "2026-10-01 16:09",
+   "camaras": [
+    "RicPreIngInFr",
+    "RicCal03",
+    "RicEgrCamFrente"
+   ]
+  },
+  "tipo": "MidTruck",
+  "marca": "Unknown",
+  "sistema": null,
+  "foto": {
+   "archivo": "fotos-granos/AG746EI_10011333_RicCal03.jpg",
+   "hora": "2026-10-01 13:33:54",
+   "camara": "RicCal03",
+   "leida": "AG746EI"
+  }
+ },
+ {
+  "patente": "UUD981",
+  "clase": "sospechoso",
+  "enGrano": [
+   "20:23 SLZVolcableC4"
+  ],
+  "visita": {
+   "desde": "2026-10-01 20:23",
+   "hasta": "2026-10-01 20:59",
+   "camaras": [
+    "SLZVolcableC4",
+    "RicS6Playa3"
+   ]
+  },
+  "tipo": "",
+  "marca": "",
+  "sistema": null,
+  "foto": {
+   "archivo": "fotos-granos/UUD981_10012019_SLZVolcableC4.jpg",
+   "hora": "2026-10-01 20:19:36",
+   "camara": "SLZVolcableC4",
+   "leida": "UUD981"
+  }
+ },
+ {
+  "patente": "AE798IV",
+  "clase": "sospechoso",
+  "enGrano": [
+   "23:07 RicCal04"
+  ],
+  "visita": {
+   "desde": "2026-10-01 23:07",
+   "hasta": "2026-10-02 03:43",
+   "camaras": [
+    "RicCal04",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  "tipo": "LargeTruck",
+  "marca": "Volkswagen",
+  "sistema": null,
+  "foto": {
+   "archivo": "fotos-granos/AE798IV_10012303_RicCal04.jpg",
+   "hora": "2026-10-01 23:03:45",
+   "camara": "RicCal04",
+   "leida": "AE798IV"
+  }
+ },
+ {
+  "patente": "GAS844",
+  "clase": "sospechoso",
+  "enGrano": [
+   "10:43 RicCal03"
+  ],
+  "visita": {
+   "desde": "2026-10-02 08:29",
+   "hasta": "2026-10-02 10:43",
+   "camaras": [
+    "RicPreIngInFr",
+    "RicCal03"
+   ]
+  },
+  "tipo": "MidTruck",
+  "marca": "Suzuki",
+  "sistema": null,
+  "notas": "tiene cartas de otros viajes",
+  "foto": {
+   "archivo": "fotos-granos/GAS844_10021039_RicCal03.jpg",
+   "hora": "2026-10-02 10:39:04",
+   "camara": "RicCal03",
+   "leida": "GAS844"
+  }
+ },
+ {
+  "patente": "AI201UM",
+  "clase": "sospechoso",
+  "enGrano": [
+   "20:41 RicCal04",
+   "11:06 RicCal04"
+  ],
+  "visita": {
+   "desde": "2026-10-02 20:00",
+   "hasta": "2026-10-03 14:01",
+   "camaras": [
+    "RicPreIngInFr",
+    "RicCal04",
+    "RicEgrCamFrente"
+   ]
+  },
+  "tipo": "MidTruck",
+  "marca": "Unknown",
+  "sistema": null,
+  "foto": {
+   "archivo": "fotos-granos/AI201UM_10022037_RicCal04.jpg",
+   "hora": "2026-10-02 20:37:34",
+   "camara": "RicCal04",
+   "leida": "AI201UM"
+  }
+ },
+ {
+  "patente": "MHN993",
+  "clase": "sospechoso",
+  "enGrano": [
+   "00:17 RicCal04"
+  ],
+  "visita": {
+   "desde": "2026-10-02 23:51",
+   "hasta": "2026-10-03 00:40",
+   "camaras": [
+    "RicPreIngInFr",
+    "RicCal04",
+    "RicEgrCamFrente"
+   ]
+  },
+  "tipo": "MidTruck",
+  "marca": "Unknown",
+  "sistema": null,
+  "foto": {
+   "archivo": "fotos-granos/MHN993_10030013_RicCal04.jpg",
+   "hora": "2026-10-03 00:13:45",
+   "camara": "RicCal04",
+   "leida": "MHN993"
+  }
+ },
+ {
+  "patente": "GUS768",
+  "clase": "sospechoso",
+  "enGrano": [
+   "13:32 RicCal03"
+  ],
+  "visita": {
+   "desde": "2026-10-03 11:31",
+   "hasta": "2026-10-03 13:32",
+   "camaras": [
+    "RicPreIngInFr",
+    "RicCal03"
+   ]
+  },
+  "tipo": "MidTruck",
+  "marca": "Benz",
+  "sistema": null,
+  "foto": {
+   "archivo": "fotos-granos/GUS768_10031328_RicCal03.jpg",
+   "hora": "2026-10-03 13:28:11",
+   "camara": "RicCal03",
+   "leida": "GUS768"
+  }
+ },
+ {
+  "patente": "JJM070",
+  "clase": "sospechoso",
+  "enGrano": [
+   "20:30 RicCal03"
+  ],
+  "visita": {
+   "desde": "2026-10-04 17:38",
+   "hasta": "2026-10-05 13:02",
+   "camaras": [
+    "RicPreIngInFr",
+    "RicCal03",
+    "RicEgrCamFrente"
+   ]
+  },
+  "tipo": "",
+  "marca": "",
+  "sistema": null,
+  "notas": "tiene cartas de otros viajes",
+  "foto": {
+   "archivo": "fotos-granos/JJM070_10042026_RicCal03.jpg",
+   "hora": "2026-10-04 20:26:11",
+   "camara": "RicCal03",
+   "leida": "JJM070"
+  }
+ },
+ {
+  "patente": "SJY378",
+  "clase": "sospechoso",
+  "enGrano": [
+   "20:34 RicCal03"
+  ],
+  "visita": {
+   "desde": "2026-10-04 17:45",
+   "hasta": "2026-10-04 22:15",
+   "camaras": [
+    "RicPreIngInFr",
+    "RicCal03",
+    "RicEgrCamFrente"
+   ]
+  },
+  "tipo": "MidTruck",
+  "marca": "Unknown",
+  "sistema": null,
+  "foto": {
+   "archivo": "fotos-granos/SJY378_10042030_RicCal03.jpg",
+   "hora": "2026-10-04 20:30:01",
+   "camara": "RicCal03",
+   "leida": "SJY378"
+  }
+ }
+]

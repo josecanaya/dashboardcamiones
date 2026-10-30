@@ -1,0 +1,103 @@
+{
+  "summary": {
+    "medidos": 8,
+    "correctos": "6/8",
+    "erroresAutomaticos": [
+      {
+        "umbral": 0.7,
+        "errores": 1
+      },
+      {
+        "umbral": 0.8,
+        "errores": 1
+      },
+      {
+        "umbral": 0.9,
+        "errores": 0
+      }
+    ],
+    "costoUsd": 0.106646
+  },
+  "results": [
+    {
+      "a": "AB349QJ",
+      "b": "AG169JJ",
+      "sim": 0.9152253761578846,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.95,
+      "reason": "El vehículo a identificar es una pickup roja con cabina simple/semicubierta tipo Fiat Toro, mientras que el candidato A es una pickup blanca tipo Ford Ranger con franjas azules, calcos 'RAICOS' y caja con cobertor diferente; distinta marca, color y equipamiento.",
+      "costUsd": 0.012506
+    },
+    {
+      "a": "GQW349",
+      "b": "EFA323",
+      "sim": 0.899787381686712,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.1,
+      "reason": "Ambos son Iveco EuroCargo blancos con cabina similar, pero la patente no coincide (GQW349 vs EFA323), el vehículo a identificar lleva acoplado con lona verde/carga visible mientras el candidato A lleva contenedor rojo, y detalles como ópticas y deflector difieren.",
+      "costUsd": 0.012582
+    },
+    {
+      "a": "FKZ258",
+      "b": "FEA810",
+      "sim": 0.9126972160738286,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.1,
+      "reason": "Mismo modelo Ford Cargo 1722 blanco con calcos idénticas, pero la patente difiere claramente (FKZ 258 vs FEA 810) y no hay otros rasgos distintivos (abolladuras, carga) para confirmar que sea el mismo camión con error de lectura.",
+      "costUsd": 0.012834
+    },
+    {
+      "a": "AG688FB",
+      "b": "MFY738",
+      "sim": 0.899383362886553,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.05,
+      "reason": "El vehículo a identificar es una furgoneta Ford Transit blanca, mientras que el candidato A es un SUV/auto Chevrolet gris; tipo de carrocería, marca, modelo y color no coinciden en absoluto.",
+      "costUsd": 0.012288
+    },
+    {
+      "a": "AD449JK",
+      "b": "AA528RN",
+      "sim": 0.8945083812722225,
+      "sameCamera": true,
+      "ok": false,
+      "confidence": 0.85,
+      "reason": "Misma Ford Ranger blanca, franja roja bajo las luces, calco Deltarossa, número '110' en la caja, misma posición de antena y óptica trasera; coincide pese a diferencia de lectura de patente.",
+      "costUsd": 0.01217
+    },
+    {
+      "a": "AA528MD",
+      "b": "AB785UY",
+      "sim": 0.8888788504227649,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.95,
+      "reason": "El vehículo a identificar es una pickup Ford Ranger blanca, mientras que el Candidato A es una furgoneta Renault Kangoo blanca; modelos y marcas completamente distintos, además de patentes diferentes (AA528MI vs AB785UY).",
+      "costUsd": 0.012483999999999999
+    },
+    {
+      "a": "COI299",
+      "b": "HED501",
+      "sim": 0.8874602344566631,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.1,
+      "reason": "Mismo modelo Mercedes-Benz y disposición de cámara, pero el candidato A tiene logos 'EL CHOLI' y 'VIESA' en el parabrisas/techo que no se ven en el vehículo a identificar, y la patente leída (COY299 vs HED501) no coincide en ningún carácter, por lo que no hay evidencia suficiente para vincularlos.",
+      "costUsd": 0.012657999999999999
+    },
+    {
+      "a": "AB394QZ",
+      "b": "AI195ZN",
+      "sim": 0.8884846170452809,
+      "sameCamera": true,
+      "ok": false,
+      "confidence": 0.55,
+      "reason": "Mismo modelo VW con cabina blanca, techo/toldo rojo, deflector y barra de luces idénticos, y disposición de espejos y ópticas coincide; sin embargo la patente leída (AD394OL vs AI195ZU) difiere en varios caracteres, lo que impide confirmar con alta certeza.",
+      "costUsd": 0.019124000000000002
+    }
+  ]
+}

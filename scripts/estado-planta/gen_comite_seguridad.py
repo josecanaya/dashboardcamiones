@@ -233,9 +233,11 @@ for x in PKG:
     if len(sin_foto) < len(fotos_): FOTOS[f'{pl}_todas'] = [f for f in fotos_ if f[0]]   # el DSS no siempre tiene la captura
     exc_txt = '; '.join(f'{e["punto"]} {e["hora"]}' for e in EXC_REC0 if e['patente'] == pl)
     s_ing, s_hist = sistema_rechazo(pl, x['primerIngreso'][:5])
+    # reingreso que la detección no ve (fuera de sus horas): un ingreso posterior sin baja en el sistema (GXO579 28/10)
+    reing = sorted([r for r in SGC_HIST.get(pl, []) if not r.get('baja') and str(r.get('external_ingreso_at', '')) > f'{P0[:4]}-{x["primerIngreso"][3:5]}-{x["primerIngreso"][:2]}T{x["primerIngreso"][6:11]}'], key=lambda r: r['external_ingreso_at'])
     VUELTAS.append({'patente': pl, 'dia': x['primerIngreso'][:5], 'estado': 'balanza', 'producto': x['producto'],
-        'titulo': ((('La balanza del puerto le dio de baja el ingreso' if any(r.get('baja') for r in SGC_HIST.get(pl, [])) else 'La balanza del puerto no lo pesó') + (', volvió a Ricardone y entró de nuevo' if x['estado'] == 'volvio_a_ricardone' else ' y no volvió a entrar'))),
-        'puertoTxt': hm_(m1), 'hastaTxt': hm_(hasta) if hasta is not None else 'Sin volver', 'hastaLbl': 'hasta entrar de nuevo al puerto' if hasta is not None else 'todavía',
+        'titulo': ((('La balanza del puerto le dio de baja el ingreso' if any(r.get('baja') for r in SGC_HIST.get(pl, [])) else 'La balanza del puerto no lo pesó') + (', volvió a Ricardone y entró de nuevo' if x['estado'] == 'volvio_a_ricardone' else (f'; volvió a entrar el {reing[0]["external_ingreso_at"][8:10]}/{reing[0]["external_ingreso_at"][5:7]} y descargó' if reing else ' y no volvió a entrar')))),
+        'puertoTxt': hm_(m1), 'hastaTxt': hm_(hasta) if hasta is not None else (f'{reing[0]["external_ingreso_at"][8:10]}/{reing[0]["external_ingreso_at"][5:7]} {reing[0]["external_ingreso_at"][11:16]}' if reing else 'Sin volver'), 'hastaLbl': 'hasta entrar de nuevo al puerto' if hasta is not None else ('nuevo ingreso en el sistema' if reing else 'todavía'),
         'grupos': [{'planta': v['planta'], 'items': [{'hora': it['hora'], 'punto': CORTO.get(it['punto'], it['punto']) + (' (alg.)' if it['estado'] != 'camara' else '')} for it in v['items']]} for v in vis],
         'lecturas': [f'{it["hora"]} {it["punto"]}' + (f' (algoritmo, leyó {it.get("leyo") or "sin patente"})' if it['estado'] != 'camara' else '') for v in vis for it in v['items']],
         'fotosNota': (f'<b>Sistema de camiones:</b> {s_ing}. {s_hist}.<br>' + '(alg.) = paso que la cámara vio sin leer bien la patente y el algoritmo por lote asignó a este camión; se revisó con la foto.' + (f' Se sacó lo que la foto mostró de otro camión: {exc_txt}.' if exc_txt else '')

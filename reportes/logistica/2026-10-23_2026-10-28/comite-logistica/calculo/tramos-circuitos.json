@@ -1,0 +1,200 @@
+{
+ "R12": {
+  "viajes": 124,
+  "t": 2623,
+  "sentidoInferidoPorHistorial": 30,
+  "totalPlanillaMedia": 378.95201612903224,
+  "totalPlanillaMediana": 360.7916666666667,
+  "tramos": [
+   {
+    "tramo": "Ingreso → Calada",
+    "media": 15.150716329966329,
+    "mediana": 9.82795,
+    "n": 99
+   },
+   {
+    "tramo": "Calada → Playa 3",
+    "media": 35.82544113475177,
+    "mediana": 16.396475,
+    "n": 94
+   },
+   {
+    "tramo": "Balanza egreso → Calada de salida",
+    "media": 15.978703703703705,
+    "mediana": 10.706183333333334,
+    "n": 45
+   },
+   {
+    "tramo": "Calada de salida → Salida",
+    "media": 20.48928196347032,
+    "mediana": 17.332533333333334,
+    "n": 73
+   },
+   {
+    "tramo": "Playa 3 → Carga silo Chief",
+    "media": 224.16795801282052,
+    "mediana": 194.58376666666666,
+    "n": 52
+   },
+   {
+    "tramo": "Carga silo Chief → Balanza egreso",
+    "media": 42.56644388888889,
+    "mediana": 30.284666666666666,
+    "n": 30
+   }
+  ]
+ },
+ "SL5": {
+  "viajes": 80,
+  "t": 2011,
+  "sentidoInferidoPorHistorial": 16,
+  "totalPlanillaMedia": 270.44,
+  "totalPlanillaMediana": 201.11666666666667,
+  "tramos": [
+   {
+    "tramo": "Balanza egreso → Salida",
+    "media": 4.118973076923077,
+    "mediana": 3.027708333333333,
+    "n": 26
+   },
+   {
+    "tramo": "Balanza ingreso → Balanza egreso",
+    "media": 232.77178780487804,
+    "mediana": 208.74505,
+    "n": 41
+   },
+   {
+    "tramo": "Ingreso → Calada",
+    "media": 34.41724285714286,
+    "mediana": 14.976825000000002,
+    "n": 14
+   },
+   {
+    "tramo": "Calada → Balanza ingreso",
+    "media": 25.72414583333333,
+    "mediana": 10.172316666666667,
+    "n": 16
+   }
+  ]
+ },
+ "SL6": {
+  "viajes": 94,
+  "t": 2670,
+  "sentidoInferidoPorHistorial": 20,
+  "totalPlanillaMedia": 250.52836879432624,
+  "totalPlanillaMediana": 202.09166666666667,
+  "tramos": [
+   {
+    "tramo": "Ingreso → Calada",
+    "media": 45.16444444444444,
+    "mediana": 3.815975,
+    "n": 78
+   },
+   {
+    "tramo": "Calada → Balanza ingreso",
+    "media": 20.241914791666666,
+    "mediana": 10.585883333333332,
+    "n": 80
+   },
+   {
+    "tramo": "Balanza ingreso → Balanza egreso",
+    "media": 157.12048867521366,
+    "mediana": 148.0498583333333,
+    "n": 78
+   },
+   {
+    "tramo": "Balanza egreso → Salida",
+    "media": 4.312725661375661,
+    "mediana": 3.1328166666666664,
+    "n": 63
+   }
+  ]
+ },
+ "R35": {
+  "viajes": 10,
+  "t": 294,
+  "sentidoInferidoPorHistorial": 0,
+  "totalPlanillaMedia": 1075.2666666666667,
+  "totalPlanillaMediana": 1074.7416666666668,
+  "tramos": [
+   {
+    "tramo": "Ingreso Ricardone → Calada líquidos",
+    "media": 18.164386666666665,
+    "mediana": 14.761741666666666,
+    "n": 10
+   },
+   {
+    "tramo": "Calada líquidos → Egreso Ricardone",
+    "media": 249.8673,
+    "mediana": 207.07678333333334,
+    "n": 9
+   },
+   {
+    "tramo": "Balanza ingreso → Balanza egreso",
+    "media": 113.48611944444444,
+    "mediana": 109.83464166666667,
+    "n": 6
+   },
+   {
+    "tramo": "Egreso Ricardone → Ingreso puerto",
+    "media": 76.880525,
+    "mediana": 19.12615833333333,
+    "n": 6
+   },
+   {
+    "tramo": "Ingreso puerto → Balanza ingreso",
+    "media": 552.5211857142857,
+    "mediana": 533.2932166666667,
+    "n": 7
+   },
+   {
+    "tramo": "Balanza egreso → Salida",
+    "media": 4.375333333333334,
+    "mediana": 3.0281000000000002,
+    "n": 5
+   }
+  ]
+ },
+ "SL1": {
+  "viajes": 14,
+  "t": 346,
+  "sentidoInferidoPorHistorial": 9,
+  "totalPlanillaMedia": 336.7166666666667,
+  "totalPlanillaMediana": 210.36666666666667,
+  "tramos": [
+   {
+    "tramo": "Balanza ingreso → Balanza egreso",
+    "media": 157.22195555555555,
+    "mediana": 141.43131666666667,
+    "n": 9
+   },
+   {
+    "tramo": "Balanza egreso → Salida",
+    "media": 25.620583333333336,
+    "mediana": 3.6336916666666665,
+    "n": 10
+   }
+  ]
+ },
+ "R8": {
+  "viajes": 5,
+  "t": 157,
+  "sentidoInferidoPorHistorial": 0,
+  "totalPlanillaMedia": 333.27,
+  "totalPlanillaMediana": 327.1166666666667,
+  "tramos": [
+   {
+    "tramo": "Ingreso → Calada líquidos",
+    "media": 6.43825,
+    "mediana": 6.43825,
+    "n": 2
+   },
+   {
+    "tramo": "Calada líquidos → Balanza egreso",
+    "media": 384.88311666666664,
+    "mediana": 384.88311666666664,
+    "n": 2
+   }
+  ]
+ }
+}

@@ -51,6 +51,15 @@ describe('la IA se aplica sola', () => {
     expect(applyVisionVerdict(caso({ seenPlateConfidence: 0.9, vehicleType: 'maquinaria', patenteVista: pv(carta) }), events)).toBeNull()
     expect(applyVisionVerdict(caso({ seenPlateConfidence: 0.9, patenteVista: pv(carta) }, { decision: { action: 'review' } }), events)).toBeNull()
   })
+  it('sin chapa leída, la elección por foto se aplica si el camión tenía este paso pendiente (IHRU293 → HPQ293)', () => {
+    const hpq = { plate: 'HPQ293', journeyUid: 'hpq', inventory: { status: 'expected' }, padron: 'carta de porte 10135837833', inBalanza: true }
+    const ilegible = (ia, cands = [hpq]) => ({ fragmentKey: 'f', readPlate: 'IHRU293', at, level: 'pendiente', decision: null, candidates: cands, ia: { plate: 'HPQ293', seenPlate: null, vehicleType: 'camion', confidence: 0.62, patenteVista: null, ...ia } })
+    expect(applyVisionVerdict(ilegible({}), [])).toMatchObject({ level: 'casi_seguro', rule: 'ia_imagen', assignedPlate: 'HPQ293', assignedJourneyUid: 'hpq' })
+    expect(applyVisionVerdict(ilegible({ confidence: 0.58 }), [])).toBeNull()
+    expect(applyVisionVerdict(ilegible({ vehicleType: 'liviano' }), [])).toBeNull()
+    expect(applyVisionVerdict(ilegible({}, [{ ...hpq, inventory: { status: 'consumed' } }]), [])).toBeNull()
+    expect(applyVisionVerdict(ilegible({}, []), [])).toBeNull()
+  })
   it('acoplado de una carta: se asigna al chasis', () => {
     const r = applyVisionVerdict(caso({ seenPlateConfidence: 0.8, patenteVista: { ...pv({ source: 'carta', ctg: '9', role: 'acoplado', chasis: 'TSO035' }), plate: 'AA111BB' } }), events)
     expect(r.assignedPlate).toBe('TSO035')

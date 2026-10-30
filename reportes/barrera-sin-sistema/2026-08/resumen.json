@@ -1,0 +1,62 @@
+{
+ "mes": "2026-08",
+ "diasConCamaras": 31,
+ "lecturasRicardone": 122486,
+ "egresosGrano": {
+  "total": 118,
+  "porEstado": {
+   "no_visto": 8,
+   "patente_ficticia": 7,
+   "visto_ok": 103
+  },
+  "conCtg": 50,
+  "sinCtgPorProducto": {
+   "SEMILLA CON AGUA/BARRO": 12,
+   "PELLETS GIRASOL": 49,
+   "SOJA": 1,
+   "MERMA DE ZARANDA": 6
+  },
+  "kgSinCtgSinFicticias": 1367960,
+  "ingresoIgualSalida": 8
+ },
+ "visitasSinSistema": {
+  "total": 5826,
+  "nuncaEnSistema": 5175,
+  "enSistemaOtroDia": 651,
+  "posibleMalaLectura": 2601,
+  "porPrioridad": {
+   "1": 106,
+   "2": 53,
+   "3": 36,
+   "4": 627,
+   "5": 2403,
+   "9": 2601
+  },
+  "malaLecturaEnCargaOBalanza": 260,
+  "prioridad1PorEstado": {
+   "en_sistema_otro_dia": 31,
+   "nunca_en_sistema": 75
+  },
+  "prioridad1Patentes": 58
+ },
+ "ficticiasRicardone": {
+  "total": 55,
+  "porProducto": {
+   "EGRESO ACGIRASOL OLEICO": 1,
+   "INGRESO ACEITE GIRASOL REFINADO": 4,
+   "EGRESO ACEITE GIRASOL REFINADO": 4,
+   "INGRESO ACEITE GIRASOL ENVASADO": 10,
+   "EGRESO ACEITE GIRASOL ENVASADO": 10,
+   "INGRESO ACEITE SOJA ENVASADO": 3,
+   "EGRESO ACEITE SOJA ENVASADO": 3,
+   "EGRESO ACEITE GIRASOL CRUDO": 5,
+   "INGRESO ACEITE GIRASOL CRUDO": 2,
+   "INGRESO PELLETS GIRASOL": 4,
+   "EGRESO PELLETS GIRASOL": 6,
+   "DEA PELLETS GIRASOL": 2,
+   "EGRESO SOJA": 1
+  },
+  "ingresoIgualSalida": 55,
+  "conCandidatos": 54
+ }
+}

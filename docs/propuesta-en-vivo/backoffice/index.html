@@ -1,0 +1,647 @@
+<title>Vehículos Autorizados Nodo Sur</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap">
+<style>
+/* Layout: banda verde NVA arriba con el día; pestañas por quién carga; formulario a la izquierda, lo autorizado del día y la ayuda del histórico a la derecha. */
+:root{
+  --ink:#10231a; --muted:#5d6f65; --line:#dbe5df; --panel:#ffffff; --bg:#f3f6f4; --field:#ffffff;
+  --brand:#0f4a33; --brand-2:#16603f; --brand-soft:#e6f1eb; --on-brand:#ffffff; --on-brand-mute:#bfe3cf;
+  --ok:#15803d; --ok-soft:#ecfdf3; --warn:#b45309; --warn-soft:#fff7e6; --bad:#dc2626; --bad-soft:#fdecec;
+  --s-egr:#1d4ed8; --s-egr-soft:#e8efff; --s-ing:#0f766e; --s-ing-soft:#e3f5f2; --s-con:#a16207; --s-con-soft:#fdf4dc; --s-tr:#7c3aed; --s-tr-soft:#f1eafe;
+  --sans:'Public Sans','Segoe UI',Arial,sans-serif; --mono:'IBM Plex Mono',Consolas,ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ink:#e4efe8; --muted:#97aa9f; --line:#284036; --panel:#13221b; --bg:#0b1611; --field:#0f1c16;
+  --brand:#0f3d2b; --brand-2:#1f7a52; --brand-soft:#173628; --on-brand:#f2fbf6; --on-brand-mute:#9fd3b6;
+  --ok:#4ade80; --ok-soft:#123222; --warn:#fbbf24; --warn-soft:#33270e; --bad:#f87171; --bad-soft:#3a1717;
+  --s-egr:#93b4ff; --s-egr-soft:#18264a; --s-ing:#5eead4; --s-ing-soft:#0f2f2b; --s-con:#facc15; --s-con-soft:#33290c; --s-tr:#c4a5ff; --s-tr-soft:#2a1c46;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --ink:#e4efe8; --muted:#97aa9f; --line:#284036; --panel:#13221b; --bg:#0b1611; --field:#0f1c16;
+  --brand:#0f3d2b; --brand-2:#1f7a52; --brand-soft:#173628; --on-brand:#f2fbf6; --on-brand-mute:#9fd3b6;
+  --ok:#4ade80; --ok-soft:#123222; --warn:#fbbf24; --warn-soft:#33270e; --bad:#f87171; --bad-soft:#3a1717;
+  --s-egr:#93b4ff; --s-egr-soft:#18264a; --s-ing:#5eead4; --s-ing-soft:#0f2f2b; --s-con:#facc15; --s-con-soft:#33290c; --s-tr:#c4a5ff; --s-tr-soft:#2a1c46;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 28px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--brand-2);outline-offset:2px}
+.app{max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.mono{font-family:var(--mono)}
+.num{font-variant-numeric:tabular-nums}
+
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;padding:12px 18px;border-radius:14px;background:var(--brand);color:var(--on-brand)}
+.top h1{margin:0;font-size:20px;font-weight:800;letter-spacing:-.01em;text-wrap:balance}
+.top .sub{font-size:12px;color:var(--on-brand-mute)}
+.top .right{margin-left:auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.daybox{display:flex;align-items:center;gap:6px}
+.daybox button{border:0;background:rgba(255,255,255,.12);color:var(--on-brand);width:30px;height:30px;border-radius:8px;font-weight:800}
+.daybox input{border:0;border-radius:8px;padding:5px 8px;background:rgba(255,255,255,.14);color:var(--on-brand);color-scheme:dark;font-weight:700}
+.daybox .lbl{font-size:12px;color:var(--on-brand-mute);min-width:56px;text-align:center}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.12)}
+.live i{width:8px;height:8px;border-radius:50%;background:#94a3b8}
+.live.on i{background:#4ade80} .live.off i{background:#f59e0b}
+
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tab{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:8px 12px;text-align:left;min-width:0;flex:1 1 200px}
+.tab .dot{width:10px;height:10px;border-radius:3px;flex:none}
+.tab b{display:block;font-size:13.5px}
+.tab small{display:block;font-size:11.5px;color:var(--muted);line-height:1.3}
+.tab .cnt{margin-left:auto;font:700 15px var(--mono);color:var(--muted)}
+.tab[aria-selected="true"]{border-color:var(--brand-2);box-shadow:inset 0 0 0 1px var(--brand-2);background:var(--brand-soft)}
+.tab[aria-selected="true"] .cnt{color:var(--ink)}
+
+.grid{display:grid;grid-template-columns:minmax(0,430px) minmax(0,1fr);gap:12px;align-items:start}
+.col{display:flex;flex-direction:column;gap:12px;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;min-width:0}
+.card > header{display:flex;align-items:baseline;gap:8px 12px;flex-wrap:wrap;padding:12px 16px 0}
+.card h2{margin:0;font-size:15px;font-weight:800}
+.card h2 + .hint{font-size:12px;color:var(--muted)}
+.card .body{padding:12px 16px 16px;display:flex;flex-direction:column;gap:12px}
+.hint{font-size:12px;color:var(--muted)}
+
+form{display:flex;flex-direction:column;gap:11px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row.three{grid-template-columns:1fr 1fr 1fr}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700;color:var(--muted);min-width:0}
+label.f .req{color:var(--bad)}
+input[type=text],input[type=date],input[type=time],select,textarea{width:100%;border:1px solid var(--line);background:var(--field);border-radius:8px;padding:7px 9px;font-weight:500;color:var(--ink);min-width:0}
+textarea{resize:vertical;min-height:62px}
+textarea.plates,input.plate{font-family:var(--mono);text-transform:uppercase;letter-spacing:.03em}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600}
+.chip.mono{font-family:var(--mono)}
+.chip[aria-pressed="true"]{background:var(--brand-2);border-color:var(--brand-2);color:var(--on-brand)}
+.chip .n{opacity:.65;margin-left:4px;font-weight:500}
+fieldset{border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;min-width:0}
+legend{font-size:12px;font-weight:700;color:var(--muted);padding:0;margin-bottom:4px}
+.secgroup{display:flex;flex-direction:column;gap:5px}
+.secgroup .pl{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:9px;padding:8px 14px;font-weight:700}
+.btn.primary{background:var(--brand-2);border-color:var(--brand-2);color:var(--on-brand)}
+.btn.primary:disabled{opacity:.45;cursor:not-allowed}
+.btn.small{padding:4px 10px;font-size:12px}
+.btn.danger{color:var(--bad);border-color:var(--bad)}
+.msg{font-size:12.5px;font-weight:600}
+.msg.ok{color:var(--ok)} .msg.bad{color:var(--bad)}
+
+.look{display:flex;flex-direction:column;gap:8px}
+.lk{border:1px solid var(--line);border-radius:10px;padding:8px 10px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;align-items:start;background:var(--bg)}
+.lk .p{font:700 15px var(--mono)}
+.lk .tx{font-size:12.5px;min-width:0}
+.lk .tx b{font-weight:700}
+.lk .tx .w{color:var(--warn);font-weight:700}
+.lk .tx .k{color:var(--muted)}
+.lk img{grid-column:1 / -1;width:100%;max-width:100%;aspect-ratio:16/7;object-fit:cover;border-radius:8px}
+
+.src{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.src.egreso{background:var(--s-egr-soft);color:var(--s-egr)}
+.src.ingreso{background:var(--s-ing-soft);color:var(--s-ing)}
+.src.contratista{background:var(--s-con-soft);color:var(--s-con)}
+.src.transile{background:var(--s-tr-soft);color:var(--s-tr)}
+.dot.egreso{background:var(--s-egr)} .dot.ingreso{background:var(--s-ing)} .dot.contratista{background:var(--s-con)} .dot.transile{background:var(--s-tr)} .dot.padron{background:var(--brand-2)}
+
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;font-weight:800;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+td.p{font:700 13.5px var(--mono);white-space:nowrap}
+td .sm{display:block;font-size:11.5px;color:var(--muted)}
+tr.anulada td{opacity:.5;text-decoration:line-through}
+tr.anulada td:last-child{text-decoration:none}
+.empty{padding:18px 4px;color:var(--muted);font-size:13px;text-align:center}
+
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.gv{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel);text-align:left;padding:0;display:flex;flex-direction:column}
+.gv:hover{border-color:var(--brand-2)}
+.gv img,.gv .noimg{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:var(--bg)}
+.gv .t{padding:6px 8px;display:flex;flex-direction:column;gap:1px}
+.gv .t b{font:700 13px var(--mono)}
+.gv .t span{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--panel)}
+.kpi .v{font:700 24px var(--mono);font-variant-numeric:tabular-nums}
+.kpi .l{font-size:12px;color:var(--muted)}
+.banner{border-radius:12px;padding:10px 14px;background:var(--warn-soft);color:var(--ink);font-size:13px;border:1px solid var(--line)}
+.banner b{color:var(--warn)}
+.chart svg{width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font:500 10px var(--sans)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.spec{font-family:var(--mono);font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;overflow-x:auto;white-space:pre}
+
+.full{grid-column:1 / -1}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.row,.row.three{grid-template-columns:minmax(0,1fr)}.top .right{margin-left:0}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="app">
+  <div class="top">
+    <div>
+      <h1>Vehículos Autorizados · Nodo Sur</h1>
+      <div class="sub">Ricardone y Puerto San Lorenzo · lo que carga cada sector arma el padrón del día que usan las cámaras</div>
+    </div>
+    <div class="right">
+      <div class="daybox">
+        <button type="button" id="dprev" aria-label="Día anterior">‹</button>
+        <input type="date" id="dia" aria-label="Día">
+        <button type="button" id="dnext" aria-label="Día siguiente">›</button>
+        <span class="lbl" id="dlbl"></span>
+      </div>
+      <span class="live" id="live"><i></i><span>Conectando…</span></span>
+    </div>
+  </div>
+
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div id="view"></div>
+</div>
+
+<script>
+const FUENTES = {
+  egreso:{nombre:'Comercial · Egresos', quien:'Camiones que vienen a cargar', corto:'Egreso'},
+  ingreso:{nombre:'Portería · Ingresos', quien:'Camiones y vehículos particulares', corto:'Ingreso'},
+  contratista:{nombre:'Portería · Contratistas', quien:'Vehículos de empresas que trabajan en planta', corto:'Contratista'},
+  transile:{nombre:'Transile del día', quien:'Sistema de camiones · jefe de movimientos', corto:'Transile'},
+  padron:{nombre:'Padrón del día', quien:'Todo lo autorizado, junto', corto:'Padrón'},
+};
+const PLANTAS = {ric:'Ricardone', sl:'Puerto San Lorenzo', reno:'Renopack', ambas:'Ricardone y puerto'};
+const SECTORES = {
+  ric:{nombre:'Ricardone', items:[['ing','Ingreso / egreso'],['pre','Pre-ingreso y playas'],['bal','Balanzas'],['cal','Calada'],['sil','Planta y silos'],['tal','Talleres y mantenimiento'],['adm','Administración']]},
+  sl:{nombre:'Puerto', items:[['por','Portería'],['ing','Ingreso camiones'],['bal','Balanzas'],['cal','Calada'],['vol','Volcables'],['liq','Tanques y líquidos'],['mue','Muelle'],['adm','Administración']]}
+};
+const GRANOS = ['SOJA','MAIZ','GIRASOL','TRIGO','SORGO','PELLETS GIRASOL','PELLETS SOJA','CASCARA DE SOJA PELLETEADA'];
+const TIPOS_ING = ['Camión','Camioneta','Utilitario','Auto','Traffic / combi','Colectivo / minibús','Moto','Otro'];
+const TIPOS_CON = ['Camioneta','Utilitario','Camión','Grúa / equipo','Auto','Otro'];
+const MES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const DSEM = ['dom','lun','mar','mié','jue','vie','sáb'];
+const LS = 'bo-vehiculos-v1';
+
+let H = null;               // histórico (historico.json)
+let regs = [];              // autorizaciones cargadas (db o este equipo)
+let db = null, user = null, uid = null, nombres = {}, canWrite = true, modo = 'cargando';
+let tab = 'egreso', dia = hoyISO(), q = '', aviso = {}, confirmar = null;
+const draft = {egreso:{}, ingreso:{}, contratista:{}};
+
+function hoyISO(){ const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+const addDays = (iso,n) => { const d = new Date(iso+'T12:00'); d.setDate(d.getDate()+n); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+const ddmm = iso => iso ? `${iso.slice(8,10)}/${iso.slice(5,7)}` : '';
+const diaLargo = iso => { const d = new Date(iso+'T12:00'); return `${DSEM[d.getDay()]} ${d.getDate()} ${MES[d.getMonth()]}`; };
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm = s => String(s ?? '').toUpperCase().replace(/[^A-Z0-9]/g,'');
+const okPlate = p => /^[A-Z]{3}\d{3}$/.test(p) || /^[A-Z]{2}\d{3}[A-Z]{2}$/.test(p);
+const titulo = s => String(s||'').toLowerCase().replace(/\b\p{L}/gu, c => c.toUpperCase());
+const fmtN = n => Number(n).toLocaleString('es-AR');
+
+// ---------- histórico ----------
+function hist(p){
+  const r = H?.patentes[p]; if (!r) return null;
+  const [n, ing, egr, tr, ult, pi, ci, pl, aco] = r;
+  return {n, ing, egr, tr, ult, prod: H.prodDic[pi] || '', cli: H.cliDic[ci] || '', pl, aco};
+}
+const livByPlate = () => { const m = {}; for (const v of H?.livianos?.lista || []) m[v.p] = v; return m; };
+let LIV = {};
+const regByPlate = () => Object.fromEntries((H?.registro || []).map(([p,c,l]) => [p,{c,l}]));
+let REG = {};
+
+// ---------- autorizaciones ----------
+const vigente = (r, d = dia) => r.estado !== 'anulada' && r.desde <= d && (r.hasta || r.desde) >= d;
+const delDia = (fuente, d = dia) => regs.filter(r => r.fuente === fuente && (r.estado === 'anulada' ? r.desde <= d && (r.hasta||r.desde) >= d : vigente(r, d)));
+function transilesDelDia(d = dia){ return (H?.transile?.detalle?.[d] || []).map(t => ({...t, fuente:'transile'})); }
+function padron(d = dia){
+  const out = regs.filter(r => vigente(r, d)).map(r => ({...r}));
+  for (const t of transilesDelDia(d)) out.push({fuente:'transile', patente:t.p, acoplado:t.a, planta:'ric', datos:{producto:t.prod, sal:t.sal, ing:t.ing}, desde:d, hasta:d});
+  return out;
+}
+const autorizadoHoy = p => padron().filter(r => r.patente === p || r.acoplado === p);
+
+// ---------- conexión ----------
+function setModo(m){
+  modo = m;
+  const el = document.getElementById('live');
+  el.className = 'live ' + (m==='on' ? 'on' : m==='cargando' ? '' : 'off');
+  el.lastElementChild.textContent = m==='on' ? (canWrite ? 'Guardado en línea' : 'Solo lectura') : m==='cargando' ? 'Conectando…' : 'Sin conexión: se guarda en este equipo';
+}
+function lsLoad(){ try { return JSON.parse(localStorage.getItem(LS) || '[]'); } catch(e){ return []; } }
+function lsSave(){ try { localStorage.setItem(LS, JSON.stringify(regs)); } catch(e){} }
+
+async function conectar(){
+  try {
+    db = await window.claude?.use?.('db');
+    user = await window.claude?.use?.('user');
+  } catch(e){ db = null; }
+  if (!db){ regs = lsLoad(); setModo('off'); render(); return; }
+  try { uid = await user?.id?.(); } catch(e){}
+  try { const c = await user?.can?.('data.write'); if (c === false) canWrite = false; } catch(e){}
+  db.collection('autorizaciones').onSnapshot(snap => {
+    regs = snap.docs.map(d => ({id:d.id, ...JSON.parse(JSON.stringify(d.data()))}));
+    resolverNombres();
+    setModo('on'); render();
+  }, () => { regs = lsLoad(); setModo('off'); render(); });
+}
+async function resolverNombres(){
+  if (!user?.profiles) return;
+  const ids = [...new Set(regs.map(r => r.creadoPor).filter(Boolean))].filter(id => !(id in nombres));
+  if (!ids.length) return;
+  try { const ps = await user.profiles(ids); for (const id of ids) nombres[id] = ps?.[id]?.name || ''; render(); } catch(e){}
+}
+const quien = id => !id ? '' : id === uid ? 'vos' : (nombres[id] || 'otro usuario');
+
+async function guardar(nuevos){
+  const ahora = new Date().toISOString();
+  const docs = nuevos.map(r => ({...r, estado:'activa', creadoPor: uid || null, creadoEn: ahora, actualizadoEn: ahora, historial:[{t:ahora, por:uid||null, accion:'autorizó'}]}));
+  if (db && modo === 'on'){
+    for (const d of docs) await db.collection('autorizaciones').add(d);
+  } else {
+    for (const d of docs) regs.push({id:'loc_'+Math.random().toString(36).slice(2,10), ...d});
+    lsSave(); render();
+  }
+}
+async function anular(id){
+  const r = regs.find(x => x.id === id); if (!r) return;
+  const ahora = new Date().toISOString();
+  const hist = [...(r.historial || []), {t:ahora, por:uid||null, accion:'anuló'}];
+  if (db && modo === 'on' && !id.startsWith('loc_')) await db.doc('autorizaciones/'+id).update({estado:'anulada', actualizadoEn:ahora, historial:hist});
+  else { Object.assign(r, {estado:'anulada', actualizadoEn:ahora, historial:hist}); lsSave(); render(); }
+}
+
+// ---------- pestañas ----------
+function renderTabs(){
+  const cnt = {egreso:delDia('egreso').filter(r=>r.estado!=='anulada').length, ingreso:delDia('ingreso').filter(r=>r.estado!=='anulada').length,
+    contratista:delDia('contratista').filter(r=>r.estado!=='anulada').length, transile:transilesDelDia().length, padron:padron().length};
+  document.getElementById('tabs').innerHTML = Object.entries(FUENTES).map(([k,f]) =>
+    `<button class="tab" role="tab" data-tab="${k}" aria-selected="${tab===k}"><span class="dot ${k}"></span><span><b>${f.nombre}</b><small>${f.quien}</small></span><span class="cnt num">${cnt[k]}</span></button>`).join('');
+}
+function renderDia(){
+  document.getElementById('dia').value = dia;
+  document.getElementById('dlbl').textContent = dia === hoyISO() ? 'Hoy' : dia === addDays(hoyISO(),1) ? 'Mañana' : dia === addDays(hoyISO(),-1) ? 'Ayer' : diaLargo(dia);
+}
+
+// ---------- ficha corta de una patente ----------
+function lookupHTML(p, {conFoto = false} = {}){
+  if (!p) return '';
+  const h = hist(p), lv = LIV[p], rg = REG[p], aut = autorizadoHoy(p);
+  const partes = [];
+  if (!okPlate(p)) partes.push(`<span class="w">Formato de patente raro: revisá que esté bien.</span>`);
+  if (h) {
+    const tipo = h.tr ? `${h.tr} transiles` : h.egr >= h.ing ? `${h.egr} egresos` : `${h.ing} ingresos`;
+    partes.push(`<b>${fmtN(h.n)} movimientos</b> en el sistema de camiones (${tipo}), último ${ddmm(h.ult)}. ${esc(titulo(h.prod))}${h.cli ? ' · ' + esc(titulo(h.cli)) : ''}${h.aco ? ` · acoplado <span class="mono">${esc(h.aco)}</span>` : ''}`);
+  } else partes.push(`<span class="k">Nunca pasó por la balanza del Nodo Sur desde ${ddmm(H?.desde)}.</span>`);
+  if (lv) partes.push(`Visto por cámaras sin sistema de camiones: <b>${lv.n} lecturas en ${lv.d} días</b>${lv.tipo ? ' · ' + esc(lv.tipo) : ''}${lv.dss ? ` · ${esc(lv.dss.marca||'')} ${esc(lv.dss.color||'')}` : ''}.`);
+  if (rg) partes.push(`En el catálogo de patentes: ${esc(rg.l || rg.c)}.`);
+  if (aut.length) partes.push(`<span class="w">Ya autorizado hoy: ${aut.map(a => FUENTES[a.fuente].corto).join(', ')}.</span>`);
+  const foto = conFoto && lv?.f?.[0] ? `<img src="${esc(lv.f[0].s)}" alt="Foto de cámara de ${esc(p)}" loading="lazy">` : '';
+  return `<div class="lk"><span class="p">${esc(p)}</span><div class="tx">${partes.join('<br>')}</div>${foto}</div>`;
+}
+// "AB123CD / ACO123" por línea → [{patente, acoplado}]
+function parsePatentes(txt){
+  return String(txt||'').split(/[\n,;]+/).map(l => l.trim()).filter(Boolean).map(l => {
+    const [a, b] = l.split(/[\/\s]+/).map(norm).filter(Boolean);
+    return {patente:a, acoplado:b || ''};
+  }).filter(x => x.patente);
+}
+
+// ---------- formularios ----------
+const val = (k, def='') => draft[tab][k] ?? def;
+const inp = (k, label, {req=false, type='text', ph='', list='', cls=''} = {}) =>
+  `<label class="f"><span>${label}${req?' <span class="req">*</span>':''}</span><input type="${type}" id="f-${tab}-${k}" data-k="${k}" value="${esc(val(k))}" placeholder="${esc(ph)}" ${list?`list="${list}"`:''} class="${cls}" autocomplete="off"></label>`;
+const sel = (k, label, opts, def) =>
+  `<label class="f">${label}<select id="f-${tab}-${k}" data-k="${k}">${opts.map(([v,t]) => `<option value="${esc(v)}" ${val(k,def)===v?'selected':''}>${esc(t)}</option>`).join('')}</select></label>`;
+const vigencia = (defHasta) => `<div class="row">${inp('desde','Desde',{type:'date'})}${inp('hasta','Hasta',{type:'date'})}</div>`;
+function sectoresHTML(){
+  const elegidos = val('sectores', []);
+  const pls = val('planta','ric') === 'ambas' ? ['ric','sl'] : val('planta','ric') === 'reno' ? ['sl'] : [val('planta','ric')];
+  return `<fieldset><legend>Sectores donde puede estar</legend>${pls.map(pl => `<div class="secgroup"><span class="pl">${SECTORES[pl].nombre}</span><div class="chips">${SECTORES[pl].items.map(([k,t]) => {
+    const key = pl+':'+k; return `<button type="button" class="chip" data-sec="${key}" aria-pressed="${elegidos.includes(key)}">${esc(t)}</button>`; }).join('')}</div></div>`).join('')}</fieldset>`;
+}
+function ensureDefaults(){
+  const d = draft[tab];
+  if (!d.desde) d.desde = dia;
+  if (!d.hasta) d.hasta = tab === 'contratista' ? addDays(dia, 4) : dia;
+  if (!d.planta) d.planta = 'ric';
+  if (tab === 'contratista'){ if (!d.hdesde) d.hdesde = '07:00'; if (!d.hhasta) d.hhasta = '18:00'; }
+}
+const plantaOpts = [['ric','Ricardone'],['sl','Puerto San Lorenzo'],['reno','Renopack'],['ambas','Ricardone y puerto']];
+
+function formEgreso(){
+  return `<form id="form" data-f="egreso">
+    ${inp('cliente','Cliente',{req:true, list:'dl-clientes', ph:'Ej. Bunge Argentina'})}
+    <div class="row">${inp('cuit','CUIT',{ph:'30-…'})}${inp('producto','Producto que carga',{req:true, list:'dl-productos', ph:'Soja, pellets…'})}</div>
+    <div class="row">${sel('planta','Planta donde carga',plantaOpts.slice(0,3),'ric')}${inp('orden','Orden de carga / contrato',{ph:'Opcional'})}</div>
+    <label class="f"><span>Patentes <span class="req">*</span></span><textarea class="plates" id="f-egreso-patentes" data-k="patentes" placeholder="Una por línea: CHASIS / ACOPLADO&#10;AB123CD / AC456EF">${esc(val('patentes'))}</textarea></label>
+    <span class="hint">Tocá un camión habitual del cliente para sumarlo. Cada patente queda como una autorización.</span>
+    ${inp('transportista','Transportista',{ph:'Opcional'})}
+    ${vigencia()}
+    ${pieForm('Autorizar carga')}
+  </form>`;
+}
+function formIngreso(){
+  return `<form id="form" data-f="ingreso">
+    <label class="f"><span>Patente <span class="req">*</span></span><input type="text" class="plate" id="f-ingreso-patentes" data-k="patentes" value="${esc(val('patentes'))}" placeholder="AB123CD" autocomplete="off"></label>
+    <div class="row">${sel('tipo','Vehículo',TIPOS_ING.map(t=>[t,t]),'Camioneta')}${sel('planta','Planta',plantaOpts,'ric')}</div>
+    <div class="row">${inp('titular','Titular o conductor',{req:true, ph:'Nombre y apellido / empresa'})}${inp('visita','Visita a / motivo',{req:true, ph:'Ej. Mantenimiento, entrega de insumos'})}</div>
+    ${sectoresHTML()}
+    ${vigencia()}
+    <div class="row">${inp('hdesde','Desde la hora',{type:'time'})}${inp('hhasta','Hasta la hora',{type:'time'})}</div>
+    ${pieForm('Autorizar ingreso')}
+  </form>`;
+}
+function formContratista(){
+  return `<form id="form" data-f="contratista">
+    <div class="row">${inp('empresa','Empresa contratista',{req:true, list:'dl-empresas', ph:'Razón social'})}${inp('cuit','CUIT',{ph:'30-…'})}</div>
+    ${inp('trabajo','Trabajo que realiza',{req:true, ph:'Ej. Cambio de rodillos cinta 4 · OT 18233'})}
+    <div class="row">${inp('responsable','Responsable Vicentin',{req:true, ph:'Quién lo pidió'})}${sel('planta','Planta',plantaOpts,'ric')}</div>
+    <label class="f"><span>Patentes <span class="req">*</span></span><textarea class="plates" id="f-contratista-patentes" data-k="patentes" placeholder="Una por línea&#10;AB123CD">${esc(val('patentes'))}</textarea></label>
+    ${sel('tipo','Vehículos',TIPOS_CON.map(t=>[t,t]),'Camioneta')}
+    ${sectoresHTML()}
+    ${vigencia()}
+    <div class="row">${inp('hdesde','Desde la hora',{type:'time'})}${inp('hhasta','Hasta la hora',{type:'time'})}</div>
+    ${pieForm('Autorizar contratista')}
+  </form>`;
+}
+function pieForm(txt){
+  const pats = parsePatentes(val('patentes'));
+  const a = aviso[tab];
+  return `<div class="look" id="look">${pats.slice(0,6).map(x => lookupHTML(x.patente, {conFoto: tab!=='egreso'})).join('')}${pats.length > 6 ? `<span class="hint">y ${pats.length-6} patentes más</span>` : ''}</div>
+    <div class="actions"><button class="btn primary" type="submit" ${!canWrite?'disabled':''}>${txt}${pats.length>1?` (${pats.length})`:''}</button>
+    <button class="btn" type="button" data-act="limpiar">Limpiar</button>
+    ${a ? `<span class="msg ${a.ok?'ok':'bad'}">${esc(a.t)}</span>` : ''}</div>
+    ${!canWrite ? '<span class="hint">Tenés acceso de lectura: pedile al dueño que te comparta como Contributor para cargar.</span>' : ''}`;
+}
+function validar(){
+  const d = draft[tab], pats = parsePatentes(d.patentes);
+  const faltan = [];
+  if (!pats.length) faltan.push('patente');
+  if (tab==='egreso'){ if (!d.cliente) faltan.push('cliente'); if (!d.producto) faltan.push('producto'); }
+  if (tab==='ingreso'){ if (!d.titular) faltan.push('titular'); if (!d.visita) faltan.push('motivo'); }
+  if (tab==='contratista'){ if (!d.empresa) faltan.push('empresa'); if (!d.trabajo) faltan.push('trabajo'); if (!d.responsable) faltan.push('responsable'); }
+  if (d.hasta && d.desde && d.hasta < d.desde) faltan.push('fechas (hasta es anterior a desde)');
+  return {pats, faltan};
+}
+async function enviar(){
+  const {pats, faltan} = validar();
+  if (faltan.length){ aviso[tab] = {ok:false, t:'Falta: ' + faltan.join(', ')}; render(); return; }
+  const d = draft[tab];
+  const base = {fuente:tab, planta:d.planta||'ric', desde:d.desde, hasta:d.hasta||d.desde, hdesde:d.hdesde||'', hhasta:d.hhasta||'', sectores:d.sectores||[]};
+  const datos = tab==='egreso' ? {cliente:d.cliente, cuit:d.cuit||'', producto:d.producto, orden:d.orden||'', transportista:d.transportista||''}
+    : tab==='ingreso' ? {tipo:d.tipo||'Camioneta', titular:d.titular, visita:d.visita}
+    : {empresa:d.empresa, cuit:d.cuit||'', trabajo:d.trabajo, responsable:d.responsable, tipo:d.tipo||'Camioneta'};
+  try {
+    await guardar(pats.map(x => ({...base, patente:x.patente, acoplado:x.acoplado, datos})));
+    const keep = tab==='egreso' ? {cliente:d.cliente, cuit:d.cuit, producto:d.producto, planta:d.planta, desde:d.desde, hasta:d.hasta}
+      : tab==='contratista' ? {empresa:d.empresa, cuit:d.cuit, trabajo:d.trabajo, responsable:d.responsable, planta:d.planta, desde:d.desde, hasta:d.hasta, hdesde:d.hdesde, hhasta:d.hhasta, sectores:d.sectores, tipo:d.tipo} : {};
+    draft[tab] = keep;
+    aviso[tab] = {ok:true, t: pats.length === 1 ? `Autorizada ${pats[0].patente}` : `Autorizadas ${pats.length} patentes`};
+  } catch(e){
+    if (e?.code === 'invalid_argument') canWrite = false;
+    aviso[tab] = {ok:false, t: e?.code === 'invalid_argument' ? 'No tenés permiso para guardar en esta base.' : 'No se pudo guardar. Probá de nuevo en un momento.'};
+  }
+  render();
+}
+
+// ---------- lista de lo autorizado ----------
+function detalle(r){
+  const d = r.datos || {};
+  if (r.fuente==='egreso') return `${esc(titulo(d.cliente))}<span class="sm">${esc(titulo(d.producto))}${d.transportista?' · '+esc(d.transportista):''}${d.orden?' · '+esc(d.orden):''}</span>`;
+  if (r.fuente==='ingreso') return `${esc(d.titular)}<span class="sm">${esc(d.tipo)} · ${esc(d.visita)}</span>`;
+  if (r.fuente==='contratista') return `${esc(d.empresa)}<span class="sm">${esc(d.trabajo)} · pidió ${esc(d.responsable)}</span>`;
+  if (r.fuente==='transile') return `${esc(titulo(d.producto))}<span class="sm">Salió de Ricardone ${esc(d.sal||'s/d')}</span>`;
+  return '';
+}
+const secTxt = r => (r.sectores||[]).map(k => { const [pl,s] = k.split(':'); return SECTORES[pl]?.items.find(x=>x[0]===s)?.[1] || s; }).join(', ');
+const vigTxt = r => (r.desde === (r.hasta||r.desde) ? ddmm(r.desde) : `${ddmm(r.desde)} → ${ddmm(r.hasta)}`) + (r.hdesde ? `<span class="sm">${esc(r.hdesde)}–${esc(r.hhasta||'')}</span>` : '');
+function tablaAut(rows, {conFuente=false, acciones=true} = {}){
+  if (!rows.length) return '';
+  return `<div class="tablewrap"><table><thead><tr><th>Patente</th>${conFuente?'<th>Fuente</th>':''}<th>Quién / para qué</th><th>Planta</th><th>Vigencia</th>${acciones?'<th>Cargó</th><th></th>':''}</tr></thead><tbody>${rows.map(r => `
+    <tr class="${r.estado==='anulada'?'anulada':''}"><td class="p">${esc(r.patente)}${r.acoplado?`<span class="sm">${esc(r.acoplado)}</span>`:''}</td>
+    ${conFuente?`<td><span class="src ${r.fuente}">${FUENTES[r.fuente].corto}</span></td>`:''}
+    <td>${detalle(r)}${secTxt(r)?`<span class="sm">Sectores: ${esc(secTxt(r))}</span>`:''}</td>
+    <td>${esc(PLANTAS[r.planta]||'')}</td><td class="num">${vigTxt(r)}</td>
+    ${acciones?`<td class="hint">${esc(quien(r.creadoPor))}</td><td>${r.estado==='anulada' ? '<span class="hint">Anulada</span>' : confirmar===r.id
+      ? `<div class="actions"><button class="btn small danger" data-anular="${r.id}">Sí, anular</button><button class="btn small" data-cancel="1">No</button></div>`
+      : canWrite ? `<button class="btn small" data-preanular="${r.id}">Anular</button>` : ''}</td>`:''}</tr>`).join('')}</tbody></table></div>`;
+}
+
+// ---------- ayudas del histórico ----------
+function ayudaEgreso(){
+  const cli = H.clientes.find(c => norm(c.nombre) === norm(val('cliente')));
+  if (!cli){
+    return `<div class="card"><header><h2>Clientes que cargan en el Nodo Sur</h2><span class="hint">desde ${ddmm(H.desde)}, sin transiles</span></header><div class="body"><div class="chips">${H.clientes.slice(0,24).map(c =>
+      `<button type="button" class="chip" data-cli="${esc(c.nombre)}">${esc(titulo(c.nombre))}<span class="n num">${fmtN(c.n)}</span></button>`).join('')}</div></div></div>`;
+  }
+  const ya = new Set(parsePatentes(val('patentes')).map(x => x.patente));
+  return `<div class="card"><header><h2>${esc(titulo(cli.nombre))}</h2><span class="hint">${fmtN(cli.n)} cargas, última ${ddmm(cli.ult)} · ${cli.pl.map(p=>PLANTAS[p]).join(', ')}</span></header><div class="body">
+    <div class="chips">${cli.prod.map(([p,n]) => `<button type="button" class="chip" data-prod="${esc(p)}" aria-pressed="${norm(val('producto'))===norm(p)}">${esc(titulo(p))}<span class="n num">${fmtN(n)}</span></button>`).join('')}</div>
+    <span class="hint">Camiones habituales (chasis / acoplado · veces que cargó)</span>
+    <div class="chips">${cli.camiones.map(([p,a,n]) => `<button type="button" class="chip mono" data-addpat="${esc(p)}${a?' / '+esc(a):''}" aria-pressed="${ya.has(p)}">${esc(p)}${a?' / '+esc(a):''}<span class="n num">${n}</span></button>`).join('')}</div>
+  </div></div>`;
+}
+function ayudaIngreso(){
+  const ya = new Set(regs.filter(r => r.estado!=='anulada' && (r.hasta||r.desde) >= dia && r.fuente !== 'egreso').map(r => r.patente));
+  const pend = (H.livianos?.lista || []).filter(v => !ya.has(v.p)).sort((a,b) => (b.u?.ambas?.[0]||'') < (a.u?.ambas?.[0]||'') ? -1 : 1);
+  return `<div class="card"><header><h2>Vistos por las cámaras sin autorización</h2><span class="hint">${pend.length} de ${H.livianos.lista.length} vehículos que entran sin sistema de camiones (${ddmm(H.livianos.periodo.desde)}–${ddmm(H.livianos.periodo.hasta)}). Tocá uno para cargarlo.</span></header>
+    <div class="body"><div class="gal">${pend.slice(0,24).map(v => `<button type="button" class="gv" data-liv="${v.p}">${v.f?.[0] ? `<img src="${esc(v.f[0].s)}" alt="${esc(v.p)}" loading="lazy">` : '<span class="noimg"></span>'}
+      <span class="t"><b>${v.p}</b><span>${esc(v.tipo||'')}${v.dss?.marca?' · '+esc(v.dss.marca):''}</span><span>${v.n} lecturas · último ${ddmm(v.u?.ambas?.[0])}</span></span></button>`).join('')}</div>
+    ${pend.length > 24 ? `<span class="hint">Se muestran los 24 vistos más recientemente; buscá cualquier otro por patente.</span>` : ''}</div></div>`;
+}
+function ayudaContratista(){
+  const emp = {};
+  for (const r of regs) if (r.fuente==='contratista') { const e = r.datos?.empresa; if (e){ emp[e] = emp[e] || {n:0, hasta:''}; emp[e].n++; if ((r.hasta||'') > emp[e].hasta) emp[e].hasta = r.hasta; } }
+  const lista = Object.entries(emp).sort((a,b) => b[1].hasta.localeCompare(a[1].hasta));
+  return `<div class="card"><header><h2>Empresas cargadas</h2><span class="hint">Tocá una para repetir sus datos</span></header><div class="body">
+    ${lista.length ? `<div class="chips">${lista.map(([e,x]) => `<button type="button" class="chip" data-emp="${esc(e)}">${esc(e)}<span class="n">hasta ${ddmm(x.hasta)}</span></button>`).join('')}</div>`
+      : `<p class="empty">Todavía no hay contratistas cargados. La primera empresa que cargues queda acá para repetirla con un toque.</p>`}
+  </div></div>`;
+}
+
+// ---------- vistas ----------
+function vistaCarga(){
+  ensureDefaults();
+  const filas = delDia(tab).sort((a,b) => (b.creadoEn||'').localeCompare(a.creadoEn||''));
+  const form = tab==='egreso' ? formEgreso() : tab==='ingreso' ? formIngreso() : formContratista();
+  const ayuda = tab==='egreso' ? ayudaEgreso() : tab==='ingreso' ? ayudaIngreso() : ayudaContratista();
+  return `<div class="grid">
+    <div class="col"><div class="card"><header><h2>Nueva autorización</h2><span class="hint">${FUENTES[tab].quien}</span></header><div class="body">${form}</div></div></div>
+    <div class="col">
+      <div class="card"><header><h2>Autorizados para el ${diaLargo(dia)}</h2><span class="hint">${filas.filter(r=>r.estado!=='anulada').length} vigentes</span></header><div class="body">
+        ${tablaAut(filas) || `<p class="empty">Nada cargado para este día. Lo que cargues a la izquierda aparece acá y en el padrón.</p>`}</div></div>
+      ${ayuda}
+    </div></div>`;
+}
+
+function chartTransile(){
+  const t = H.transile, map = Object.fromEntries(t.porDia.map(r => [r[0], r]));
+  const fin = dia > t.ultimoDia ? dia : t.ultimoDia, N = 60, dias = [];
+  for (let i = N-1; i >= 0; i--) dias.push(addDays(fin, -i));
+  const vals = dias.map(d => map[d] ? [map[d][1], map[d][2], map[d][3]] : [0,0,0]);
+  const max = Math.max(10, ...vals.map(v => v[0]+v[1]+v[2]));
+  const step = max > 200 ? 50 : max > 100 ? 25 : max > 40 ? 10 : 5, top = Math.ceil(max/step)*step;
+  const W = 760, Hh = 200, L = 34, R = 8, T = 10, B = 26, bw = (W-L-R)/N;
+  const y = v => T + (Hh-T-B) * (1 - v/top);
+  const cols = ['var(--s-tr)','var(--brand-2)','var(--muted)'];
+  let g = '';
+  for (let v = 0; v <= top; v += step) g += `<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${L-6}" y="${y(v)+3}" text-anchor="end">${v}</text>`;
+  dias.forEach((d,i) => {
+    let acc = 0; const x = L + i*bw + 1;
+    vals[i].forEach((v,j) => { if (!v) return; g += `<rect x="${x}" y="${y(acc+v)}" width="${Math.max(1,bw-2)}" height="${y(acc)-y(acc+v)}" fill="${cols[j]}"><title>${ddmm(d)}: ${v}</title></rect>`; acc += v; });
+    if (d === dia) g += `<rect x="${x-1}" y="${T}" width="${bw}" height="${Hh-T-B}" fill="none" stroke="var(--ink)" stroke-dasharray="3 2"/>`;
+    if (i % 7 === 0) g += `<text x="${x+bw/2}" y="${Hh-8}" text-anchor="middle">${ddmm(d)}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Transiles por día, últimos 60 días">${g}</svg>`;
+}
+function vistaTransile(){
+  const hoyTr = transilesDelDia(), t = H.transile;
+  const by = k => hoyTr.filter(x => k==='pellet' ? /PELLET/.test(x.prod) : k==='soja' ? x.prod==='SOJA' : !/PELLET/.test(x.prod) && x.prod!=='SOJA').length;
+  const sinDatos = !hoyTr.length;
+  return `<div class="col">
+    <div class="banner"><b>Vista pendiente en el sistema de camiones.</b> El jefe de movimientos autoriza los transiles en el sistema de camiones, pero la vista que nos da Vicentin (CamionesActivos24horas) no trae esas autorizaciones. Hasta que agreguen la vista de abajo, acá se muestran los transiles que <b>salieron</b> de Ricardone hacia el puerto según la balanza, para el día elegido.</div>
+    <div class="kpis">
+      <div class="kpi"><div class="v">${hoyTr.length}</div><div class="l">Transiles el ${diaLargo(dia)}</div></div>
+      <div class="kpi"><div class="v">${by('pellet')}</div><div class="l">Pellet</div></div>
+      <div class="kpi"><div class="v">${by('soja')}</div><div class="l">Soja de silos</div></div>
+      <div class="kpi"><div class="v">${by('otros')}</div><div class="l">Otros productos</div></div>
+    </div>
+    <div class="grid">
+      <div class="card"><header><h2>Camiones del ${diaLargo(dia)}</h2><span class="hint">salida de Ricardone → puerto</span></header><div class="body">
+        ${sinDatos ? `<p class="empty">Sin transiles ese día en la balanza. El último día con transiles es el ${diaLargo(t.ultimoDia)}.<br><button class="btn small" type="button" data-irdia="${t.ultimoDia}">Ir al ${ddmm(t.ultimoDia)}</button></p>`
+          : `<div class="tablewrap"><table><thead><tr><th>Patente</th><th>Producto</th><th>Sale Ric.</th><th>Kg neto</th></tr></thead><tbody>${hoyTr.sort((a,b)=>(a.sal||'').localeCompare(b.sal||'')).map(x =>
+            `<tr><td class="p">${esc(x.p)}${x.a?`<span class="sm">${esc(x.a)}</span>`:''}</td><td>${esc(titulo(x.prod))}</td><td class="num">${esc(x.sal||'–')}</td><td class="num">${x.kg?fmtN(x.kg):'–'}</td></tr>`).join('')}</tbody></table></div>`}
+      </div></div>
+      <div class="col">
+        <div class="card"><header><h2>Transiles por día</h2><span class="hint">últimos 60 días</span></header><div class="body chart">
+          ${chartTransile()}
+          <div class="legend"><span><i style="background:var(--s-tr)"></i>Pellet</span><span><i style="background:var(--brand-2)"></i>Soja de silos</span><span><i style="background:var(--muted)"></i>Otros</span></div>
+        </div></div>
+        <div class="card"><header><h2>Flota habitual de transile</h2><span class="hint">camiones con 5 o más transiles desde ${ddmm(H.desde)}</span></header><div class="body">
+          <div class="chips">${t.habituales.slice(0,40).map(([p,a,n,u]) => `<span class="chip mono" title="Último ${ddmm(u)}">${esc(p)}<span class="n num">${n}</span></span>`).join('')}</div>
+        </div></div>
+      </div>
+    </div>
+    <div class="card"><header><h2>Vista que hay que pedirle a Vicentin</h2><span class="hint">solo lectura, mismo usuario bimtrazer_view</span></header><div class="body">
+      <div class="spec">SGC_PROD.TRANSILES_AUTORIZADOS
+  FECHA            día autorizado
+  PATENTE          chasis
+  PATENTE_ACOPLADO
+  PRODUCTO         código y nombre
+  ORIGEN / DESTINO planta (Ricardone → Terminal de Embarque)
+  VIAJES           cantidad de vueltas autorizadas
+  SOLICITO         usuario del jefe de movimientos
+  FECHA_ALTA       cuándo se cargó</div>
+      <span class="hint">Con esa vista, esta pestaña muestra lo autorizado y lo compara con lo que efectivamente salió.</span>
+    </div></div>
+  </div>`;
+}
+function vistaPadron(){
+  const all = padron();
+  const f = q ? all.filter(r => r.patente.includes(q) || (r.acoplado||'').includes(q)) : all;
+  const cnt = k => all.filter(r => r.fuente===k).length;
+  const qLook = q && q.length >= 6 ? lookupHTML(q, {conFoto:true}) : '';
+  return `<div class="col">
+    <div class="kpis">${['egreso','ingreso','contratista','transile'].map(k => `<div class="kpi"><div class="v"><span class="dot ${k}" style="display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px"></span>${cnt(k)}</div><div class="l">${FUENTES[k].nombre}</div></div>`).join('')}</div>
+    <div class="card"><header><h2>Padrón del ${diaLargo(dia)}</h2><span class="hint">${all.length} patentes autorizadas. Es lo que lee el en vivo: una lectura de cámara que no está acá, ni en las cartas de porte, es una alerta.</span></header><div class="body">
+      <div class="actions"><input type="text" class="plate" id="buscar" placeholder="Buscar patente" value="${esc(q)}" style="max-width:240px" autocomplete="off">
+        <button class="btn" type="button" data-act="exportar">Descargar padrón (JSON)</button></div>
+      ${qLook}
+      ${tablaAut(f, {conFuente:true, acciones:false}) || `<p class="empty">${q ? 'Ninguna patente autorizada coincide.' : 'Nada autorizado para este día todavía.'}</p>`}
+    </div></div>
+  </div>`;
+}
+
+function datalists(){
+  const prods = [...new Set([...GRANOS, ...H.productosEgreso.map(p => p[0])])];
+  const emps = [...new Set(regs.filter(r => r.fuente==='contratista').map(r => r.datos?.empresa).filter(Boolean))];
+  return `<datalist id="dl-clientes">${H.clientes.map(c => `<option value="${esc(c.nombre)}">`).join('')}</datalist>
+    <datalist id="dl-productos">${prods.map(p => `<option value="${esc(p)}">`).join('')}</datalist>
+    <datalist id="dl-empresas">${emps.map(e => `<option value="${esc(e)}">`).join('')}</datalist>`;
+}
+
+function render(){
+  renderDia(); renderTabs();
+  const v = document.getElementById('view');
+  if (!H){ v.innerHTML = `<div class="card"><div class="body"><p class="empty">Cargando el histórico de camiones…</p></div></div>`; return; }
+  const act = document.activeElement, actId = act?.id, pos = act?.selectionStart;
+  v.innerHTML = (tab==='transile' ? vistaTransile() : tab==='padron' ? vistaPadron() : vistaCarga()) + datalists();
+  if (actId){ const el = document.getElementById(actId); if (el){ el.focus(); try { if (pos != null) el.setSelectionRange(pos,pos); } catch(e){} } }
+}
+// Reemplaza solo la ficha de patentes mientras se tipea (no re-renderiza el formulario).
+function refreshLook(){
+  const el = document.getElementById('look'); if (!el) return render();
+  const pats = parsePatentes(val('patentes'));
+  el.innerHTML = pats.slice(0,6).map(x => lookupHTML(x.patente, {conFoto: tab!=='egreso'})).join('') + (pats.length > 6 ? `<span class="hint">y ${pats.length-6} patentes más</span>` : '');
+}
+
+// ---------- eventos ----------
+document.addEventListener('input', e => {
+  const k = e.target.dataset?.k;
+  if (e.target.id === 'buscar'){ q = norm(e.target.value); render(); return; }
+  if (!k || !draft[tab]) return;
+  draft[tab][k] = e.target.value;
+  aviso[tab] = null;
+  if (k === 'patentes') refreshLook();
+  else if (k === 'cliente' && tab === 'egreso'){
+    const c = H.clientes.find(c => norm(c.nombre) === norm(e.target.value));
+    if (c){ if (!draft.egreso.cuit) draft.egreso.cuit = c.cuit; if (!draft.egreso.producto) draft.egreso.producto = c.prod[0]?.[0] || ''; if (c.pl[0]) draft.egreso.planta = c.pl[0]; render(); }
+  }
+});
+document.addEventListener('change', e => {
+  const k = e.target.dataset?.k;
+  if (e.target.id === 'dia' && e.target.value){ dia = e.target.value; resetFechas(); render(); return; }
+  if (k && draft[tab] && e.target.tagName === 'SELECT'){ draft[tab][k] = e.target.value; if (k === 'planta') draft[tab].sectores = (draft[tab].sectores||[]).filter(s => e.target.value==='ambas' || s.startsWith(e.target.value==='reno'?'sl':e.target.value)); render(); }
+});
+function resetFechas(){ for (const k of ['egreso','ingreso','contratista']){ delete draft[k].desde; delete draft[k].hasta; } }
+document.addEventListener('submit', e => { e.preventDefault(); enviar(); });
+document.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const d = b.dataset;
+  if (d.tab){ tab = d.tab; confirmar = null; try { history.replaceState(null,'','#'+tab); } catch(_){} try { localStorage.setItem(LS+'-tab', tab); } catch(_){} render(); return; }
+  if (b.id === 'dprev' || b.id === 'dnext'){ dia = addDays(dia, b.id === 'dprev' ? -1 : 1); resetFechas(); render(); return; }
+  if (d.irdia){ dia = d.irdia; render(); return; }
+  if (d.sec){ const s = new Set(val('sectores', [])); s.has(d.sec) ? s.delete(d.sec) : s.add(d.sec); draft[tab].sectores = [...s]; render(); return; }
+  if (d.cli){ const c = H.clientes.find(x => x.nombre === d.cli); Object.assign(draft.egreso, {cliente:c.nombre, cuit:c.cuit, producto:c.prod[0]?.[0]||'', planta:c.pl[0]||'ric'}); render(); return; }
+  if (d.prod){ draft.egreso.producto = d.prod; render(); return; }
+  if (d.addpat){
+    const cur = parsePatentes(val('patentes')), p = norm(d.addpat.split('/')[0]);
+    const nuevo = cur.some(x => x.patente === p) ? cur.filter(x => x.patente !== p) : [...cur, {patente:p, acoplado:norm(d.addpat.split('/')[1]||'') || hist(p)?.aco || ''}];
+    draft.egreso.patentes = nuevo.map(x => x.acoplado ? `${x.patente} / ${x.acoplado}` : x.patente).join('\n'); render(); return;
+  }
+  if (d.liv){
+    const v = LIV[d.liv], tot = Object.values(v.v).reduce((a,b)=>a+b,0);
+    const sect = Object.entries(v.v).filter(([,n]) => n >= 3 && n/tot >= .05).map(([k]) => k);
+    const ric = Object.keys(v.v).some(k => k.startsWith('ric:')), sl = Object.keys(v.v).some(k => k.startsWith('sl:'));
+    const tipo = TIPOS_ING.find(t => t.toLowerCase().startsWith((v.tipo||'').toLowerCase().slice(0,5))) || 'Camioneta';
+    draft.ingreso = {...draft.ingreso, patentes:v.p, tipo, planta: ric && sl ? 'ambas' : sl ? 'sl' : 'ric', sectores:sect};
+    aviso.ingreso = null; render(); document.getElementById('f-ingreso-titular')?.focus(); return;
+  }
+  if (d.emp){
+    const r = [...regs].reverse().find(x => x.fuente==='contratista' && x.datos?.empresa === d.emp); if (!r) return;
+    draft.contratista = {...draft.contratista, empresa:r.datos.empresa, cuit:r.datos.cuit, trabajo:r.datos.trabajo, responsable:r.datos.responsable, tipo:r.datos.tipo, planta:r.planta, sectores:r.sectores, hdesde:r.hdesde, hhasta:r.hhasta,
+      patentes: regs.filter(x => x.fuente==='contratista' && x.datos?.empresa===d.emp && x.estado!=='anulada').map(x => x.patente).filter((p,i,a)=>a.indexOf(p)===i).join('\n')};
+    render(); return;
+  }
+  if (d.act === 'limpiar'){ draft[tab] = {}; aviso[tab] = null; render(); return; }
+  if (d.preanular){ confirmar = d.preanular; render(); return; }
+  if (d.cancel){ confirmar = null; render(); return; }
+  if (d.anular){ confirmar = null; anular(d.anular).catch(() => { aviso[tab] = {ok:false, t:'No se pudo anular.'}; render(); }); return; }
+  if (d.act === 'exportar') exportar();
+});
+async function exportar(){
+  const filas = padron().map(r => ({patente:r.patente, acoplado:r.acoplado||null, fuente:r.fuente, planta:r.planta, sectores:r.sectores||[],
+    desde:r.desde, hasta:r.hasta||r.desde, horario: r.hdesde ? [r.hdesde, r.hhasta||null] : null, datos:r.datos||{}, actualizado:r.actualizadoEn||null}));
+  const data = JSON.stringify({dia, generado:new Date().toISOString(), vehiculos:filas}, null, 1);
+  try { const dl = await window.claude?.use?.('downloads'); if (dl) await dl.save({filename:`padron-${dia}.json`, data}); } catch(e){}
+}
+
+// ---------- arranque ----------
+try { const t = localStorage.getItem(LS+'-tab'); if (t && FUENTES[t]) tab = t; } catch(e){}
+if (location.hash && FUENTES[location.hash.slice(1)]) tab = location.hash.slice(1);
+addEventListener('hashchange', () => { const t = location.hash.slice(1); if (FUENTES[t] && t !== tab){ tab = t; render(); } });
+render();
+fetch('backoffice/historico.json').then(r => r.json()).then(j => { H = j; LIV = livByPlate(); REG = regByPlate(); render(); })
+  .catch(() => { document.getElementById('view').innerHTML = '<div class="card"><div class="body"><p class="empty">No se pudo cargar el histórico de camiones. Recargá la página.</p></div></div>'; });
+conectar();
+</script>

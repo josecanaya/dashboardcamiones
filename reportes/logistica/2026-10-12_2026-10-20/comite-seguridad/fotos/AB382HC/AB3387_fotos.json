@@ -1,0 +1,19 @@
+[
+ {
+  "plate": "AB3387",
+  "device": "SLZIngCamFrente",
+  "horaOperativa": "10-13_2029",
+  "found": true,
+  "error": null,
+  "capture": {
+   "plate": "AB3387",
+   "confidence": 26,
+   "color": "White",
+   "marca": "Iveco",
+   "tipo": "Medium Truck",
+   "at": "2026-10-13T23:25:14.000Z"
+  },
+  "sceneFile": "AB3387_10-13_2029_SLZIngCamFrente_escena.jpg",
+  "plateFile": "AB3387_10-13_2029_SLZIngCamFrente_patente.jpg"
+ }
+]

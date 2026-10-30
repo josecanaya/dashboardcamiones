@@ -46,12 +46,13 @@ export function checkSeenPlate(verdict, item, { padron = null, balanza = null, n
  * @param {object[]} rawEvents eventos del buffer de la planta
  * @returns {object|null} el caso asignado, o null si no corresponde
  */
-export function applyVisionVerdict(it, rawEvents, { minConfidence = 0.4 } = {}) {
+export function applyVisionVerdict(it, rawEvents, { minConfidence = 0.4, minPhotoConfidence = 0.6 } = {}) {
   if (it.decision || !['provisorio', 'pendiente', 'fuera_sistema'].includes(it.level)) return null
   const v = it.ia
   const pv = v?.patenteVista
   const confidence = v?.seenPlateConfidence ?? v?.confidence ?? 0
-  if (!pv?.capa2 || v.vehicleType === 'maquinaria' || confidence < minConfidence) return null
+  if (!pv?.capa2) return photoMatch(it, minPhotoConfidence)
+  if (v.vehicleType === 'maquinaria' || confidence < minConfidence) return null
   const plate = pv.capa2.role === 'acoplado' && pv.capa2.chasis ? pv.capa2.chasis : pv.plate
   const t = Date.parse(it.at)
   let journeyUid = null
@@ -73,5 +74,25 @@ export function applyVisionVerdict(it, rawEvents, { minConfidence = 0.4 } = {}) 
     assignedPlate: plate,
     assignedJourneyUid: journeyUid,
     reason: `la IA lee ${pv.plate} en la foto (${Math.round(confidence * 100)} %) y figura en ${pv.capa2Label}${plate !== pv.plate ? `: es el acoplado de ${plate}` : ''}`,
+  }
+}
+
+/**
+ * La IA no pudo leer la chapa pero eligió al camión comparando la foto (marca, cabina, color, ópticas):
+ * se aplica si vio un camión, su confianza llega al umbral y el elegido es candidato de la lectura con este
+ * paso pendiente y carta de porte o balanza (IHRU293 en Volcable C5 SL → HPQ293, MB capotado blanco, 29/10).
+ */
+function photoMatch(it, minConfidence) {
+  const v = it.ia
+  if (!v?.plate || v.vehicleType !== 'camion' || (v.confidence ?? 0) < minConfidence) return null
+  const c = (it.candidates ?? []).find((x) => x.plate === v.plate)
+  if (!c || c.seenAfter || c.inventory?.status !== 'expected' || !(c.padron || c.inBalanza)) return null
+  return {
+    ...it,
+    level: 'casi_seguro',
+    rule: 'ia_imagen',
+    assignedPlate: c.plate,
+    assignedJourneyUid: c.journeyUid ?? null,
+    reason: `la IA compara la foto con los candidatos y elige ${c.plate} (${Math.round(v.confidence * 100)} %): ${c.plate} tenía este paso pendiente${c.padron ? ` y figura en ${c.padron}` : ' y está en planta según la balanza'}`,
   }
 }

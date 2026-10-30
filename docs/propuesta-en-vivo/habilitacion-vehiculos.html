@@ -1,0 +1,428 @@
+<title>Habilitación de Vehículos Nodo Sur</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap">
+<style>
+/* Layout: bandeja administrativa — lista de vehículos a la izquierda (última captura primero), ficha a la derecha. Paleta clara de En vivo (verde NVA). */
+:root{
+  --ink:#10231a; --muted:#5d6f65; --line:#dbe5df; --panel:#ffffff; --bg:#f3f6f4;
+  --brand:#0f4a33; --brand-2:#16603f; --brand-soft:#e6f1eb; --on-brand:#ffffff; --on-brand-mute:#bfe3cf;
+  --ok:#16a34a; --ok-soft:#ecfdf3; --warn:#b45309; --warn-soft:#fff7e6; --bad:#dc2626; --bad-soft:#fdecec;
+  --sans:'Public Sans','Segoe UI',Arial,sans-serif; --mono:'IBM Plex Mono',Consolas,ui-monospace,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.app{max-width:1320px;margin:0 auto;height:100%;display:flex;flex-direction:column;gap:10px;min-height:560px}
+
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;padding:10px 16px;border-radius:14px;background:var(--brand);color:var(--on-brand)}
+.top h1{margin:0;font-size:19px;font-weight:800;letter-spacing:-.01em}
+.top .sub{font-size:12px;color:var(--on-brand-mute)}
+.top .right{margin-left:auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.prog{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--on-brand-mute)}
+.prog b{color:var(--on-brand);font-size:15px;font-variant-numeric:tabular-nums}
+.prog .track{width:120px;height:6px;border-radius:3px;background:rgba(255,255,255,.18);overflow:hidden}
+.prog .track i{display:block;height:100%;background:#4ade80}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.12)}
+.live i{width:8px;height:8px;border-radius:50%;background:#94a3b8}
+.live.on i{background:#4ade80} .live.off i{background:#f59e0b}
+
+.body{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,350px) minmax(0,1fr);gap:10px}
+.side,.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.side-head{padding:12px;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--line)}
+.search{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;text-transform:uppercase;background:var(--panel)}
+.seg{display:flex;padding:3px;border-radius:10px;background:var(--bg)}
+.seg button{flex:1;border:0;background:none;padding:6px 4px;border-radius:8px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--panel);color:var(--brand);box-shadow:0 1px 2px rgba(16,35,26,.12)}
+.planta-seg{background:var(--brand-soft)}
+.planta-seg button[aria-pressed="true"]{background:var(--brand);color:var(--on-brand);box-shadow:none}
+.seg .n{font-weight:600;opacity:.7;margin-left:3px;font-variant-numeric:tabular-nums}
+.list{flex:1;min-height:0;overflow-y:auto;padding:4px 6px 10px}
+.day{position:sticky;top:0;z-index:1;background:var(--panel);padding:10px 8px 4px;font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.item{width:100%;display:grid;grid-template-columns:76px minmax(0,1fr);gap:10px;align-items:center;padding:7px;border-radius:10px;border:1px solid transparent;background:none;text-align:left}
+.item:hover{background:var(--bg)}
+.item[aria-current="true"]{background:var(--brand-soft);border-color:#b9d6c6}
+.item img,.item .noimg{width:76px;height:52px;border-radius:7px;object-fit:cover;background:var(--bg);display:block}
+.item .l1{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.item strong{font:700 14.5px var(--mono);letter-spacing:.02em}
+.item .l2{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.st{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap}
+.st i{width:8px;height:8px;border-radius:50%;background:#c3cfc8}
+.st.hab{color:var(--ok)} .st.hab i{background:var(--ok)}
+.st.desv{color:var(--bad)} .st.desv i{background:var(--bad)}
+.st.venc{color:var(--warn)} .st.venc i{background:var(--warn)}
+.st.bor{color:var(--warn)} .st.bor i{background:#f59e0b}
+.empty{padding:16px 10px;color:var(--muted);font-size:13px}
+
+.card{overflow-y:auto}
+.detail{padding:16px 18px 20px;display:flex;flex-direction:column;gap:18px}
+.photo{display:flex;flex-direction:column;gap:8px}
+.photo .main{position:relative;border-radius:12px;overflow:hidden;background:var(--bg);aspect-ratio:16/9;max-height:440px}
+.photo .main img{width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in}
+.photo .main img.zoom{object-fit:contain;cursor:zoom-out;background:#0c1913}
+.photo .cap{position:absolute;left:10px;bottom:10px;background:rgba(12,25,19,.78);color:#fff;font-size:12px;padding:4px 9px;border-radius:6px}
+.photo .thumbs{display:flex;gap:8px}
+.photo .thumbs button{padding:0;border:2px solid transparent;border-radius:8px;overflow:hidden;background:none;width:110px}
+.photo .thumbs button[aria-pressed="true"]{border-color:var(--brand)}
+.photo .thumbs img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.head{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between}
+.idbox{display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-width:0}
+.plate{font:700 26px var(--mono);letter-spacing:.04em;border:2px solid var(--ink);border-radius:7px;padding:1px 12px;background:var(--panel)}
+.facts{display:flex;flex-direction:column;gap:3px;min-width:0}
+.facts p{margin:0;color:var(--muted);font-size:13px}
+.facts p b{color:var(--ink)}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:11.5px;font-weight:600;background:var(--bg);color:var(--muted);border-radius:6px;padding:2px 8px}
+.tag.w{background:var(--warn-soft);color:var(--warn)}
+.big-st{font-size:13px;font-weight:800;padding:5px 12px;border-radius:999px;background:var(--bg);color:var(--muted)}
+.big-st.hab{background:var(--ok-soft);color:var(--ok)} .big-st.desv{background:var(--bad-soft);color:var(--bad)} .big-st.venc{background:var(--warn-soft);color:var(--warn)}
+
+.blk h2{margin:0 0 4px;font-size:15px;font-weight:800}
+.blk .help{margin:0 0 10px;color:var(--muted);font-size:12.5px}
+.plantas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.planta h3{margin:0 0 6px;font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.secs{display:flex;flex-direction:column;gap:5px}
+.sec{display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;text-align:left;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--panel)}
+.sec:hover{border-color:#b9d6c6}
+.sec .box{width:18px;height:18px;border-radius:5px;border:1.5px solid #9fb2a7;display:grid;place-items:center;font-size:12px;line-height:1;color:var(--on-brand)}
+.sec[aria-pressed="true"]{background:var(--brand-soft);border-color:#9cc9b1}
+.sec[aria-pressed="true"] .box{background:var(--brand);border-color:var(--brand)}
+.sec .nm{font-weight:600;font-size:13px}
+.sec .cnt{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.sec.out .cnt{color:var(--warn);font-weight:700}
+.sec:disabled{cursor:default}
+.note{margin-top:10px;padding:9px 12px;border-radius:9px;font-size:13px}
+.note.ok{background:var(--ok-soft)} .note.w{background:var(--warn-soft)}
+.links{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px}
+.lnk{border:0;background:none;padding:0;color:var(--brand-2);font-weight:700;font-size:12.5px;text-decoration:underline;text-underline-offset:2px}
+
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 14px}
+.fld{display:flex;flex-direction:column;gap:4px;min-width:0}
+.fld.full{grid-column:1/-1}
+.fld label,.fld .lab{font-size:12px;font-weight:700;color:var(--muted)}
+.fld input,.fld select{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--panel);width:100%;min-width:0}
+.fld input:focus,.fld select:focus{border-color:var(--brand)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dias{display:flex;gap:5px;flex-wrap:wrap}
+.dia{width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:var(--panel);font-weight:700;font-size:12.5px;color:var(--muted)}
+.dia[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.hist{margin:10px 0 0;padding:0;list-style:none;font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+
+.bar{position:sticky;bottom:0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 18px;border-top:1px solid var(--line);background:var(--panel)}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:9px;padding:8px 14px;font-weight:700;font-size:13px}
+.btn:hover{border-color:#9fb2a7}
+.btn.pri{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.btn.pri:hover{background:var(--brand-2)}
+.btn.bad{color:var(--bad)}
+.btn:disabled{opacity:.5;cursor:default}
+.msg{font-size:13px;font-weight:600;color:var(--ok)} .msg.e{color:var(--bad)} .msg.d{color:var(--warn)}
+.bar .sp{flex:1}
+
+@media (max-width:860px){
+  html,body{height:auto} .app{height:auto}
+  .body{grid-template-columns:minmax(0,1fr)} .list{max-height:300px}
+  .plantas,.form{grid-template-columns:minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="app">
+  <div class="top">
+    <div><h1>Habilitación de vehículos</h1><div class="sub">Camionetas y utilitarios sin sistema de camiones · Ricardone y Puerto San Lorenzo</div></div>
+    <div class="right">
+      <div class="prog" id="prog"></div>
+      <span class="live" id="live"><i></i><span>Conectando…</span></span>
+    </div>
+  </div>
+  <div class="body">
+    <aside class="side">
+      <div class="side-head">
+        <div class="seg planta-seg" id="planta"></div>
+        <input id="q" class="search" type="search" placeholder="Buscar patente" aria-label="Buscar patente" autocomplete="off">
+        <div class="seg" id="seg"></div>
+      </div>
+      <div class="list" id="list"></div>
+    </aside>
+    <main class="card" id="card"></main>
+  </div>
+</div>
+<script>
+const DATA = {"periodo":{"desde":"2026-10-12","hasta":"2026-10-25","dias":["2026-10-12","2026-10-13","2026-10-14","2026-10-15","2026-10-16","2026-10-17","2026-10-18","2026-10-19","2026-10-20","2026-10-21","2026-10-22","2026-10-23","2026-10-24","2026-10-25"]},"umbral":10,"lista":[{"p":"AE264XY","n":109,"d":13,"z":"ric+sl","v":{"sl:por":66,"sl:liq":39,"ric:bal":20,"ric:ing":86,"sl:bal":17,"ric:pre":5},"reg":true,"par":"","de":"17/10","f":[{"s":"habilitacion-vehiculos-fotos/AE264XY_ric_1.jpg","c":"14/10 08:15","pto":"Egreso Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AE264XY_ric_2.jpg","c":"14/10 08:15","pto":"Egreso Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AE264XY_sl_1.jpg","c":"25/10 17:01","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AE264XY_sl_2.jpg","c":"22/10 16:27","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Citroën","color":"blanco"},"tipo":"Utilitario","u":{"ambas":["2026-10-25T17:01","Portería puerto"],"ric":["2026-10-25T15:19","Egreso Ricardone"],"sl":["2026-10-25T17:01","Portería puerto"]}},{"p":"IMH787","n":92,"d":14,"z":"ric+sl","v":{"sl:por":95,"ric:bal":60},"reg":true,"par":"","de":"21/10","f":[{"s":"habilitacion-vehiculos-fotos/IMH787_ric_1.jpg","c":"12/10 15:21","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/IMH787_ric_2.jpg","c":"05/10 11:35","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/IMH787_sl_1.jpg","c":"25/10 12:18","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/IMH787_sl_2.jpg","c":"22/10 12:14","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Renault","color":"plateado"},"tipo":"Utilitario","u":{"ambas":["2026-10-26T04:47","Portería puerto"],"ric":["2026-10-26T04:39","Balanza Ricardone"],"sl":["2026-10-26T04:47","Portería puerto"]}},{"p":"AG622BE","n":81,"d":11,"z":"sl","v":{"sl:por":84},"reg":false,"par":"","de":"16/10","f":[{"s":"habilitacion-vehiculos-fotos/AG622BE_sl_1.jpg","c":"22/10 16:27","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AG622BE_sl_2.jpg","c":"21/10 16:26","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Scania","color":"blanco"},"tipo":"Colectivo / minibús","u":{"ambas":["2026-10-26T04:26","Portería puerto"],"sl":["2026-10-26T04:26","Portería puerto"]}},{"p":"NAH953","n":78,"d":12,"z":"ric+sl","v":{"sl:por":78,"ric:bal":16,"sl:liq":9,"sl:bal":5},"reg":false,"par":"","de":"14/10","f":[{"s":"habilitacion-vehiculos-fotos/NAH953_ric_1.jpg","c":"12/10 11:10","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/NAH953_ric_2.jpg","c":"05/10 09:13","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/NAH953_sl_1.jpg","c":"22/10 09:33","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/NAH953_sl_2.jpg","c":"21/10 11:54","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Toyota","color":"gris"},"tipo":"Camioneta","u":{"ambas":["2026-10-24T13:42","Portería puerto (cola)"],"sl":["2026-10-24T13:42","Portería puerto (cola)"],"ric":["2026-10-24T08:51","Balanza Ricardone"]}},{"p":"OCB815","n":68,"d":14,"z":"ric+sl","v":{"sl:por":68,"ric:bal":36},"reg":false,"par":"CCB815","de":"18/10","f":[{"s":"habilitacion-vehiculos-fotos/OCB815_ric_1.jpg","c":"18/10 15:27","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/OCB815_ric_2.jpg","c":"05/10 03:20","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/OCB815_sl_1.jpg","c":"22/10 16:18","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/OCB815_sl_2.jpg","c":"21/10 16:12","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Chevrolet","color":"blanco"},"tipo":"Auto","u":{"ambas":["2026-10-26T00:10","Portería puerto"],"ric":["2026-10-25T16:34","Balanza Ricardone"],"sl":["2026-10-26T00:10","Portería puerto"]}},{"p":"AF778YL","n":63,"d":9,"z":"ric+sl","v":{"ric:bal":2,"sl:por":64},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AF778YL_sl_1.jpg","c":"22/10 16:16","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AF778YL_sl_2.jpg","c":"21/10 16:17","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Mitsubishi","color":"blanco"},"tipo":"Colectivo / minibús","u":{"ambas":["2026-10-26T04:15","Portería puerto"],"sl":["2026-10-26T04:15","Portería puerto"]}},{"p":"AF529RF","n":61,"d":14,"z":"sl","v":{"sl:por":61},"reg":false,"par":"AF529TF AF529RI","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AF529RF_sl_1.jpg","c":"25/10 16:14","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AF529RF_sl_2.jpg","c":"24/10 15:36","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Mercedes-Benz","color":"blanco"},"tipo":"Utilitario","u":{"ambas":["2026-10-26T03:43","Portería puerto"],"sl":["2026-10-26T03:43","Portería puerto"]}},{"p":"AE036AM","n":49,"d":14,"z":"sl","v":{"sl:por":49},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AE036AM_sl_1.jpg","c":"25/10 16:06","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AE036AM_sl_2.jpg","c":"23/10 16:13","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Renault","color":"blanco"},"tipo":"Utilitario","u":{"ambas":["2026-10-26T04:09","Portería puerto"],"sl":["2026-10-26T04:09","Portería puerto"]}},{"p":"JLQ557","n":46,"d":9,"z":"sl","v":{"sl:liq":12,"sl:por":48},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/JLQ557_sl_1.jpg","c":"22/10 12:17","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/JLQ557_sl_2.jpg","c":"21/10 13:10","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"GMC","color":"negro"},"tipo":"Camioneta","u":{"ambas":["2026-10-23T12:10","Portería puerto"],"sl":["2026-10-23T12:10","Portería puerto"]}},{"p":"AF566OP","n":44,"d":12,"z":"ric+sl","v":{"sl:por":44,"sl:liq":65,"sl:bal":2,"ric:bal":5},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AF566OP_ric_1.jpg","c":"23/10 08:40","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AF566OP_sl_1.jpg","c":"22/10 14:46","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AF566OP_sl_2.jpg","c":"21/10 13:10","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Toyota","color":"blanco"},"tipo":"Camioneta","u":{"ambas":["2026-10-26T04:59","Portería puerto"],"sl":["2026-10-26T04:59","Portería puerto"],"ric":["2026-10-23T11:45","Balanza Ricardone"]}},{"p":"AA208QN","n":43,"d":12,"z":"ric+sl","v":{"sl:por":43,"sl:liq":44,"sl:bal":37,"ric:bal":2},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AA208QN_ric_1.jpg","c":"23/10 09:51","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AA208QN_sl_1.jpg","c":"22/10 11:56","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AA208QN_sl_2.jpg","c":"21/10 12:41","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Toyota","color":"blanco"},"tipo":"Camioneta","u":{"ambas":["2026-10-26T06:23","Portería puerto"],"sl":["2026-10-26T06:23","Portería puerto"],"ric":["2026-10-23T07:11","Balanza Ricardone"]}},{"p":"JUE083","n":43,"d":9,"z":"ric+sl","v":{"sl:por":45,"ric:bal":14},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/JUE083_ric_1.jpg","c":"13/10 08:36","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/JUE083_ric_2.jpg","c":"06/10 09:07","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/JUE083_sl_1.jpg","c":"20/10 13:22","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/JUE083_sl_2.jpg","c":"16/10 09:01","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"","color":"negro"},"tipo":"Camioneta","u":{"ambas":["2026-10-23T09:51","Portería puerto"],"sl":["2026-10-23T09:51","Portería puerto"],"ric":["2026-10-22T07:28","Balanza Ricardone"]}},{"p":"AG688FB","n":41,"d":12,"z":"sl","v":{"sl:por":44},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AG688FB_sl_1.jpg","c":"23/10 11:55","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AG688FB_sl_2.jpg","c":"22/10 12:56","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Toyota","color":"blanco"},"tipo":"Utilitario","u":{"ambas":["2026-10-26T03:29","Portería puerto"],"sl":["2026-10-26T03:29","Portería puerto"]}},{"p":"LJB988","n":41,"d":8,"z":"sl","v":{"sl:por":42,"sl:bal":19,"sl:liq":15,"sl:ing":5},"reg":true,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/LJB988_sl_1.jpg","c":"22/10 11:18","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/LJB988_sl_2.jpg","c":"20/10 11:00","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Ford","color":"blanco"},"tipo":"Camioneta","u":{"ambas":["2026-10-26T06:07","Portería puerto"],"sl":["2026-10-26T06:07","Portería puerto"]}},{"p":"AB785UY","n":40,"d":9,"z":"sl","v":{"sl:por":44,"sl:liq":11},"reg":false,"par":"AB785NY","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AB785UY_sl_1.jpg","c":"22/10 12:27","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AB785UY_sl_2.jpg","c":"21/10 14:43","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Renault","color":"plateado"},"tipo":"","u":{"ambas":["2026-10-26T05:25","Balanza Ricardone"],"sl":["2026-10-23T06:06","Portería puerto"],"ric":["2026-10-26T05:25","Balanza Ricardone"]}},{"p":"AI065WC","n":40,"d":12,"z":"sl","v":{"sl:por":40},"reg":false,"par":"AH065WC","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AI065WC_sl_1.jpg","c":"20/10 15:43","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AI065WC_sl_2.jpg","c":"17/10 15:55","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Toyota","color":"blanco"},"tipo":"Utilitario","u":{"ambas":["2026-10-26T03:48","Portería puerto"],"sl":["2026-10-26T03:48","Portería puerto"]}},{"p":"AE827VZ","n":37,"d":7,"z":"sl","v":{"sl:por":37},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AE827VZ_sl_1.jpg","c":"22/10 16:25","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AE827VZ_sl_2.jpg","c":"21/10 16:25","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-26T03:31","Portería puerto"],"sl":["2026-10-26T03:31","Portería puerto"]}},{"p":"AH090IH","n":37,"d":9,"z":"sl","v":{"sl:por":38},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AH090IH_sl_1.jpg","c":"15/10 16:31","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AH090IH_sl_2.jpg","c":"14/10 16:28","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"","color":"blanco"},"tipo":"Colectivo / minibús","u":{"ambas":["2026-10-23T04:27","Portería puerto"],"sl":["2026-10-23T04:27","Portería puerto"]}},{"p":"AE040HU","n":36,"d":9,"z":"ric+sl","v":{"sl:por":36,"sl:bal":26,"ric:bal":3},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AE040HU_ric_1.jpg","c":"16/10 14:10","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AE040HU_sl_1.jpg","c":"22/10 13:41","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AE040HU_sl_2.jpg","c":"21/10 13:53","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Toyota","color":"blanco"},"tipo":"Camioneta","u":{"ambas":["2026-10-23T13:44","Portería puerto"],"sl":["2026-10-23T13:44","Portería puerto"],"ric":["2026-10-16T11:32","Balanza Ricardone"]}},{"p":"AF282QI","n":35,"d":13,"z":"sl","v":{"sl:por":36},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AF282QI_sl_1.jpg","c":"23/10 12:16","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AF282QI_sl_2.jpg","c":"21/10 13:18","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Volvo","color":"blanco"},"tipo":"Utilitario","u":{"ambas":["2026-10-26T04:14","Portería puerto"],"sl":["2026-10-26T04:14","Portería puerto"]}},{"p":"IJN886","n":34,"d":8,"z":"sl","v":{"sl:por":36,"sl:bal":25,"sl:liq":4},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/IJN886_sl_1.jpg","c":"21/10 11:58","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/IJN886_sl_2.jpg","c":"19/10 11:33","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Ford","color":"gris"},"tipo":"Camioneta","u":{"ambas":["2026-10-26T06:05","Balanza puerto"],"sl":["2026-10-26T06:05","Balanza puerto"]}},{"p":"AG361MP","n":33,"d":13,"z":"sl","v":{"sl:por":33},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AG361MP_sl_1.jpg","c":"25/10 16:07","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AG361MP_sl_2.jpg","c":"22/10 16:12","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Toyota","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-26T04:12","Portería puerto"],"sl":["2026-10-26T04:12","Portería puerto"]}},{"p":"AH456NL","n":33,"d":7,"z":"sl","v":{"sl:por":33,"sl:liq":25},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AH456NL_sl_1.jpg","c":"23/10 15:46","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AH456NL_sl_2.jpg","c":"22/10 14:14","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Toyota","color":"blanco"},"tipo":"Utilitario","u":{"ambas":["2026-10-26T05:34","Tanques puerto"],"sl":["2026-10-26T05:34","Tanques puerto"]}},{"p":"JZW724","n":33,"d":11,"z":"ric+sl","v":{"sl:por":33,"sl:bal":19,"sl:liq":6,"ric:bal":33,"ric:ing":2,"sl:vol":1},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/JZW724_ric_1.jpg","c":"20/10 08:12","pto":"Ingreso Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/JZW724_ric_2.jpg","c":"05/10 09:12","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/JZW724_sl_1.jpg","c":"25/10 08:42","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/JZW724_sl_2.jpg","c":"24/10 09:20","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Volkswagen","color":"plateado"},"tipo":"Camioneta","u":{"ambas":["2026-10-26T06:15","Portería puerto (cola)"],"sl":["2026-10-26T06:15","Portería puerto (cola)"],"ric":["2026-10-23T08:10","Balanza Ricardone"]}},{"p":"AE937SG","n":32,"d":10,"z":"sl","v":{"sl:por":34},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AE937SG_sl_1.jpg","c":"16/10 11:49","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AE937SG_sl_2.jpg","c":"26/10 03:32","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"","color":"blanco"},"tipo":"Colectivo / minibús","u":{"ambas":["2026-10-26T03:32","Portería puerto"],"sl":["2026-10-26T03:32","Portería puerto"]}},{"p":"AG142JP","n":32,"d":9,"z":"sl","v":{"sl:por":35},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AG142JP_sl_1.jpg","c":"22/10 13:16","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AG142JP_sl_2.jpg","c":"21/10 13:17","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Mercedes-Benz","color":"blanco"},"tipo":"Colectivo / minibús","u":{"ambas":["2026-10-26T03:36","Portería puerto"],"sl":["2026-10-26T03:36","Portería puerto"]}},{"p":"HLT270","n":30,"d":10,"z":"ric+sl","v":{"sl:por":30,"ric:bal":12,"sl:liq":11},"reg":false,"par":"HLD270 HLX270","de":"","f":[{"s":"habilitacion-vehiculos-fotos/HLT270_ric_1.jpg","c":"14/10 08:10","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/HLT270_sl_1.jpg","c":"22/10 12:53","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/HLT270_sl_2.jpg","c":"20/10 11:07","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Hyundai","color":"blanco"},"tipo":"Camión chico","u":{"ambas":["2026-10-24T13:16","Portería puerto (cola)"],"sl":["2026-10-24T13:16","Portería puerto (cola)"],"ric":["2026-10-21T07:29","Balanza Ricardone"]}},{"p":"AH540BR","n":28,"d":12,"z":"sl","v":{"sl:por":28},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AH540BR_sl_1.jpg","c":"25/10 15:47","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AH540BR_sl_2.jpg","c":"17/10 15:44","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Mercedes-Benz","color":"blanco"},"tipo":"Utilitario","u":{"ambas":["2026-10-26T03:41","Portería puerto"],"sl":["2026-10-26T03:41","Portería puerto"]}},{"p":"AC169LG","n":27,"d":10,"z":"ric+sl","v":{"sl:por":27,"sl:liq":5,"ric:bal":11,"sl:bal":1},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AC169LG_ric_1.jpg","c":"15/10 09:35","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AC169LG_ric_2.jpg","c":"07/10 08:03","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AC169LG_sl_1.jpg","c":"21/10 12:21","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AC169LG_sl_2.jpg","c":"16/10 14:36","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"","color":"blanco"},"tipo":"Camión chico","u":{"ambas":["2026-10-26T05:40","Balanza Ricardone"],"sl":["2026-10-21T12:21","Portería puerto"],"ric":["2026-10-26T05:40","Balanza Ricardone"]}},{"p":"INE931","n":27,"d":11,"z":"sl","v":{"sl:por":28,"sl:liq":25,"sl:bal":1},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/INE931_sl_1.jpg","c":"22/10 13:10","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/INE931_sl_2.jpg","c":"21/10 15:49","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Toyota","color":"plateado"},"tipo":"Camioneta","u":{"ambas":["2026-10-26T03:50","Portería puerto (cola)"],"sl":["2026-10-26T03:50","Portería puerto (cola)"]}},{"p":"AG128YL","n":26,"d":6,"z":"sl","v":{"sl:por":26},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AG128YL_sl_1.jpg","c":"25/10 16:25","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AG128YL_sl_2.jpg","c":"17/10 16:26","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Mercedes-Benz","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-26T04:26","Portería puerto"],"sl":["2026-10-26T04:26","Portería puerto"]}},{"p":"AG428EL","n":26,"d":5,"z":"sl","v":{"sl:por":27},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AG428EL_sl_1.jpg","c":"22/10 13:27","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AG428EL_sl_2.jpg","c":"21/10 13:26","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Renault","color":"gris"},"tipo":"","u":{"ambas":["2026-10-23T15:12","Portería puerto"],"sl":["2026-10-23T15:12","Portería puerto"]}},{"p":"AH700ET","n":26,"d":10,"z":"sl","v":{"sl:por":26},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AH700ET_sl_1.jpg","c":"22/10 15:26","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AH700ET_sl_2.jpg","c":"21/10 08:15","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Renault","color":"blanco"},"tipo":"Utilitario","u":{"ambas":["2026-10-24T16:18","Portería puerto"],"sl":["2026-10-24T16:18","Portería puerto"]}},{"p":"GCW191","n":26,"d":14,"z":"sl","v":{"sl:por":27,"sl:liq":1},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/GCW191_sl_1.jpg","c":"22/10 08:14","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/GCW191_sl_2.jpg","c":"21/10 08:05","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Ford","color":"gris"},"tipo":"Camión chico","u":{"ambas":["2026-10-25T07:27","Portería puerto"],"sl":["2026-10-25T07:27","Portería puerto"]}},{"p":"AH763WD","n":24,"d":9,"z":"ric+sl","v":{"sl:por":23,"sl:bal":3,"sl:liq":9,"ric:bal":8},"reg":false,"par":"AH763FD","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AH763WD_ric_1.jpg","c":"16/10 08:01","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AH763WD_sl_1.jpg","c":"21/10 14:03","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AH763WD_sl_2.jpg","c":"16/10 09:45","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-26T06:18","Portería puerto"],"sl":["2026-10-26T06:18","Portería puerto"],"ric":["2026-10-23T08:11","Balanza Ricardone"]}},{"p":"AF881FZ","n":23,"d":12,"z":"sl","v":{"sl:por":23,"sl:liq":29},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AF881FZ_sl_1.jpg","c":"22/10 14:12","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AF881FZ_sl_2.jpg","c":"21/10 16:14","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Volkswagen","color":"plateado"},"tipo":"Camioneta","u":{"ambas":["2026-10-26T04:10","Tanques puerto"],"sl":["2026-10-26T04:10","Tanques puerto"]}},{"p":"AG294KA","n":23,"d":5,"z":"ric+sl","v":{"sl:por":23,"ric:bal":2,"sl:liq":1,"sl:bal":1},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AG294KA_ric_1.jpg","c":"19/10 08:47","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AG294KA_sl_1.jpg","c":"21/10 10:41","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AG294KA_sl_2.jpg","c":"20/10 10:33","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Peugeot","color":"blanco"},"tipo":"Utilitario","u":{"ambas":["2026-10-26T05:42","Portería puerto (cola)"],"sl":["2026-10-26T05:42","Portería puerto (cola)"],"ric":["2026-10-19T07:01","Balanza Ricardone"]}},{"p":"AG575TD","n":23,"d":10,"z":"sl","v":{"sl:por":23,"sl:liq":11},"reg":false,"par":"AA575TD","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AG575TD_sl_1.jpg","c":"22/10 08:46","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AG575TD_sl_2.jpg","c":"21/10 11:07","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Renault","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-24T09:24","Portería puerto"],"sl":["2026-10-24T09:24","Portería puerto"]}},{"p":"AH933LO","n":23,"d":8,"z":"ric+sl","v":{"sl:por":25,"ric:bal":8},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AH933LO_ric_1.jpg","c":"13/10 09:52","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AH933LO_sl_1.jpg","c":"22/10 11:47","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AH933LO_sl_2.jpg","c":"21/10 08:17","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"BMW","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-26T06:10","Portería puerto (cola)"],"ric":["2026-10-21T07:21","Balanza Ricardone"],"sl":["2026-10-26T06:10","Portería puerto (cola)"]}},{"p":"AB148YJ","n":22,"d":8,"z":"sl","v":{"sl:por":22,"sl:bal":2,"sl:liq":1},"reg":false,"par":"AB148YV","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AB148YJ_sl_1.jpg","c":"21/10 12:28","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AB148YJ_sl_2.jpg","c":"20/10 12:33","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Kia","color":"blanco"},"tipo":"Camión chico","u":{"ambas":["2026-10-26T05:10","Portería puerto"],"sl":["2026-10-26T05:10","Portería puerto"]}},{"p":"AD545MJ","n":19,"d":9,"z":"ric+sl","v":{"ric:bal":6,"sl:por":20,"sl:liq":2},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AD545MJ_ric_1.jpg","c":"14/10 09:59","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AD545MJ_sl_1.jpg","c":"22/10 15:31","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AD545MJ_sl_2.jpg","c":"20/10 12:23","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Lifan","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-24T06:51","Portería puerto"],"sl":["2026-10-24T06:51","Portería puerto"],"ric":["2026-10-16T12:16","Balanza Ricardone"]}},{"p":"PFA290","n":19,"d":6,"z":"sl","v":{"sl:por":20},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/PFA290_sl_1.jpg","c":"21/10 15:58","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/PFA290_sl_2.jpg","c":"20/10 16:01","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Mercedes-Benz","color":"blanco"},"tipo":"Utilitario","u":{"ambas":["2026-10-21T15:58","Portería puerto"],"sl":["2026-10-21T15:58","Portería puerto"]}},{"p":"AF211ER","n":18,"d":10,"z":"sl","v":{"sl:por":16,"sl:bal":5,"sl:liq":9},"reg":true,"par":"AI211ER","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AF211ER_sl_1.jpg","c":"23/10 11:19","pto":"Balanza puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AF211ER_sl_2.jpg","c":"17/10 11:34","pto":"Balanza puerto","pl":"sl"}],"dss":{"marca":"","color":"plateado"},"tipo":"Camioneta","u":{"ambas":["2026-10-26T04:11","Portería puerto (cola)"],"sl":["2026-10-26T04:11","Portería puerto (cola)"]}},{"p":"AH911RJ","n":18,"d":9,"z":"sl","v":{"sl:por":19},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AH911RJ_sl_1.jpg","c":"23/10 10:09","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AH911RJ_sl_2.jpg","c":"22/10 11:04","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"","color":""},"tipo":"","u":{"ambas":["2026-10-23T10:09","Portería puerto"],"sl":["2026-10-23T10:09","Portería puerto"]}},{"p":"AI456GB","n":18,"d":10,"z":"sl","v":{"sl:por":19},"reg":false,"par":"AI456GI","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AI456GB_sl_1.jpg","c":"22/10 08:08","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AI456GB_sl_2.jpg","c":"17/10 08:04","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Fiat","color":"blanco"},"tipo":"Utilitario","u":{"ambas":["2026-10-23T07:42","Portería puerto"],"sl":["2026-10-23T07:42","Portería puerto"]}},{"p":"PQK206","n":18,"d":8,"z":"sl","v":{"sl:liq":13,"sl:por":18,"sl:bal":7},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/PQK206_sl_1.jpg","c":"22/10 12:51","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/PQK206_sl_2.jpg","c":"20/10 12:51","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Renault","color":"plateado"},"tipo":"Utilitario","u":{"ambas":["2026-10-26T04:32","Balanza puerto"],"sl":["2026-10-26T04:32","Balanza puerto"]}},{"p":"AF316PR","n":17,"d":10,"z":"sl","v":{"sl:por":19},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AF316PR_sl_1.jpg","c":"22/10 12:35","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AF316PR_sl_2.jpg","c":"21/10 15:59","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Mercedes-Benz","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-24T03:39","Portería puerto"],"sl":["2026-10-24T03:39","Portería puerto"]}},{"p":"AH185MZ","n":16,"d":8,"z":"ric+sl","v":{"ric:bal":19,"sl:por":17},"reg":true,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AH185MZ_ric_1.jpg","c":"14/10 08:05","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AH185MZ_sl_1.jpg","c":"22/10 12:19","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AH185MZ_sl_2.jpg","c":"21/10 11:23","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Renault","color":"rojo"},"tipo":"","u":{"ambas":["2026-10-26T06:13","Portería puerto (cola)"],"sl":["2026-10-26T06:13","Portería puerto (cola)"],"ric":["2026-10-26T05:47","Balanza Ricardone"]}},{"p":"AA689GI","n":15,"d":4,"z":"ric+sl","v":{"sl:por":15,"sl:bal":9,"sl:liq":4,"ric:bal":1},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AA689GI_ric_1.jpg","c":"13/10 10:17","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AA689GI_ric_2.jpg","c":"05/10 11:27","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AA689GI_sl_1.jpg","c":"19/10 10:08","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AA689GI_sl_2.jpg","c":"13/10 13:49","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Golden Dragon","color":"blanco"},"tipo":"Camioneta","u":{"ambas":["2026-10-26T05:28","Portería puerto"],"sl":["2026-10-26T05:28","Portería puerto"],"ric":["2026-10-13T07:17","Balanza Ricardone"]}},{"p":"AF446TN","n":15,"d":8,"z":"sl","v":{"sl:por":16},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AF446TN_sl_1.jpg","c":"21/10 12:47","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AF446TN_sl_2.jpg","c":"15/10 12:49","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Ford","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-26T03:30","Portería puerto"],"sl":["2026-10-26T03:30","Portería puerto"]}},{"p":"AG275GX","n":15,"d":7,"z":"sl","v":{"sl:por":16,"sl:liq":4},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AG275GX_sl_1.jpg","c":"21/10 09:01","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AG275GX_sl_2.jpg","c":"16/10 09:47","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"","color":"blanco"},"tipo":"Camioneta","u":{"ambas":["2026-10-22T05:53","Portería puerto"],"sl":["2026-10-22T05:53","Portería puerto"]}},{"p":"AH149NK","n":15,"d":7,"z":"sl","v":{"sl:por":16},"reg":false,"par":"AH149NB","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AH149NK_sl_1.jpg","c":"21/10 16:17","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AH149NK_sl_2.jpg","c":"17/10 15:45","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-24T07:57","Portería puerto"],"sl":["2026-10-24T07:57","Portería puerto"]}},{"p":"DVT968","n":15,"d":9,"z":"ric+sl","v":{"ric:bal":9,"sl:por":16,"sl:bal":1},"reg":false,"par":"DVH968","de":"","f":[{"s":"habilitacion-vehiculos-fotos/DVT968_ric_1.jpg","c":"14/10 08:02","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/DVT968_sl_1.jpg","c":"22/10 12:30","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/DVT968_sl_2.jpg","c":"16/10 11:20","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Ford","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-24T08:49","Portería puerto"],"sl":["2026-10-24T08:49","Portería puerto"],"ric":["2026-10-23T07:59","Balanza Ricardone"]}},{"p":"KDG543","n":15,"d":3,"z":"sl","v":{"sl:por":17,"sl:liq":9},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/KDG543_sl_1.jpg","c":"16/10 13:23","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/KDG543_sl_2.jpg","c":"15/10 10:02","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Iveco","color":"negro"},"tipo":"","u":{"ambas":["2026-10-19T12:29","Portería puerto (cola)"],"sl":["2026-10-19T12:29","Portería puerto (cola)"]}},{"p":"AB947SF","n":14,"d":4,"z":"sl","v":{"sl:por":14},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AB947SF_sl_1.jpg","c":"16/10 15:40","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AB947SF_sl_2.jpg","c":"23/10 06:14","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Renault","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-24T09:04","Portería puerto"],"sl":["2026-10-24T09:04","Portería puerto"]}},{"p":"AD001TD","n":14,"d":8,"z":"ric+sl","v":{"sl:bal":13,"sl:liq":6,"sl:por":15,"ric:bal":13,"ric:pre":7,"ric:sil":2,"ric:ing":2},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AD001TD_ric_1.jpg","c":"23/10 10:17","pto":"Ingreso Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AD001TD_ric_2.jpg","c":"23/10 10:17","pto":"Ingreso Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AD001TD_sl_1.jpg","c":"20/10 10:51","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AD001TD_sl_2.jpg","c":"16/10 12:34","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Fiat","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-23T10:46","Balanza Ricardone"],"sl":["2026-10-20T10:51","Portería puerto"],"ric":["2026-10-23T10:46","Balanza Ricardone"]}},{"p":"AD373WR","n":14,"d":8,"z":"sl","v":{"sl:por":16},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AD373WR_sl_1.jpg","c":"22/10 15:39","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AD373WR_sl_2.jpg","c":"21/10 15:39","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-23T15:42","Portería puerto"],"sl":["2026-10-23T15:42","Portería puerto"]}},{"p":"AE772KD","n":14,"d":7,"z":"sl","v":{"sl:por":14},"reg":false,"par":"AE772ID","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AE772KD_sl_1.jpg","c":"22/10 12:21","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AE772KD_sl_2.jpg","c":"21/10 12:31","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Mitsubishi","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-22T12:21","Portería puerto"],"sl":["2026-10-22T12:21","Portería puerto"]}},{"p":"AF544UV","n":14,"d":8,"z":"sl","v":{"sl:por":14},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AF544UV_sl_1.jpg","c":"26/10 03:50","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AF544UV_sl_2.jpg","c":"21/10 03:48","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Mercedes-Benz","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-26T03:50","Portería puerto"],"sl":["2026-10-26T03:50","Portería puerto"]}},{"p":"AG361MX","n":14,"d":6,"z":"sl","v":{"sl:por":15},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AG361MX_sl_1.jpg","c":"22/10 15:37","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AG361MX_sl_2.jpg","c":"20/10 15:10","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Toyota","color":"negro"},"tipo":"Camioneta","u":{"ambas":["2026-10-22T15:37","Portería puerto"],"sl":["2026-10-22T15:37","Portería puerto"]}},{"p":"AG696QV","n":14,"d":4,"z":"sl","v":{"sl:por":14,"sl:liq":10},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AG696QV_sl_1.jpg","c":"16/10 09:30","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AG696QV_sl_2.jpg","c":"14/10 14:05","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Ford","color":"negro"},"tipo":"Camioneta","u":{"ambas":["2026-10-22T07:39","Portería puerto"],"sl":["2026-10-22T07:39","Portería puerto"]}},{"p":"AG978PR","n":14,"d":7,"z":"ric+sl","v":{"ric:bal":10,"sl:por":14,"sl:liq":5},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AG978PR_ric_1.jpg","c":"14/10 12:23","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AG978PR_ric_2.jpg","c":"08/10 14:35","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AG978PR_sl_1.jpg","c":"20/10 13:22","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AG978PR_sl_2.jpg","c":"15/10 12:48","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Mercedes-Benz","color":"blanco"},"tipo":"Camión chico","u":{"ambas":["2026-10-24T09:20","Portería puerto"],"sl":["2026-10-24T09:20","Portería puerto"],"ric":["2026-10-23T13:45","Balanza Ricardone"]}},{"p":"AB349QJ","n":13,"d":3,"z":"sl","v":{"sl:por":13,"sl:bal":9},"reg":false,"par":"AB349CJ AB349QT","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AB349QJ_sl_1.jpg","c":"16/10 08:18","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AB349QJ_sl_2.jpg","c":"15/10 15:36","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Fiat","color":"rojo"},"tipo":"","u":{"ambas":["2026-10-26T06:11","Balanza puerto"],"sl":["2026-10-26T06:11","Balanza puerto"]}},{"p":"AE264AY","n":13,"d":12,"z":"ric+sl","v":{"ric:ing":37,"sl:liq":17,"sl:por":1},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AE264AY_ric_1.jpg","c":"17/10 16:16","pto":"Egreso Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AE264AY_ric_2.jpg","c":"17/10 16:16","pto":"Egreso Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AE264AY_sl_1.jpg","c":"21/10 12:53","pto":"Tanques puerto","pl":"sl"}],"dss":{"marca":"","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-25T16:52","Líquidos puerto"],"sl":["2026-10-25T16:52","Líquidos puerto"],"ric":["2026-10-24T16:27","Ingreso Ricardone"]}},{"p":"AF261AQ","n":13,"d":6,"z":"sl","v":{"sl:por":13},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AF261AQ_sl_1.jpg","c":"21/10 12:14","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AF261AQ_sl_2.jpg","c":"20/10 08:02","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Iveco","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-21T12:14","Portería puerto"],"sl":["2026-10-21T12:14","Portería puerto"]}},{"p":"AF909MM","n":13,"d":10,"z":"sl","v":{"sl:por":14},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AF909MM_sl_1.jpg","c":"25/10 15:39","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AF909MM_sl_2.jpg","c":"22/10 15:45","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Mercedes-Benz","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-25T15:39","Portería puerto"],"sl":["2026-10-25T15:39","Portería puerto"]}},{"p":"AG066KT","n":13,"d":7,"z":"sl","v":{"sl:por":14},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AG066KT_sl_1.jpg","c":"22/10 12:44","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AG066KT_sl_2.jpg","c":"21/10 12:42","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Mercedes-Benz","color":"blanco"},"tipo":"Colectivo / minibús","u":{"ambas":["2026-10-24T15:37","Portería puerto"],"sl":["2026-10-24T15:37","Portería puerto"]}},{"p":"JBF932","n":13,"d":4,"z":"sl","v":{"sl:por":13,"sl:bal":1},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/JBF932_sl_1.jpg","c":"20/10 11:25","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/JBF932_sl_2.jpg","c":"13/10 08:44","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Toyota","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-22T07:13","Portería puerto"],"sl":["2026-10-22T07:13","Portería puerto"]}},{"p":"AA703EO","n":12,"d":6,"z":"sl","v":{"sl:bal":9,"sl:por":11},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AA703EO_sl_1.jpg","c":"15/10 10:39","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AA703EO_sl_2.jpg","c":"14/10 10:34","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Toyota","color":"negro"},"tipo":"","u":{"ambas":["2026-10-23T12:15","Balanza puerto"],"sl":["2026-10-23T12:15","Balanza puerto"]}},{"p":"AE580ZP","n":12,"d":4,"z":"sl","v":{"sl:por":12},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AE580ZP_sl_1.jpg","c":"17/10 15:37","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AE580ZP_sl_2.jpg","c":"18/10 03:39","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Mercedes-Benz","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-24T15:37","Portería puerto"],"sl":["2026-10-24T15:37","Portería puerto"]}},{"p":"AG408SM","n":12,"d":5,"z":"ric+sl","v":{"sl:liq":6,"sl:por":13,"ric:bal":4},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AG408SM_ric_1.jpg","c":"16/10 09:24","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AG408SM_sl_1.jpg","c":"15/10 09:41","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AG408SM_sl_2.jpg","c":"22/10 06:44","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Ford","color":"blanco"},"tipo":"Utilitario","u":{"ambas":["2026-10-24T12:37","Portería puerto"],"sl":["2026-10-24T12:37","Portería puerto"],"ric":["2026-10-19T08:04","Balanza Ricardone"]}},{"p":"AG700CR","n":12,"d":6,"z":"ric+sl","v":{"sl:por":12,"ric:bal":4},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AG700CR_ric_1.jpg","c":"15/10 09:40","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AG700CR_sl_1.jpg","c":"22/10 06:07","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AG700CR_sl_2.jpg","c":"20/10 06:48","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Renault","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-22T06:07","Portería puerto"],"sl":["2026-10-22T06:07","Portería puerto"],"ric":["2026-10-16T08:43","Balanza Ricardone"]}},{"p":"AH540BL","n":12,"d":5,"z":"sl","v":{"sl:por":12},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AH540BL_sl_1.jpg","c":"17/10 16:13","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AH540BL_sl_2.jpg","c":"16/10 16:36","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Ford","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-20T03:35","Portería puerto"],"sl":["2026-10-20T03:35","Portería puerto"]}},{"p":"AH733KN","n":12,"d":4,"z":"ric+sl","v":{"sl:por":9,"sl:bal":2,"sl:liq":9,"ric:bal":6,"ric:ing":6,"ric:pre":2},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AH733KN_ric_1.jpg","c":"14/10 14:28","pto":"Ingreso Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AH733KN_ric_2.jpg","c":"23/10 11:45","pto":"Ingreso Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AH733KN_sl_1.jpg","c":"20/10 08:51","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AH733KN_sl_2.jpg","c":"14/10 09:52","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Mercedes-Benz","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-23T09:10","Egreso Ricardone"],"ric":["2026-10-23T09:10","Egreso Ricardone"],"sl":["2026-10-23T06:45","Portería puerto"]}},{"p":"AI217QP","n":12,"d":6,"z":"ric+sl","v":{"sl:por":11,"ric:bal":10},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AI217QP_ric_1.jpg","c":"19/10 10:31","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AI217QP_sl_1.jpg","c":"14/10 12:18","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AI217QP_sl_2.jpg","c":"13/10 05:35","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Honda","color":"negro"},"tipo":"","u":{"ambas":["2026-10-26T05:02","Balanza Ricardone"],"sl":["2026-10-14T12:18","Portería puerto"],"ric":["2026-10-26T05:02","Balanza Ricardone"]}},{"p":"AI238IS","n":12,"d":4,"z":"sl","v":{"sl:por":12,"sl:bal":7},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AI238IS_sl_1.jpg","c":"16/10 12:43","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AI238IS_sl_2.jpg","c":"15/10 13:20","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"DAF","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-16T12:43","Portería puerto"],"sl":["2026-10-16T12:43","Portería puerto"]}},{"p":"OJD501","n":12,"d":5,"z":"ric+sl","v":{"sl:por":12,"ric:bal":6},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/OJD501_ric_1.jpg","c":"13/10 14:17","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/OJD501_sl_1.jpg","c":"17/10 09:26","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/OJD501_sl_2.jpg","c":"13/10 07:42","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Volkswagen","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-26T06:04","Balanza Ricardone"],"ric":["2026-10-26T06:04","Balanza Ricardone"],"sl":["2026-10-23T09:09","Portería puerto"]}},{"p":"AA492OU","n":11,"d":9,"z":"ric+sl","v":{"sl:por":11,"sl:liq":1,"ric:ing":3},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AA492OU_ric_1.jpg","c":"19/10 13:54","pto":"Ingreso Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AA492OU_ric_2.jpg","c":"19/10 13:54","pto":"Ingreso Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AA492OU_sl_1.jpg","c":"13/10 14:26","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AA492OU_sl_2.jpg","c":"21/10 06:55","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Mercedes-Benz","color":"negro"},"tipo":"","u":{"ambas":["2026-10-23T07:45","Portería puerto"],"sl":["2026-10-23T07:45","Portería puerto"],"ric":["2026-10-19T11:22","Egreso Ricardone"]}},{"p":"AD468VC","n":11,"d":6,"z":"ric+sl","v":{"ric:bal":24,"sl:por":11,"ric:pre":1,"sl:bal":2},"reg":false,"par":"AD468VV","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AD468VC_ric_1.jpg","c":"13/10 09:17","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AD468VC_sl_1.jpg","c":"15/10 11:45","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AD468VC_sl_2.jpg","c":"14/10 12:15","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Ford","color":"negro"},"tipo":"","u":{"ambas":["2026-10-20T06:04","Portería puerto"],"ric":["2026-10-20T05:28","Balanza Ricardone"],"sl":["2026-10-20T06:04","Portería puerto"]}},{"p":"AD686SH","n":11,"d":7,"z":"sl","v":{"sl:por":13},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AD686SH_sl_1.jpg","c":"22/10 12:59","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AD686SH_sl_2.jpg","c":"21/10 12:58","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Citroën","color":"blanco"},"tipo":"Colectivo / minibús","u":{"ambas":["2026-10-23T11:51","Portería puerto"],"sl":["2026-10-23T11:51","Portería puerto"]}},{"p":"AE040HT","n":11,"d":3,"z":"sl","v":{"sl:bal":6,"sl:por":12},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AE040HT_sl_1.jpg","c":"16/10 09:37","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AE040HT_sl_2.jpg","c":"14/10 11:46","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Toyota","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-16T09:37","Portería puerto"],"sl":["2026-10-16T09:37","Portería puerto"]}},{"p":"AE747HZ","n":11,"d":5,"z":"sl","v":{"sl:por":11,"sl:bal":10,"sl:liq":1},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AE747HZ_sl_1.jpg","c":"20/10 08:43","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AE747HZ_sl_2.jpg","c":"15/10 10:45","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Citroën","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-23T10:47","Portería puerto"],"sl":["2026-10-23T10:47","Portería puerto"]}},{"p":"AG692JE","n":11,"d":6,"z":"sl","v":{"sl:por":12},"reg":false,"par":"AG692JX","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AG692JE_sl_1.jpg","c":"22/10 15:59","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AG692JE_sl_2.jpg","c":"21/10 12:33","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-23T11:47","Portería puerto"],"sl":["2026-10-23T11:47","Portería puerto"]}},{"p":"AG767CT","n":11,"d":2,"z":"sl","v":{"sl:por":12},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AG767CT_sl_1.jpg","c":"23/10 16:26","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AG767CT_sl_2.jpg","c":"18/10 16:25","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-23T16:26","Portería puerto"],"sl":["2026-10-23T16:26","Portería puerto"]}},{"p":"HTK722","n":11,"d":5,"z":"ric+sl","v":{"sl:por":10,"ric:bal":8},"reg":true,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/HTK722_ric_1.jpg","c":"16/10 10:32","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/HTK722_sl_1.jpg","c":"16/10 13:48","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/HTK722_sl_2.jpg","c":"13/10 08:23","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-23T11:01","Balanza Ricardone"],"sl":["2026-10-23T08:06","Portería puerto"],"ric":["2026-10-23T11:01","Balanza Ricardone"]}},{"p":"ONS723","n":11,"d":8,"z":"ric+sl","v":{"ric:bal":12,"sl:por":10,"sl:bal":3,"sl:liq":1},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/ONS723_ric_1.jpg","c":"13/10 08:03","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/ONS723_sl_1.jpg","c":"22/10 08:01","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/ONS723_sl_2.jpg","c":"20/10 09:32","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Iveco","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-26T05:16","Balanza Ricardone"],"sl":["2026-10-22T08:01","Portería puerto"],"ric":["2026-10-26T05:16","Balanza Ricardone"]}},{"p":"OTB580","n":11,"d":3,"z":"ric+sl","v":{"sl:por":6,"ric:ing":10,"ric:bal":3,"sl:liq":5,"sl:bal":2},"reg":false,"par":"OWB580","de":"","f":[{"s":"habilitacion-vehiculos-fotos/OTB580_ric_1.jpg","c":"23/10 10:10","pto":"Ingreso Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/OTB580_ric_2.jpg","c":"24/10 12:59","pto":"Ingreso Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/OTB580_sl_1.jpg","c":"24/10 11:31","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/OTB580_sl_2.jpg","c":"20/10 10:43","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Citroën","color":"negro"},"tipo":"","u":{"ambas":["2026-10-24T11:31","Portería puerto"],"sl":["2026-10-24T11:31","Portería puerto"],"ric":["2026-10-24T10:40","Egreso Ricardone"]}},{"p":"AA682QZ","n":10,"d":5,"z":"ric+sl","v":{"ric:bal":4,"sl:por":10,"sl:liq":1},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AA682QZ_ric_1.jpg","c":"13/10 10:54","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AA682QZ_sl_1.jpg","c":"22/10 12:09","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AA682QZ_sl_2.jpg","c":"20/10 09:03","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Mercedes-Benz","color":"negro"},"tipo":"","u":{"ambas":["2026-10-22T12:09","Portería puerto"],"sl":["2026-10-22T12:09","Portería puerto"],"ric":["2026-10-22T11:50","Balanza Ricardone"]}},{"p":"AE532MU","n":10,"d":10,"z":"sl","v":{"sl:por":10,"sl:liq":7,"sl:cal":1},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AE532MU_sl_1.jpg","c":"17/10 10:52","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AE532MU_sl_2.jpg","c":"20/10 06:29","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Iveco","color":""},"tipo":"","u":{"ambas":["2026-10-26T06:06","Tanques puerto"],"sl":["2026-10-26T06:06","Tanques puerto"]}},{"p":"AG245ND","n":10,"d":4,"z":"sl","v":{"sl:por":10,"sl:liq":1,"sl:bal":10},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AG245ND_sl_1.jpg","c":"16/10 14:40","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AG245ND_sl_2.jpg","c":"15/10 13:25","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Chevrolet","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-23T06:01","Portería puerto"],"sl":["2026-10-23T06:01","Portería puerto"]}},{"p":"AI276FZ","n":10,"d":7,"z":"ric+sl","v":{"sl:por":9,"sl:liq":3,"sl:bal":2,"ric:bal":9},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/AI276FZ_ric_1.jpg","c":"14/10 10:18","pto":"Balanza Ricardone","pl":"ric"},{"s":"habilitacion-vehiculos-fotos/AI276FZ_sl_1.jpg","c":"21/10 08:09","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/AI276FZ_sl_2.jpg","c":"14/10 12:26","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Dongfeng","color":"azul"},"tipo":"","u":{"ambas":["2026-10-23T10:53","Balanza Ricardone"],"sl":["2026-10-21T08:09","Portería puerto"],"ric":["2026-10-23T10:53","Balanza Ricardone"]}},{"p":"FAF824","n":10,"d":5,"z":"sl","v":{"sl:por":10,"sl:bal":7},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/FAF824_sl_1.jpg","c":"19/10 10:23","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/FAF824_sl_2.jpg","c":"17/10 14:29","pto":"Portería puerto","pl":"sl"}],"dss":{"marca":"Toyota","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-19T17:35","Portería puerto"],"sl":["2026-10-19T17:35","Portería puerto"]}},{"p":"FYJ679","n":10,"d":5,"z":"sl","v":{"sl:por":10,"sl:bal":8},"reg":false,"par":"","de":"","f":[{"s":"habilitacion-vehiculos-fotos/FYJ679_sl_1.jpg","c":"20/10 08:27","pto":"Portería puerto","pl":"sl"},{"s":"habilitacion-vehiculos-fotos/FYJ679_sl_2.jpg","c":"15/10 16:04","pto":"Balanza puerto","pl":"sl"}],"dss":{"marca":"Toyota","color":"blanco"},"tipo":"","u":{"ambas":["2026-10-23T12:28","Portería puerto (cola)"],"sl":["2026-10-23T12:28","Portería puerto (cola)"]}}],"hoy":"2026-10-26"};
+const SECTORES = {
+  ric:{nombre:'Ricardone', items:[['ing','Ingreso / egreso'],['pre','Pre-ingreso y playas'],['bal','Balanzas'],['cal','Calada'],['sil','Planta y silos']]},
+  sl:{nombre:'Puerto San Lorenzo', items:[['por','Portería'],['ing','Ingreso camiones'],['bal','Balanzas'],['cal','Calada'],['vol','Volcables'],['liq','Tanques y líquidos'],['mue','Muelle']]}
+};
+const RESP = ['Seguridad Patrimonial','Logística Ricardone','Logística Puerto','Mantenimiento','Planta de aceite','Calidad / laboratorio','Administración'];
+const TIPOS = ['Camioneta','Utilitario','Traffic / combi','Colectivo / minibús','Camión chico','Auto','Otro'];
+const DIAS = ['L','M','X','J','V','S','D'];
+const MES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const DSEM = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+const LS = 'hab-vehiculos-v2';
+
+// lista en orden de última captura, la más nueva primero
+// última lectura y fotos según la planta elegida (en «Ambas», la más nueva de cualquiera)
+const ultima = v => v.u[planta] || v.u.ambas;
+const fotosDe = v => planta === 'ambas' ? v.f : v.f.filter(x => x.pl === planta);
+const porUltima = (a,b) => { const x = ultima(a)[0], y = ultima(b)[0]; return y < x ? -1 : y > x ? 1 : 0; };
+DATA.lista.sort((a,b) => b.u.ambas[0] < a.u.ambas[0] ? -1 : b.u.ambas[0] > a.u.ambas[0] ? 1 : 0);
+
+let remote = {}, drafts = {}, nombres = {};
+let db = null, user = null, uid = null, canWrite = true, modo = 'cargando';
+let sel = DATA.lista[0].p, filtro = 'pend', planta = 'ambas', q = '', fotoIdx = 0, zoom = false, aviso = null;
+
+const total = v => Object.values(v.v).reduce((a,b)=>a+b,0);
+const clone = o => JSON.parse(JSON.stringify(o));
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const secNombre = k => { const [pl,s] = k.split(':'); const it = SECTORES[pl].items.find(x=>x[0]===s); return (it?it[1]:s) + (pl==='ric'?' (Ricardone)':' (puerto)'); };
+const hhmm = iso => iso.slice(11,16);
+function diaTxt(iso){
+  const d = iso.slice(0,10), hoy = new Date(), loc = x => `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`;
+  const ay = new Date(hoy); ay.setDate(hoy.getDate()-1);
+  if (d === loc(hoy)) return 'Hoy';
+  if (d === loc(ay)) return 'Ayer';
+  const dt = new Date(d+'T12:00');
+  return `${DSEM[dt.getDay()]} ${dt.getDate()} de ${MES[dt.getMonth()]}`;
+}
+const fechaCorta = iso => `${iso.slice(8,10)}/${iso.slice(5,7)} ${hhmm(iso)}`;
+const fechaHist = iso => { try { return new Date(iso).toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}); } catch(e){ return ''; } };
+
+function conocido(v){ const t = total(v); return Object.entries(v.v).filter(([,n]) => n >= 3 && n/t >= .05).map(([k])=>k); }
+const base = v => ({estado:'pend', permit:conocido(v), propuesto:true, dias:[0,1,2,3,4,5,6], titular:'', tipo:v.tipo||'', motivo:'', contacto:'', resp:'', desde:'', hasta:'', vig:'', autoriza:''});
+const guardada = v => remote[v.p] ? {...base(v), ...remote[v.p]} : base(v);
+const ficha = v => drafts[v.p] || guardada(v);
+const fuera = (v,f) => Object.entries(v.v).filter(([k]) => !(f.permit||[]).includes(k)).sort((a,b)=>b[1]-a[1]);
+function estado(v){
+  const f = remote[v.p];
+  if (!f) return 'pend';
+  if (f.estado !== 'hab') return 'bor';
+  if (f.vig && f.vig < DATA.hoy) return 'venc';
+  return fuera(v,f).length ? 'desv' : 'hab';
+}
+const EST = {pend:'Sin ficha', bor:'Borrador', hab:'Habilitado', desv:'Fuera de recorrido', venc:'Vencido'};
+const pendiente = e => e==='pend' || e==='bor' || e==='venc';
+
+function setModo(m){
+  modo = m;
+  const el = document.getElementById('live');
+  el.className = 'live ' + (m==='on' ? 'on' : m==='cargando' ? '' : 'off');
+  el.lastElementChild.textContent = m==='on' ? (canWrite ? 'Guardado en línea' : 'Solo lectura') : m==='cargando' ? 'Conectando…' : 'Sin conexión: se guarda en este equipo';
+}
+
+function renderTop(){
+  const hechos = DATA.lista.filter(v => !pendiente(estado(v))).length, n = DATA.lista.length;
+  document.getElementById('prog').innerHTML = `<span><b>${hechos}</b> de ${n} habilitados</span><span class="track"><i style="width:${(hechos/n*100).toFixed(1)}%"></i></span>`;
+}
+
+// un vehículo es de una planta si alguna cámara de esa planta lo leyó en el período
+const enPlanta = (v, pl = planta) => pl === 'ambas' || Object.keys(v.v).some(k => k.startsWith(pl + ':'));
+
+function renderPlanta(){
+  document.getElementById('planta').innerHTML = [['ric','Ricardone'],['sl','San Lorenzo'],['ambas','Ambas']]
+    .map(([k,l]) => `<button data-pl="${k}" aria-pressed="${planta===k}">${l}<span class="n">${DATA.lista.filter(v=>enPlanta(v,k)).length}</span></button>`).join('');
+}
+
+function visibles(){
+  return DATA.lista.filter(v => {
+    if (!enPlanta(v)) return false;
+    if (q && !v.p.includes(q)) return false;
+    const e = estado(v);
+    if (filtro==='pend') return pendiente(e);
+    if (filtro==='hab') return !pendiente(e);
+    return true;
+  }).sort(porUltima);
+}
+
+function renderSeg(){
+  const de = DATA.lista.filter(v => enPlanta(v)), c = {pend:0, hab:0, todos:de.length};
+  de.forEach(v => pendiente(estado(v)) ? c.pend++ : c.hab++);
+  document.getElementById('seg').innerHTML = [['pend','Por revisar'],['hab','Habilitados'],['todos','Todos']]
+    .map(([k,l]) => `<button data-f="${k}" aria-pressed="${filtro===k}">${l}<span class="n">${c[k]}</span></button>`).join('');
+}
+
+function renderList(){
+  const rows = visibles(), el = document.getElementById('list');
+  if (!rows.length){ el.innerHTML = `<p class="empty">${filtro==='pend' && !q ? 'No queda ningún vehículo por revisar.' : 'Ningún vehículo con ese filtro.'}</p>`; return; }
+  let html = '', grupo = '';
+  for (const v of rows){
+    const u = ultima(v), fs = fotosDe(v), g = diaTxt(u[0]);
+    if (g !== grupo){ grupo = g; html += `<div class="day">${g}</div>`; }
+    const e = estado(v);
+    html += `<button class="item" data-p="${v.p}" aria-current="${v.p===sel}">
+      ${fs.length ? `<img src="${fs[0].s}" alt="" loading="lazy">` : `<span class="noimg"></span>`}
+      <span><span class="l1"><strong>${v.p}</strong><span class="st ${e}"><i></i>${EST[e]}</span></span>
+      <span class="l2" style="display:block">${hhmm(u[0])} · ${esc(u[1])}</span></span>
+    </button>`;
+  }
+  el.innerHTML = html;
+}
+
+function renderCard(){
+  const v = DATA.lista.find(x=>x.p===sel);
+  const card = document.getElementById('card');
+  if (!v){ card.innerHTML = `<p class="empty" style="padding:20px">Elegí un vehículo de la lista.</p>`; return; }
+  const f = ficha(v), e = estado(v), g = remote[v.p], dis = canWrite ? '' : 'disabled';
+  const fs = fotosDe(v), u = ultima(v), i = Math.min(fotoIdx, fs.length-1), foto = fs[i];
+  const plantas = Object.entries(SECTORES).map(([pl,P]) => `<div class="planta"><h3>${P.nombre}</h3><div class="secs">
+    ${P.items.map(([s,nm]) => { const k = pl+':'+s, n = v.v[k]||0, on = (f.permit||[]).includes(k);
+      return `<button class="sec ${n && !on ? 'out':''}" data-sec="${k}" aria-pressed="${on}" ${dis}><span class="box">${on?'✓':''}</span><span class="nm">${nm}</span><span class="cnt">${n ? `visto ${n} ${n===1?'vez':'veces'}` : ''}</span></button>`; }).join('')}
+  </div></div>`).join('');
+  const opt = (arr, val) => `<option value="">Elegir…</option>` + arr.map(o=>`<option ${o===val?'selected':''}>${esc(o)}</option>`).join('');
+  const tags = [v.tipo && `Por la foto: ${esc(v.tipo)}`, v.dss.marca && esc(v.dss.marca), v.dss.color && `Color ${esc(v.dss.color)}`].filter(Boolean).map(t=>`<span class="tag">${t}</span>`);
+  if (v.reg) tags.push(`<span class="tag w">En el registro como vehículo particular</span>`);
+  if (v.par) tags.push(`<span class="tag w">Parecida a ${esc(v.par)} del Excel</span>`);
+  const hist = (g?.historial || []).slice().reverse().slice(0,4);
+  const sucio = !!drafts[v.p];
+  const msg = aviso ? `<span class="msg ${aviso.c||''}">${esc(aviso.t)}</span>` : sucio ? `<span class="msg d">Cambios sin guardar</span>` : '';
+  aviso = null;
+
+  card.innerHTML = `<div class="detail">
+    <div class="photo">
+      ${foto ? `<div class="main"><img id="foto" class="${zoom?'zoom':''}" src="${foto.s}" alt="Foto de cámara de ${v.p}"><span class="cap">${esc(foto.c)} · ${esc(foto.pto)}</span></div>
+      ${fs.length > 1 ? `<div class="thumbs">${fs.map((x,j)=>`<button data-foto="${j}" aria-pressed="${j===i}" aria-label="Ver foto ${j+1}"><img src="${x.s}" alt=""></button>`).join('')}</div>` : ''}`
+      : `<div class="main" style="display:grid;place-items:center;color:var(--muted)">${planta === "ric" ? "Sin foto de cámaras de Ricardone" : "Sin foto del DSS"}</div>`}
+    </div>
+
+    <div class="head">
+      <div class="idbox"><span class="plate">${v.p}</span>
+        <div class="facts"><p><b>${v.n} viajes</b> en ${v.d} de los últimos 14 días · última vez ${diaTxt(u[0]).toLowerCase()} ${hhmm(u[0])} en ${esc(u[1])}</p>
+        ${tags.length ? `<div class="tags">${tags.join('')}</div>` : ''}</div>
+      </div>
+      <span class="big-st ${e}">${EST[e]}</span>
+    </div>
+
+    <div class="blk">
+      <h2>¿Por dónde puede circular?</h2>
+      <p class="help">${f.propuesto ? 'Marcamos los lugares donde las cámaras lo ven siempre. Revisá y corregí si hace falta.' : 'Recorrido marcado para este vehículo.'}</p>
+      <div class="plantas">${plantas}</div>
+    </div>
+
+    <div class="blk">
+      <h2>Datos de la autorización</h2>
+      <div class="form">
+        <div class="fld"><label for="f-titular">Titular o empresa</label><input id="f-titular" data-k="titular" value="${esc(f.titular)}" ${dis}></div>
+        <div class="fld"><label for="f-tipo">Tipo de vehículo</label><select id="f-tipo" data-k="tipo" ${dis}>${opt(TIPOS, f.tipo)}</select></div>
+        <div class="fld full"><label for="f-motivo">Motivo del ingreso</label><input id="f-motivo" data-k="motivo" value="${esc(f.motivo)}" placeholder="Ej.: traslado de personal, mantenimiento, laboratorio" ${dis}></div>
+        <div class="fld"><label for="f-resp">Sector responsable</label><select id="f-resp" data-k="resp" ${dis}>${opt(RESP, f.resp)}</select></div>
+        <div class="fld"><label for="f-contacto">Contacto (teléfono o interno)</label><input id="f-contacto" data-k="contacto" value="${esc(f.contacto)}" ${dis}></div>
+        <div class="fld"><span class="lab">Horario permitido</span><div class="row2"><input id="f-desde" type="time" data-k="desde" value="${esc(f.desde)}" aria-label="Desde" ${dis}><input id="f-hasta" type="time" data-k="hasta" value="${esc(f.hasta)}" aria-label="Hasta" ${dis}></div></div>
+        <div class="fld"><span class="lab">Días</span><div class="dias">${DIAS.map((d,j)=>`<button class="dia" data-dia="${j}" aria-pressed="${(f.dias||[]).includes(j)}" ${dis}>${d}</button>`).join('')}</div></div>
+        <div class="fld"><label for="f-vig">Autorizado hasta</label><input id="f-vig" type="date" data-k="vig" value="${esc(f.vig)}" ${dis}></div>
+        <div class="fld"><label for="f-autoriza">Autoriza (nombre y sector)</label><input id="f-autoriza" data-k="autoriza" value="${esc(f.autoriza)}" ${dis}></div>
+      </div>
+      ${hist.length ? `<ul class="hist">${hist.map(h=>`<li>${fechaHist(h.t)} · ${esc(h.a)}${h.by && nombres[h.by] ? ' · ' + esc(nombres[h.by]) : ''}</li>`).join('')}</ul>` : ''}
+    </div>
+  </div>
+  ${canWrite ? `<div class="bar">
+    ${pendiente(e) ? `<button class="btn pri" data-act="habilitar">Habilitar y pasar al siguiente</button><button class="btn" data-act="borrador">Guardar borrador</button>`
+                   : `<button class="btn pri" data-act="borrador">Guardar cambios</button><button class="btn bad" data-act="revocar">Quitar habilitación</button>`}
+    ${msg}<span class="sp"></span>
+    <button class="btn" data-act="siguiente">Saltear →</button>
+  </div>` : `<div class="bar"><span class="msg d">Tenés acceso de lectura. Para cargar, pedí que te compartan la página como colaborador.</span></div>`}`;
+  resolverNombres(hist.map(h=>h.by).filter(Boolean));
+}
+
+async function resolverNombres(ids){
+  const faltan = ids.filter(id => !(id in nombres));
+  if (!user || !faltan.length) return;
+  try {
+    const ps = await user.profiles(faltan); let cambio = false;
+    for (const id of faltan){ nombres[id] = ps[id]?.name || ''; if (nombres[id]) cambio = true; }
+    if (cambio && !drafts[sel]) renderCard();
+  } catch(e) {}
+}
+
+function renderAll(){ renderTop(); renderPlanta(); renderSeg(); renderList(); renderCard(); }
+function draft(){ const v = DATA.lista.find(x=>x.p===sel); if (!drafts[v.p]) drafts[v.p] = clone(ficha(v)); return [drafts[v.p], v]; }
+function elegir(p){
+  sel = p; fotoIdx = 0; zoom = false; renderList(); renderCard();
+  document.getElementById('card').scrollTop = 0;
+  const it = document.querySelector(`.item[data-p="${p}"]`); if (it) it.scrollIntoView({block:'nearest'});
+}
+function siguiente(rows = visibles()){
+  const idx = rows.findIndex(v=>v.p===sel);
+  const sig = rows[idx+1] || rows.find(v=>v.p!==sel && pendiente(estado(v)));
+  if (sig) elegir(sig.p); else renderAll();
+}
+
+async function guardar(v, f, accion){
+  const ahora = new Date().toISOString();
+  const doc = {...f, propuesto:false, updatedAt:ahora, updatedBy:uid || null,
+    historial:[...(remote[v.p]?.historial || []), {t:ahora, a:accion, by:uid || null}].slice(-30)};
+  if (modo === 'on') await db.collection('habilitaciones').doc(v.p).set(doc);
+  else { remote[v.p] = doc; try { localStorage.setItem(LS, JSON.stringify(remote)); } catch(e) {} }
+  delete drafts[v.p];
+}
+
+document.getElementById('q').addEventListener('input', e => { q = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,''); renderList(); });
+document.getElementById('planta').addEventListener('click', e => {
+  const b = e.target.closest('[data-pl]'); if (!b) return;
+  planta = b.dataset.pl; fotoIdx = 0; renderPlanta(); renderSeg(); renderList();
+  const r = visibles(); if (r.length && !r.some(v => v.p === sel)) elegir(r[0].p); else renderCard();
+});
+document.getElementById('seg').addEventListener('click', e => { const b = e.target.closest('[data-f]'); if (!b) return; filtro = b.dataset.f; renderSeg(); renderList(); });
+document.getElementById('list').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (b) elegir(b.dataset.p); });
+document.getElementById('card').addEventListener('input', e => {
+  const k = e.target.dataset?.k; if (!k) return;
+  const nuevo = !drafts[sel]; const [f] = draft(); f[k] = e.target.value.trim();
+  if (nuevo){ const b = document.querySelector('#card .bar .sp'); if (b && !b.previousElementSibling?.classList.contains('msg')) b.insertAdjacentHTML('beforebegin','<span class="msg d">Cambios sin guardar</span>'); }
+});
+document.getElementById('card').addEventListener('click', async e => {
+  if (e.target.id === 'foto'){ zoom = !zoom; e.target.classList.toggle('zoom', zoom); return; }
+  const ft = e.target.closest('[data-foto]'); if (ft){ fotoIdx = +ft.dataset.foto; return renderCard(); }
+  const act = e.target.closest('[data-act]');
+  if (act?.dataset.act === 'siguiente') return siguiente();
+  if (!canWrite) return;
+  const sec = e.target.closest('[data-sec]'), dia = e.target.closest('[data-dia]');
+  if (sec){ const [f] = draft(); const k = sec.dataset.sec; f.permit = f.permit.includes(k) ? f.permit.filter(x=>x!==k) : [...f.permit,k]; f.propuesto = false; return renderCard(); }
+  if (dia){ const [f] = draft(); const j = +dia.dataset.dia; f.dias = f.dias.includes(j) ? f.dias.filter(x=>x!==j) : [...f.dias,j].sort(); return renderCard(); }
+  if (!act) return;
+  const a = act.dataset.act;
+  if (a==='conocido'){ const [f,v] = draft(); f.permit = conocido(v); return renderCard(); }
+  if (a==='todo'){ const [f,v] = draft(); f.permit = Object.keys(v.v); f.propuesto = false; return renderCard(); }
+  const [f, v] = draft();
+  act.disabled = true;
+  try {
+    if (a==='habilitar'){
+      const falta = [['titular','titular'],['resp','sector responsable'],['vig','autorizado hasta'],['autoriza','quién autoriza']].filter(([k])=>!f[k]).map(x=>x[1]);
+      if (falta.length){ aviso = {t:'Falta completar: ' + falta.join(', '), c:'e'}; return renderCard(); }
+      const orden = visibles();   // antes de guardar: con el filtro «Por revisar» el habilitado sale de la lista
+      f.estado = 'hab'; await guardar(v, f, 'Habilitó');
+      renderTop(); renderSeg(); return siguiente(orden);
+    }
+    if (a==='borrador'){ await guardar(v, f, f.estado==='hab' ? 'Modificó la autorización' : 'Guardó borrador'); aviso = {t:'Guardado'}; return renderAll(); }
+    if (a==='revocar'){ f.estado = 'pend'; await guardar(v, f, 'Quitó la habilitación'); aviso = {t:'Habilitación quitada'}; return renderAll(); }
+  } catch(err) {
+    if (err?.code === 'invalid_argument' && modo === 'on'){ canWrite = false; setModo('on'); return renderCard(); }
+    aviso = {t:'No se pudo guardar. Probá de nuevo en un momento.', c:'e'}; return renderCard();
+  }
+});
+
+function modoLocal(){
+  try { remote = JSON.parse(localStorage.getItem(LS) || '{}') || {}; } catch(e) { remote = {}; }
+  setModo('local'); renderAll();
+}
+
+setModo('cargando');
+renderAll();
+(async () => {
+  const c = window.claude;
+  if (!c?.use) return modoLocal();
+  const [d, u] = await Promise.all([c.use('db'), c.use('user')]);
+  if (!d) return modoLocal();
+  db = d; user = u;
+  if (user){
+    try { uid = await user.id(); } catch(e) {}
+    try { if (await user.can('data.write') === false) canWrite = false; } catch(e) {}
+  }
+  db.collection('habilitaciones').onSnapshot(s => {
+    const r = {}; s.docs.forEach(x => { r[x.id] = x.data(); }); remote = r;
+    setModo('on'); renderTop(); renderSeg(); renderList();
+    if (!drafts[sel]) renderCard();   // no pisar lo que se está escribiendo
+  }, () => modoLocal());
+})();
+</script>

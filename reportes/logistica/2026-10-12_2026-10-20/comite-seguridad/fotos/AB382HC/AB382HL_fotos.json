@@ -1,0 +1,10 @@
+[
+ {
+  "plate": "AB382HL",
+  "device": "RicCal03",
+  "horaOperativa": "10-13_2013",
+  "found": false,
+  "error": "Error de red hacia DSS 192.168.4.2:443: Client network socket disconnected before secure TLS connection was established",
+  "capture": null
+ }
+]

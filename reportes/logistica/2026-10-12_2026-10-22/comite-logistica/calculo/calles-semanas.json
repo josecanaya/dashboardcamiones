@@ -1,0 +1,225 @@
+{
+ "criterio": "camiones = patentes distintas por visita (misma patente y calle a menos de 60 min = un camión); horas = horas reloj con al menos una lectura; hora operativa = occurredAt + 206 min",
+ "semanas": [
+  {
+   "desde": "2026-09-24",
+   "hasta": "2026-09-30"
+  },
+  {
+   "desde": "2026-10-01",
+   "hasta": "2026-10-07"
+  },
+  {
+   "desde": "2026-10-08",
+   "hasta": "2026-10-14"
+  },
+  {
+   "desde": "2026-10-15",
+   "hasta": "2026-10-21"
+  }
+ ],
+ "grupos": {
+  "calada": {
+   "1": [
+    {
+     "camiones": 74,
+     "horas": 15
+    },
+    {
+     "camiones": 0,
+     "horas": 0
+    },
+    {
+     "camiones": 22,
+     "horas": 8
+    },
+    {
+     "camiones": 0,
+     "horas": 0
+    }
+   ],
+   "2": [
+    {
+     "camiones": 114,
+     "horas": 20
+    },
+    {
+     "camiones": 0,
+     "horas": 0
+    },
+    {
+     "camiones": 27,
+     "horas": 8
+    },
+    {
+     "camiones": 0,
+     "horas": 0
+    }
+   ],
+   "3": [
+    {
+     "camiones": 570,
+     "horas": 114
+    },
+    {
+     "camiones": 374,
+     "horas": 86
+    },
+    {
+     "camiones": 176,
+     "horas": 58
+    },
+    {
+     "camiones": 332,
+     "horas": 78
+    }
+   ],
+   "4": [
+    {
+     "camiones": 725,
+     "horas": 126
+    },
+    {
+     "camiones": 362,
+     "horas": 88
+    },
+    {
+     "camiones": 178,
+     "horas": 63
+    },
+    {
+     "camiones": 317,
+     "horas": 79
+    }
+   ],
+   "5": [
+    {
+     "camiones": 0,
+     "horas": 0
+    },
+    {
+     "camiones": 0,
+     "horas": 0
+    },
+    {
+     "camiones": 0,
+     "horas": 0
+    },
+    {
+     "camiones": 5,
+     "horas": 5
+    }
+   ],
+   "6": [
+    {
+     "camiones": 5,
+     "horas": 4
+    },
+    {
+     "camiones": 1,
+     "horas": 1
+    },
+    {
+     "camiones": 0,
+     "horas": 0
+    },
+    {
+     "camiones": 0,
+     "horas": 0
+    }
+   ]
+  },
+  "volcables": {
+   "V1": [
+    {
+     "camiones": 10,
+     "horas": 5
+    },
+    {
+     "camiones": 6,
+     "horas": 5
+    },
+    {
+     "camiones": 2,
+     "horas": 3
+    },
+    {
+     "camiones": 14,
+     "horas": 6
+    }
+   ],
+   "V2": [
+    {
+     "camiones": 63,
+     "horas": 17
+    },
+    {
+     "camiones": 60,
+     "horas": 22
+    },
+    {
+     "camiones": 4,
+     "horas": 3
+    },
+    {
+     "camiones": 1,
+     "horas": 1
+    }
+   ],
+   "V3": [
+    {
+     "camiones": 378,
+     "horas": 78
+    },
+    {
+     "camiones": 26,
+     "horas": 10
+    },
+    {
+     "camiones": 100,
+     "horas": 32
+    },
+    {
+     "camiones": 77,
+     "horas": 25
+    }
+   ],
+   "V4": [
+    {
+     "camiones": 360,
+     "horas": 69
+    },
+    {
+     "camiones": 200,
+     "horas": 41
+    },
+    {
+     "camiones": 3,
+     "horas": 2
+    },
+    {
+     "camiones": 0,
+     "horas": 0
+    }
+   ],
+   "V5": [
+    {
+     "camiones": 376,
+     "horas": 99
+    },
+    {
+     "camiones": 293,
+     "horas": 99
+    },
+    {
+     "camiones": 68,
+     "horas": 29
+    },
+    {
+     "camiones": 358,
+     "horas": 98
+    }
+   ]
+  }
+ }
+}

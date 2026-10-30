@@ -68,6 +68,51 @@ export type MapTruck = {
 }
 
 /**
+ * Paso del camión seguido, como en la revisión del vínculo: hecho (lectura de cámara o corregida),
+ * deducido (sin lectura, hora estimada entre sus vecinos) o el próximo esperado.
+ */
+export type RouteStep = {
+  label: string
+  kind: 'hecho' | 'deducido' | 'proximo'
+  /** HH:MM del paso; en uno deducido, estimada. */
+  time?: string | null
+  /** Planta del paso: R (Ricardone) o SL (San Lorenzo). */
+  site: 'R' | 'SL'
+  /** Primera lectura del paso: con ella se busca la foto en el DSS. */
+  photo?: { device: string; at: string } | null
+}
+
+/** Rótulo del camión seguido: patente y, debajo, los pasos que hizo y el próximo (en negro). Clic en un paso leído: su foto. */
+function FollowedLabel({ plate, route, onOpenPhoto }: { plate: string; route: RouteStep[]; onOpenPhoto?: (step: RouteStep) => void }) {
+  return (
+    <span className="tf-map-truck__plate tf-map-route">
+      <span className="tf-map-route__head">{plate}</span>
+      {route.length ? (
+        <span className="tf-map-route__steps">
+          {route.map((s, i) => (
+            <span
+              key={`${s.label}-${i}`}
+              className={`tf-map-route__step is-${s.kind}${s.photo && onOpenPhoto ? ' has-photo' : ''}`}
+              {...(s.photo && onOpenPhoto ? {
+                role: 'button',
+                tabIndex: 0,
+                title: 'Ver la foto',
+                onClick: (e: React.MouseEvent) => { e.stopPropagation(); onOpenPhoto(s) },
+                onKeyDown: (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); onOpenPhoto(s) } },
+              } : {})}
+            >
+              <b>{s.label}</b>
+              <em>{s.site}</em>
+              <i>{s.kind === 'deducido' ? `≈ ${s.time ?? ''}` : s.kind === 'proximo' ? 'próximo' : s.time ?? ''}</i>
+            </span>
+          ))}
+        </span>
+      ) : null}
+    </span>
+  )
+}
+
+/**
  * Lugares para camiones dentro de una playa: grilla recortada al polígono, de arriba a la izquierda
  * hacia abajo (como en el simulador). Se mide en píxeles de la imagen base para que sea pareja.
  */
@@ -219,6 +264,10 @@ export function PlantMap(props: {
   /** Puntos del recorrido que son pasos deducidos (sin lectura): se dibujan punteados. */
   followDeduced?: string[]
   followNext?: string | null
+  /** Pasos hechos y próximo paso del camión seguido: se muestran sobre el camión. */
+  followRoute?: RouteStep[]
+  /** Clic en un paso leído del rótulo: abrir su foto. */
+  onOpenStepPhoto?: (step: RouteStep) => void
   /** Oculta los rótulos grandes de ocupación (el monitoreo los muestra en el panel). */
   quietZones?: boolean
   /** Dibuja la red de caminos (tramos) por donde circulan los camiones. */
@@ -226,7 +275,7 @@ export function PlantMap(props: {
   /** Si está, el clic en un punto lo entrega entero (en vez de abrir directo sus cámaras). */
   onSelectPoint?: (point: PlantPoint) => void
 }): JSX.Element {
-  const { layout, site = 'ricardone', compact = false, showCircuitControls = true, align = 'center', flowPulse = { ingress: 0, egress: 0 }, zones, onOpenCameras, onSelectSector, onSelectZone, selectedSector, fill = false, trucks = [], followedPlate = null, onSelectTruck, followPath = [], followDeduced = [], followNext = null, quietZones = false, showRoads = false, onSelectPoint } = props
+  const { layout, site = 'ricardone', compact = false, showCircuitControls = true, align = 'center', flowPulse = { ingress: 0, egress: 0 }, zones, onOpenCameras, onSelectSector, onSelectZone, selectedSector, fill = false, trucks = [], followedPlate = null, onSelectTruck, followPath = [], followDeduced = [], followNext = null, followRoute = [], onOpenStepPhoto, quietZones = false, showRoads = false, onSelectPoint } = props
   const [hovered, setHovered] = useState<string | null>(null)
   const [hoveredZone, setHoveredZone] = useState<string | null>(null)
   const [circuit, setCircuit] = useState<string | null>(null)
@@ -645,16 +694,6 @@ export function PlantMap(props: {
                     {order + 1}
                   </span>
                 ) : null}
-                {/* cola esperando */}
-                {state.queue != null && state.queue > 0 ? (
-                  <span
-                    className="absolute -right-2 -top-1.5 rounded-full px-1 text-[8.5px] font-bold leading-[13px] tabular-nums text-white"
-                    style={{ background: status.ring, minWidth: 13 }}
-                    aria-hidden
-                  >
-                    {state.queue}
-                  </span>
-                ) : null}
               </button>
 
               {/* etiqueta flotante: solo al pasar el cursor */}
@@ -690,13 +729,6 @@ export function PlantMap(props: {
           )
         }) : null}
 
-        {/* Puntos por los que pasó el camión seguido, numerados en orden; el próximo con aro verde. */}
-        {followKnown.filter((id, i) => followKnown[i - 1] !== id).map((id, i) => {
-          const p = byId.get(id)!
-          return <span key={`fstep-${id}-${i}`} className={`tf-map-step${deducedSet.has(id) ? ' tf-map-step--deduced' : ''}`} title={deducedSet.has(id) ? 'Paso deducido: sin lectura de cámara' : undefined} style={{ left: `${p.xPercent}%`, top: `${p.yPercent}%` }} aria-hidden>{i + 1}</span>
-        })}
-        {followNext && byId.get(followNext) ? <span className="tf-map-step tf-map-step--next" style={{ left: `${byId.get(followNext)!.xPercent}%`, top: `${byId.get(followNext)!.yPercent}%` }} aria-hidden>→</span> : null}
-
         {/* Capa de flujo: cada camión en su punto actual. */}
         {[...trucksByPoint.entries()].map(([pointId, list]) => {
           const p = byId.get(pointId)!
@@ -727,7 +759,7 @@ export function PlantMap(props: {
                 title={`${t.plate}${t.label ? ` · ${t.label}` : ''}`}
               >
                 {isoView ? <IsoTruck color={TRUCK_COLOR[t.status]} /> : null}
-              {followed ? <span className="tf-map-truck__plate">{t.plate}</span> : null}
+              {followed ? <FollowedLabel plate={t.plate} route={followRoute} onOpenPhoto={onOpenStepPhoto} /> : null}
               </button>
             )
           })
@@ -748,7 +780,7 @@ export function PlantMap(props: {
               title={`${t.plate}${t.inferred ? ' · paso por Preingreso inferido' : ''}${t.label ? ` · ${t.label}` : ''}`}
             >
               {isoView ? <IsoTruck color={TRUCK_COLOR[t.status]} /> : null}
-              {followed ? <span className="tf-map-truck__plate">{t.plate}</span> : null}
+              {followed ? <FollowedLabel plate={t.plate} route={followRoute} onOpenPhoto={onOpenStepPhoto} /> : null}
             </button>
           )
         })}
@@ -769,7 +801,7 @@ export function PlantMap(props: {
               title={`${t.plate} · hacia ${byId.get(t.transit!.toPointId)?.label ?? t.transit!.toPointId}${t.transit?.guessed ? ' (estimado)' : ''}${t.label ? ` · ${t.label}` : ''}`}
             >
               {isoView ? <IsoTruck color={TRUCK_COLOR[t.status]} /> : null}
-              {followed ? <span className="tf-map-truck__plate">{t.plate}</span> : null}
+              {followed ? <FollowedLabel plate={t.plate} route={followRoute} onOpenPhoto={onOpenStepPhoto} /> : null}
             </button>
           )
         })}

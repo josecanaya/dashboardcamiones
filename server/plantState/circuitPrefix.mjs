@@ -232,7 +232,7 @@ function isPrefix(prefix, seq) {
 /**
  * Match por prefijo. provisional: true siempre.
  * @param {string[]} observedLogical
- * @returns {{ circuit: string|null, circuitLabel: string|null, nextExpectedPoint: string|null, nextExpectedLabel: string|null, matchedSequence: string[]|null, provisional: true, source: string }}
+ * @returns {{ circuit: string|null, circuitLabel: string|null, nextExpectedPoint: string|null, nextExpectedLabel: string|null, matchedSequence: string[]|null, remainingSequence: string[], provisional: true, source: string }}
  */
 export function matchCircuitByPrefix(observedLogical) {
   const catalog = ensureCatalog()
@@ -244,6 +244,7 @@ export function matchCircuitByPrefix(observedLogical) {
       nextExpectedPoint: null,
       nextExpectedLabel: null,
       matchedSequence: null,
+      remainingSequence: [],
       provisional: true,
       source: _loadSource,
     }
@@ -266,6 +267,7 @@ export function matchCircuitByPrefix(observedLogical) {
       nextExpectedPoint: null,
       nextExpectedLabel: null,
       matchedSequence: null,
+      remainingSequence: [],
       provisional: true,
       source: _loadSource,
     }
@@ -290,6 +292,8 @@ export function matchCircuitByPrefix(observedLogical) {
     nextExpectedPoint: best.next,
     nextExpectedLabel: best.next ? logicalLabel(best.next) : null,
     matchedSequence: best.seq,
+    /** Puntos del circuito que el camión todavía no pasó (el primero es el próximo esperado). */
+    remainingSequence: best.seq.slice(observed.length),
     provisional: true,
     source: _loadSource,
   }

@@ -162,9 +162,6 @@
 .pv-footer .pv-no { border-color: #e3b4b0; color: #9a2a22; background: #fff; }
 
 /* Pasos del camión seguido sobre el plano */
-.tf-map-step { position: absolute; z-index: 32; width: 20px; height: 20px; margin: -32px 0 0 4px; display: grid; place-items: center; border-radius: 50%; background: #7c3aed; color: #fff; font: 800 11px system-ui, sans-serif; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,.35); pointer-events: none; }
-.tf-map-step--next { background: #f0fdf4; color: #15803d; border: 2px dashed #86efac; }
-.tf-map-step--deduced { background: #fff; color: #7c3aed; border: 2px dashed #7c3aed; }
 
 .lm-discard__open { width: 100%; margin: 0 0 10px; padding: 7px; border-radius: 8px; border: 1px solid #e3b4b0; color: #9a2a22; background: #fff; font-size: 12px; font-weight: 700; }
 .lm-discard { margin: 0 0 12px; padding: 10px; border-radius: 10px; background: #fdecec; display: grid; gap: 4px; font-size: 13px; }
@@ -215,7 +212,7 @@
 .lm-exp .lm-exp__actions { display: flex; gap: 4px; }
 .lm-exp .lm-exp__plate { width: auto; display: inline; padding: 0; background: none; border: 0; text-align: left; font: 800 15px ui-monospace, monospace; color: inherit; cursor: pointer; text-decoration: underline dotted; }
 /* Los diálogos van a body: fuera de .lm, repiten sus colores. */
-.lm-trip-dialog, .lm-cpe-dialog { --lm-ink: #10231a; --lm-muted: #5d6f65; --lm-line: #dbe5df; --lm-panel: #ffffff; --lm-bg: #f3f6f4; --lm-brand: #0f4a33; --lm-brand-soft: #e6f1eb; --lm-ok: #16a34a; --lm-warn: #f59e0b; --lm-bad: #dc2626; --lm-follow: #7c3aed; }
+.lm-trip-dialog, .lm-cpe-dialog, .lm-step-photo { --lm-ink: #10231a; --lm-muted: #5d6f65; --lm-line: #dbe5df; --lm-panel: #ffffff; --lm-bg: #f3f6f4; --lm-brand: #0f4a33; --lm-brand-soft: #e6f1eb; --lm-ok: #16a34a; --lm-warn: #f59e0b; --lm-bad: #dc2626; --lm-follow: #7c3aed; }
 .lm-trip-dialog { width: min(720px, calc(100vw - 32px)); }
 .lm-trip { padding: 16px 24px 24px; display: grid; gap: 10px; }
 .lm-trip__actions { display: flex; gap: 8px; margin: 0; }
@@ -240,3 +237,59 @@
 .tf-map-truck.tf-map-truck--iso.is-guessed { opacity: .65; }
 .tf-map-truck.tf-map-truck--iso.is-followed { width: var(--w); height: calc(var(--w) * 20 / 22); margin: calc(var(--w) * -10 / 22) 0 0 calc(var(--w) / -2); border: 0; transform: scale(1.8); animation: none; box-shadow: none; filter: drop-shadow(0 0 2px #7c3aed) drop-shadow(0 0 5px rgba(124,58,237,.6)); }
 .tf-map-truck.tf-map-truck--iso.is-followed .tf-map-truck__plate { bottom: 110%; transform: translateX(-50%) scale(.56); }
+
+/* Rótulo del camión seguido: patente, pasos hechos (verde; deducido naranja ≈) y el próximo en negro. */
+.tf-map-truck__plate.tf-map-route { display: flex; flex-direction: column; gap: 5px; padding: 6px; width: max-content; max-width: 560px; white-space: normal; background: #1f2421; border: 2px solid #7c3aed; border-radius: 10px; text-align: left; }
+.tf-map-route__head { padding: 0 2px; font: 800 14px ui-monospace, monospace; color: #fff; }
+.tf-map-route__steps { display: flex; flex-wrap: wrap; gap: 4px; }
+.tf-map-route__step { position: relative; display: flex; flex-direction: column; justify-content: space-between; min-width: 74px; max-width: 104px; min-height: 42px; padding: 4px 18px 4px 6px; border-radius: 5px; font: 700 11px/1.15 system-ui, sans-serif; color: #fff; }
+.tf-map-route__step b { font-weight: 700; }
+.tf-map-route__step em { position: absolute; top: 3px; right: 4px; font: 700 9px system-ui, sans-serif; font-style: normal; opacity: .85; }
+.tf-map-route__step i { margin-top: 3px; font: 600 11px ui-monospace, monospace; font-style: normal; }
+.tf-map-route__step.is-hecho { background: #2e9e4f; }
+.tf-map-route__step.is-deducido { background: #ee8a2b; }
+.tf-map-route__step.is-proximo { background: #0b0b0b; border: 1px solid #6b7280; }
+.tf-map-route__step.has-photo { cursor: pointer; }
+.tf-map-route__step.has-photo:hover, .tf-map-route__step.has-photo:focus-visible { outline: 2px solid #fff; outline-offset: 1px; }
+.lm-step-photo { width: min(860px, calc(100vw - 32px)); }
+.lm-step-photo .lm-shot { margin: 0 16px 16px; }
+
+/* Margen izquierdo: las últimas 4 capturas de cámara con su camión. */
+.lm-body { grid-template-columns: clamp(180px, 15vw, 230px) minmax(0, 1fr) clamp(280px, 30vw, 380px); }
+.lm-rail { min-height: 0; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; scrollbar-width: thin; }
+.lm-rail ol { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; min-height: 0; }
+.lm-rail li button { display: grid; width: 100%; gap: 1px; padding: 0 0 4px; border: 1px solid var(--lm-line); border-radius: 10px; overflow: hidden; background: var(--lm-panel); text-align: left; cursor: pointer; }
+.lm-rail li button:disabled { cursor: default; }
+.lm-rail li button:not(:disabled):hover { border-color: #7c3aed; }
+.lm-rail li.is-new button { animation: lm-rail-in .6s ease-out; border-color: #16a34a; }
+@keyframes lm-rail-in { from { transform: translateY(-12px); opacity: 0 } to { transform: none; opacity: 1 } }
+.lm-rail li img { display: block; width: 100%; aspect-ratio: 2 / 1; object-fit: cover; background: #0c1913; }
+.lm-rail__wait { display: grid; place-items: center; aspect-ratio: 2 / 1; background: #0c1913; color: #9fb7aa; font-size: 11px; text-align: center; padding: 4px; }
+.lm-rail__clock { padding: 0 6px; font: 600 11px ui-monospace, monospace; color: var(--lm-muted); }
+.lm-rail__node { padding: 0 6px; font-size: 11.5px; font-weight: 700; color: var(--lm-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lm-rail__truck { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 6px; margin: 0 5px; padding: 2px 6px; border-radius: 6px; font-size: 10.5px; }
+.lm-rail__truck b { font: 800 13px ui-monospace, monospace; }
+.lm-rail__truck small { color: inherit; opacity: .75; }
+.lm-rail__truck em { margin-left: auto; font-style: normal; font-weight: 700; }
+.lm-rail__truck.is-ok { background: #dcfce7; color: #166534; }
+.lm-rail__truck.is-warn { background: #fef3c7; color: #92400e; }
+.lm-rail__truck.is-bad { background: #ffe4e6; color: #9f1239; }
+.lm-rail__truck.is-off { background: #f1f5f9; color: #475569; }
+@media (max-width: 1100px) { .lm-body { grid-template-columns: minmax(0, 1fr) clamp(280px, 30vw, 380px); } .lm-rail { display: none; } }
+@media (max-width: 860px) { .lm-body { grid-template-columns: 1fr; } }
+.lm-rail__tabs { display: flex; gap: 4px; flex-shrink: 0; }
+.lm-rail__tabs button { flex: 1; padding: 4px 6px; border: 1px solid var(--lm-line); border-radius: 8px; background: var(--lm-panel); color: var(--lm-muted); font-size: 11.5px; font-weight: 700; }
+.lm-rail__tabs button[aria-pressed="true"] { background: #0f4a33; border-color: #0f4a33; color: #fff; }
+/* Capas del algoritmo (24 h): cuántas decidió cada una y hace cuánto la última. Clic: filtra las capturas. */
+.lm-rail__layers { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; flex-shrink: 0; }
+.lm-rail__layers button { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 0 4px; padding: 3px 5px 3px 7px; border: 1px solid var(--lm-line); border-left-width: 4px; border-radius: 6px; background: var(--lm-panel); text-align: left; line-height: 1.15; }
+.lm-rail__layers button span { font-size: 10.5px; font-weight: 700; color: var(--lm-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lm-rail__layers button b { font: 800 12px ui-monospace, monospace; color: var(--lm-ink); }
+.lm-rail__layers button small { grid-column: 1 / -1; font-size: 9.5px; color: var(--lm-muted); }
+.lm-rail__layers button.is-ok { border-left-color: #16a34a; }
+.lm-rail__layers button.is-idle { border-left-color: #f59e0b; }
+.lm-rail__layers button.is-off { border-left-color: #94a3b8; opacity: .75; }
+.lm-rail__layers button.is-neutral { border-left-color: #cbd5e1; }
+.lm-rail__layers button[aria-pressed="true"] { background: #0f4a33; border-color: #0f4a33; }
+.lm-rail__layers button[aria-pressed="true"] span, .lm-rail__layers button[aria-pressed="true"] b, .lm-rail__layers button[aria-pressed="true"] small { color: #fff; }
+.lm-rail__node i { font-style: normal; font-weight: 500; color: var(--lm-muted); }

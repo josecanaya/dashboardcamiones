@@ -1,0 +1,90 @@
+{
+ "criterio": "RICARDONE · INGRESO · aceite de la planilla (día operativo del ingreso); cámaras: primera RicCalLiq y última RicB2Egreso entre 3 h antes del ingreso y 1 h después de la salida",
+ "periodo": {
+  "desde": "2026-10-05",
+  "hasta": "2026-10-11",
+  "dias": [
+   "2026-10-05",
+   "2026-10-06",
+   "2026-10-07",
+   "2026-10-08",
+   "2026-10-09",
+   "2026-10-10",
+   "2026-10-11"
+  ]
+ },
+ "productos": {},
+ "total": {
+  "camiones": 0,
+  "toneladas": 0,
+  "adentroMediana": null,
+  "ingresoACaladaMediana": null,
+  "caladaAEgresoMediana": null,
+  "conCamaras": 0
+ },
+ "porDia": {
+  "2026-10-05": {
+   "camiones": 0,
+   "toneladas": 0,
+   "adentroMediana": null,
+   "ingresoACaladaMediana": null,
+   "caladaAEgresoMediana": null,
+   "conCamaras": 0
+  },
+  "2026-10-06": {
+   "camiones": 0,
+   "toneladas": 0,
+   "adentroMediana": null,
+   "ingresoACaladaMediana": null,
+   "caladaAEgresoMediana": null,
+   "conCamaras": 0
+  },
+  "2026-10-07": {
+   "camiones": 0,
+   "toneladas": 0,
+   "adentroMediana": null,
+   "ingresoACaladaMediana": null,
+   "caladaAEgresoMediana": null,
+   "conCamaras": 0
+  },
+  "2026-10-08": {
+   "camiones": 0,
+   "toneladas": 0,
+   "adentroMediana": null,
+   "ingresoACaladaMediana": null,
+   "caladaAEgresoMediana": null,
+   "conCamaras": 0
+  },
+  "2026-10-09": {
+   "camiones": 0,
+   "toneladas": 0,
+   "adentroMediana": null,
+   "ingresoACaladaMediana": null,
+   "caladaAEgresoMediana": null,
+   "conCamaras": 0
+  },
+  "2026-10-10": {
+   "camiones": 0,
+   "toneladas": 0,
+   "adentroMediana": null,
+   "ingresoACaladaMediana": null,
+   "caladaAEgresoMediana": null,
+   "conCamaras": 0
+  },
+  "2026-10-11": {
+   "camiones": 0,
+   "toneladas": 0,
+   "adentroMediana": null,
+   "ingresoACaladaMediana": null,
+   "caladaAEgresoMediana": null,
+   "conCamaras": 0
+  }
+ },
+ "maxSimultaneos": {
+  "n": 0,
+  "at": null
+ },
+ "minEntreSalidasMediana": null,
+ "fuentes": {},
+ "camiones": []
+}

@@ -1,0 +1,30 @@
+{
+  "v": 4,
+  "createdOnFiles": { "v": 1, "at": "2026-10-26T15:00:00Z" },
+  "lists": "css",
+  "title": "Reconocimiento de cámaras · 21 al 26 de octubre",
+  "cover": "portada",
+  "order": [
+    "portada",
+    "conclusiones-ric",
+    "sectores-ric",
+    "dia-por-dia",
+    "conclusiones-sl",
+    "sectores-sl",
+    "dia-por-dia-sl",
+    "reconstruccion"
+  ],
+  "sections": {
+    "s1": { "description": "Portada", "start": "portada" },
+    "s2": { "description": "Ricardone: conclusiones, sectores de día y de noche, y día a día", "start": "conclusiones-ric" },
+    "s3": { "description": "Puerto San Lorenzo: conclusiones, sectores de día y de noche, y día a día", "start": "conclusiones-sl" },
+    "s4": { "description": "Ejemplo: por qué importa que la cámara capture el camión", "start": "reconstruccion" }
+  },
+  "faces": {
+    "ibm-plex-sans": {
+      "family": "IBM Plex Sans",
+      "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap"
+    }
+  },
+  "designSystems": []
+}

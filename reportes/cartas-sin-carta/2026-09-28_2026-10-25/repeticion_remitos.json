@@ -1,0 +1,539 @@
+{
+ "tot": {
+  "viajes": 800,
+  "patentes": 211,
+  "patentes5mas": 51,
+  "viajesDe5mas": 555,
+  "unaVez": 105,
+  "multiProducto": [
+   "NWZ336:carga BORRA DE ACSOJA REFINADO/carga BORRA ACEITE GIRASOL REFINADO",
+   "EAO104:carga ACEITE GIRASOL REFINADO/carga ACEITE SOJA CRUDO DESGOMADO",
+   "KAD727:carga GLICERINA REFINADA/carga GLICERINA SUBSTANDARD",
+   "LAU467:carga BORRA DE ACSOJA REFINADO/carga BORRA ACEITE GIRASOL REFINADO",
+   "IRK465:carga GLICERINA REFINADA/carga GLICERINA SUBSTANDARD",
+   "GFP699:carga GLICERINA REFINADA/carga GLICERINA SUBSTANDARD",
+   "ATO068:carga GLICERINA SUBSTANDARD/carga GLICERINA REFINADA",
+   "GQL244:carga GLICERINA SUBSTANDARD/carga GLICERINA REFINADA",
+   "SAZ976:carga GLICERINA SUBSTANDARD/carga GLICERINA REFINADA",
+   "PAR121:carga BORRA ACEITE GIRASOL REFINADO/carga BORRA DE ACSOJA REFINADO",
+   "AC275KB:carga BORRA ACEITE GIRASOL REFINADO/carga BORRA DE ACSOJA REFINADO",
+   "GMM265:carga GLICERINA SUBSTANDARD/carga GLICERINA REFINADA",
+   "AC925UP:carga BORRA DE ACSOJA REFINADO/carga BORRA ACEITE GIRASOL REFINADO"
+  ]
+ },
+ "res": [
+  {
+   "tipo": "carga",
+   "prod": "ACEITE GIRASOL REFINADO",
+   "viajes": 306,
+   "patentes": 34,
+   "viajesDeRepetidas": 304,
+   "patentesRepetidas": 32,
+   "top": [
+    "AA875OG 20",
+    "WGG348 19",
+    "GZI868 18",
+    "OFG785 17",
+    "AGR963 16"
+   ],
+   "excel": 245,
+   "rawOk": 245,
+   "conRemitoRenova": 245,
+   "conCpRemito": 0,
+   "conComprob": 245,
+   "ejRemRenova": [
+    "000500066513",
+    "000500066514",
+    "000500066517"
+   ],
+   "ejCp": []
+  },
+  {
+   "tipo": "carga",
+   "prod": "ACEITE SOJA CRUDO DESGOMADO",
+   "viajes": 102,
+   "patentes": 38,
+   "viajesDeRepetidas": 87,
+   "patentesRepetidas": 23,
+   "top": [
+    "DBC119 7",
+    "SQL603 7",
+    "ROO085 7",
+    "AFR797 7",
+    "SMA331 6"
+   ],
+   "excel": 81,
+   "rawOk": 81,
+   "conRemitoRenova": 0,
+   "conCpRemito": 0,
+   "conComprob": 81,
+   "ejRemRenova": [],
+   "ejCp": []
+  },
+  {
+   "tipo": "carga",
+   "prod": "GLICERINA REFINADA",
+   "viajes": 90,
+   "patentes": 45,
+   "viajesDeRepetidas": 64,
+   "patentesRepetidas": 19,
+   "top": [
+    "EFA323 6",
+    "GXT382 6",
+    "JBN715 5",
+    "KAD727 5",
+    "GYW157 5"
+   ],
+   "excel": 76,
+   "rawOk": 76,
+   "conRemitoRenova": 76,
+   "conCpRemito": 0,
+   "conComprob": 76,
+   "ejRemRenova": [
+    "000500066515",
+    "000500066519",
+    "000500066522"
+   ],
+   "ejCp": []
+  },
+  {
+   "tipo": "carga",
+   "prod": "BORRA DE ACSOJA REFINADO",
+   "viajes": 43,
+   "patentes": 11,
+   "viajesDeRepetidas": 40,
+   "patentesRepetidas": 8,
+   "top": [
+    "PAR121 10",
+    "LAU467 9",
+    "NWZ336 6",
+    "KGX035 4",
+    "OIG256 4"
+   ],
+   "excel": 27,
+   "rawOk": 27,
+   "conRemitoRenova": 27,
+   "conCpRemito": 0,
+   "conComprob": 27,
+   "ejRemRenova": [
+    "000500066512",
+    "000500066539",
+    "000500066553"
+   ],
+   "ejCp": []
+  },
+  {
+   "tipo": "carga",
+   "prod": "GLICERINA",
+   "viajes": 34,
+   "patentes": 4,
+   "viajesDeRepetidas": 34,
+   "patentesRepetidas": 4,
+   "top": [
+    "RUK692 19",
+    "VCK738 9",
+    "CTW713 4",
+    "RVG299 2"
+   ],
+   "excel": 21,
+   "rawOk": 21,
+   "conRemitoRenova": 21,
+   "conCpRemito": 0,
+   "conComprob": 21,
+   "ejRemRenova": [
+    "000500066725",
+    "000500066727",
+    "000500066729"
+   ],
+   "ejCp": []
+  },
+  {
+   "tipo": "carga",
+   "prod": "BORRA ACEITE GIRASOL REFINADO",
+   "viajes": 32,
+   "patentes": 6,
+   "viajesDeRepetidas": 31,
+   "patentesRepetidas": 5,
+   "top": [
+    "NWZ336 18",
+    "PAR121 5",
+    "AC275KB 4",
+    "OLL626 2",
+    "LAU467 2"
+   ],
+   "excel": 23,
+   "rawOk": 23,
+   "conRemitoRenova": 23,
+   "conCpRemito": 0,
+   "conComprob": 23,
+   "ejRemRenova": [
+    "000500066516",
+    "000500066544",
+    "000500066561"
+   ],
+   "ejCp": []
+  },
+  {
+   "tipo": "carga",
+   "prod": "BORRA ACEITE GIRASOL",
+   "viajes": 13,
+   "patentes": 5,
+   "viajesDeRepetidas": 10,
+   "patentesRepetidas": 2,
+   "top": [
+    "AF411UI 6",
+    "LZP122 4",
+    "AF804QL 1",
+    "AF670GC 1",
+    "LZV303 1"
+   ],
+   "excel": 13,
+   "rawOk": 13,
+   "conRemitoRenova": 0,
+   "conCpRemito": 0,
+   "conComprob": 13,
+   "ejRemRenova": [],
+   "ejCp": []
+  },
+  {
+   "tipo": "carga",
+   "prod": "CASCARA DE SOJA PELLETEADA",
+   "viajes": 8,
+   "patentes": 7,
+   "viajesDeRepetidas": 2,
+   "patentesRepetidas": 1,
+   "top": [
+    "AC988RL 2",
+    "EKO144 1",
+    "LWV631 1",
+    "LYQ549 1",
+    "AD714BI 1"
+   ],
+   "excel": 8,
+   "rawOk": 8,
+   "conRemitoRenova": 0,
+   "conCpRemito": 0,
+   "conComprob": 8,
+   "ejRemRenova": [],
+   "ejCp": []
+  },
+  {
+   "tipo": "carga",
+   "prod": "GLICERINA SUBSTANDARD",
+   "viajes": 8,
+   "patentes": 8,
+   "viajesDeRepetidas": 0,
+   "patentesRepetidas": 0,
+   "top": [
+    "ATO068 1",
+    "GQL244 1",
+    "SLD748 1",
+    "SAZ976 1",
+    "GMM265 1"
+   ],
+   "excel": 8,
+   "rawOk": 8,
+   "conRemitoRenova": 8,
+   "conCpRemito": 0,
+   "conComprob": 8,
+   "ejRemRenova": [
+    "000500066648",
+    "000500066653",
+    "000500066661"
+   ],
+   "ejCp": []
+  },
+  {
+   "tipo": "carga",
+   "prod": "CASCARA DE GIRASOL",
+   "viajes": 4,
+   "patentes": 3,
+   "viajesDeRepetidas": 2,
+   "patentesRepetidas": 1,
+   "top": [
+    "HDH668 2",
+    "ENL539 1",
+    "GXI774 1"
+   ],
+   "excel": 4,
+   "rawOk": 4,
+   "conRemitoRenova": 0,
+   "conCpRemito": 0,
+   "conComprob": 4,
+   "ejRemRenova": [],
+   "ejCp": []
+  },
+  {
+   "tipo": "carga",
+   "prod": "ACIDOS GRASOS GIRASOL",
+   "viajes": 1,
+   "patentes": 1,
+   "viajesDeRepetidas": 0,
+   "patentesRepetidas": 0,
+   "top": [
+    "IUE642 1"
+   ],
+   "excel": 1,
+   "rawOk": 1,
+   "conRemitoRenova": 1,
+   "conCpRemito": 0,
+   "conComprob": 1,
+   "ejRemRenova": [
+    "000500066764"
+   ],
+   "ejCp": []
+  },
+  {
+   "tipo": "descarga",
+   "prod": "GLICERINA",
+   "viajes": 81,
+   "patentes": 6,
+   "viajesDeRepetidas": 80,
+   "patentesRepetidas": 5,
+   "top": [
+    "RUK692 39",
+    "VCK738 26",
+    "RVG299 8",
+    "TDQ017 4",
+    "CTW713 3"
+   ],
+   "excel": 72,
+   "rawOk": 72,
+   "conRemitoRenova": 0,
+   "conCpRemito": 72,
+   "conComprob": 72,
+   "ejRemRenova": [],
+   "ejCp": [
+    "0001100019239",
+    "0001100019241",
+    "0001100019255"
+   ]
+  },
+  {
+   "tipo": "descarga",
+   "prod": "METANOL",
+   "viajes": 41,
+   "patentes": 39,
+   "viajesDeRepetidas": 4,
+   "patentesRepetidas": 2,
+   "top": [
+    "AF260KA 2",
+    "AF211NL 2",
+    "AB366HF 1",
+    "AH385DJ 1",
+    "AH669QS 1"
+   ],
+   "excel": 34,
+   "rawOk": 34,
+   "conRemitoRenova": 0,
+   "conCpRemito": 34,
+   "conComprob": 34,
+   "ejRemRenova": [],
+   "ejCp": [
+    "110400136318",
+    "110400136288",
+    "110400136419"
+   ]
+  },
+  {
+   "tipo": "descarga",
+   "prod": "METILATO DE SODIO",
+   "viajes": 12,
+   "patentes": 4,
+   "viajesDeRepetidas": 12,
+   "patentesRepetidas": 4,
+   "top": [
+    "MTT517 4",
+    "PMV179 3",
+    "NRV526 3",
+    "PEY638 2"
+   ],
+   "excel": 9,
+   "rawOk": 9,
+   "conRemitoRenova": 0,
+   "conCpRemito": 9,
+   "conComprob": 9,
+   "ejRemRenova": [],
+   "ejCp": [
+    "002200013019",
+    "002200013046",
+    "002200013056"
+   ]
+  },
+  {
+   "tipo": "descarga",
+   "prod": "ACIDO CLORHIDRICO",
+   "viajes": 8,
+   "patentes": 4,
+   "viajesDeRepetidas": 6,
+   "patentesRepetidas": 2,
+   "top": [
+    "AH260UA 4",
+    "AH499BP 2",
+    "AB060AO 1",
+    "AA457JS 1"
+   ],
+   "excel": 5,
+   "rawOk": 5,
+   "conRemitoRenova": 0,
+   "conCpRemito": 5,
+   "conComprob": 5,
+   "ejRemRenova": [],
+   "ejCp": [
+    "001700130737",
+    "001700130837",
+    "001700130998"
+   ]
+  },
+  {
+   "tipo": "descarga",
+   "prod": "SODA CAUSTICA LIQUIDA",
+   "viajes": 4,
+   "patentes": 3,
+   "viajesDeRepetidas": 2,
+   "patentesRepetidas": 1,
+   "top": [
+    "AD956ZF 2",
+    "AD156FB 1",
+    "AE656GN 1"
+   ],
+   "excel": 3,
+   "rawOk": 3,
+   "conRemitoRenova": 0,
+   "conCpRemito": 3,
+   "conComprob": 3,
+   "ejRemRenova": [],
+   "ejCp": [
+    "002000042525",
+    "002000042558",
+    "002000042709"
+   ]
+  },
+  {
+   "tipo": "descarga",
+   "prod": "NITROGENO LIQUIDO",
+   "viajes": 4,
+   "patentes": 4,
+   "viajesDeRepetidas": 0,
+   "patentesRepetidas": 0,
+   "top": [
+    "AG756MR 1",
+    "AG897AF 1",
+    "AE008FZ 1",
+    "AB938UJ 1"
+   ],
+   "excel": 3,
+   "rawOk": 3,
+   "conRemitoRenova": 0,
+   "conCpRemito": 3,
+   "conComprob": 3,
+   "ejRemRenova": [],
+   "ejCp": [
+    "035100073802",
+    "035800151828",
+    "035800152255"
+   ]
+  },
+  {
+   "tipo": "descarga",
+   "prod": "SOLVENTE HEXANO",
+   "viajes": 4,
+   "patentes": 3,
+   "viajesDeRepetidas": 2,
+   "patentesRepetidas": 1,
+   "top": [
+    "AG332BP 2",
+    "AH214JU 1",
+    "AB472CS 1"
+   ],
+   "excel": 0,
+   "rawOk": 0,
+   "conRemitoRenova": 0,
+   "conCpRemito": 0,
+   "conComprob": 0,
+   "ejRemRenova": [],
+   "ejCp": []
+  },
+  {
+   "tipo": "descarga",
+   "prod": "HIPOCLORITO DE SODIO",
+   "viajes": 2,
+   "patentes": 1,
+   "viajesDeRepetidas": 2,
+   "patentesRepetidas": 1,
+   "top": [
+    "AF615IJ 2"
+   ],
+   "excel": 2,
+   "rawOk": 2,
+   "conRemitoRenova": 0,
+   "conCpRemito": 2,
+   "conComprob": 2,
+   "ejRemRenova": [],
+   "ejCp": [
+    "000100151177",
+    "000100151451"
+   ]
+  },
+  {
+   "tipo": "descarga",
+   "prod": "ACIDO FOSFORICO",
+   "viajes": 1,
+   "patentes": 1,
+   "viajesDeRepetidas": 0,
+   "patentesRepetidas": 0,
+   "top": [
+    "OLL595 1"
+   ],
+   "excel": 1,
+   "rawOk": 1,
+   "conRemitoRenova": 0,
+   "conCpRemito": 1,
+   "conComprob": 1,
+   "ejRemRenova": [],
+   "ejCp": [
+    "000100047862"
+   ]
+  },
+  {
+   "tipo": "descarga",
+   "prod": "ACEITE GIRASOL REFINADO",
+   "viajes": 1,
+   "patentes": 1,
+   "viajesDeRepetidas": 0,
+   "patentesRepetidas": 0,
+   "top": [
+    "MRM512 1"
+   ],
+   "excel": 1,
+   "rawOk": 1,
+   "conRemitoRenova": 0,
+   "conCpRemito": 1,
+   "conComprob": 1,
+   "ejRemRenova": [],
+   "ejCp": [
+    "0000400423005"
+   ]
+  },
+  {
+   "tipo": "descarga",
+   "prod": "ACIDO CITRICO ANHIDRO",
+   "viajes": 1,
+   "patentes": 1,
+   "viajesDeRepetidas": 0,
+   "patentesRepetidas": 0,
+   "top": [
+    "PBI245 1"
+   ],
+   "excel": 1,
+   "rawOk": 1,
+   "conRemitoRenova": 0,
+   "conCpRemito": 1,
+   "conComprob": 1,
+   "ejRemRenova": [],
+   "ejCp": [
+    "000400085393"
+   ]
+  }
+ ]
+}

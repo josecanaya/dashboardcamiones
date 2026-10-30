@@ -1,0 +1,223 @@
+{
+  "summary": {
+    "medidos": 20,
+    "correctos": "20/20",
+    "erroresAutomaticos": [
+      {
+        "umbral": 0.7,
+        "errores": 0
+      },
+      {
+        "umbral": 0.8,
+        "errores": 0
+      },
+      {
+        "umbral": 0.9,
+        "errores": 0
+      }
+    ],
+    "costoUsd": 3.7153089999999995
+  },
+  "results": [
+    {
+      "a": "AB349QJ",
+      "b": "AG169JJ",
+      "sim": 0.9152253761578846,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.95,
+      "reason": "La captura es una Fiat Toro roja con caja descubierta, barra antivuelco negra y logo FIAT, patente AB 349 QJ; el candidato A es una Ford Ranger blanca con calcos azules y logo RAICOS, patente AG 169 JJ. Son vehículos de marca, modelo, color y gráfica totalmente distintos.",
+      "costUsd": 0.180253
+    },
+    {
+      "a": "FKZ258",
+      "b": "FEA810",
+      "sim": 0.9126972160738286,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.85,
+      "reason": "Ambos son Ford Cargo 1722 blancos, pero los calcos difieren (moño/guarda floral azul en la captura vs. dos calcos de olas azules en A), el candidato A tiene franja negra en el paragolpes, ópticas auxiliares y faros de giro amarillos distintos, y la patente FKZ 258 no se parece a FEA 810.",
+      "costUsd": 0.1879555
+    },
+    {
+      "a": "AG688FB",
+      "b": "MFY738",
+      "sim": 0.899383362886553,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.95,
+      "reason": "La captura es un furgón Ford Transit blanco alto con patente Mercosur azul AG 688 FB, mientras que el candidato A es una camioneta pick-up Chevrolet S10 celeste con patente vieja blanca MFY 738: difieren en marca, modelo, tipo de vehículo, color y formato de patente.",
+      "costUsd": 0.180597
+    },
+    {
+      "a": "GQW349",
+      "b": "EFA323",
+      "sim": 0.899787381686712,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.88,
+      "reason": "Ambos son Iveco EuroCargo blancos, pero difieren en casi todo lo demás: la captura tiene paragolpes y espejos negros, luces LED azules en el techo, caja con barandas de madera y lona verde, y patente negra vieja GQW 349; el candidato A tiene paragolpes y espejos blancos (color carrocería), techo sin balizas, lleva un contenedor rojo (STJU 206641) con cartel 'A-323' en el parabrisas y patente blanca ARGENTINA EFA 323. No hay coincidencia de caracteres ni de formato de chapa.",
+      "costUsd": 0.198223
+    },
+    {
+      "a": "AA528MD",
+      "b": "AB785UY",
+      "sim": 0.8888788504227649,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.95,
+      "reason": "La captura es una pickup Ford Ranger blanca de cabina doble con parrilla negra y logo Ford ovalado, patente AA 528 MI; el candidato A es un furgón Renault Kangoo celeste con techo alto, logo rombo Renault y patente AB 785 UY. Son marca, tipo de vehículo y patente totalmente distintos.",
+      "costUsd": 0.180527
+    },
+    {
+      "a": "AD449JK",
+      "b": "AA528RN",
+      "sim": 0.8945083812722225,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.9,
+      "reason": "Ambas son Ford Ranger blancas en la misma báscula, pero la captura lleva calcos 'Dellarossa / Servicio Técnico' con doble franja roja, sticker GIORGI y el '110' en círculo sobre el vidrio trasero, matafuego en la caja y antena, mientras el candidato A tiene el '110' pintado en la tapa de caja, calco C.A.M.I. y una sola franja roja baja. Además las patentes difieren por completo y en formato: AB 449 JK (fondo blanco) contra AA 528 HN (Mercosur con franja azul).",
+      "costUsd": 0.1899525
+    },
+    {
+      "a": "AB394QZ",
+      "b": "AI195ZN",
+      "sim": 0.8884846170452809,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.82,
+      "reason": "Ambos son VW Constellation blancos, pero el candidato A tiene la visera/techo de cabina con franja roja y claraboya, mientras el vehículo de la captura tiene la cabina y el techo enteramente blancos y espejos/soportes distintos; además las patentes se leen nítidas y difieren (AB 394 QL vs AI 195 ZU).",
+      "costUsd": 0.18743449999999998
+    },
+    {
+      "a": "AF211ER",
+      "b": "KDG543",
+      "sim": 0.8821382910834108,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.93,
+      "reason": "La captura es una Toyota Hilux doble cabina gris plata (patente AF 211 ER, formato nuevo) mientras que el candidato A es una Chevrolet S-10 doble cabina gris oscuro con calco 'S-10' en la caja y patente KDG 503 (formato viejo); difieren en marca, modelo, carrocería, llantas y caracteres de patente.",
+      "costUsd": 0.17991200000000002
+    },
+    {
+      "a": "COI299",
+      "b": "HED501",
+      "sim": 0.8874602344566631,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.9,
+      "reason": "La captura es un Mercedes-Benz con parrilla de barras horizontales cromadas y estrella central, sin leyendas en el frente, techo con equipo liso y patente terminada en 259; el candidato A es un Mercedes con panel de parrilla negro rectangular, leyenda 'EL CHOLI' sobre el parabrisas, equipo de techo VIESA, antena larga en el guardabarros derecho y patente HED 501. Son vehículos distintos.",
+      "costUsd": 0.18909150000000002
+    },
+    {
+      "a": "AE264XY",
+      "b": "PQK206",
+      "sim": 0.8805062943023929,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.95,
+      "reason": "La captura es un furgón grande tipo Citroën Jumpy/Peugeot Expert blanco, con patente Mercosur AE 264 XV, calco circular rojo en el lateral y sin portaequipajes; el candidato A es una Renault Kangoo gris, más chica, con parrilla portaequipajes en el techo, paragolpes y zócalos oscuros sin pintar y patente vieja PQK 206. Son modelos, tamaños, colores y formatos de patente distintos.",
+      "costUsd": 0.18397550000000001
+    },
+    {
+      "a": "AH049ID",
+      "b": "POK206",
+      "sim": 0.878204471619481,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.95,
+      "reason": "La captura es un sedán Fiat Cronos blanco con patente nueva Mercosur AH 049 ID, mientras que el candidato A es un furgón Renault Kangoo gris con parrilla de techo y patente vieja negra PQK 206; son vehículos de tipo, marca y color distintos.",
+      "costUsd": 0.18029
+    },
+    {
+      "a": "EDA987",
+      "b": "ERN622",
+      "sim": 0.872034252056187,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.95,
+      "reason": "La captura es un Mercedes-Benz Atego blanco de cabina baja con parrilla cromada, visera amarilla y caja/acoplado amarillo, patente EUA987/EDA907; el candidato A es un Volvo FM de cabina alta con franja azul en el parasol, logo Volvo en la parrilla negra y semirremolque blanco, patente ENN622. Marca, modelo, color de cabina y carga difieren por completo.",
+      "costUsd": 0.180759
+    },
+    {
+      "a": "LEW695",
+      "b": "MWG720",
+      "sim": 0.8728720478328754,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.85,
+      "reason": "Ambos son Ford Cargo blancos, pero el vehículo de la captura lleva un equipo de aire VIESA cuadrado sobre el techo dentro de una jaula tubular con faros en los laterales y espejos simples, mientras que el candidato A tiene un deflector aerodinámico liso con tres luces, sin jaula ni VIESA, y doble juego de espejos; además las patentes (LEW895 vs MWG720) no comparten ningún carácter.",
+      "costUsd": 0.19152800000000003
+    },
+    {
+      "a": "LJB988",
+      "b": "AA358UP",
+      "sim": 0.8709844910432957,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.95,
+      "reason": "La captura es una pick-up Ford Ranger negra de caja abierta con barra antivuelco y patente LJB 988, mientras que el candidato A es un furgón Citroën Berlingo blanco con patente AA 358 UP; difieren en tipo de vehículo, marca, color y patente por completo.",
+      "costUsd": 0.1797215
+    },
+    {
+      "a": "ROQ011",
+      "b": "BER232",
+      "sim": 0.8654783310121932,
+      "sameCamera": false,
+      "ok": true,
+      "confidence": 0.93,
+      "reason": "La captura es un Scania 112H con franja roja en el frente, visera/banda azul en el parabrisas y deflector de techo 'Bepo' (patente ROQ011), mientras que el candidato A es un Scania 113H con filetes azules, faros de techo y leyenda 'Blackhorse' en el parabrisas (patente OER232). Difieren modelo, color de franjas, accesorios de techo y patente: no son el mismo vehículo.",
+      "costUsd": 0.185281
+    },
+    {
+      "a": "AB449JK",
+      "b": "AA208QN",
+      "sim": 0.8571491856924464,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.95,
+      "reason": "La captura es una Ford Ranger blanca con calcos rojos y logo 'Dellarossa / Servicio Técnico', número 110 y matafuego en la caja, patente AB 449 JK; el candidato A es una Toyota Hilux blanca con jaula/portaequipaje tubular en la caja, sin calcos, patente AA 208 QN. Marca, modelo, gráfica y patente difieren por completo.",
+      "costUsd": 0.1821735
+    },
+    {
+      "a": "ETO684",
+      "b": "EIQ973",
+      "sim": 0.8609933291780932,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.85,
+      "reason": "Ambos son VW blancos de trompa similar, pero difieren en rasgos fijos: el equipo de techo es VIESA en la captura y YACUZZI en el candidato A; A tiene calco de 'Volkswagen' con llamas en el parabrisas y tiras LED violetas a los costados de la parrilla que la captura no tiene, además de luces de posición naranjas sobre la caja. Las patentes también difieren (LTO604 vs LIU973).",
+      "costUsd": 0.189519
+    },
+    {
+      "a": "GZG893",
+      "b": "LQJ870",
+      "sim": 0.856900811483869,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.95,
+      "reason": "La captura es un Ford Cargo 1722e (logo Ford en la parrilla, leyenda 'CARGO' y '1722e' en el frente, sin lettering de empresa) con patente de 6 caracteres tipo DA7893, mientras que el candidato A es un IVECO con parrilla y logo IVECO, leyenda 'TRANSOL S.A.' en el frontal, deflector VIESA en el techo y patente LQJ870. Difieren marca, modelo, cabina, calcos y patente: no son el mismo vehículo.",
+      "costUsd": 0.1843585
+    },
+    {
+      "a": "GKG349",
+      "b": "HNG637",
+      "sim": 0.8474251799764098,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.95,
+      "reason": "La captura es un Ford Cargo 1722 blanco de cabina baja con parrilla y óvalo Ford, barra de faros en el techo y patente GKG 349; el candidato A es un Iveco Stralis blanco de cabina alta con parrilla IVECO, paragolpes y faros totalmente distintos y patente HNG 637. Son marcas y modelos diferentes.",
+      "costUsd": 0.1812135
+    },
+    {
+      "a": "NAH953",
+      "b": "AB912RO",
+      "sim": 0.8441688359475664,
+      "sameCamera": true,
+      "ok": true,
+      "confidence": 0.95,
+      "reason": "La captura es una Toyota Hilux blanca con parrilla y paragolpes negros, toma de aire en el capot y patente vieja negra NAH 953; el candidato A es una Volkswagen Amarok blanca con paragolpes del color de la carrocería y patente Mercosur AB 912 RO. Marca, modelo, frente y formato de patente son distintos.",
+      "costUsd": 0.2025435
+    }
+  ]
+}

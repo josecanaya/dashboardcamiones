@@ -1,0 +1,1842 @@
+[
+ {
+  "patente": "AA208QN",
+  "archivo": "AA208QN_2210_1156_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 11:56",
+  "leida": "AA208QN",
+  "tipo": "Pickup",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AA208QN",
+  "archivo": "AA208QN_2110_1241_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 12:41",
+  "leida": "AA208QN",
+  "tipo": "SUV",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AA492OU",
+  "archivo": "AA492OU_1310_1426_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "13/10 14:26",
+  "leida": "AA492OU",
+  "tipo": "Large Truck",
+  "marca": "Mercedes-Benz",
+  "color": "Black"
+ },
+ {
+  "patente": "AA492OU",
+  "archivo": "AA492OU_2110_0655_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 06:55",
+  "leida": "AA492OU",
+  "tipo": "Large Truck",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AA682QZ",
+  "archivo": "AA682QZ_2210_1209_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 12:09",
+  "leida": "AA682QZ",
+  "tipo": "MPV",
+  "marca": "Mercedes-Benz",
+  "color": "Black"
+ },
+ {
+  "patente": "AA682QZ",
+  "archivo": "AA682QZ_2010_0903_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 09:03",
+  "leida": "AA682QZ",
+  "tipo": "MPV",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AA689GI",
+  "archivo": "AA689GI_1910_1008_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "19/10 10:08",
+  "leida": "AA689GI",
+  "tipo": "Pickup",
+  "marca": "Golden Dragon",
+  "color": "White"
+ },
+ {
+  "patente": "AA689GI",
+  "archivo": "AA689GI_1310_1349_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "13/10 13:49",
+  "leida": "AA689GI",
+  "tipo": "Pickup",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AA703EO",
+  "archivo": "AA703EO_1510_1039_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "15/10 10:39",
+  "leida": "AA703EO",
+  "tipo": "Pickup",
+  "marca": "Toyota",
+  "color": "Black"
+ },
+ {
+  "patente": "AA703EO",
+  "archivo": "AA703EO_1410_1034_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "14/10 10:34",
+  "leida": "AA703EO",
+  "tipo": "Pickup",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AB148YJ",
+  "archivo": "AB148YJ_2110_1228_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 12:28",
+  "leida": "AB148YJ",
+  "tipo": "Small Truck",
+  "marca": "Kia",
+  "color": "White"
+ },
+ {
+  "patente": "AB148YJ",
+  "archivo": "AB148YJ_2010_1233_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 12:33",
+  "leida": "AB148YJ",
+  "tipo": "Small Truck",
+  "marca": "Kia",
+  "color": "White"
+ },
+ {
+  "patente": "AB349QJ",
+  "archivo": "AB349QJ_1610_0818_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "16/10 08:18",
+  "leida": "AB349QJ",
+  "tipo": "SUV",
+  "marca": "Fiat",
+  "color": "Red"
+ },
+ {
+  "patente": "AB349QJ",
+  "archivo": "AB349QJ_1510_1536_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "15/10 15:36",
+  "leida": "AB349QJ",
+  "tipo": "SUV",
+  "marca": "Fiat",
+  "color": "Red"
+ },
+ {
+  "patente": "AB785UY",
+  "archivo": "AB785UY_2210_1227_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 12:27",
+  "leida": "AB785UY",
+  "tipo": "MPV",
+  "marca": "Renault",
+  "color": "Silver"
+ },
+ {
+  "patente": "AB785UY",
+  "archivo": "AB785UY_2110_1443_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 14:43",
+  "leida": "AB785UY",
+  "tipo": "MPV",
+  "marca": "Renault",
+  "color": "Silver"
+ },
+ {
+  "patente": "AB947SF",
+  "archivo": "AB947SF_1610_1540_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "16/10 15:40",
+  "leida": "AB947SF",
+  "tipo": "MPV",
+  "marca": "Renault",
+  "color": "White"
+ },
+ {
+  "patente": "AB947SF",
+  "archivo": "AB947SF_2310_0614_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "23/10 06:14",
+  "leida": "AH763WD",
+  "tipo": "SUV",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AC169LG",
+  "archivo": "AC169LG_2110_1221_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 12:21",
+  "leida": "AC169LG",
+  "tipo": "Small Truck",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AC169LG",
+  "archivo": "AC169LG_1610_1436_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "16/10 14:36",
+  "leida": "AC169LG",
+  "tipo": "Small Truck",
+  "marca": "Hyundai",
+  "color": "White"
+ },
+ {
+  "patente": "AD001TD",
+  "archivo": "AD001TD_2010_1051_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 10:51",
+  "leida": "AD001TD",
+  "tipo": "SUV",
+  "marca": "Fiat",
+  "color": "White"
+ },
+ {
+  "patente": "AD001TD",
+  "archivo": "AD001TD_1610_1234_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "16/10 12:34",
+  "leida": "AD001TD",
+  "tipo": "SUV",
+  "marca": "Fiat",
+  "color": "White"
+ },
+ {
+  "patente": "AD373WR",
+  "archivo": "AD373WR_2210_1539_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 15:39",
+  "leida": "AD373WR",
+  "tipo": "Bus",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AD373WR",
+  "archivo": "AD373WR_2110_1539_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 15:39",
+  "leida": "AD373WR",
+  "tipo": "Bus",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AD468VC",
+  "archivo": "AD468VC_1510_1145_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "15/10 11:45",
+  "leida": "AD468VC",
+  "tipo": "SUV",
+  "marca": "Ford",
+  "color": "Black"
+ },
+ {
+  "patente": "AD468VC",
+  "archivo": "AD468VC_1410_1215_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "14/10 12:15",
+  "leida": "AD468VC",
+  "tipo": "Pickup",
+  "marca": "Ford",
+  "color": "Black"
+ },
+ {
+  "patente": "AD545MJ",
+  "archivo": "AD545MJ_2210_1531_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 15:31",
+  "leida": "AD545MJ",
+  "tipo": "Van",
+  "marca": "Lifan",
+  "color": "White"
+ },
+ {
+  "patente": "AD545MJ",
+  "archivo": "AD545MJ_2010_1223_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 12:23",
+  "leida": "AD545MJ",
+  "tipo": "Van",
+  "marca": "Lifan",
+  "color": "White"
+ },
+ {
+  "patente": "AD686SH",
+  "archivo": "AD686SH_2210_1259_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 12:59",
+  "leida": "AD686SH",
+  "tipo": "Medium Truck",
+  "marca": "Citroën",
+  "color": "White"
+ },
+ {
+  "patente": "AD686SH",
+  "archivo": "AD686SH_2110_1258_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 12:58",
+  "leida": "AD686SH",
+  "tipo": "Van",
+  "marca": "Mitsubishi",
+  "color": "White"
+ },
+ {
+  "patente": "AE036AM",
+  "archivo": "AE036AM_2510_1606_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "25/10 16:06",
+  "leida": "AE036AM",
+  "tipo": "Van",
+  "marca": "Renault",
+  "color": "White"
+ },
+ {
+  "patente": "AE036AM",
+  "archivo": "AE036AM_2310_1613_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "23/10 16:13",
+  "leida": "OCB815",
+  "tipo": "Sedan",
+  "marca": null,
+  "color": "Silver"
+ },
+ {
+  "patente": "AE040HT",
+  "archivo": "AE040HT_1610_0937_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "16/10 09:37",
+  "leida": "AE040HT",
+  "tipo": "Pickup",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AE040HT",
+  "archivo": "AE040HT_1410_1146_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "14/10 11:46",
+  "leida": "AE040HT",
+  "tipo": "Pickup",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AE040HU",
+  "archivo": "AE040HU_2210_1341_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 13:41",
+  "leida": "AE040HU",
+  "tipo": "MPV",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AE040HU",
+  "archivo": "AE040HU_2110_1353_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 13:53",
+  "leida": "AE040HU",
+  "tipo": "SUV",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AE264XY",
+  "archivo": "AE264XY_2510_1701_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "25/10 17:01",
+  "leida": "AE264XY",
+  "tipo": "Van",
+  "marca": "Citroën",
+  "color": "White"
+ },
+ {
+  "patente": "AE264XY",
+  "archivo": "AE264XY_2210_1627_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 16:27",
+  "leida": "AE264XY",
+  "tipo": "MPV",
+  "marca": "Citroën",
+  "color": "White"
+ },
+ {
+  "patente": "AE532MU",
+  "archivo": "AE532MU_1710_1052_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "17/10 10:52",
+  "leida": "AE532MU",
+  "tipo": "Large Truck",
+  "marca": "Iveco",
+  "color": null
+ },
+ {
+  "patente": "AE532MU",
+  "archivo": "AE532MU_2010_0629_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 06:29",
+  "leida": "AE532MU",
+  "tipo": "Medium Truck",
+  "marca": "Volkswagen",
+  "color": null
+ },
+ {
+  "patente": "AE580ZP",
+  "archivo": "AE580ZP_1710_1537_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "17/10 15:37",
+  "leida": "AE580ZP",
+  "tipo": "MPV",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AE580ZP",
+  "archivo": "AE580ZP_1810_0339_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "18/10 03:39",
+  "leida": "AE580ZP",
+  "tipo": "MPV",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AE747HZ",
+  "archivo": "AE747HZ_2010_0843_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 08:43",
+  "leida": "AE747HZ",
+  "tipo": "SUV",
+  "marca": "Citroën",
+  "color": "White"
+ },
+ {
+  "patente": "AE747HZ",
+  "archivo": "AE747HZ_1510_1045_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "15/10 10:45",
+  "leida": "AE747HZ",
+  "tipo": "SUV",
+  "marca": "Dodge Caliber",
+  "color": "White"
+ },
+ {
+  "patente": "AE772KD",
+  "archivo": "AE772KD_2210_1221_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 12:21",
+  "leida": "AE772KD",
+  "tipo": "Bus",
+  "marca": "Mitsubishi",
+  "color": "White"
+ },
+ {
+  "patente": "AE772KD",
+  "archivo": "AE772KD_2110_1231_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 12:31",
+  "leida": "AE772KD",
+  "tipo": "Bus",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AE827VZ",
+  "archivo": "AE827VZ_2210_1625_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 16:25",
+  "leida": "AE827VZ",
+  "tipo": "Large Truck",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AE827VZ",
+  "archivo": "AE827VZ_2110_1625_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 16:25",
+  "leida": "AE827VZ",
+  "tipo": "Bus",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AE937SG",
+  "archivo": "AE937SG_1610_1149_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "16/10 11:49",
+  "leida": "AE937SG",
+  "tipo": "Bus",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AE937SG",
+  "archivo": "AE937SG_2610_0332_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "26/10 03:32",
+  "leida": "AE937SG",
+  "tipo": "Bus",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AF211ER",
+  "archivo": "AF211ER_2310_1119_SLZBalSC1Fte.jpg",
+  "dispositivo": "SLZBalSC1Fte",
+  "cuando": "23/10 11:19",
+  "leida": "AF211ER",
+  "tipo": "Pickup",
+  "marca": null,
+  "color": "Silver"
+ },
+ {
+  "patente": "AF211ER",
+  "archivo": "AF211ER_1710_1134_SLZBalSC1Fte.jpg",
+  "dispositivo": "SLZBalSC1Fte",
+  "cuando": "17/10 11:34",
+  "leida": "AF211ER",
+  "tipo": "Pickup",
+  "marca": null,
+  "color": "Silver"
+ },
+ {
+  "patente": "AF261AQ",
+  "archivo": "AF261AQ_2110_1214_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 12:14",
+  "leida": "AF261AQ",
+  "tipo": "SUV",
+  "marca": "Iveco",
+  "color": "White"
+ },
+ {
+  "patente": "AF261AQ",
+  "archivo": "AF261AQ_2010_0802_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 08:02",
+  "leida": "AF261AQ",
+  "tipo": "MPV",
+  "marca": "Iveco",
+  "color": "White"
+ },
+ {
+  "patente": "AF282QI",
+  "archivo": "AF282QI_2310_1216_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "23/10 12:16",
+  "leida": "AG142JP",
+  "tipo": "Medium Truck",
+  "marca": "Volvo",
+  "color": "White"
+ },
+ {
+  "patente": "AF282QI",
+  "archivo": "AF282QI_2110_1318_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 13:18",
+  "leida": "AF282QI",
+  "tipo": "MPV",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AF316PR",
+  "archivo": "AF316PR_2210_1235_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 12:35",
+  "leida": "AF316PR",
+  "tipo": "Medium Bus",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AF316PR",
+  "archivo": "AF316PR_2110_1559_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 15:59",
+  "leida": "AF316PR",
+  "tipo": "MPV",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AF446TN",
+  "archivo": "AF446TN_2110_1247_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 12:47",
+  "leida": "AF446TN",
+  "tipo": "Medium Bus",
+  "marca": "Ford",
+  "color": "White"
+ },
+ {
+  "patente": "AF446TN",
+  "archivo": "AF446TN_1510_1249_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "15/10 12:49",
+  "leida": "AF446TN",
+  "tipo": "SUV",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AF529RF",
+  "archivo": "AF529RF_2510_1614_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "25/10 16:14",
+  "leida": "AF529RF",
+  "tipo": "Medium Bus",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AF529RF",
+  "archivo": "AF529RF_2410_1536_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "24/10 15:36",
+  "leida": "AE666IG",
+  "tipo": "Bus",
+  "marca": "Chevrolet",
+  "color": "White"
+ },
+ {
+  "patente": "AF544UV",
+  "archivo": "AF544UV_2610_0350_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "26/10 03:50",
+  "leida": "AF544UV",
+  "tipo": "Medium Bus",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AF544UV",
+  "archivo": "AF544UV_2110_0348_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 03:48",
+  "leida": "AF544UV",
+  "tipo": "Pickup",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AF566OP",
+  "archivo": "AF566OP_2210_1446_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 14:46",
+  "leida": "AF566OP",
+  "tipo": "SUV",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AF566OP",
+  "archivo": "AF566OP_2110_1310_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 13:10",
+  "leida": "AF566OP",
+  "tipo": "SUV",
+  "marca": "Citroën DS",
+  "color": "White"
+ },
+ {
+  "patente": "AF778YL",
+  "archivo": "AF778YL_2210_1616_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 16:16",
+  "leida": "AF778YL",
+  "tipo": "Bus",
+  "marca": "Mitsubishi",
+  "color": "White"
+ },
+ {
+  "patente": "AF778YL",
+  "archivo": "AF778YL_2110_1617_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 16:17",
+  "leida": "AF778YL",
+  "tipo": "Bus",
+  "marca": "Trumpchi",
+  "color": "White"
+ },
+ {
+  "patente": "AF881FZ",
+  "archivo": "AF881FZ_2210_1412_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 14:12",
+  "leida": "AF881FZ",
+  "tipo": "MPV",
+  "marca": "Volkswagen",
+  "color": "Silver"
+ },
+ {
+  "patente": "AF881FZ",
+  "archivo": "AF881FZ_2110_1614_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 16:14",
+  "leida": "AF881FZ",
+  "tipo": "Pickup",
+  "marca": "Volkswagen",
+  "color": "White"
+ },
+ {
+  "patente": "AF909MM",
+  "archivo": "AF909MM_2510_1539_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "25/10 15:39",
+  "leida": "AF909MM",
+  "tipo": "Medium Bus",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AF909MM",
+  "archivo": "AF909MM_2210_1545_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 15:45",
+  "leida": "AF909MM",
+  "tipo": "Large Truck",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AG066KT",
+  "archivo": "AG066KT_2210_1244_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 12:44",
+  "leida": "AG066KT",
+  "tipo": "MPV",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AG066KT",
+  "archivo": "AG066KT_2110_1242_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 12:42",
+  "leida": "AG066KT",
+  "tipo": "MPV",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AG128YL",
+  "archivo": "AG128YL_2510_1625_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "25/10 16:25",
+  "leida": "AG128YL",
+  "tipo": "Bus",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AG128YL",
+  "archivo": "AG128YL_1710_1626_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "17/10 16:26",
+  "leida": "AG128YL",
+  "tipo": "Bus",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AG142JP",
+  "archivo": "AG142JP_2210_1316_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 13:16",
+  "leida": "AG142JP",
+  "tipo": "Bus",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AG142JP",
+  "archivo": "AG142JP_2110_1317_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 13:17",
+  "leida": "AG142JP",
+  "tipo": "Bus",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AG245ND",
+  "archivo": "AG245ND_1610_1440_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "16/10 14:40",
+  "leida": "AG245ND",
+  "tipo": "SUV",
+  "marca": "Chevrolet",
+  "color": "White"
+ },
+ {
+  "patente": "AG245ND",
+  "archivo": "AG245ND_1510_1325_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "15/10 13:25",
+  "leida": "AG245ND",
+  "tipo": "SUV",
+  "marca": "Ford",
+  "color": "White"
+ },
+ {
+  "patente": "AG275GX",
+  "archivo": "AG275GX_2110_0901_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 09:01",
+  "leida": "AG275GX",
+  "tipo": "SUV",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AG275GX",
+  "archivo": "AG275GX_1610_0947_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "16/10 09:47",
+  "leida": "AG275GX",
+  "tipo": "SUV",
+  "marca": "Ford",
+  "color": "Black"
+ },
+ {
+  "patente": "AG294KA",
+  "archivo": "AG294KA_2110_1041_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 10:41",
+  "leida": "AG294KA",
+  "tipo": "MPV",
+  "marca": "Peugeot",
+  "color": "White"
+ },
+ {
+  "patente": "AG294KA",
+  "archivo": "AG294KA_2010_1033_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 10:33",
+  "leida": "AG294KA",
+  "tipo": "MPV",
+  "marca": "Peugeot",
+  "color": "White"
+ },
+ {
+  "patente": "AG361MP",
+  "archivo": "AG361MP_2510_1607_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "25/10 16:07",
+  "leida": "AG361MP",
+  "tipo": "MPV",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AG361MP",
+  "archivo": "AG361MP_2210_1612_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 16:12",
+  "leida": "AG361MP",
+  "tipo": "Van",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AG361MX",
+  "archivo": "AG361MX_2210_1537_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 15:37",
+  "leida": "AG361MX",
+  "tipo": "Pickup",
+  "marca": "Toyota",
+  "color": "Black"
+ },
+ {
+  "patente": "AG361MX",
+  "archivo": "AG361MX_2010_1510_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 15:10",
+  "leida": "AG361MX",
+  "tipo": "SUV",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AG408SM",
+  "archivo": "AG408SM_1510_0941_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "15/10 09:41",
+  "leida": "AG408SM",
+  "tipo": "Small Truck",
+  "marca": "Ford",
+  "color": "White"
+ },
+ {
+  "patente": "AG408SM",
+  "archivo": "AG408SM_2210_0644_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 06:44",
+  "leida": "AG408SM",
+  "tipo": "Small Truck",
+  "marca": "Hyundai",
+  "color": "White"
+ },
+ {
+  "patente": "AG428EL",
+  "archivo": "AG428EL_2210_1327_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 13:27",
+  "leida": "AG428EL",
+  "tipo": "MPV",
+  "marca": "Renault",
+  "color": "Gray"
+ },
+ {
+  "patente": "AG428EL",
+  "archivo": "AG428EL_2110_1326_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 13:26",
+  "leida": "AG428EL",
+  "tipo": "SUV",
+  "marca": "Renault",
+  "color": "Gray"
+ },
+ {
+  "patente": "AG575TD",
+  "archivo": "AG575TD_2210_0846_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 08:46",
+  "leida": "AG575TD",
+  "tipo": "MPV",
+  "marca": "Renault",
+  "color": "White"
+ },
+ {
+  "patente": "AG575TD",
+  "archivo": "AG575TD_2110_1107_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 11:07",
+  "leida": "AG575TD",
+  "tipo": "MPV",
+  "marca": "Renault",
+  "color": "White"
+ },
+ {
+  "patente": "AG622BE",
+  "archivo": "AG622BE_2210_1627_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 16:27",
+  "leida": "AG622BE",
+  "tipo": "Bus",
+  "marca": "Scania",
+  "color": "White"
+ },
+ {
+  "patente": "AG622BE",
+  "archivo": "AG622BE_2110_1626_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 16:26",
+  "leida": "AG622BE",
+  "tipo": "Bus",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AG688FB",
+  "archivo": "AG688FB_2310_1155_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "23/10 11:55",
+  "leida": "AE040HU",
+  "tipo": "MPV",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AG688FB",
+  "archivo": "AG688FB_2210_1256_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 12:56",
+  "leida": "AG688FB",
+  "tipo": "Medium Bus",
+  "marca": "Ford",
+  "color": "White"
+ },
+ {
+  "patente": "AG692JE",
+  "archivo": "AG692JE_2210_1559_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 15:59",
+  "leida": "AG692JE",
+  "tipo": "Bus",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AG692JE",
+  "archivo": "AG692JE_2110_1233_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 12:33",
+  "leida": "AG692JE",
+  "tipo": "Bus",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AG696QV",
+  "archivo": "AG696QV_1610_0930_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "16/10 09:30",
+  "leida": "AG696QV",
+  "tipo": "Pickup",
+  "marca": "Ford",
+  "color": "Black"
+ },
+ {
+  "patente": "AG696QV",
+  "archivo": "AG696QV_1410_1405_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "14/10 14:05",
+  "leida": "AG696QV",
+  "tipo": "Pickup",
+  "marca": "Ford",
+  "color": "Black"
+ },
+ {
+  "patente": "AG700CR",
+  "archivo": "AG700CR_2210_0607_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 06:07",
+  "leida": "AG700CR",
+  "tipo": "MPV",
+  "marca": "Renault",
+  "color": "White"
+ },
+ {
+  "patente": "AG700CR",
+  "archivo": "AG700CR_2010_0648_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 06:48",
+  "leida": "AG700CR",
+  "tipo": "MPV",
+  "marca": "Renault",
+  "color": "White"
+ },
+ {
+  "patente": "AG767CT",
+  "archivo": "AG767CT_2310_1626_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "23/10 16:26",
+  "leida": "AE937SG",
+  "tipo": "Bus",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AG767CT",
+  "archivo": "AG767CT_1810_1625_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "18/10 16:25",
+  "leida": "AG767CT",
+  "tipo": "Bus",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AG978PR",
+  "archivo": "AG978PR_2010_1322_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 13:22",
+  "leida": "AG978PR",
+  "tipo": "Van",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AG978PR",
+  "archivo": "AG978PR_1510_1248_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "15/10 12:48",
+  "leida": "AG978PR",
+  "tipo": "Van",
+  "marca": "Dongfeng",
+  "color": "White"
+ },
+ {
+  "patente": "AH090IH",
+  "archivo": "AH090IH_1510_1631_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "15/10 16:31",
+  "leida": "AH090IH",
+  "tipo": "Medium Truck",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AH090IH",
+  "archivo": "AH090IH_1410_1628_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "14/10 16:28",
+  "leida": "AH090IH",
+  "tipo": "Large Truck",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AH149NK",
+  "archivo": "AH149NK_2110_1617_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 16:17",
+  "leida": "AH149NK",
+  "tipo": "SUV",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AH149NK",
+  "archivo": "AH149NK_1710_1545_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "17/10 15:45",
+  "leida": "AH149NK",
+  "tipo": "SUV",
+  "marca": "Renault",
+  "color": "White"
+ },
+ {
+  "patente": "AH185MZ",
+  "archivo": "AH185MZ_2210_1219_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 12:19",
+  "leida": "AH185MZ",
+  "tipo": "MPV",
+  "marca": "Renault",
+  "color": "Red"
+ },
+ {
+  "patente": "AH185MZ",
+  "archivo": "AH185MZ_2110_1123_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 11:23",
+  "leida": "AH185MZ",
+  "tipo": "MPV",
+  "marca": "Renault",
+  "color": "Red"
+ },
+ {
+  "patente": "AH456NL",
+  "archivo": "AH456NL_2310_1546_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "23/10 15:46",
+  "leida": "AI065WC",
+  "tipo": "MPV",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AH456NL",
+  "archivo": "AH456NL_2210_1414_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 14:14",
+  "leida": "AH456NL",
+  "tipo": "MPV",
+  "marca": "Renault",
+  "color": "White"
+ },
+ {
+  "patente": "AH540BL",
+  "archivo": "AH540BL_1710_1613_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "17/10 16:13",
+  "leida": "AH540BL",
+  "tipo": "Pickup",
+  "marca": "Ford",
+  "color": "White"
+ },
+ {
+  "patente": "AH540BL",
+  "archivo": "AH540BL_1610_1636_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "16/10 16:36",
+  "leida": "AH540BL",
+  "tipo": "Pickup",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AH540BR",
+  "archivo": "AH540BR_2510_1547_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "25/10 15:47",
+  "leida": "AH540BR",
+  "tipo": "Medium Bus",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AH540BR",
+  "archivo": "AH540BR_1710_1544_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "17/10 15:44",
+  "leida": "AH540BR",
+  "tipo": "Medium Bus",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AH700ET",
+  "archivo": "AH700ET_2210_1526_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 15:26",
+  "leida": "AH700ET",
+  "tipo": "MPV",
+  "marca": "Renault",
+  "color": "White"
+ },
+ {
+  "patente": "AH700ET",
+  "archivo": "AH700ET_2110_0815_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 08:15",
+  "leida": "AH700ET",
+  "tipo": "MPV",
+  "marca": "Renault",
+  "color": "White"
+ },
+ {
+  "patente": "AH733KN",
+  "archivo": "AH733KN_2010_0851_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 08:51",
+  "leida": "AH733KN",
+  "tipo": "Large Truck",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AH733KN",
+  "archivo": "AH733KN_1410_0952_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "14/10 09:52",
+  "leida": "AH733KN",
+  "tipo": "Large Truck",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AH763WD",
+  "archivo": "AH763WD_2110_1403_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 14:03",
+  "leida": "AH763WD",
+  "tipo": "MPV",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AH763WD",
+  "archivo": "AH763WD_1610_0945_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "16/10 09:45",
+  "leida": "AH763WD",
+  "tipo": "Pickup",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AH911RJ",
+  "archivo": "AH911RJ_2310_1009_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "23/10 10:09",
+  "leida": "AE532MU",
+  "tipo": "Large Truck",
+  "marca": null,
+  "color": null
+ },
+ {
+  "patente": "AH911RJ",
+  "archivo": "AH911RJ_2210_1104_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 11:04",
+  "leida": "AH911RJ",
+  "tipo": "SUV",
+  "marca": null,
+  "color": "Black"
+ },
+ {
+  "patente": "AH933LO",
+  "archivo": "AH933LO_2210_1147_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 11:47",
+  "leida": "AH933LO",
+  "tipo": "Van",
+  "marca": "BMW",
+  "color": "White"
+ },
+ {
+  "patente": "AH933LO",
+  "archivo": "AH933LO_2110_0817_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 08:17",
+  "leida": "AH933LO",
+  "tipo": "Van",
+  "marca": "BMW",
+  "color": "White"
+ },
+ {
+  "patente": "AI065WC",
+  "archivo": "AI065WC_2010_1543_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 15:43",
+  "leida": "AI065WC",
+  "tipo": "MPV",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AI065WC",
+  "archivo": "AI065WC_1710_1555_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "17/10 15:55",
+  "leida": "AI065WC",
+  "tipo": "Van",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AI217QP",
+  "archivo": "AI217QP_1410_1218_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "14/10 12:18",
+  "leida": "AI217QP",
+  "tipo": "Small Truck",
+  "marca": "Honda",
+  "color": "Black"
+ },
+ {
+  "patente": "AI217QP",
+  "archivo": "AI217QP_1310_0535_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "13/10 05:35",
+  "leida": "AI217QP",
+  "tipo": "MPV",
+  "marca": "Fiat",
+  "color": "Gray"
+ },
+ {
+  "patente": "AI238IS",
+  "archivo": "AI238IS_1610_1243_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "16/10 12:43",
+  "leida": "AI238IS",
+  "tipo": "Medium Bus",
+  "marca": "DAF",
+  "color": "White"
+ },
+ {
+  "patente": "AI238IS",
+  "archivo": "AI238IS_1510_1320_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "15/10 13:20",
+  "leida": "AI238IS",
+  "tipo": "Small Truck",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AI276FZ",
+  "archivo": "AI276FZ_2110_0809_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 08:09",
+  "leida": "AI276FZ",
+  "tipo": "MPV",
+  "marca": "Dongfeng",
+  "color": "Blue"
+ },
+ {
+  "patente": "AI276FZ",
+  "archivo": "AI276FZ_1410_1226_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "14/10 12:26",
+  "leida": "AI276FZ",
+  "tipo": "Medium Truck",
+  "marca": "Volkswagen",
+  "color": "White"
+ },
+ {
+  "patente": "AI456GB",
+  "archivo": "AI456GB_2210_0808_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 08:08",
+  "leida": "AI456GB",
+  "tipo": "MPV",
+  "marca": "Fiat",
+  "color": "White"
+ },
+ {
+  "patente": "AI456GB",
+  "archivo": "AI456GB_1710_0804_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "17/10 08:04",
+  "leida": "AI456GB",
+  "tipo": "Sedan",
+  "marca": "Peugeot",
+  "color": "White"
+ },
+ {
+  "patente": "DVT968",
+  "archivo": "DVT968_2210_1230_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 12:30",
+  "leida": "DVT968",
+  "tipo": "Pickup",
+  "marca": "Ford",
+  "color": "White"
+ },
+ {
+  "patente": "DVT968",
+  "archivo": "DVT968_1610_1120_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "16/10 11:20",
+  "leida": "DVT968",
+  "tipo": "Pickup",
+  "marca": "Ford",
+  "color": "White"
+ },
+ {
+  "patente": "FAF824",
+  "archivo": "FAF824_1910_1023_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "19/10 10:23",
+  "leida": "FAF824",
+  "tipo": "Pickup",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "FAF824",
+  "archivo": "FAF824_1710_1429_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "17/10 14:29",
+  "leida": "FAF824",
+  "tipo": "Pickup",
+  "marca": "Toyota",
+  "color": "Blue"
+ },
+ {
+  "patente": "FYJ679",
+  "archivo": "FYJ679_2010_0827_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 08:27",
+  "leida": "FYJ679",
+  "tipo": "Pickup",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "FYJ679",
+  "archivo": "FYJ679_1510_1604_SLZBalSC1Fte.jpg",
+  "dispositivo": "SLZBalSC1Fte",
+  "cuando": "15/10 16:04",
+  "leida": "FYJ679",
+  "tipo": "SUV",
+  "marca": "Toyota",
+  "color": "Gray"
+ },
+ {
+  "patente": "GCW191",
+  "archivo": "GCW191_2210_0814_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 08:14",
+  "leida": "GCW191",
+  "tipo": "SUV",
+  "marca": "Ford",
+  "color": "Gray"
+ },
+ {
+  "patente": "GCW191",
+  "archivo": "GCW191_2110_0805_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 08:05",
+  "leida": "GCW191",
+  "tipo": "Medium Truck",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "HLT270",
+  "archivo": "HLT270_2210_1253_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 12:53",
+  "leida": "HLT270",
+  "tipo": "Small Truck",
+  "marca": "Hyundai",
+  "color": "White"
+ },
+ {
+  "patente": "HLT270",
+  "archivo": "HLT270_2010_1107_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 11:07",
+  "leida": "HLT270",
+  "tipo": "Small Truck",
+  "marca": "Hyundai",
+  "color": "White"
+ },
+ {
+  "patente": "HTK722",
+  "archivo": "HTK722_1610_1348_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "16/10 13:48",
+  "leida": "HTK722",
+  "tipo": "SUV",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "HTK722",
+  "archivo": "HTK722_1310_0823_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "13/10 08:23",
+  "leida": "HTK722",
+  "tipo": "Medium Truck",
+  "marca": "Ford",
+  "color": "White"
+ },
+ {
+  "patente": "IJN886",
+  "archivo": "IJN886_2110_1158_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 11:58",
+  "leida": "IJN886",
+  "tipo": "SUV",
+  "marca": "Ford",
+  "color": "Gray"
+ },
+ {
+  "patente": "IJN886",
+  "archivo": "IJN886_1910_1133_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "19/10 11:33",
+  "leida": "IJN886",
+  "tipo": "SUV",
+  "marca": "Ford",
+  "color": "Gray"
+ },
+ {
+  "patente": "IMH787",
+  "archivo": "IMH787_2510_1218_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "25/10 12:18",
+  "leida": "IMH787",
+  "tipo": "MPV",
+  "marca": "Renault",
+  "color": "Silver"
+ },
+ {
+  "patente": "IMH787",
+  "archivo": "IMH787_2210_1214_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 12:14",
+  "leida": "IMH787",
+  "tipo": "MPV",
+  "marca": "Renault",
+  "color": "Silver"
+ },
+ {
+  "patente": "INE931",
+  "archivo": "INE931_2210_1310_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 13:10",
+  "leida": "INE931",
+  "tipo": "Pickup",
+  "marca": "Toyota",
+  "color": "Silver"
+ },
+ {
+  "patente": "INE931",
+  "archivo": "INE931_2110_1549_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 15:49",
+  "leida": "INE931",
+  "tipo": "Pickup",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "JBF932",
+  "archivo": "JBF932_2010_1125_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 11:25",
+  "leida": "JBF932",
+  "tipo": "SUV",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "JBF932",
+  "archivo": "JBF932_1310_0844_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "13/10 08:44",
+  "leida": "JBF932",
+  "tipo": "SUV",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "JLQ557",
+  "archivo": "JLQ557_2210_1217_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 12:17",
+  "leida": "JLQ557",
+  "tipo": "Pickup",
+  "marca": "GMC",
+  "color": "Black"
+ },
+ {
+  "patente": "JLQ557",
+  "archivo": "JLQ557_2110_1310_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 13:10",
+  "leida": "JLQ557",
+  "tipo": "Pickup",
+  "marca": "Ford",
+  "color": "Black"
+ },
+ {
+  "patente": "JUE083",
+  "archivo": "JUE083_2010_1322_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 13:22",
+  "leida": "JUE083",
+  "tipo": "SUV",
+  "marca": null,
+  "color": "Black"
+ },
+ {
+  "patente": "JUE083",
+  "archivo": "JUE083_1610_0901_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "16/10 09:01",
+  "leida": "JUE083",
+  "tipo": "SUV",
+  "marca": "Chevrolet",
+  "color": "Black"
+ },
+ {
+  "patente": "JZW724",
+  "archivo": "JZW724_2510_0842_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "25/10 08:42",
+  "leida": "JZW724",
+  "tipo": "MPV",
+  "marca": "Volkswagen",
+  "color": "Silver"
+ },
+ {
+  "patente": "JZW724",
+  "archivo": "JZW724_2410_0920_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "24/10 09:20",
+  "leida": "AG978PR",
+  "tipo": "Small Truck",
+  "marca": "Nissan",
+  "color": "White"
+ },
+ {
+  "patente": "KDG543",
+  "archivo": "KDG543_1610_1323_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "16/10 13:23",
+  "leida": "KDG543",
+  "tipo": "SUV",
+  "marca": "Iveco",
+  "color": "Black"
+ },
+ {
+  "patente": "KDG543",
+  "archivo": "KDG543_1510_1002_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "15/10 10:02",
+  "leida": "KDG543",
+  "tipo": "SUV",
+  "marca": "Chevrolet",
+  "color": "Black"
+ },
+ {
+  "patente": "LJB988",
+  "archivo": "LJB988_2210_1118_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 11:18",
+  "leida": "LJB988",
+  "tipo": "Pickup",
+  "marca": "Ford",
+  "color": "White"
+ },
+ {
+  "patente": "LJB988",
+  "archivo": "LJB988_2010_1100_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 11:00",
+  "leida": "LJB988",
+  "tipo": "MPV",
+  "marca": "Chevrolet",
+  "color": "Black"
+ },
+ {
+  "patente": "NAH953",
+  "archivo": "NAH953_2210_0933_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 09:33",
+  "leida": "NAH953",
+  "tipo": "Pickup",
+  "marca": "Toyota",
+  "color": "Gray"
+ },
+ {
+  "patente": "NAH953",
+  "archivo": "NAH953_2110_1154_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 11:54",
+  "leida": "NAH953",
+  "tipo": "Pickup",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "OCB815",
+  "archivo": "OCB815_2210_1618_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 16:18",
+  "leida": "OCB815",
+  "tipo": "Sedan",
+  "marca": "Chevrolet",
+  "color": "White"
+ },
+ {
+  "patente": "OCB815",
+  "archivo": "OCB815_2110_1612_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 16:12",
+  "leida": "OCB815",
+  "tipo": "Sedan",
+  "marca": "Chevrolet",
+  "color": "Silver"
+ },
+ {
+  "patente": "OJD501",
+  "archivo": "OJD501_1710_0926_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "17/10 09:26",
+  "leida": "OJD501",
+  "tipo": "Sedan",
+  "marca": "Volkswagen",
+  "color": "White"
+ },
+ {
+  "patente": "OJD501",
+  "archivo": "OJD501_1310_0742_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "13/10 07:42",
+  "leida": "OJD501",
+  "tipo": "MPV",
+  "marca": "Volkswagen",
+  "color": "Silver"
+ },
+ {
+  "patente": "ONS723",
+  "archivo": "ONS723_2210_0801_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 08:01",
+  "leida": "ONS723",
+  "tipo": "Small Truck",
+  "marca": "Iveco",
+  "color": "White"
+ },
+ {
+  "patente": "ONS723",
+  "archivo": "ONS723_2010_0932_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 09:32",
+  "leida": "ONS723",
+  "tipo": "MPV",
+  "marca": "Iveco",
+  "color": "White"
+ },
+ {
+  "patente": "OTB580",
+  "archivo": "OTB580_2410_1131_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "24/10 11:31",
+  "leida": "DTB580",
+  "tipo": "MPV",
+  "marca": "Citroën",
+  "color": "Black"
+ },
+ {
+  "patente": "OTB580",
+  "archivo": "OTB580_2010_1043_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 10:43",
+  "leida": "OTB580",
+  "tipo": "MPV",
+  "marca": "Citroën",
+  "color": "Black"
+ },
+ {
+  "patente": "PFA290",
+  "archivo": "PFA290_2110_1558_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "21/10 15:58",
+  "leida": "PFA290",
+  "tipo": "Van",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "PFA290",
+  "archivo": "PFA290_2010_1601_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 16:01",
+  "leida": "PFA290",
+  "tipo": "MPV",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "PQK206",
+  "archivo": "PQK206_2210_1251_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "22/10 12:51",
+  "leida": "PQK206",
+  "tipo": "MPV",
+  "marca": "Renault",
+  "color": "Silver"
+ },
+ {
+  "patente": "PQK206",
+  "archivo": "PQK206_2010_1251_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 12:51",
+  "leida": "PQK206",
+  "tipo": "MPV",
+  "marca": "Renault",
+  "color": "White"
+ }
+]

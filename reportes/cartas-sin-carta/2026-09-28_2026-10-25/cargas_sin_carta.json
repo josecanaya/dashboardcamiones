@@ -1,0 +1,282 @@
+{
+ "tot": 641,
+ "pd": 22.89,
+ "ph": 30,
+ "pf": 5.13,
+ "cargasProducto": 1198,
+ "semanas": [
+  236,
+  147,
+  126,
+  132
+ ],
+ "planta": {
+  "TERMINAL_EMBARQUE": 630,
+  "RICARDONE": 11
+ },
+ "conCarta": {
+  "SOJA": 179,
+  "PELLETS GIRASOL": 316,
+  "ACEITE SOJA CRUDO DESGOMADO": 24,
+  "CASCARA DE SOJA PELLETEADA": 10,
+  "GIRASOL": 28
+ },
+ "productos": [
+  {
+   "prod": "ACEITE GIRASOL REFINADO",
+   "n": 306,
+   "h": 303,
+   "sem": {
+    "2026-09-28": 138,
+    "2026-10-05": 40,
+    "2026-10-12": 67,
+    "2026-10-19": 61
+   },
+   "planta": {
+    "TERMINAL_EMBARQUE": 306
+   },
+   "dias": 17,
+   "pd": 10.93,
+   "ph": 15.15,
+   "pf": 0.38,
+   "semanas": [
+    138,
+    40,
+    67,
+    61
+   ]
+  },
+  {
+   "prod": "ACEITE SOJA CRUDO DESGOMADO",
+   "n": 102,
+   "h": 101,
+   "sem": {
+    "2026-09-28": 1,
+    "2026-10-05": 49,
+    "2026-10-12": 31,
+    "2026-10-19": 21
+   },
+   "planta": {
+    "TERMINAL_EMBARQUE": 102
+   },
+   "dias": 11,
+   "pd": 3.64,
+   "ph": 5.05,
+   "pf": 0.13,
+   "semanas": [
+    1,
+    49,
+    31,
+    21
+   ]
+  },
+  {
+   "prod": "GLICERINA REFINADA",
+   "n": 90,
+   "h": 89,
+   "sem": {
+    "2026-09-28": 45,
+    "2026-10-05": 30,
+    "2026-10-12": 1,
+    "2026-10-19": 14
+   },
+   "planta": {
+    "TERMINAL_EMBARQUE": 90
+   },
+   "dias": 13,
+   "pd": 3.21,
+   "ph": 4.45,
+   "pf": 0.13,
+   "semanas": [
+    45,
+    30,
+    1,
+    14
+   ]
+  },
+  {
+   "prod": "BORRA DE ACSOJA REFINADO",
+   "n": 43,
+   "h": 28,
+   "sem": {
+    "2026-09-28": 15,
+    "2026-10-05": 4,
+    "2026-10-12": 9,
+    "2026-10-19": 15
+   },
+   "planta": {
+    "TERMINAL_EMBARQUE": 43
+   },
+   "dias": 19,
+   "pd": 1.54,
+   "ph": 1.4,
+   "pf": 1.88,
+   "semanas": [
+    15,
+    4,
+    9,
+    15
+   ]
+  },
+  {
+   "prod": "GLICERINA",
+   "n": 34,
+   "h": 25,
+   "sem": {
+    "2026-09-28": 7,
+    "2026-10-05": 12,
+    "2026-10-12": 2,
+    "2026-10-19": 13
+   },
+   "planta": {
+    "TERMINAL_EMBARQUE": 30,
+    "RICARDONE": 4
+   },
+   "dias": 8,
+   "pd": 1.21,
+   "ph": 1.25,
+   "pf": 1.13,
+   "semanas": [
+    7,
+    12,
+    2,
+    13
+   ]
+  },
+  {
+   "prod": "BORRA ACEITE GIRASOL REFINADO",
+   "n": 32,
+   "h": 20,
+   "sem": {
+    "2026-09-28": 16,
+    "2026-10-05": 4,
+    "2026-10-12": 4,
+    "2026-10-19": 8
+   },
+   "planta": {
+    "TERMINAL_EMBARQUE": 32
+   },
+   "dias": 19,
+   "pd": 1.14,
+   "ph": 1,
+   "pf": 1.5,
+   "semanas": [
+    16,
+    4,
+    4,
+    8
+   ]
+  },
+  {
+   "prod": "BORRA ACEITE GIRASOL",
+   "n": 13,
+   "h": 13,
+   "sem": {
+    "2026-09-28": 6,
+    "2026-10-05": 1,
+    "2026-10-12": 6
+   },
+   "planta": {
+    "TERMINAL_EMBARQUE": 10,
+    "RICARDONE": 3
+   },
+   "dias": 10,
+   "pd": 0.46,
+   "ph": 0.65,
+   "pf": 0,
+   "semanas": [
+    6,
+    1,
+    6,
+    0
+   ]
+  },
+  {
+   "prod": "CASCARA DE SOJA PELLETEADA",
+   "n": 8,
+   "h": 8,
+   "sem": {
+    "2026-09-28": 4,
+    "2026-10-05": 4
+   },
+   "planta": {
+    "TERMINAL_EMBARQUE": 8
+   },
+   "dias": 3,
+   "pd": 0.29,
+   "ph": 0.4,
+   "pf": 0,
+   "semanas": [
+    4,
+    4,
+    0,
+    0
+   ]
+  },
+  {
+   "prod": "GLICERINA SUBSTANDARD",
+   "n": 8,
+   "h": 8,
+   "sem": {
+    "2026-09-28": 4,
+    "2026-10-12": 4
+   },
+   "planta": {
+    "TERMINAL_EMBARQUE": 8
+   },
+   "dias": 2,
+   "pd": 0.29,
+   "ph": 0.4,
+   "pf": 0,
+   "semanas": [
+    4,
+    0,
+    4,
+    0
+   ]
+  },
+  {
+   "prod": "CASCARA DE GIRASOL",
+   "n": 4,
+   "h": 4,
+   "sem": {
+    "2026-10-05": 2,
+    "2026-10-12": 2
+   },
+   "planta": {
+    "RICARDONE": 4
+   },
+   "dias": 4,
+   "pd": 0.14,
+   "ph": 0.2,
+   "pf": 0,
+   "semanas": [
+    0,
+    2,
+    2,
+    0
+   ]
+  },
+  {
+   "prod": "ACIDOS GRASOS GIRASOL",
+   "n": 1,
+   "h": 1,
+   "sem": {
+    "2026-10-05": 1
+   },
+   "planta": {
+    "TERMINAL_EMBARQUE": 1
+   },
+   "dias": 1,
+   "pd": 0.04,
+   "ph": 0.05,
+   "pf": 0,
+   "semanas": [
+    0,
+    1,
+    0,
+    0
+   ]
+  }
+ ]
+}

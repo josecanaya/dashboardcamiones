@@ -59,4 +59,14 @@ describe('el plano es solo de camiones de granos', () => {
     expect(r.others.map((e) => e.plate)).toEqual(['BTS626'])
     expect(r.whyOf('BTS626').label).toBe('Vehículos Permitidos (agua)')
   })
+  it('una lectura ilegible sin asignar no es un camión nuevo (IHRU293 en Volcable C5, era HPQ293)', () => {
+    const items = [
+      { readPlate: 'IHRU293', validFormat: false, level: 'pendiente' },
+      { readPlate: 'XX1', validFormat: false, level: 'casi_seguro', assignedPlate: 'TAO150' },
+      { readPlate: 'MFY788', validFormat: true, level: 'provisorio' },
+    ]
+    const r = splitNonTrucks([ev('IHRU293'), ev('TAO150'), ev('MFY788')], items, base)
+    expect(r.trucks.map((e) => e.plate)).toEqual(['TAO150', 'MFY788'])
+    expect(r.whyOf('IHRU293').kind).toBe('ilegible')
+  })
 })

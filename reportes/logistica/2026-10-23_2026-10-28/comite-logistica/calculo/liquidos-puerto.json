@@ -1,0 +1,213 @@
+{
+ "excluidos": {
+  "calados en Ricardone": 10
+ },
+ "grupos": {
+  "Carga · aceite de girasol refinado": {
+   "viajes": 79,
+   "t": 2094,
+   "totalMedia": 272.09535864978903,
+   "totalMediana": 216.98333333333332,
+   "conCamaraPuerto": 78,
+   "conCarta": 0,
+   "sentidoHistorial": 21,
+   "renovaCam": 59,
+   "plataformas": {
+    "ACEITE_OSL": 79
+   },
+   "productos": {
+    "ACEITE GIRASOL REFINADO": 79
+   },
+   "tramos": {
+    "Ingreso → Calada": {
+     "media": 45.62770354609929,
+     "mediana": 6.242466666666667,
+     "n": 47
+    },
+    "Calada → Balanza ingreso": {
+     "media": 15.020217628205128,
+     "mediana": 8.091141666666667,
+     "n": 52
+    },
+    "Balanza ingreso → Balanza egreso": {
+     "media": 180.1261462585034,
+     "mediana": 170.25911666666667,
+     "n": 49
+    },
+    "Balanza egreso → Salida": {
+     "media": 3.4928622807017544,
+     "mediana": 2.9187333333333334,
+     "n": 57
+    }
+   }
+  },
+  "Carga · aceite de soja crudo": {
+   "viajes": 44,
+   "t": 1292,
+   "totalMedia": 228.62916666666666,
+   "totalMediana": 164.8,
+   "conCamaraPuerto": 40,
+   "conCarta": 4,
+   "sentidoHistorial": 8,
+   "renovaCam": 35,
+   "plataformas": {
+    "sin plataforma": 44
+   },
+   "productos": {
+    "ACEITE SOJA CRUDO DESGOMADO": 44
+   },
+   "tramos": {
+    "Ingreso → Calada": {
+     "media": 44.83371333333333,
+     "mediana": 2.7288666666666668,
+     "n": 40
+    },
+    "Calada → Balanza ingreso": {
+     "media": 25.668294444444445,
+     "mediana": 11.44455,
+     "n": 39
+    },
+    "Balanza ingreso → Balanza egreso": {
+     "media": 117.01615656565657,
+     "mediana": 96.40715,
+     "n": 33
+    },
+    "Balanza egreso → Salida": {
+     "media": 8.889831481481481,
+     "mediana": 6.075733333333333,
+     "n": 9
+    }
+   }
+  },
+  "Carga · glicerina": {
+   "viajes": 27,
+   "t": 680,
+   "totalMedia": 309.9203703703704,
+   "totalMediana": 318.85,
+   "conCamaraPuerto": 26,
+   "conCarta": 0,
+   "sentidoHistorial": 0,
+   "renovaCam": 0,
+   "plataformas": {
+    "sin plataforma": 27
+   },
+   "productos": {
+    "GLICERINA": 7,
+    "GLICERINA REFINADA": 20
+   },
+   "tramos": {
+    "Balanza egreso → Salida": {
+     "media": 4.5866625,
+     "mediana": 3.5457166666666664,
+     "n": 8
+    },
+    "Balanza ingreso → Balanza egreso": {
+     "media": 270.7479431818182,
+     "mediana": 246.85430833333334,
+     "n": 22
+    },
+    "Ingreso → Calada": {
+     "media": 12.163383333333334,
+     "mediana": 5.3373333333333335,
+     "n": 3
+    },
+    "Calada → Balanza ingreso": {
+     "media": 9.281161111111112,
+     "mediana": 10.527216666666668,
+     "n": 3
+    }
+   }
+  },
+  "Carga · borras, lecitina y ácidos grasos": {
+   "viajes": 24,
+   "t": 615,
+   "totalMedia": 219.24166666666667,
+   "totalMediana": 128.06666666666666,
+   "conCamaraPuerto": 22,
+   "conCarta": 0,
+   "sentidoHistorial": 7,
+   "renovaCam": 0,
+   "plataformas": {
+    "sin plataforma": 13,
+    "ACEITE_OSL": 9,
+    "ACEITE_PTO": 2
+   },
+   "productos": {
+    "BORRA DE ACSOJA REFINADO": 13,
+    "BORRA ACEITE GIRASOL REFINADO": 8,
+    "LECITINA DE SOJA": 2,
+    "ACIDOS GRASOS GIRASOL": 1
+   },
+   "tramos": {
+    "Balanza ingreso → Balanza egreso": {
+     "media": 210.32482222222222,
+     "mediana": 124.72245,
+     "n": 15
+    },
+    "Balanza egreso → Salida": {
+     "media": 4.200005555555555,
+     "mediana": 3.1286,
+     "n": 15
+    },
+    "Ingreso → Calada": {
+     "media": 15.163658333333334,
+     "mediana": 15.163658333333334,
+     "n": 2
+    },
+    "Calada → Balanza ingreso": {
+     "media": 110.49061666666665,
+     "mediana": 110.49061666666665,
+     "n": 2
+    }
+   }
+  },
+  "Descarga · glicerina e insumos químicos": {
+   "viajes": 12,
+   "t": 287,
+   "totalMedia": 215.40555555555557,
+   "totalMediana": 188.43333333333334,
+   "conCamaraPuerto": 12,
+   "conCarta": 0,
+   "sentidoHistorial": 9,
+   "renovaCam": 0,
+   "plataformas": {
+    "sin plataforma": 12
+   },
+   "productos": {
+    "GLICERINA": 4,
+    "ACIDO CLORHIDRICO": 2,
+    "METANOL": 4,
+    "SODA CAUSTICA LIQUIDA": 2
+   },
+   "tramos": {
+    "Balanza ingreso → Balanza egreso": {
+     "media": 157.22195555555555,
+     "mediana": 141.43131666666667,
+     "n": 9
+    },
+    "Balanza egreso → Salida": {
+     "media": 25.620583333333336,
+     "mediana": 3.6336916666666665,
+     "n": 10
+    }
+   }
+  },
+  "Descarga · aceite para refinar": {
+   "viajes": 2,
+   "t": 58,
+   "totalMedia": 1064.5833333333335,
+   "totalMediana": 1064.5833333333335,
+   "conCamaraPuerto": 1,
+   "conCarta": 0,
+   "sentidoHistorial": 0,
+   "renovaCam": 0,
+   "plataformas": {
+    "ACEITE_PTO": 2
+   },
+   "productos": {
+    "ACEITE GIRASOL PARA REFINAR": 2
+   },
+   "tramos": {}
+  }
+ }
+}

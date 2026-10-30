@@ -3,8 +3,8 @@
   "attachments": {},
   "cover": "cover",
   "createdOnFiles": {
-    "at": "2026-10-21T18:25:09Z",
-    "v": 1
+    "v": 1,
+    "at": "2026-10-26T15:36:39Z"
   },
   "designSystems": [],
   "faces": {
@@ -36,8 +36,7 @@
     "div-interplanta",
     "interplanta",
     "camionetas",
-    "ficha-permitido",
-    "servicio"
+    "ficha-permitido"
   ],
   "sections": {
     "s1": {
@@ -55,12 +54,6 @@
     "s4": {
       "description": "Demoras entre plantas sin calado en el puerto y vehículos sin Excel",
       "start": "div-interplanta"
-    },
-    "s5": {
-      "before": null,
-      "description": "Balanza y recorridos fuera de lo común: sin pesar, reingresos y visitas relámpago",
-      "seq": 0,
-      "start": null
     },
     "s7": {
       "description": "Vehículos Permitidos: ficha para completar por cada sector",

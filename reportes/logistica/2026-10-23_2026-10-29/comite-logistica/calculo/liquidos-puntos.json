@@ -1,0 +1,171 @@
+{
+ "Carga · OSL": {
+  "viajes": 121,
+  "t": 3310,
+  "totalMedia": 263.298347107438,
+  "totalMediana": 204.25,
+  "productos": {
+   "ACEITE GIRASOL REFINADO": 78,
+   "ACEITE SOJA CRUDO DESGOMADO": 39,
+   "BORRA ACEITE GIRASOL REFINADO": 4
+  },
+  "plataformaSGC": {
+   "ACEITE_OSL": 82,
+   "sin plataforma": 39
+  },
+  "tramos": {
+   "Ingreso → balanza ingreso": {
+    "media": 104.8394038961039,
+    "mediana": 31.39431666666667,
+    "n": 77
+   },
+   "Balanza ingreso → punto": {
+    "media": 103.93696249999999,
+    "mediana": 93.747575,
+    "n": 84
+   },
+   "En el punto": {
+    "media": 0.7225666666666668,
+    "mediana": 0.0,
+    "n": 97
+   },
+   "Punto → balanza egreso": {
+    "media": 40.75895606060606,
+    "mediana": 36.02235833333333,
+    "n": 88
+   },
+   "Balanza egreso → salida": {
+    "media": 3.7710372395833334,
+    "mediana": 3.022683333333333,
+    "n": 64
+   }
+  }
+ },
+ "Carga · PTO": {
+  "viajes": 2,
+  "t": 22,
+  "totalMedia": 218.63333333333333,
+  "totalMediana": 218.63333333333333,
+  "productos": {
+   "LECITINA DE SOJA": 2
+  },
+  "plataformaSGC": {
+   "ACEITE_PTO": 2
+  },
+  "tramos": {
+   "Ingreso → balanza ingreso": {
+    "media": 125.65427500000001,
+    "mediana": 125.65427500000001,
+    "n": 2
+   },
+   "Balanza ingreso → punto": {
+    "media": 34.77043333333334,
+    "mediana": 34.77043333333334,
+    "n": 1
+   },
+   "En el punto": {
+    "media": 0.0,
+    "mediana": 0.0,
+    "n": 1
+   },
+   "Punto → balanza egreso": {
+    "media": 74.92273333333333,
+    "mediana": 74.92273333333333,
+    "n": 1
+   },
+   "Balanza egreso → salida": {
+    "media": 3.4343666666666666,
+    "mediana": 3.4343666666666666,
+    "n": 2
+   }
+  }
+ },
+ "Carga · Renova": {
+  "viajes": 69,
+  "t": 1813,
+  "totalMedia": 309.70193236714977,
+  "totalMediana": 291.15,
+  "productos": {
+   "ACEITE SOJA CRUDO DESGOMADO": 8,
+   "BORRA DE ACSOJA REFINADO": 9,
+   "GLICERINA REFINADA": 20,
+   "GLICERINA": 4,
+   "ACEITE GIRASOL REFINADO": 20,
+   "BORRA ACEITE GIRASOL REFINADO": 5,
+   "ACIDOS GRASOS GIRASOL": 1,
+   "GLICERINA SUBSTANDARD": 2
+  },
+  "plataformaSGC": {
+   "sin plataforma": 43,
+   "ACEITE_OSL": 26
+  },
+  "tramos": {
+   "Ingreso → balanza ingreso": {
+    "media": 28.80800484848485,
+    "mediana": 13.52765,
+    "n": 55
+   },
+   "Balanza ingreso → punto": {
+    "media": 78.4246234375,
+    "mediana": 4.700875,
+    "n": 64
+   },
+   "En el punto": {
+    "media": 22.393687439613526,
+    "mediana": 0.0,
+    "n": 69
+   },
+   "Punto → balanza egreso": {
+    "media": 141.4665873655914,
+    "mediana": 100.35557499999999,
+    "n": 62
+   },
+   "Balanza egreso → salida": {
+    "media": 4.733563425925926,
+    "mediana": 3.514283333333333,
+    "n": 36
+   }
+  }
+ },
+ "Descarga · Renova": {
+  "viajes": 4,
+  "t": 125,
+  "totalMedia": 207.58333333333334,
+  "totalMediana": 173.47500000000002,
+  "productos": {
+   "GLICERINA": 2,
+   "SODA CAUSTICA LIQUIDA": 1,
+   "METANOL": 1
+  },
+  "plataformaSGC": {
+   "sin plataforma": 4
+  },
+  "tramos": {
+   "Ingreso → balanza ingreso": {
+    "media": 49.3588,
+    "mediana": 49.3588,
+    "n": 2
+   },
+   "Balanza ingreso → punto": {
+    "media": 102.08361111111111,
+    "mediana": 79.02006666666666,
+    "n": 3
+   },
+   "En el punto": {
+    "media": 34.4557875,
+    "mediana": 30.981808333333333,
+    "n": 4
+   },
+   "Punto → balanza egreso": {
+    "media": 76.38171666666666,
+    "mediana": 99.40915,
+    "n": 3
+   },
+   "Balanza egreso → salida": {
+    "media": 4.848861111111112,
+    "mediana": 4.90055,
+    "n": 3
+   }
+  }
+ }
+}

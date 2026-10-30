@@ -1,0 +1,33 @@
+{
+ "criterio": "media por tramo de la soja R7 (circuit_timing de las corridas semanales que cubren cada comité, paquete-periodo.ts); 4/10 y 11/10 coinciden con lo publicado",
+ "comites": [
+  {
+   "comite": "18/9",
+   "playaOsl": 138,
+   "descarga": 43,
+   "nOsl": 996,
+   "nDesc": 769
+  },
+  {
+   "comite": "28/9",
+   "playaOsl": 127,
+   "descarga": 49,
+   "nOsl": 109,
+   "nDesc": 434
+  },
+  {
+   "comite": "4/10",
+   "playaOsl": 112,
+   "descarga": 58,
+   "nOsl": 149,
+   "nDesc": 127
+  },
+  {
+   "comite": "11/10",
+   "playaOsl": 50,
+   "descarga": 54,
+   "nOsl": 184,
+   "nDesc": 141
+  }
+ ]
+}

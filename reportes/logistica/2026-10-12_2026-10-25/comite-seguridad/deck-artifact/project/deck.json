@@ -1,0 +1,64 @@
+{
+  "v": 4,
+  "attachments": {},
+  "cover": "cover",
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-10-26T15:36:39Z"
+  },
+  "designSystems": [],
+  "faces": {
+    "domine": {
+      "family": "Domine",
+      "href": "https://fonts.googleapis.com/css2?family=Domine:wght@400..700&display=swap"
+    },
+    "ibm-plex-sans": {
+      "family": "IBM Plex Sans",
+      "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap"
+    },
+    "public-sans": {
+      "family": "Public Sans",
+      "href": "https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&display=swap"
+    }
+  },
+  "lists": "css",
+  "order": [
+    "cover",
+    "ficha-vuelta",
+    "ficha-calles",
+    "div-vuelta",
+    "v-bmf567-2110",
+    "v-umt456-2110",
+    "v-jjv417-2110",
+    "v-tcd135-2310",
+    "v-gxu312-2310",
+    "v-gvw791-2310",
+    "div-interplanta",
+    "interplanta",
+    "camionetas",
+    "ficha-permitido"
+  ],
+  "sections": {
+    "s1": {
+      "description": "Portada, histórico y números del período",
+      "start": "cover"
+    },
+    "s6": {
+      "description": "Fichas de ejemplo: ida y vuelta puerto–Ricardone y calle declarada vs descarga",
+      "start": "ficha-vuelta"
+    },
+    "s2": {
+      "description": "Camiones que fueron al puerto y volvieron a Ricardone antes de descargar",
+      "start": "div-vuelta"
+    },
+    "s4": {
+      "description": "Demoras entre plantas sin calado en el puerto y vehículos sin Excel",
+      "start": "div-interplanta"
+    },
+    "s7": {
+      "description": "Vehículos Permitidos: ficha para completar por cada sector",
+      "start": "ficha-permitido"
+    }
+  },
+  "title": "Comité de Seguridad · 12/10 al 25/10"
+}

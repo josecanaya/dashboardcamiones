@@ -1,0 +1,3449 @@
+{
+ "desde": "2026-10-23",
+ "hasta": "2026-10-28",
+ "metodo": "cámaras por patente (sin planilla); visita = lecturas de una planta separadas por menos de 4 h",
+ "visitas": {
+  "RIC": 34,
+  "TER": 225
+ },
+ "porDia": {
+  "2026-10-23": {
+   "RIC": 4,
+   "TER": 46
+  },
+  "2026-10-24": {
+   "RIC": 2,
+   "TER": 11
+  },
+  "2026-10-25": {
+   "RIC": 1,
+   "TER": 4
+  },
+  "2026-10-26": {
+   "RIC": 6,
+   "TER": 49
+  },
+  "2026-10-27": {
+   "RIC": 12,
+   "TER": 61
+  },
+  "2026-10-28": {
+   "RIC": 9,
+   "TER": 54
+  }
+ },
+ "terminalCargaDescarga": {
+  "carga": 49,
+  "descarga": 34
+ },
+ "porCamara": {
+  "RIC": {
+   "RicIngCamFrente": 27,
+   "RicPreIngInFr": 34,
+   "RicEgrCamFrente": 23,
+   "RicB2Egreso": 12,
+   "RicCalLiq": 26
+  },
+  "TER": {
+   "SLZIngCamFrente": 200,
+   "SLZBalIngFte": 207,
+   "SLZTK400": 120,
+   "SLZBalSC2Fte": 188,
+   "SLZSalidaC1Fte": 195,
+   "SLZBalSC1Fte": 11,
+   "SLZCalado": 131,
+   "RenDescFte": 34,
+   "RenCargFte": 49,
+   "SLZSalidaC2Fte": 5,
+   "SLZBalLiq1a": 1,
+   "SLZBalLiq1b": 3
+  }
+ },
+ "calibracion": {
+  "RIC": {
+   "visitasCamara": 34,
+   "porFamiliaPlanilla": {
+    "otro": 10,
+    "sin movimiento en planilla": 19,
+    "liquido": 5
+   },
+   "precision": 0.147,
+   "movimientosPlanilla": 5,
+   "conVisita": 5,
+   "cobertura": 1,
+   "porSentido": {
+    "INGRESO": {
+     "planilla": 5,
+     "conVisita": 5
+    },
+    "EGRESO": {
+     "planilla": 0,
+     "conVisita": 0
+    }
+   }
+  },
+  "TER": {
+   "visitasCamara": 225,
+   "porFamiliaPlanilla": {
+    "agua": 21,
+    "liquido": 133,
+    "otro": 24,
+    "sin movimiento en planilla": 47
+   },
+   "precision": 0.591,
+   "movimientosPlanilla": 189,
+   "conVisita": 130,
+   "cobertura": 0.688,
+   "porSentido": {
+    "INGRESO": {
+     "planilla": 18,
+     "conVisita": 3
+    },
+    "EGRESO": {
+     "planilla": 171,
+     "conVisita": 127
+    }
+   }
+  }
+ },
+ "detalle": [
+  {
+   "p": "CMF111",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 351,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "CMF111",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 445,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "CMF111",
+   "pl": "TER",
+   "day": "2026-10-24",
+   "min": 73,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "CMF111",
+   "pl": "TER",
+   "day": "2026-10-24",
+   "min": 92,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "CMF111",
+   "pl": "TER",
+   "day": "2026-10-25",
+   "min": 150,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC1Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "CMF111",
+   "pl": "TER",
+   "day": "2026-10-25",
+   "min": 109,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "CMF111",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 151,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "CMF111",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 99,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "CMF111",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 105,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "CMF111",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 81,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "CMF111",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 541,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "IMX724",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 161,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "IMX724",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 176,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "JTT879",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 12,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "JTT879",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 305,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "JTT879",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 135,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "SCG152",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 138,
+   "devs": [
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "SCG152",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 190,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "SCG152",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 212,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "EXR046",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 90,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "EXR046",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 153,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "JRP333",
+   "pl": "TER",
+   "day": "2026-10-24",
+   "min": 141,
+   "devs": [
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "JRP333",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 157,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "JRP333",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 176,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AA463TD",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 185,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "EGV380",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 111,
+   "devs": [
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "EGV380",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 160,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "EGV380",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 196,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "EGV380",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 166,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "EGV380",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 104,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AA875OG",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 89,
+   "devs": [
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AA875OG",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 1,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado"
+   ]
+  },
+  {
+   "p": "AA875OG",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 691,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AA875OG",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 180,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AA875OG",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 199,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AA875OG",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 203,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "CDF727",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 15,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado"
+   ]
+  },
+  {
+   "p": "CDF727",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 326,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "CDF727",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 229,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "CDF727",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 180,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "VCK738",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 187,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "VCK738",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 140,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "SZG666",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 79,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "SZG666",
+   "pl": "TER",
+   "day": "2026-10-24",
+   "min": 63,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "SZG666",
+   "pl": "TER",
+   "day": "2026-10-24",
+   "min": 72,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "SZG666",
+   "pl": "TER",
+   "day": "2026-10-25",
+   "min": 295,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "SZG666",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 78,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "SZG666",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 61,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "SZG666",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 74,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "SZG666",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 67,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "SZG666",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 70,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "SZG666",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 354,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZBalIngFte"
+   ]
+  },
+  {
+   "p": "CXA592",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 2,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado"
+   ]
+  },
+  {
+   "p": "CXA592",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 113,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "CXA592",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 28,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado"
+   ]
+  },
+  {
+   "p": "ENA722",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 90,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "ENA722",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 88,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "ENA722",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 118,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "OFG785",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 37,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado"
+   ]
+  },
+  {
+   "p": "OFG785",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 279,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "OFG785",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 212,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "OFG785",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 206,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "OFG785",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 203,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "WGG348",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 169,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado"
+   ]
+  },
+  {
+   "p": "WGG348",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 41,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "WGG348",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 158,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "WGG348",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 201,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "RenCargFte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "OIG256",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 95,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "OIG256",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 82,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "OIG256",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 502,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZSalidaC1Fte",
+    "SLZTK400",
+    "SLZBalSC2Fte"
+   ]
+  },
+  {
+   "p": "OIG256",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 350,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AE808WG",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 786,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZCalado",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "AE808WG",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 142,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZCalado",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AE880CH",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 728,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZCalado",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AE880CH",
+   "pl": "RIC",
+   "day": "2026-10-24",
+   "min": 537,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicEgrCamFrente",
+    "RicB2Egreso",
+    "RicCalLiq"
+   ]
+  },
+  {
+   "p": "AE880CH",
+   "pl": "RIC",
+   "day": "2026-10-25",
+   "min": 532,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicEgrCamFrente",
+    "RicB2Egreso",
+    "RicCalLiq"
+   ]
+  },
+  {
+   "p": "AE880CH",
+   "pl": "RIC",
+   "day": "2026-10-27",
+   "min": 98,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicCalLiq",
+    "RicEgrCamFrente"
+   ]
+  },
+  {
+   "p": "AE880CH",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 15,
+   "devs": [
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AE880CH",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 1037,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZBalSC2Fte",
+    "SLZTK400",
+    "SLZCalado",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "GZI868",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 121,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AD887XZ",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 47,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado"
+   ]
+  },
+  {
+   "p": "AD887XZ",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 173,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AD887XZ",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 146,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "JIA232",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 344,
+   "devs": [
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "JIA232",
+   "pl": "TER",
+   "day": "2026-10-24",
+   "min": 470,
+   "devs": [
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "AGR963",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 3,
+   "devs": [
+    "SLZCalado",
+    "SLZBalIngFte"
+   ]
+  },
+  {
+   "p": "AGR963",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 350,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AGR963",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 57,
+   "devs": [
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "UAJ766",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 25,
+   "devs": [
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "UAJ766",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 78,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "UAJ766",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 19,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "UAJ766",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 98,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "UAJ766",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 21,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "UAJ766",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 30,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "UAJ766",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 27,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "KWN857",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 36,
+   "devs": [
+    "SLZSalidaC1Fte",
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "KWN857",
+   "pl": "TER",
+   "day": "2026-10-24",
+   "min": 404,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZCalado",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "KWN857",
+   "pl": "TER",
+   "day": "2026-10-25",
+   "min": 213,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZCalado",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "KWN857",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 141,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZCalado",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AF411UI",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 252,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "FEA810",
+   "pl": "RIC",
+   "day": "2026-10-26",
+   "min": 192,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicEgrCamFrente",
+    "RicB2Egreso"
+   ]
+  },
+  {
+   "p": "FEA810",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 15,
+   "devs": [
+    "SLZSalidaC1Fte",
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "FEA810",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 38,
+   "devs": [
+    "SLZTK400",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "GGX385",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 45,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "GGX385",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 172,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "VNA879",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 156,
+   "devs": [
+    "SLZSalidaC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte"
+   ]
+  },
+  {
+   "p": "KOQ228",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 34,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "KOQ228",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 87,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte"
+   ]
+  },
+  {
+   "p": "KOQ228",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 246,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "KOQ228",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 221,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AD195CG",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 62,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "AD195CG",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 458,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AD195CG",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 162,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AD195CG",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 222,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AD195CG",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 231,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "JBN715",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 534,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "IRK465",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 199,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte"
+   ]
+  },
+  {
+   "p": "DEL202",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 217,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte"
+   ]
+  },
+  {
+   "p": "DEL202",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 316,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "DEL202",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 256,
+   "devs": [
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "DEL202",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 216,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AA463TC",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 207,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AA463TC",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 115,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "GGO842",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 88,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte"
+   ]
+  },
+  {
+   "p": "GGO842",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 530,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "HAQ820",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 3,
+   "devs": [
+    "SLZCalado",
+    "SLZBalIngFte"
+   ]
+  },
+  {
+   "p": "HAQ820",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 29,
+   "devs": [
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AH201VB",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 297,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "JYG654",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 179,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "EVD342",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 141,
+   "devs": [
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte"
+   ]
+  },
+  {
+   "p": "EVD342",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 250,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "EVD342",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 220,
+   "devs": [
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "EVD342",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 190,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "NWZ336",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 75,
+   "devs": [
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte"
+   ]
+  },
+  {
+   "p": "LZP121",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 345,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZCalado",
+    "RenCargFte",
+    "SLZTK400",
+    "SLZBalLiq1a"
+   ]
+  },
+  {
+   "p": "LZP121",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 293,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZBalSC1Fte",
+    "SLZTK400",
+    "SLZCalado",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "BTS626",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 144,
+   "devs": [
+    "SLZSalidaC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte"
+   ]
+  },
+  {
+   "p": "BTS626",
+   "pl": "RIC",
+   "day": "2026-10-26",
+   "min": 376,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicEgrCamFrente",
+    "RicB2Egreso"
+   ]
+  },
+  {
+   "p": "BTS626",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 149,
+   "devs": [
+    "SLZSalidaC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte"
+   ]
+  },
+  {
+   "p": "BTS626",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 141,
+   "devs": [
+    "SLZSalidaC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte"
+   ]
+  },
+  {
+   "p": "AE052QO",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 97,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "RUK692",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 103,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AA996WD",
+   "pl": "RIC",
+   "day": "2026-10-28",
+   "min": 10,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicCalLiq"
+   ]
+  },
+  {
+   "p": "OEF695",
+   "pl": "RIC",
+   "day": "2026-10-28",
+   "min": 6,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicCalLiq"
+   ]
+  },
+  {
+   "p": "JEZ560",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 148,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "JEZ560",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 333,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZBalSC1Fte",
+    "SLZBalLiq1b",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "IIN906",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 257,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "VJG112",
+   "pl": "RIC",
+   "day": "2026-10-28",
+   "min": 125,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicCalLiq"
+   ]
+  },
+  {
+   "p": "AB985TZ",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 304,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "JJC110",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 409,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "TAO150",
+   "pl": "RIC",
+   "day": "2026-10-27",
+   "min": 5,
+   "devs": [
+    "RicPreIngInFr",
+    "RicCalLiq"
+   ]
+  },
+  {
+   "p": "TAO150",
+   "pl": "RIC",
+   "day": "2026-10-28",
+   "min": 128,
+   "devs": [
+    "RicPreIngInFr",
+    "RicCalLiq",
+    "RicEgrCamFrente",
+    "RicIngCamFrente"
+   ]
+  },
+  {
+   "p": "VAJ028",
+   "pl": "RIC",
+   "day": "2026-10-27",
+   "min": 19,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicCalLiq",
+    "RicEgrCamFrente"
+   ]
+  },
+  {
+   "p": "AB536JC",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 432,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "JYP960",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 443,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "LER204",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 437,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "LER204",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 189,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "EOI579",
+   "pl": "RIC",
+   "day": "2026-10-23",
+   "min": 214,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicB2Egreso"
+   ]
+  },
+  {
+   "p": "KAD727",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 390,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "GYW157",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 432,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "GYW157",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 256,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte"
+   ]
+  },
+  {
+   "p": "INV971",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 144,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "AC925UP",
+   "pl": "TER",
+   "day": "2026-10-24",
+   "min": 111,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "RYJ562",
+   "pl": "RIC",
+   "day": "2026-10-26",
+   "min": 16,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicCalLiq",
+    "RicEgrCamFrente"
+   ]
+  },
+  {
+   "p": "PDC059",
+   "pl": "RIC",
+   "day": "2026-10-23",
+   "min": 150,
+   "devs": [
+    "RicPreIngInFr",
+    "RicCalLiq",
+    "RicEgrCamFrente",
+    "RicB2Egreso"
+   ]
+  },
+  {
+   "p": "NAD656",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 90,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC1Fte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AAE877",
+   "pl": "RIC",
+   "day": "2026-10-26",
+   "min": 14,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicCalLiq",
+    "RicEgrCamFrente"
+   ]
+  },
+  {
+   "p": "OHI283",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 52,
+   "devs": [
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "FES324",
+   "pl": "RIC",
+   "day": "2026-10-23",
+   "min": 351,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicEgrCamFrente",
+    "RicB2Egreso"
+   ]
+  },
+  {
+   "p": "FES324",
+   "pl": "RIC",
+   "day": "2026-10-28",
+   "min": 19,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicCalLiq"
+   ]
+  },
+  {
+   "p": "AA421OL",
+   "pl": "RIC",
+   "day": "2026-10-23",
+   "min": 329,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicEgrCamFrente",
+    "RicB2Egreso"
+   ]
+  },
+  {
+   "p": "HWU967",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 73,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZBalSC1Fte"
+   ]
+  },
+  {
+   "p": "HWU967",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 60,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZBalSC1Fte"
+   ]
+  },
+  {
+   "p": "HWU967",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 68,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC1Fte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AB531CT",
+   "pl": "TER",
+   "day": "2026-10-23",
+   "min": 227,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC1Fte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "DIH255",
+   "pl": "RIC",
+   "day": "2026-10-27",
+   "min": 7,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicCalLiq",
+    "RicEgrCamFrente"
+   ]
+  },
+  {
+   "p": "AC132NO",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 58,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZBalSC2Fte",
+    "SLZCalado",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "CIE516",
+   "pl": "RIC",
+   "day": "2026-10-27",
+   "min": 7,
+   "devs": [
+    "RicPreIngInFr",
+    "RicCalLiq"
+   ]
+  },
+  {
+   "p": "DON372",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 64,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZBalSC2Fte",
+    "SLZCalado",
+    "SLZTK400",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "DON372",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 46,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AE784ON",
+   "pl": "RIC",
+   "day": "2026-10-27",
+   "min": 51,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicEgrCamFrente",
+    "RicB2Egreso"
+   ]
+  },
+  {
+   "p": "AC754JJ",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 74,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AC754JJ",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 81,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AB472CS",
+   "pl": "TER",
+   "day": "2026-10-24",
+   "min": 84,
+   "devs": [
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AA703FC",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 534,
+   "devs": [
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "AA703FC",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 661,
+   "devs": [
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "AA703FC",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 170,
+   "devs": [
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZIngCamFrente",
+    "SLZBalIngFte"
+   ]
+  },
+  {
+   "p": "KGH346",
+   "pl": "RIC",
+   "day": "2026-10-24",
+   "min": 11,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicCalLiq"
+   ]
+  },
+  {
+   "p": "AG332BP",
+   "pl": "TER",
+   "day": "2026-10-24",
+   "min": 277,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "OIN331",
+   "pl": "TER",
+   "day": "2026-10-24",
+   "min": 81,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "VHTB16",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 451,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AYB759",
+   "pl": "RIC",
+   "day": "2026-10-27",
+   "min": 6,
+   "devs": [
+    "RicPreIngInFr",
+    "RicCalLiq"
+   ]
+  },
+  {
+   "p": "RAW481",
+   "pl": "RIC",
+   "day": "2026-10-27",
+   "min": 13,
+   "devs": [
+    "RicPreIngInFr",
+    "RicCalLiq",
+    "RicEgrCamFrente"
+   ]
+  },
+  {
+   "p": "RAW481",
+   "pl": "RIC",
+   "day": "2026-10-28",
+   "min": 91,
+   "devs": [
+    "RicPreIngInFr",
+    "RicCalLiq",
+    "RicEgrCamFrente"
+   ]
+  },
+  {
+   "p": "BVS300",
+   "pl": "RIC",
+   "day": "2026-10-27",
+   "min": 12,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicCalLiq",
+    "RicEgrCamFrente"
+   ]
+  },
+  {
+   "p": "NXN155",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 205,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalLiq1b",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "HFT868",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 164,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZBalSC2Fte"
+   ]
+  },
+  {
+   "p": "DOQ926",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 86,
+   "devs": [
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZBalSC2Fte"
+   ]
+  },
+  {
+   "p": "JLZ827",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 180,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "KWO040",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 206,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "DOD926",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 119,
+   "devs": [
+    "SLZBalIngFte",
+    "SLZCalado"
+   ]
+  },
+  {
+   "p": "DOD926",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 18,
+   "devs": [
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "OGA047",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 220,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "OGA047",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 213,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "OGA047",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 154,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "OGA047",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 94,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AE888WG",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 46,
+   "devs": [
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte"
+   ]
+  },
+  {
+   "p": "AH214JU",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 87,
+   "devs": [
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AH214JU",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 127,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AE499JQ",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 401,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AE499JQ",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 130,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "KFC223",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 122,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "KFC223",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 111,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "KFC223",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 119,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "WYM436",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 156,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AF804QL",
+   "pl": "RIC",
+   "day": "2026-10-27",
+   "min": 17,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicCalLiq",
+    "RicEgrCamFrente"
+   ]
+  },
+  {
+   "p": "GDE552",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 333,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "GDE552",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 235,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "GDE552",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 173,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenCargFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AC191XZ",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 142,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "FFU234",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 134,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "GYC220",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 103,
+   "devs": [
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "KUH403",
+   "pl": "RIC",
+   "day": "2026-10-26",
+   "min": 202,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicCalLiq",
+    "RicEgrCamFrente",
+    "RicB2Egreso"
+   ]
+  },
+  {
+   "p": "AF984QB",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 275,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "EPH797",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 310,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "EPH797",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 522,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "EPH797",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 625,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "AB472AR",
+   "pl": "TER",
+   "day": "2026-10-26",
+   "min": 51,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AE374FK",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 78,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "AE374FK",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 75,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "LRN071",
+   "pl": "RIC",
+   "day": "2026-10-26",
+   "min": 89,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicEgrCamFrente",
+    "RicB2Egreso"
+   ]
+  },
+  {
+   "p": "LRN071",
+   "pl": "RIC",
+   "day": "2026-10-27",
+   "min": 89,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicEgrCamFrente",
+    "RicB2Egreso"
+   ]
+  },
+  {
+   "p": "AB495QJ",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 9,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado"
+   ]
+  },
+  {
+   "p": "JLD592",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 181,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400"
+   ]
+  },
+  {
+   "p": "AH370HH",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 220,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AEM183",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 207,
+   "devs": [
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AG266CO",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 95,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "LAU466",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 264,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AF443TR",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 27,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC1Fte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AF443TR",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 23,
+   "devs": [
+    "SLZSalidaC2Fte",
+    "SLZSalidaC1Fte",
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC1Fte",
+    "SLZBalSC2Fte"
+   ]
+  },
+  {
+   "p": "AG952LG",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 203,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AG952LG",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 200,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AB608FB",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 527,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZCalado",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AB608FB",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 188,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "GNH814",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 144,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "GNH814",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 230,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZBalLiq1b",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AB646GL",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 111,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "LCP506",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 171,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "LCP506",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 168,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AH362SA",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 123,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AF829YZ",
+   "pl": "TER",
+   "day": "2026-10-27",
+   "min": 117,
+   "devs": [
+    "SLZBalIngFte",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "GXO579",
+   "pl": "RIC",
+   "day": "2026-10-27",
+   "min": 101,
+   "devs": [
+    "RicPreIngInFr",
+    "RicCalLiq"
+   ]
+  },
+  {
+   "p": "NUD400",
+   "pl": "RIC",
+   "day": "2026-10-28",
+   "min": 110,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicCalLiq",
+    "RicEgrCamFrente"
+   ]
+  },
+  {
+   "p": "MAB570",
+   "pl": "RIC",
+   "day": "2026-10-28",
+   "min": 22,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicCalLiq"
+   ]
+  },
+  {
+   "p": "EMM462",
+   "pl": "RIC",
+   "day": "2026-10-28",
+   "min": 24,
+   "devs": [
+    "RicIngCamFrente",
+    "RicPreIngInFr",
+    "RicCalLiq",
+    "RicEgrCamFrente"
+   ]
+  },
+  {
+   "p": "AD968KP",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 139,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZCalado",
+    "SLZBalIngFte",
+    "RenDescFte",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "PAR121",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 107,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "AF615IJ",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 129,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZTK400",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  },
+  {
+   "p": "LZP122",
+   "pl": "TER",
+   "day": "2026-10-28",
+   "min": 215,
+   "devs": [
+    "SLZIngCamFrente",
+    "SLZBalIngFte",
+    "SLZBalSC1Fte",
+    "SLZTK400",
+    "SLZCalado",
+    "SLZBalSC2Fte",
+    "SLZSalidaC1Fte"
+   ]
+  }
+ ]
+}

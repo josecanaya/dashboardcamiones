@@ -1,0 +1,647 @@
+<title>Lectura de cámaras · 21 al 26 de octubre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: informe de una columna; resumen arriba, tablas por planta en orden de recorrido, detalle al final. */
+:root {
+  --bg: #f6f8f5; --surface: #ffffff; --fg: #17221b; --muted: #5d6b62; --line: #dde4de;
+  --accent: #1f7a4a; --accent-2: #6a4bb3;
+  --ok: #1f7a4a; --ok-bg: #dcefe3; --fair: #5e8c2f; --fair-bg: #ebf3d9;
+  --warn: #a8660b; --warn-bg: #fbeccd; --bad: #b3261e; --bad-bg: #f8dcd9; --na-bg: #eef1ee;
+  --f-display: "Barlow Semi Condensed", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111713; --surface: #18201b; --fg: #e5ece6; --muted: #9aa89f; --line: #2b362f;
+  --accent: #5cc58b; --accent-2: #a98ce8;
+  --ok: #6fd39b; --ok-bg: #1d3a2a; --fair: #b3d57a; --fair-bg: #2c3a1c; --warn: #f0b659; --warn-bg: #3d2e12; --bad: #ff8a80; --bad-bg: #45201d; --na-bg: #1f2822;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #111713; --surface: #18201b; --fg: #e5ece6; --muted: #9aa89f; --line: #2b362f;
+  --accent: #5cc58b; --accent-2: #a98ce8;
+  --ok: #6fd39b; --ok-bg: #1d3a2a; --fair: #b3d57a; --fair-bg: #2c3a1c; --warn: #f0b659; --warn-bg: #3d2e12; --bad: #ff8a80; --bad-bg: #45201d; --na-bg: #1f2822;
+  color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font: 400 15px/1.5 var(--f-body); }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 20px; padding-block: 32px 64px; display: grid; gap: 40px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; letter-spacing: .005em; }
+h1 { font-size: clamp(28px, 4vw, 40px); font-weight: 700; line-height: 1.05; }
+h2 { font-size: 24px; font-weight: 600; }
+h3 { font-size: 18px; font-weight: 600; }
+p { margin: 0; max-width: 72ch; }
+.eyebrow { font: 600 12px/1 var(--f-display); letter-spacing: .12em; text-transform: uppercase; color: var(--accent-2); }
+header { display: grid; gap: 10px; }
+.meta { color: var(--muted); font-size: 13px; font-family: var(--f-mono); }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; display: grid; gap: 2px; }
+.kpi .v { font: 700 36px/1.1 var(--f-display); font-variant-numeric: tabular-nums; }
+.kpi .l { color: var(--muted); font-size: 13px; }
+.kpi.dia .v { color: var(--accent); } .kpi.noche .v { color: var(--accent-2); }
+section { display: grid; gap: 14px; min-width: 0; }
+.lede { color: var(--muted); }
+.findings { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.findings > div { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; min-width: 0; }
+.findings ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 6px; }
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+thead th { font: 600 12px/1.2 var(--f-display); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); background: var(--bg); position: sticky; top: 0; white-space: nowrap; }
+tbody tr:last-child > * { border-bottom: 0; }
+tbody th { font-weight: 500; min-width: 180px; }
+.pname { display: inline; font-weight: 600; }
+.code { font: 500 11px var(--f-mono); color: var(--muted); margin-left: 6px; }
+.cams { display: block; font: 400 11.5px/1.35 var(--f-mono); color: var(--muted); margin-top: 2px; }
+.mono { font-family: var(--f-mono); font-size: 13px; }
+.num { text-align: right; white-space: nowrap; }
+.pct { text-align: right; white-space: nowrap; font-weight: 600; border-left: 3px solid transparent; }
+.pct small { display: block; font: 400 11px var(--f-mono); color: var(--muted); }
+.pct.ok { color: var(--ok); } .pct.fair { color: var(--fair); } .pct.warn { color: var(--warn); } .pct.bad { color: var(--bad); }
+.pct.bad { background: var(--bad-bg); } .pct.warn { background: var(--warn-bg); }
+.pct.low, .pct.na { color: var(--muted); }
+.bar-cell { min-width: 150px; white-space: nowrap; }
+.bar-cell b { font: 700 16px var(--f-display); margin-left: 8px; vertical-align: middle; }
+.bar { display: inline-block; vertical-align: middle; width: 96px; height: 8px; border-radius: 4px; background: var(--na-bg); overflow: hidden; }
+.bar span { display: block; height: 100%; background: var(--muted); }
+.bar.ok span { background: var(--ok); } .bar.fair span { background: var(--fair); } .bar.warn span { background: var(--warn); } .bar.bad span { background: var(--bad); }
+.gap.hot { color: var(--accent-2); font-weight: 700; }
+.circ { font: 400 12px var(--f-mono); color: var(--muted); min-width: 160px; }
+.planta-row th { background: var(--bg); font: 700 13px var(--f-display); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.hm { text-align: center; font: 500 12px var(--f-mono); padding: 6px 4px; min-width: 34px; }
+.hm.n { border-right: 1px solid var(--line); }
+.hm.ok { background: var(--ok-bg); color: var(--ok); } .hm.fair { background: var(--fair-bg); color: var(--fair); }
+.hm.warn { background: var(--warn-bg); color: var(--warn); } .hm.bad { background: var(--bad-bg); color: var(--bad); }
+.hm.low, .hm.na { color: var(--muted); }
+.hm-head th { text-align: center; }
+.raw.zero { color: var(--bad); font-weight: 600; background: var(--bad-bg); } .raw.few { color: var(--warn); }
+tr.grp > * { border-top: 2px solid var(--line); }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px; color: var(--muted); }
+.legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; background: var(--c); }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 760px) { .split { grid-template-columns: 1fr; } }
+.dist-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; display: grid; gap: 10px; min-width: 0; }
+.dist { display: flex; align-items: flex-end; gap: 6px; height: 170px; }
+.dist-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; min-width: 0; }
+.dist-bar { width: 100%; max-width: 38px; background: var(--accent); border-radius: 3px 3px 0 0; }
+.dist-bar.zero { background: var(--bad); } .dist-bar.few { background: var(--warn); }
+.dist-v { font: 500 11px var(--f-mono); color: var(--muted); }
+.dist-k { font: 600 13px var(--f-display); border-top: 1px solid var(--line); width: 100%; text-align: center; padding-top: 2px; }
+.wk .pct small { display: none; } .wk .pct { font-size: 13px; padding: 6px 8px; } .wk-end { border-right: 1px solid var(--line); }
+.muted { color: var(--muted); } .small { font-size: 12.5px; }
+.method { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px 18px; display: grid; gap: 8px; font-size: 14px; }
+.method ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.method p, .method li { max-width: 90ch; }
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">Auditoría de cámaras · Ricardone y Puerto San Lorenzo</span>
+  <h1>Lectura de cámaras por punto de control</h1>
+  <p class="lede">De los camiones que tenían que pasar por cada cámara según su circuito, cuántos leyó. Movimientos con salida del mié 21/10 al lun 26/10.</p>
+  <p class="meta">Corridas 2026-10-19_2026-10-25 + 2026-10-26_2026-11-01 · etl_transform_v17 · tabla excel_operations_with_truckflow + eventos y alertas crudas Truckflow</p>
+</header>
+
+<div class="kpis">
+  <div class="kpi"><span class="v">81%</span><span class="l">pasos leídos: 6.260 de 7.710</span></div>
+  <div class="kpi dia"><span class="v">86%</span><span class="l">de día (06 a 18 h): 3.322 de 3.862</span></div>
+  <div class="kpi noche"><span class="v">76%</span><span class="l">de noche (18 a 06 h): 2.938 de 3.848</span></div>
+  <div class="kpi"><span class="v">960</span><span class="l">movimientos SGC evaluados</span></div>
+</div>
+
+<section>
+  <h2>Semana a semana</h2>
+  <p class="lede">Semanas de lunes a domingo. Cada camión cuenta en la semana de su salida.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Semana</th><th class="num">Camiones</th><th class="num">Alguna cámara</th><th class="num">3 puntos o más</th><th class="num">Pasos leídos</th><th class="num">Día</th><th class="num">Noche</th></tr></thead>
+    <tbody><tr><th scope="row">mié 21/10 – dom 25/10</th>
+    <td class="num">921</td>
+    <td class="pct ok" title="911 de 921">99%<small>911/921</small></td>
+    <td class="pct ok" title="862 de 921">94%<small>862/921</small></td>
+    <td class="pct fair" title="6.012 de 7.379">81%<small>6.012/7.379</small></td><td class="pct fair" title="3.233 de 3.738">86%<small>3.233/3.738</small></td><td class="pct fair" title="2.779 de 3.641">76%<small>2.779/3.641</small></td></tr><tr><th scope="row">lun 26/10</th>
+    <td class="num">39</td>
+    <td class="pct ok" title="38 de 39">97%<small>38/39</small></td>
+    <td class="pct ok" title="36 de 39">92%<small>36/39</small></td>
+    <td class="pct fair" title="248 de 331">75%<small>248/331</small></td><td class="pct warn" title="89 de 124">72%<small>89/124</small></td><td class="pct fair" title="159 de 207">77%<small>159/207</small></td></tr></tbody>
+  </table></div>
+  <h3>Por punto de control</h3>
+  <div class="scroll"><table class="wk">
+    <thead>
+      <tr class="hm-head"><th rowspan="2">Punto</th><th colspan="3" class="wk-end">mié 21/10 – dom 25/10</th><th colspan="3" class="wk-end">lun 26/10</th></tr>
+      <tr class="hm-head"><th>Total</th><th>Día</th><th class="wk-end">Noche</th><th>Total</th><th>Día</th><th class="wk-end">Noche</th></tr>
+    </thead>
+    <tbody>
+      <tr class="planta-row"><th colspan="7">Ricardone</th></tr>
+      <tr><th scope="row"><span class="pname">Ingreso</span></th><td class="pct warn" title="560 de 774">72%<small>560/774</small></td><td class="pct fair" title="300 de 401">75%<small>300/401</small></td><td class="pct wk-end warn" title="260 de 373">70%<small>260/373</small></td><td class="pct fair" title="26 de 34">76%<small>26/34</small></td><td class="pct low" title="2 de 2">100%<small>2/2</small></td><td class="pct wk-end fair" title="24 de 32">75%<small>24/32</small></td></tr><tr><th scope="row"><span class="pname">Preingreso</span></th><td class="pct fair" title="673 de 774">87%<small>673/774</small></td><td class="pct fair" title="338 de 398">85%<small>338/398</small></td><td class="pct wk-end fair" title="335 de 376">89%<small>335/376</small></td><td class="pct fair" title="30 de 34">88%<small>30/34</small></td><td class="pct low" title="1 de 2">50%<small>1/2</small></td><td class="pct wk-end ok" title="29 de 32">91%<small>29/32</small></td></tr><tr><th scope="row"><span class="pname">Calada</span></th><td class="pct fair" title="661 de 774">85%<small>661/774</small></td><td class="pct ok" title="351 de 390">90%<small>351/390</small></td><td class="pct wk-end fair" title="310 de 384">81%<small>310/384</small></td><td class="pct fair" title="30 de 34">88%<small>30/34</small></td><td class="pct low" title="5 de 5">100%<small>5/5</small></td><td class="pct wk-end fair" title="25 de 29">86%<small>25/29</small></td></tr><tr><th scope="row"><span class="pname">Balanza ingreso</span></th><td class="pct bad" title="11 de 85">13%<small>11/85</small></td><td class="pct bad" title="10 de 51">20%<small>10/51</small></td><td class="pct wk-end bad" title="1 de 34">3%<small>1/34</small></td><td class="pct na">—</td><td class="pct na"></td><td class="pct na wk-end"></td></tr><tr><th scope="row"><span class="pname">Balanza egreso</span></th><td class="pct warn" title="50 de 85">59%<small>50/85</small></td><td class="pct warn" title="42 de 65">65%<small>42/65</small></td><td class="pct wk-end bad" title="8 de 20">40%<small>8/20</small></td><td class="pct na">—</td><td class="pct na"></td><td class="pct na wk-end"></td></tr><tr><th scope="row"><span class="pname">Salida 2</span></th><td class="pct fair" title="610 de 696">88%<small>610/696</small></td><td class="pct ok" title="305 de 325">94%<small>305/325</small></td><td class="pct wk-end fair" title="305 de 371">82%<small>305/371</small></td><td class="pct warn" title="25 de 34">74%<small>25/34</small></td><td class="pct low" title="5 de 6">83%<small>5/6</small></td><td class="pct wk-end warn" title="20 de 28">71%<small>20/28</small></td></tr>
+      <tr class="planta-row"><th colspan="7">Puerto San Lorenzo</th></tr>
+      <tr><th scope="row"><span class="pname">Ingreso</span></th><td class="pct ok" title="752 de 837">90%<small>752/837</small></td><td class="pct ok" title="382 de 420">91%<small>382/420</small></td><td class="pct wk-end fair" title="370 de 417">89%<small>370/417</small></td><td class="pct fair" title="34 de 39">87%<small>34/39</small></td><td class="pct low" title="6 de 10">60%<small>6/10</small></td><td class="pct wk-end ok" title="28 de 29">97%<small>28/29</small></td></tr><tr><th scope="row"><span class="pname">Balanza ingreso</span></th><td class="pct fair" title="709 de 837">85%<small>709/837</small></td><td class="pct ok" title="414 de 448">92%<small>414/448</small></td><td class="pct wk-end fair" title="295 de 389">76%<small>295/389</small></td><td class="pct fair" title="30 de 39">77%<small>30/39</small></td><td class="pct fair" title="19 de 22">86%<small>19/22</small></td><td class="pct wk-end low" title="11 de 17">65%<small>11/17</small></td></tr><tr><th scope="row"><span class="pname">Carga OSL</span></th><td class="pct warn" title="60 de 104">58%<small>60/104</small></td><td class="pct warn" title="46 de 71">65%<small>46/71</small></td><td class="pct wk-end bad" title="14 de 33">42%<small>14/33</small></td><td class="pct low" title="2 de 5">40%<small>2/5</small></td><td class="pct low" title="2 de 4">50%<small>2/4</small></td><td class="pct wk-end low" title="0 de 1">0%<small>0/1</small></td></tr><tr><th scope="row"><span class="pname">Volcables</span></th><td class="pct warn" title="491 de 689">71%<small>491/689</small></td><td class="pct ok" title="302 de 328">92%<small>302/328</small></td><td class="pct wk-end warn" title="189 de 361">52%<small>189/361</small></td><td class="pct warn" title="19 de 34">56%<small>19/34</small></td><td class="pct warn" title="14 de 21">67%<small>14/21</small></td><td class="pct wk-end low" title="5 de 13">38%<small>5/13</small></td></tr><tr><th scope="row"><span class="pname">Carga y descarga</span></th><td class="pct warn" title="31 de 42">74%<small>31/42</small></td><td class="pct ok" title="20 de 22">91%<small>20/22</small></td><td class="pct wk-end warn" title="11 de 20">55%<small>11/20</small></td><td class="pct na">—</td><td class="pct na"></td><td class="pct na wk-end"></td></tr><tr><th scope="row"><span class="pname">Balanza egreso</span></th><td class="pct fair" title="633 de 837">76%<small>633/837</small></td><td class="pct fair" title="335 de 408">82%<small>335/408</small></td><td class="pct wk-end warn" title="298 de 429">69%<small>298/429</small></td><td class="pct warn" title="25 de 39">64%<small>25/39</small></td><td class="pct warn" title="18 de 26">69%<small>18/26</small></td><td class="pct wk-end low" title="7 de 13">54%<small>7/13</small></td></tr><tr><th scope="row"><span class="pname">Egreso</span></th><td class="pct ok" title="766 de 837">92%<small>766/837</small></td><td class="pct ok" title="383 de 404">95%<small>383/404</small></td><td class="pct wk-end fair" title="383 de 433">88%<small>383/433</small></td><td class="pct warn" title="27 de 39">69%<small>27/39</small></td><td class="pct warn" title="17 de 26">65%<small>17/26</small></td><td class="pct wk-end low" title="10 de 13">77%<small>10/13</small></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Camiones leídos</h2>
+  <p class="lede">Sobre los 960 camiones del período: cuántos quedaron registrados por al menos una cámara y cuántos por al menos 3 puntos de control distintos de su recorrido.</p>
+  <div class="kpis">
+    <div class="kpi"><span class="v">99%</span><span class="l">leídos en alguna cámara: 949 de 960</span></div>
+    <div class="kpi dia"><span class="v">94%</span><span class="l">leídos en 3 puntos o más: 898 de 960</span></div>
+    <div class="kpi"><span class="v">34%</span><span class="l">leídos en todos los puntos de su circuito: 330</span></div>
+    <div class="kpi noche"><span class="v">11</span><span class="l">camiones sin ninguna lectura</span></div>
+  </div>
+  <div class="split">
+    <div class="dist-wrap"><h3>Camiones según cuántos puntos se leyeron</h3><div class="dist"><div class="dist-col" title="11 camiones con 0 puntos leídos"><span class="dist-v">11</span><span class="dist-bar zero" style="height:5px"></span><span class="dist-k">0</span></div><div class="dist-col" title="17 camiones con 1 puntos leídos"><span class="dist-v">17</span><span class="dist-bar few" style="height:7px"></span><span class="dist-k">1</span></div><div class="dist-col" title="34 camiones con 2 puntos leídos"><span class="dist-v">34</span><span class="dist-bar few" style="height:15px"></span><span class="dist-k">2</span></div><div class="dist-col" title="60 camiones con 3 puntos leídos"><span class="dist-v">60</span><span class="dist-bar " style="height:26px"></span><span class="dist-k">3</span></div><div class="dist-col" title="116 camiones con 4 puntos leídos"><span class="dist-v">116</span><span class="dist-bar " style="height:50px"></span><span class="dist-k">4</span></div><div class="dist-col" title="94 camiones con 5 puntos leídos"><span class="dist-v">94</span><span class="dist-bar " style="height:40px"></span><span class="dist-k">5</span></div><div class="dist-col" title="72 camiones con 6 puntos leídos"><span class="dist-v">72</span><span class="dist-bar " style="height:31px"></span><span class="dist-k">6</span></div><div class="dist-col" title="100 camiones con 7 puntos leídos"><span class="dist-v">100</span><span class="dist-bar " style="height:43px"></span><span class="dist-k">7</span></div><div class="dist-col" title="175 camiones con 8 puntos leídos"><span class="dist-v">175</span><span class="dist-bar " style="height:75px"></span><span class="dist-k">8</span></div><div class="dist-col" title="281 camiones con 9 puntos leídos"><span class="dist-v">281</span><span class="dist-bar " style="height:120px"></span><span class="dist-k">9</span></div></div><p class="muted small">Puntos de control leídos por camión (0 = ninguna lectura).</p></div>
+    <div class="scroll"><table>
+      <thead><tr><th>Circuito</th><th class="num">Camiones</th><th class="num">Alguna cámara</th><th class="num">3 puntos o más</th><th class="num">Sin lectura</th></tr></thead>
+      <tbody><tr><th scope="row">R7</th><td class="num">723</td>
+    <td class="num">718 <small class="muted">99%</small></td>
+    <td class="num">704 <small class="muted">97%</small></td>
+    <td class="num">5</td></tr><tr><th scope="row">SL1</th><td class="num">109</td>
+    <td class="num">109 <small class="muted">100%</small></td>
+    <td class="num">98 <small class="muted">90%</small></td>
+    <td class="num">0</td></tr><tr><th scope="row">R8</th><td class="num">78</td>
+    <td class="num">72 <small class="muted">92%</small></td>
+    <td class="num">47 <small class="muted">60%</small></td>
+    <td class="num">6</td></tr><tr><th scope="row">SL2</th><td class="num">42</td>
+    <td class="num">42 <small class="muted">100%</small></td>
+    <td class="num">41 <small class="muted">98%</small></td>
+    <td class="num">0</td></tr><tr><th scope="row">R13</th><td class="num">6</td>
+    <td class="num">6 <small class="muted">100%</small></td>
+    <td class="num">6 <small class="muted">100%</small></td>
+    <td class="num">0</td></tr><tr><th scope="row">R29</th><td class="num">1</td>
+    <td class="num">1 <small class="muted">100%</small></td>
+    <td class="num">1 <small class="muted">100%</small></td>
+    <td class="num">0</td></tr><tr><th scope="row">SL3</th><td class="num">1</td>
+    <td class="num">1 <small class="muted">100%</small></td>
+    <td class="num">1 <small class="muted">100%</small></td>
+    <td class="num">0</td></tr></tbody>
+    </table></div>
+  </div>
+</section>
+
+<section>
+  <h2>Qué mirar</h2>
+  <div class="findings">
+    <div><h3>Puntos con menor lectura</h3><ul><li><b>Balanza ingreso</b> (Ricardone) leyó 13% de 85 pasos esperados.</li><li><b>Carga OSL</b> (Puerto San Lorenzo) leyó 57% de 109 pasos esperados.</li><li><b>Balanza egreso</b> (Ricardone) leyó 59% de 85 pasos esperados.</li><li><b>Volcables</b> (Puerto San Lorenzo) leyó 71% de 723 pasos esperados.</li></ul></div>
+    <div><h3>Mayor caída de noche</h3><ul><li><b>Volcables</b> Puerto San Lorenzo: 91% de día contra 52% de noche</li><li><b>Carga y descarga</b> Puerto San Lorenzo: 91% de día contra 55% de noche</li><li><b>Balanza egreso</b> Ricardone: 65% de día contra 40% de noche</li><li><b>Carga OSL</b> Puerto San Lorenzo: 64% de día contra 41% de noche</li></ul></div>
+    <div><h3>Cámaras que no reportan</h3><ul><li>Todas las cámaras reportaron todos los días.</li></ul></div>
+  </div>
+</section>
+
+<section>
+  <h2>Reconocimiento por punto</h2>
+  <p class="lede">Un punto puede tener varias cámaras (una por calle o carril). Se cuenta leído si cualquiera de sus cámaras frontales leyó la patente. La columna Δ es la diferencia en puntos entre día y noche.</p>
+  <div class="legend"><span style="--c:var(--ok)">90% o más</span><span style="--c:var(--fair)">75 a 89%</span><span style="--c:var(--warn)">50 a 74%</span><span style="--c:var(--bad)">menos de 50%</span><span style="--c:var(--na-bg)">menos de 20 camiones: sin color</span></div>
+  <div class="scroll"><table>
+    <thead><tr><th>Punto · cámaras</th><th class="num">Esperados</th><th class="num">Leídos</th><th>Total</th><th class="num">Día</th><th class="num">Noche</th><th class="num">Δ</th><th>Circuitos que pasan</th></tr></thead>
+    <tbody>
+      <tr class="planta-row"><th colspan="8">Ricardone</th></tr>
+      <tr>
+        <th scope="row"><span class="pname">Ingreso</span><span class="code">S0</span><span class="cams">RicIngCamFrente</span></th>
+        <td class="num">808</td>
+        <td class="num">586</td>
+        <td class="bar-cell"><div class="bar warn"><span style="width:73%"></span></div><b>73%</b></td>
+        <td class="pct fair" title="302 de 403">75%<small>302/403</small></td>
+        <td class="pct warn" title="284 de 405">70%<small>284/405</small></td>
+        <td class="num gap ">+5</td>
+        <td class="circ">R7 723 · R8 78 · R13 6 · R29 1</td>
+      </tr><tr>
+        <th scope="row"><span class="pname">Preingreso</span><span class="code">S1</span><span class="cams">RicPreIngInFr, RicPreIngEgFr</span></th>
+        <td class="num">808</td>
+        <td class="num">703</td>
+        <td class="bar-cell"><div class="bar fair"><span style="width:87%"></span></div><b>87%</b></td>
+        <td class="pct fair" title="339 de 400">85%<small>339/400</small></td>
+        <td class="pct fair" title="364 de 408">89%<small>364/408</small></td>
+        <td class="num gap ">-4</td>
+        <td class="circ">R7 723 · R8 78 · R13 6 · R29 1</td>
+      </tr><tr>
+        <th scope="row"><span class="pname">Calada</span><span class="code">S2</span><span class="cams">RicCal01, RicCal02, RicCal03, RicCal04, RicCal05, RicCal06, RicCalLiq</span></th>
+        <td class="num">808</td>
+        <td class="num">691</td>
+        <td class="bar-cell"><div class="bar fair"><span style="width:86%"></span></div><b>86%</b></td>
+        <td class="pct ok" title="356 de 395">90%<small>356/395</small></td>
+        <td class="pct fair" title="335 de 413">81%<small>335/413</small></td>
+        <td class="num gap ">+9</td>
+        <td class="circ">R7 723 · R8 78 · R13 6 · R29 1</td>
+      </tr><tr>
+        <th scope="row"><span class="pname">Balanza ingreso</span><span class="code">S4</span><span class="cams">RicB1Ingreso, RicB2Ingreso, RicB3Ingreso</span></th>
+        <td class="num">85</td>
+        <td class="num">11</td>
+        <td class="bar-cell"><div class="bar bad"><span style="width:13%"></span></div><b>13%</b></td>
+        <td class="pct bad" title="10 de 51">20%<small>10/51</small></td>
+        <td class="pct bad" title="1 de 34">3%<small>1/34</small></td>
+        <td class="num gap ">+17</td>
+        <td class="circ">R8 78 · R13 6 · R29 1</td>
+      </tr><tr>
+        <th scope="row"><span class="pname">Playa 3</span><span class="code">S6</span><span class="cams">RicS6Playa3</span></th>
+        <td class="num">7</td>
+        <td class="num">5</td>
+        <td class="bar-cell"><div class="bar low"><span style="width:71%"></span></div><b>71%</b></td>
+        <td class="pct low" title="5 de 6">83%<small>5/6</small></td>
+        <td class="pct low" title="0 de 1">0%<small>0/1</small></td>
+        <td class="num gap ">—</td>
+        <td class="circ">R13 6 · R29 1</td>
+      </tr><tr>
+        <th scope="row"><span class="pname">Tolva silo Chief</span><span class="code">S8</span><span class="cams">RicS8CargaLinea1, RicS8CargaLinea2</span></th>
+        <td class="num">1</td>
+        <td class="num">0</td>
+        <td class="bar-cell"><div class="bar low"><span style="width:0%"></span></div><b>0%</b></td>
+        <td class="pct low" title="0 de 1">0%<small>0/1</small></td>
+        <td class="pct na">—</td>
+        <td class="num gap ">—</td>
+        <td class="circ">R29 1</td>
+      </tr><tr>
+        <th scope="row"><span class="pname">Balanza egreso</span><span class="code">S4</span><span class="cams">RicB1Egreso, RicB2Egreso, RicB3Egreso</span></th>
+        <td class="num">85</td>
+        <td class="num">50</td>
+        <td class="bar-cell"><div class="bar warn"><span style="width:59%"></span></div><b>59%</b></td>
+        <td class="pct warn" title="42 de 65">65%<small>42/65</small></td>
+        <td class="pct bad" title="8 de 20">40%<small>8/20</small></td>
+        <td class="num gap hot">+25</td>
+        <td class="circ">R8 78 · R13 6 · R29 1</td>
+      </tr><tr>
+        <th scope="row"><span class="pname">Salida 2</span><span class="code">S3</span><span class="cams">RicEgrCamFrente</span></th>
+        <td class="num">730</td>
+        <td class="num">635</td>
+        <td class="bar-cell"><div class="bar fair"><span style="width:87%"></span></div><b>87%</b></td>
+        <td class="pct ok" title="310 de 331">94%<small>310/331</small></td>
+        <td class="pct fair" title="325 de 399">81%<small>325/399</small></td>
+        <td class="num gap ">+13</td>
+        <td class="circ">R7 723 · R13 6 · R29 1</td>
+      </tr>
+      <tr class="planta-row"><th colspan="8">Puerto San Lorenzo</th></tr>
+      <tr>
+        <th scope="row"><span class="pname">Ingreso</span><span class="code">S0</span><span class="cams">SLZIngCamFrente</span></th>
+        <td class="num">876</td>
+        <td class="num">786</td>
+        <td class="bar-cell"><div class="bar ok"><span style="width:90%"></span></div><b>90%</b></td>
+        <td class="pct ok" title="388 de 430">90%<small>388/430</small></td>
+        <td class="pct fair" title="398 de 446">89%<small>398/446</small></td>
+        <td class="num gap ">+1</td>
+        <td class="circ">R7 723 · SL1 109 · SL2 42 · R29 1 · SL3 1</td>
+      </tr><tr>
+        <th scope="row"><span class="pname">Balanza ingreso</span><span class="code">S1</span><span class="cams">SLZBalIngFte</span></th>
+        <td class="num">876</td>
+        <td class="num">739</td>
+        <td class="bar-cell"><div class="bar fair"><span style="width:84%"></span></div><b>84%</b></td>
+        <td class="pct ok" title="433 de 470">92%<small>433/470</small></td>
+        <td class="pct fair" title="306 de 406">75%<small>306/406</small></td>
+        <td class="num gap ">+17</td>
+        <td class="circ">R7 723 · SL1 109 · SL2 42 · R29 1 · SL3 1</td>
+      </tr><tr>
+        <th scope="row"><span class="pname">Carga OSL</span><span class="code">S10</span><span class="cams">RenCargFte, RenDescFte</span></th>
+        <td class="num">109</td>
+        <td class="num">62</td>
+        <td class="bar-cell"><div class="bar warn"><span style="width:57%"></span></div><b>57%</b></td>
+        <td class="pct warn" title="48 de 75">64%<small>48/75</small></td>
+        <td class="pct bad" title="14 de 34">41%<small>14/34</small></td>
+        <td class="num gap hot">+23</td>
+        <td class="circ">SL1 109</td>
+      </tr><tr>
+        <th scope="row"><span class="pname">Volcables</span><span class="code">S4</span><span class="cams">SLZVolcableC1, SLZVolcableC2, SLZVolcableC3, SLZVolcableC4, SLZVolcableC5, SLZDescCam</span></th>
+        <td class="num">723</td>
+        <td class="num">510</td>
+        <td class="bar-cell"><div class="bar warn"><span style="width:71%"></span></div><b>71%</b></td>
+        <td class="pct ok" title="316 de 349">91%<small>316/349</small></td>
+        <td class="pct warn" title="194 de 374">52%<small>194/374</small></td>
+        <td class="num gap hot">+39</td>
+        <td class="circ">R7 723</td>
+      </tr><tr>
+        <th scope="row"><span class="pname">Carga y descarga</span><span class="code">S6</span><span class="cams">SLZBalLiq1a, SLZBalLiq1b, SLZBalLiq2a, SLZBalLiq2b</span></th>
+        <td class="num">42</td>
+        <td class="num">31</td>
+        <td class="bar-cell"><div class="bar warn"><span style="width:74%"></span></div><b>74%</b></td>
+        <td class="pct ok" title="20 de 22">91%<small>20/22</small></td>
+        <td class="pct warn" title="11 de 20">55%<small>11/20</small></td>
+        <td class="num gap hot">+36</td>
+        <td class="circ">SL2 42</td>
+      </tr><tr>
+        <th scope="row"><span class="pname">Balanza egreso</span><span class="code">S5</span><span class="cams">SLZBalSC1Fte, SLZBalSC2Fte</span></th>
+        <td class="num">876</td>
+        <td class="num">658</td>
+        <td class="bar-cell"><div class="bar fair"><span style="width:75%"></span></div><b>75%</b></td>
+        <td class="pct fair" title="353 de 434">81%<small>353/434</small></td>
+        <td class="pct warn" title="305 de 442">69%<small>305/442</small></td>
+        <td class="num gap ">+12</td>
+        <td class="circ">R7 723 · SL1 109 · SL2 42 · R29 1 · SL3 1</td>
+      </tr><tr>
+        <th scope="row"><span class="pname">Egreso</span><span class="code">S7</span><span class="cams">SLZSalidaC1Fte, SLZSalidaC2Fte</span></th>
+        <td class="num">876</td>
+        <td class="num">793</td>
+        <td class="bar-cell"><div class="bar ok"><span style="width:91%"></span></div><b>91%</b></td>
+        <td class="pct ok" title="400 de 430">93%<small>400/430</small></td>
+        <td class="pct fair" title="393 de 446">88%<small>393/446</small></td>
+        <td class="num gap ">+5</td>
+        <td class="circ">R7 723 · SL1 109 · SL2 42 · R29 1 · SL3 1</td>
+      </tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Reconocimiento por cámara</h2>
+  <p class="lede">Solo cámaras por las que el camión pasa sí o sí: puntos de un solo carril y las calles del volcable del puerto, donde la calle sale del Excel (VOLCABLE PTO 1 a 5; el SGC no informa la calle, así que desde el 15/10 el volcable se mide como punto). Fallas LPR: veces que la cámara detectó un vehículo pero no pudo leer una patente válida.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Cámara</th><th class="num">Esperados</th><th class="num">Total</th><th class="num">Día</th><th class="num">Noche</th><th class="num">Fallas LPR día</th><th class="num">Fallas LPR noche</th></tr></thead>
+    <tbody><tr>
+      <th scope="row"><span class="mono">RicIngCamFrente</span><span class="cams">Ricardone · Ingreso</span></th>
+      <td class="num">808</td>
+      <td class="pct warn" title="586 de 808">73%<small>586/808</small></td>
+      <td class="pct fair" title="302 de 403">75%<small>302/403</small></td>
+      <td class="pct warn" title="284 de 405">70%<small>284/405</small></td>
+      <td class="num">26</td>
+      <td class="num">44</td>
+    </tr><tr>
+      <th scope="row"><span class="mono">RicS6Playa3</span><span class="cams">Ricardone · Playa 3</span></th>
+      <td class="num">7</td>
+      <td class="pct low" title="5 de 7">71%<small>5/7</small></td>
+      <td class="pct low" title="5 de 6">83%<small>5/6</small></td>
+      <td class="pct low" title="0 de 1">0%<small>0/1</small></td>
+      <td class="num">32</td>
+      <td class="num">11</td>
+    </tr><tr>
+      <th scope="row"><span class="mono">RicEgrCamFrente</span><span class="cams">Ricardone · Salida 2</span></th>
+      <td class="num">730</td>
+      <td class="pct fair" title="635 de 730">87%<small>635/730</small></td>
+      <td class="pct ok" title="310 de 331">94%<small>310/331</small></td>
+      <td class="pct fair" title="325 de 399">81%<small>325/399</small></td>
+      <td class="num">45</td>
+      <td class="num">77</td>
+    </tr><tr>
+      <th scope="row"><span class="mono">SLZIngCamFrente</span><span class="cams">Puerto San Lorenzo · Ingreso</span></th>
+      <td class="num">876</td>
+      <td class="pct ok" title="786 de 876">90%<small>786/876</small></td>
+      <td class="pct ok" title="388 de 430">90%<small>388/430</small></td>
+      <td class="pct fair" title="398 de 446">89%<small>398/446</small></td>
+      <td class="num">20</td>
+      <td class="num">58</td>
+    </tr><tr>
+      <th scope="row"><span class="mono">SLZBalIngFte</span><span class="cams">Puerto San Lorenzo · Balanza ingreso</span></th>
+      <td class="num">876</td>
+      <td class="pct fair" title="739 de 876">84%<small>739/876</small></td>
+      <td class="pct ok" title="433 de 470">92%<small>433/470</small></td>
+      <td class="pct fair" title="306 de 406">75%<small>306/406</small></td>
+      <td class="num">21</td>
+      <td class="num">56</td>
+    </tr><tr>
+      <th scope="row"><span class="mono">SLZVolcableC1</span><span class="cams">Puerto San Lorenzo · Volcables</span></th>
+      <td class="num">0</td>
+      <td class="pct na">—</td>
+      <td class="pct na">—</td>
+      <td class="pct na">—</td>
+      <td class="num">3</td>
+      <td class="num">1</td>
+    </tr><tr>
+      <th scope="row"><span class="mono">SLZVolcableC2</span><span class="cams">Puerto San Lorenzo · Volcables</span></th>
+      <td class="num">0</td>
+      <td class="pct na">—</td>
+      <td class="pct na">—</td>
+      <td class="pct na">—</td>
+      <td class="num">1</td>
+      <td class="num">13</td>
+    </tr><tr>
+      <th scope="row"><span class="mono">SLZVolcableC3</span><span class="cams">Puerto San Lorenzo · Volcables</span></th>
+      <td class="num">0</td>
+      <td class="pct na">—</td>
+      <td class="pct na">—</td>
+      <td class="pct na">—</td>
+      <td class="num">0</td>
+      <td class="num">0</td>
+    </tr><tr>
+      <th scope="row"><span class="mono">SLZVolcableC4</span><span class="cams">Puerto San Lorenzo · Volcables</span></th>
+      <td class="num">0</td>
+      <td class="pct na">—</td>
+      <td class="pct na">—</td>
+      <td class="pct na">—</td>
+      <td class="num">3</td>
+      <td class="num">1</td>
+    </tr><tr>
+      <th scope="row"><span class="mono">SLZVolcableC5</span><span class="cams">Puerto San Lorenzo · Volcables</span></th>
+      <td class="num">0</td>
+      <td class="pct na">—</td>
+      <td class="pct na">—</td>
+      <td class="pct na">—</td>
+      <td class="num">9</td>
+      <td class="num">92</td>
+    </tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Día por día</h2>
+  <p class="lede">Porcentaje leído por punto, cada día separado en día (D) y noche (N). Pasá el cursor sobre una celda para ver leídos y esperados.</p>
+  <div class="scroll"><table>
+    <thead>
+      <tr class="hm-head"><th rowspan="2">Punto</th><th colspan="2">mié 21/10</th><th colspan="2">jue 22/10</th><th colspan="2">vie 23/10</th><th colspan="2">sáb 24/10</th><th colspan="2">dom 25/10</th><th colspan="2">lun 26/10</th></tr>
+      <tr class="hm-head"><th>D</th><th>N</th><th>D</th><th>N</th><th>D</th><th>N</th><th>D</th><th>N</th><th>D</th><th>N</th><th>D</th><th>N</th></tr>
+    </thead>
+    <tbody><tr><th scope="row">Ingreso<span class="cams">Ricardone</span></th><td class="hm d fair" title="mié 21/10 día: 71 de 87">82</td><td class="hm n warn" title="mié 21/10 noche: 58 de 78">74</td><td class="hm d fair" title="jue 22/10 día: 72 de 95">76</td><td class="hm n warn" title="jue 22/10 noche: 52 de 85">61</td><td class="hm d warn" title="vie 23/10 día: 67 de 94">71</td><td class="hm n warn" title="vie 23/10 noche: 54 de 83">65</td><td class="hm d warn" title="sáb 24/10 día: 58 de 82">71</td><td class="hm n warn" title="sáb 24/10 noche: 47 de 69">68</td><td class="hm d warn" title="dom 25/10 día: 27 de 38">71</td><td class="hm n fair" title="dom 25/10 noche: 30 de 35">86</td><td class="hm d low" title="lun 26/10 día: 2 de 2">100</td><td class="hm n warn" title="lun 26/10 noche: 12 de 18">67</td></tr><tr><th scope="row">Preingreso<span class="cams">Ricardone</span></th><td class="hm d fair" title="mié 21/10 día: 70 de 86">81</td><td class="hm n ok" title="mié 21/10 noche: 70 de 76">92</td><td class="hm d ok" title="jue 22/10 día: 86 de 96">90</td><td class="hm n fair" title="jue 22/10 noche: 79 de 89">89</td><td class="hm d fair" title="vie 23/10 día: 69 de 92">75</td><td class="hm n fair" title="vie 23/10 noche: 73 de 83">88</td><td class="hm d ok" title="sáb 24/10 día: 76 de 82">93</td><td class="hm n fair" title="sáb 24/10 noche: 60 de 70">86</td><td class="hm d fair" title="dom 25/10 día: 33 de 38">87</td><td class="hm n ok" title="dom 25/10 noche: 34 de 35">97</td><td class="hm d low" title="lun 26/10 día: 1 de 2">50</td><td class="hm n fair" title="lun 26/10 noche: 15 de 18">83</td></tr><tr><th scope="row">Calada<span class="cams">Ricardone</span></th><td class="hm d ok" title="mié 21/10 día: 82 de 87">94</td><td class="hm n fair" title="mié 21/10 noche: 61 de 79">77</td><td class="hm d ok" title="jue 22/10 día: 79 de 88">90</td><td class="hm n fair" title="jue 22/10 noche: 81 de 95">85</td><td class="hm d fair" title="vie 23/10 día: 69 de 92">75</td><td class="hm n fair" title="vie 23/10 noche: 63 de 79">80</td><td class="hm d ok" title="sáb 24/10 día: 78 de 80">98</td><td class="hm n fair" title="sáb 24/10 noche: 62 de 79">78</td><td class="hm d ok" title="dom 25/10 día: 42 de 42">100</td><td class="hm n fair" title="dom 25/10 noche: 19 de 22">86</td><td class="hm d ok" title="lun 26/10 día: 5 de 5">100</td><td class="hm n fair" title="lun 26/10 noche: 21 de 24">88</td></tr><tr><th scope="row">Balanza ingreso<span class="cams">Ricardone</span></th><td class="hm d bad" title="mié 21/10 día: 4 de 16">25</td><td class="hm n bad" title="mié 21/10 noche: 1 de 11">9</td><td class="hm d bad" title="jue 22/10 día: 4 de 16">25</td><td class="hm n bad" title="jue 22/10 noche: 0 de 14">0</td><td class="hm d bad" title="vie 23/10 día: 2 de 18">11</td><td class="hm n bad" title="vie 23/10 noche: 0 de 9">0</td><td class="hm d low" title="sáb 24/10 día: 0 de 1">0</td><td class="hm n na">·</td><td class="hm d na">·</td><td class="hm n na">·</td><td class="hm d na">·</td><td class="hm n na">·</td></tr><tr><th scope="row">Balanza egreso<span class="cams">Ricardone</span></th><td class="hm d fair" title="mié 21/10 día: 17 de 20">85</td><td class="hm n warn" title="mié 21/10 noche: 5 de 7">71</td><td class="hm d warn" title="jue 22/10 día: 11 de 20">55</td><td class="hm n bad" title="jue 22/10 noche: 2 de 8">25</td><td class="hm d warn" title="vie 23/10 día: 13 de 24">54</td><td class="hm n bad" title="vie 23/10 noche: 1 de 5">20</td><td class="hm d low" title="sáb 24/10 día: 1 de 1">100</td><td class="hm n na">·</td><td class="hm d na">·</td><td class="hm n na">·</td><td class="hm d na">·</td><td class="hm n na">·</td></tr><tr><th scope="row">Salida 2<span class="cams">Ricardone</span></th><td class="hm d ok" title="mié 21/10 día: 57 de 62">92</td><td class="hm n fair" title="mié 21/10 noche: 67 de 81">83</td><td class="hm d ok" title="jue 22/10 día: 67 de 71">94</td><td class="hm n fair" title="jue 22/10 noche: 61 de 75">81</td><td class="hm d ok" title="vie 23/10 día: 72 de 79">91</td><td class="hm n fair" title="vie 23/10 noche: 69 de 82">84</td><td class="hm d ok" title="sáb 24/10 día: 69 de 72">96</td><td class="hm n fair" title="sáb 24/10 noche: 60 de 80">75</td><td class="hm d ok" title="dom 25/10 día: 40 de 41">98</td><td class="hm n ok" title="dom 25/10 noche: 26 de 29">90</td><td class="hm d fair" title="lun 26/10 día: 5 de 6">83</td><td class="hm n warn" title="lun 26/10 noche: 15 de 23">65</td></tr><tr><th scope="row">Ingreso<span class="cams">Puerto San Lorenzo</span></th><td class="hm d fair" title="mié 21/10 día: 86 de 98">88</td><td class="hm n fair" title="mié 21/10 noche: 76 de 87">87</td><td class="hm d fair" title="jue 22/10 día: 89 de 100">89</td><td class="hm n ok" title="jue 22/10 noche: 78 de 84">93</td><td class="hm d fair" title="vie 23/10 día: 96 de 108">89</td><td class="hm n fair" title="vie 23/10 noche: 80 de 91">88</td><td class="hm d ok" title="sáb 24/10 día: 71 de 73">97</td><td class="hm n fair" title="sáb 24/10 noche: 67 de 82">82</td><td class="hm d ok" title="dom 25/10 día: 40 de 41">98</td><td class="hm n ok" title="dom 25/10 noche: 38 de 41">93</td><td class="hm d warn" title="lun 26/10 día: 6 de 10">60</td><td class="hm n ok" title="lun 26/10 noche: 23 de 24">96</td></tr><tr><th scope="row">Balanza ingreso<span class="cams">Puerto San Lorenzo</span></th><td class="hm d ok" title="mié 21/10 día: 94 de 103">91</td><td class="hm n fair" title="mié 21/10 noche: 79 de 96">82</td><td class="hm d ok" title="jue 22/10 día: 116 de 119">97</td><td class="hm n fair" title="jue 22/10 noche: 51 de 64">80</td><td class="hm d fair" title="vie 23/10 día: 90 de 110">82</td><td class="hm n warn" title="vie 23/10 noche: 53 de 72">74</td><td class="hm d ok" title="sáb 24/10 día: 76 de 78">97</td><td class="hm n warn" title="sáb 24/10 noche: 73 de 98">74</td><td class="hm d ok" title="dom 25/10 día: 38 de 38">100</td><td class="hm n warn" title="dom 25/10 noche: 28 de 45">62</td><td class="hm d fair" title="lun 26/10 día: 19 de 22">86</td><td class="hm n warn" title="lun 26/10 noche: 11 de 15">73</td></tr><tr><th scope="row">Carga OSL<span class="cams">Puerto San Lorenzo</span></th><td class="hm d ok" title="mié 21/10 día: 14 de 15">93</td><td class="hm n bad" title="mié 21/10 noche: 5 de 11">45</td><td class="hm d warn" title="jue 22/10 día: 18 de 25">72</td><td class="hm n bad" title="jue 22/10 noche: 2 de 5">40</td><td class="hm d warn" title="vie 23/10 día: 13 de 21">62</td><td class="hm n warn" title="vie 23/10 noche: 7 de 11">64</td><td class="hm d bad" title="sáb 24/10 día: 1 de 5">20</td><td class="hm n low" title="sáb 24/10 noche: 0 de 4">0</td><td class="hm d bad" title="dom 25/10 día: 0 de 5">0</td><td class="hm n low" title="dom 25/10 noche: 0 de 2">0</td><td class="hm d low" title="lun 26/10 día: 2 de 4">50</td><td class="hm n low" title="lun 26/10 noche: 0 de 1">0</td></tr><tr><th scope="row">Volcables<span class="cams">Puerto San Lorenzo</span></th><td class="hm d ok" title="mié 21/10 día: 60 de 66">91</td><td class="hm n warn" title="mié 21/10 noche: 37 de 72">51</td><td class="hm d ok" title="jue 22/10 día: 87 de 89">98</td><td class="hm n warn" title="jue 22/10 noche: 46 de 69">67</td><td class="hm d fair" title="vie 23/10 día: 54 de 72">75</td><td class="hm n bad" title="vie 23/10 noche: 35 de 71">49</td><td class="hm d ok" title="sáb 24/10 día: 67 de 67">100</td><td class="hm n warn" title="sáb 24/10 noche: 50 de 90">56</td><td class="hm d ok" title="dom 25/10 día: 34 de 34">100</td><td class="hm n bad" title="dom 25/10 noche: 21 de 56">38</td><td class="hm d warn" title="lun 26/10 día: 14 de 21">67</td><td class="hm n bad" title="lun 26/10 noche: 5 de 12">42</td></tr><tr><th scope="row">Carga y descarga<span class="cams">Puerto San Lorenzo</span></th><td class="hm d ok" title="mié 21/10 día: 16 de 17">94</td><td class="hm n warn" title="mié 21/10 noche: 11 de 15">73</td><td class="hm d low" title="jue 22/10 día: 4 de 4">100</td><td class="hm n low" title="jue 22/10 noche: 0 de 2">0</td><td class="hm d low" title="vie 23/10 día: 0 de 1">0</td><td class="hm n low" title="vie 23/10 noche: 0 de 3">0</td><td class="hm d na">·</td><td class="hm n na">·</td><td class="hm d na">·</td><td class="hm n na">·</td><td class="hm d na">·</td><td class="hm n na">·</td></tr><tr><th scope="row">Balanza egreso<span class="cams">Puerto San Lorenzo</span></th><td class="hm d bad" title="mié 21/10 día: 38 de 93">41</td><td class="hm n warn" title="mié 21/10 noche: 68 de 106">64</td><td class="hm d ok" title="jue 22/10 día: 110 de 114">96</td><td class="hm n warn" title="jue 22/10 noche: 57 de 80">71</td><td class="hm d fair" title="vie 23/10 día: 78 de 92">85</td><td class="hm n warn" title="vie 23/10 noche: 60 de 83">72</td><td class="hm d ok" title="sáb 24/10 día: 70 de 70">100</td><td class="hm n fair" title="sáb 24/10 noche: 74 de 99">75</td><td class="hm d ok" title="dom 25/10 día: 39 de 39">100</td><td class="hm n warn" title="dom 25/10 noche: 39 de 61">64</td><td class="hm d warn" title="lun 26/10 día: 18 de 26">69</td><td class="hm n warn" title="lun 26/10 noche: 7 de 12">58</td></tr><tr><th scope="row">Egreso<span class="cams">Puerto San Lorenzo</span></th><td class="hm d ok" title="mié 21/10 día: 91 de 93">98</td><td class="hm n ok" title="mié 21/10 noche: 94 de 105">90</td><td class="hm d ok" title="jue 22/10 día: 111 de 114">97</td><td class="hm n ok" title="jue 22/10 noche: 72 de 79">91</td><td class="hm d fair" title="vie 23/10 día: 73 de 88">83</td><td class="hm n fair" title="vie 23/10 noche: 77 de 88">88</td><td class="hm d ok" title="sáb 24/10 día: 69 de 70">99</td><td class="hm n fair" title="sáb 24/10 noche: 86 de 97">89</td><td class="hm d ok" title="dom 25/10 día: 39 de 39">100</td><td class="hm n fair" title="dom 25/10 noche: 54 de 64">84</td><td class="hm d warn" title="lun 26/10 día: 17 de 26">65</td><td class="hm n fair" title="lun 26/10 noche: 9 de 12">75</td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Lecturas crudas en puntos de varias cámaras</h2>
+  <p class="lede">En calada, balanzas y salidas con varios carriles no se sabe por qué calle pasó cada camión, así que no hay porcentaje por cámara. Estas son las lecturas que mandó cada cámara por día (con y sin journey). Una cámara en cero mientras su hermana trabaja indica que está fuera de servicio. La última columna cuenta cuántos camiones esperados leyó.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Punto</th><th>Cámara</th><th class="num">mié 21/10</th><th class="num">jue 22/10</th><th class="num">vie 23/10</th><th class="num">sáb 24/10</th><th class="num">dom 25/10</th><th class="num">lun 26/10</th><th class="num">Total</th><th class="num">Camiones leídos</th></tr></thead>
+    <tbody><tr class="grp">
+          <th scope="rowgroup" rowspan="2">Preingreso<span class="cams">Ricardone · 87% del punto</span></th>
+          <td class="mono">RicPreIngInFr</td>
+          <td class="num raw ">255</td><td class="num raw ">279</td><td class="num raw ">291</td><td class="num raw ">229</td><td class="num raw ">113</td><td class="num raw ">106</td>
+          <td class="num"><b>1.273</b></td>
+          <td class="num">703</td>
+        </tr><tr class="">
+          
+          <td class="mono">RicPreIngEgFr</td>
+          <td class="num raw ">16</td><td class="num raw few">8</td><td class="num raw few">2</td><td class="num raw zero">0</td><td class="num raw few">1</td><td class="num raw zero">0</td>
+          <td class="num"><b>27</b></td>
+          <td class="num">1</td>
+        </tr><tr class="grp">
+          <th scope="rowgroup" rowspan="7">Calada<span class="cams">Ricardone · 86% del punto</span></th>
+          <td class="mono">RicCal01</td>
+          <td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw few">1</td><td class="num raw zero">0</td>
+          <td class="num"><b>1</b></td>
+          <td class="num">0</td>
+        </tr><tr class="">
+          
+          <td class="mono">RicCal02</td>
+          <td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw zero">0</td>
+          <td class="num"><b>0</b></td>
+          <td class="num">0</td>
+        </tr><tr class="">
+          
+          <td class="mono">RicCal03</td>
+          <td class="num raw ">109</td><td class="num raw ">106</td><td class="num raw ">125</td><td class="num raw ">102</td><td class="num raw ">41</td><td class="num raw ">23</td>
+          <td class="num"><b>506</b></td>
+          <td class="num">337</td>
+        </tr><tr class="">
+          
+          <td class="mono">RicCal04</td>
+          <td class="num raw ">109</td><td class="num raw ">103</td><td class="num raw ">107</td><td class="num raw ">101</td><td class="num raw ">37</td><td class="num raw ">28</td>
+          <td class="num"><b>485</b></td>
+          <td class="num">312</td>
+        </tr><tr class="">
+          
+          <td class="mono">RicCal05</td>
+          <td class="num raw few">2</td><td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw zero">0</td>
+          <td class="num"><b>2</b></td>
+          <td class="num">0</td>
+        </tr><tr class="">
+          
+          <td class="mono">RicCal06</td>
+          <td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw zero">0</td>
+          <td class="num"><b>0</b></td>
+          <td class="num">0</td>
+        </tr><tr class="">
+          
+          <td class="mono">RicCalLiq</td>
+          <td class="num raw ">62</td><td class="num raw ">29</td><td class="num raw ">49</td><td class="num raw few">3</td><td class="num raw few">2</td><td class="num raw ">30</td>
+          <td class="num"><b>175</b></td>
+          <td class="num">57</td>
+        </tr><tr class="grp">
+          <th scope="rowgroup" rowspan="3">Balanza ingreso<span class="cams">Ricardone · 13% del punto</span></th>
+          <td class="mono">RicB1Ingreso</td>
+          <td class="num raw ">13</td><td class="num raw few">7</td><td class="num raw ">13</td><td class="num raw few">8</td><td class="num raw few">3</td><td class="num raw few">6</td>
+          <td class="num"><b>50</b></td>
+          <td class="num">11</td>
+        </tr><tr class="">
+          
+          <td class="mono">RicB2Ingreso</td>
+          <td class="num raw ">20</td><td class="num raw ">34</td><td class="num raw ">26</td><td class="num raw ">14</td><td class="num raw ">18</td><td class="num raw ">15</td>
+          <td class="num"><b>127</b></td>
+          <td class="num">0</td>
+        </tr><tr class="">
+          
+          <td class="mono">RicB3Ingreso</td>
+          <td class="num raw ">103</td><td class="num raw ">78</td><td class="num raw ">100</td><td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw ">31</td>
+          <td class="num"><b>312</b></td>
+          <td class="num">0</td>
+        </tr><tr class="grp">
+          <th scope="rowgroup" rowspan="3">Balanza egreso<span class="cams">Ricardone · 59% del punto</span></th>
+          <td class="mono">RicB1Egreso</td>
+          <td class="num raw few">2</td><td class="num raw few">1</td><td class="num raw few">4</td><td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw zero">0</td>
+          <td class="num"><b>7</b></td>
+          <td class="num">0</td>
+        </tr><tr class="">
+          
+          <td class="mono">RicB2Egreso</td>
+          <td class="num raw ">119</td><td class="num raw ">78</td><td class="num raw ">100</td><td class="num raw ">58</td><td class="num raw ">29</td><td class="num raw ">17</td>
+          <td class="num"><b>401</b></td>
+          <td class="num">50</td>
+        </tr><tr class="">
+          
+          <td class="mono">RicB3Egreso</td>
+          <td class="num raw ">52</td><td class="num raw ">44</td><td class="num raw ">48</td><td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw ">10</td>
+          <td class="num"><b>154</b></td>
+          <td class="num">0</td>
+        </tr><tr class="grp">
+          <th scope="rowgroup" rowspan="2">Carga OSL<span class="cams">Puerto San Lorenzo · 57% del punto</span></th>
+          <td class="mono">RenCargFte</td>
+          <td class="num raw ">28</td><td class="num raw ">26</td><td class="num raw ">20</td><td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw few">2</td>
+          <td class="num"><b>76</b></td>
+          <td class="num">44</td>
+        </tr><tr class="">
+          
+          <td class="mono">RenDescFte</td>
+          <td class="num raw ">13</td><td class="num raw ">11</td><td class="num raw ">12</td><td class="num raw few">2</td><td class="num raw zero">0</td><td class="num raw zero">0</td>
+          <td class="num"><b>38</b></td>
+          <td class="num">18</td>
+        </tr><tr class="grp">
+          <th scope="rowgroup" rowspan="6">Volcables<span class="cams">Puerto San Lorenzo · 71% del punto</span></th>
+          <td class="mono">SLZVolcableC1</td>
+          <td class="num raw ">19</td><td class="num raw ">22</td><td class="num raw few">4</td><td class="num raw few">1</td><td class="num raw zero">0</td><td class="num raw zero">0</td>
+          <td class="num"><b>46</b></td>
+          <td class="num">30</td>
+        </tr><tr class="">
+          
+          <td class="mono">SLZVolcableC2</td>
+          <td class="num raw few">2</td><td class="num raw ">27</td><td class="num raw ">23</td><td class="num raw ">55</td><td class="num raw ">14</td><td class="num raw zero">0</td>
+          <td class="num"><b>121</b></td>
+          <td class="num">65</td>
+        </tr><tr class="">
+          
+          <td class="mono">SLZVolcableC3</td>
+          <td class="num raw few">1</td><td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw few">1</td><td class="num raw zero">0</td><td class="num raw zero">0</td>
+          <td class="num"><b>2</b></td>
+          <td class="num">1</td>
+        </tr><tr class="">
+          
+          <td class="mono">SLZVolcableC4</td>
+          <td class="num raw few">1</td><td class="num raw few">1</td><td class="num raw few">1</td><td class="num raw few">1</td><td class="num raw zero">0</td><td class="num raw zero">0</td>
+          <td class="num"><b>4</b></td>
+          <td class="num">0</td>
+        </tr><tr class="">
+          
+          <td class="mono">SLZVolcableC5</td>
+          <td class="num raw ">134</td><td class="num raw ">163</td><td class="num raw ">128</td><td class="num raw ">109</td><td class="num raw ">67</td><td class="num raw ">28</td>
+          <td class="num"><b>629</b></td>
+          <td class="num">420</td>
+        </tr><tr class="">
+          
+          <td class="mono">SLZDescCam</td>
+          <td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw zero">0</td><td class="num raw zero">0</td>
+          <td class="num"><b>0</b></td>
+          <td class="num">0</td>
+        </tr><tr class="grp">
+          <th scope="rowgroup" rowspan="4">Carga y descarga<span class="cams">Puerto San Lorenzo · 74% del punto</span></th>
+          <td class="mono">SLZBalLiq1a</td>
+          <td class="num raw zero">0</td><td class="num raw few">1</td><td class="num raw zero">0</td><td class="num raw few">3</td><td class="num raw zero">0</td><td class="num raw zero">0</td>
+          <td class="num"><b>4</b></td>
+          <td class="num">0</td>
+        </tr><tr class="">
+          
+          <td class="mono">SLZBalLiq1b</td>
+          <td class="num raw ">19</td><td class="num raw few">2</td><td class="num raw few">2</td><td class="num raw few">5</td><td class="num raw few">2</td><td class="num raw zero">0</td>
+          <td class="num"><b>30</b></td>
+          <td class="num">9</td>
+        </tr><tr class="">
+          
+          <td class="mono">SLZBalLiq2a</td>
+          <td class="num raw ">36</td><td class="num raw ">10</td><td class="num raw few">6</td><td class="num raw few">5</td><td class="num raw few">2</td><td class="num raw few">1</td>
+          <td class="num"><b>60</b></td>
+          <td class="num">22</td>
+        </tr><tr class="">
+          
+          <td class="mono">SLZBalLiq2b</td>
+          <td class="num raw few">2</td><td class="num raw few">2</td><td class="num raw few">2</td><td class="num raw few">1</td><td class="num raw few">2</td><td class="num raw few">2</td>
+          <td class="num"><b>11</b></td>
+          <td class="num">0</td>
+        </tr><tr class="grp">
+          <th scope="rowgroup" rowspan="2">Balanza egreso<span class="cams">Puerto San Lorenzo · 75% del punto</span></th>
+          <td class="mono">SLZBalSC1Fte</td>
+          <td class="num raw ">75</td><td class="num raw ">79</td><td class="num raw ">83</td><td class="num raw ">37</td><td class="num raw ">41</td><td class="num raw ">39</td>
+          <td class="num"><b>354</b></td>
+          <td class="num">1</td>
+        </tr><tr class="">
+          
+          <td class="mono">SLZBalSC2Fte</td>
+          <td class="num raw ">219</td><td class="num raw ">286</td><td class="num raw ">233</td><td class="num raw ">207</td><td class="num raw ">124</td><td class="num raw ">44</td>
+          <td class="num"><b>1.113</b></td>
+          <td class="num">657</td>
+        </tr><tr class="grp">
+          <th scope="rowgroup" rowspan="2">Egreso<span class="cams">Puerto San Lorenzo · 91% del punto</span></th>
+          <td class="mono">SLZSalidaC1Fte</td>
+          <td class="num raw ">881</td><td class="num raw ">657</td><td class="num raw ">539</td><td class="num raw ">375</td><td class="num raw ">217</td><td class="num raw ">149</td>
+          <td class="num"><b>2.818</b></td>
+          <td class="num">792</td>
+        </tr><tr class="">
+          
+          <td class="mono">SLZSalidaC2Fte</td>
+          <td class="num raw ">539</td><td class="num raw ">393</td><td class="num raw ">359</td><td class="num raw ">188</td><td class="num raw ">104</td><td class="num raw ">132</td>
+          <td class="num"><b>1.715</b></td>
+          <td class="num">102</td>
+        </tr></tbody>
+  </table></div>
+</section>
+
+<section class="method">
+  <h2>Cómo se calcula</h2>
+  <ul>
+    <li><b>Universo:</b> 960 movimientos del SGC (sistema de balanza Vicentin) con salida del mié 21/10 al lun 26/10 y circuito asignado por el Excel (R7 723 · SL1 109 · R8 78 · SL2 42 · R13 6 · R29 1 · SL3 1). Quedan fuera 109 movimientos sin circuito resuelto, 0 con patente ficticia (XXXXXX, PPPPPP, TTTTTT) y los de plantas sin cámaras del Nodo Sur (AVELLANEDA 247, LOS_CORRALES_DE_NICANOR 35, HIDROFILO 4, RENOPACK 85).</li>
+    <li><b>Cámaras esperadas:</b> los puntos con cámara del recorrido de cada circuito en el modelo de nodos del Nodo Sur. Las plataformas volcables del puerto se esperan solo si el Excel indica VOLCABLE PTO.</li>
+    <li><b>Leído:</b> una lectura de una cámara frontal del punto con la patente del movimiento, exacta o con un error de OCR tolerable, entre 45 minutos antes del ingreso y 45 minutos después de la salida del Excel. Se usan eventos de journey y también alertas (ruta inválida, inicio inválido), porque en esos casos la cámara leyó la patente aunque el sistema no la asignó a un recorrido.</li>
+    <li><b>Día y noche:</b> día de 06 a 18 h, noche de 18 a 06 h, hora Argentina, según la hora de la lectura. Si la cámara no leyó, se toma la hora estimada entre las lecturas vecinas del mismo camión.</li>
+    <li><b>Cámaras traseras:</b> no se incluyen. Leen la patente del acoplado, que no es la patente del chasis que figura en el Excel.</li>
+    <li><b>Camiones leídos:</b> un camión cuenta en 3 puntos o más cuando lo leyeron cámaras frontales de al menos 3 puntos de control distintos de su recorrido (por ejemplo ingreso, calada y salida).</li>
+    <li><b>Límite:</b> el circuito sale del Excel, no de la cámara, para no depender de lo que se leyó. Los transiles de soja desde silos que el Excel marca como R7 pasan por balanza en Ricardone pero no se esperan ahí, así que la balanza puede tener lecturas de camiones que no están en su denominador.</li>
+  </ul>
+</section>
+</div>

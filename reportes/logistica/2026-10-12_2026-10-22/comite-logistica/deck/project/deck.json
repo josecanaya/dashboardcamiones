@@ -1,0 +1,87 @@
+{
+ "v": 4,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-10-23T11:39:43Z"
+ },
+ "lists": "css",
+ "title": "Comité de Logística Nodo Sur · 12 – 22 oct",
+ "order": [
+  "portada",
+  "sep-div",
+  "sep-soja",
+  "sep-soja-t",
+  "sep-girasol",
+  "sep-girasol-t",
+  "sep-pellet",
+  "sep-calada",
+  "sep-calada-t",
+  "sep-volcables",
+  "sep-volcables-t",
+  "div-semana",
+  "resumen-planta",
+  "dia-a-dia",
+  "div-soja",
+  "tramos-r7",
+  "resumen-soja",
+  "hallazgo",
+  "plantas",
+  "cuartos",
+  "historico",
+  "div-girasol",
+  "girasol",
+  "girasol-hist",
+  "liq-semana",
+  "liq-oleico",
+  "div-sectores",
+  "calada",
+  "volcables",
+  "volcables-mes",
+  "silos",
+  "silos-camiones",
+  "silos-ritmo",
+  "cruces"
+ ],
+ "cover": "portada",
+ "faces": {
+  "ibm-plex-sans": {
+   "family": "IBM Plex Sans",
+   "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap"
+  }
+ },
+ "designSystems": [],
+ "sections": {
+  "s1": {
+   "description": "Portada, resumen de la planta y la semana día por día",
+   "start": "portada"
+  },
+  "s0": {
+   "description": "Últimos comités: actividad y tiempos de soja, girasol, pellet, calada y volcables",
+   "start": "sep-div"
+  },
+  "s0b": {
+   "description": "Análisis de la semana",
+   "start": "div-semana"
+  },
+  "s2": {
+   "description": "Soja: tiempos por tramo de R7, resumen, día por día, por planta, por horario y en contexto",
+   "start": "div-soja"
+  },
+  "s3": {
+   "description": "Girasol: tiempos por tramo y comparación con el comité anterior",
+   "start": "div-girasol"
+  },
+  "s3b": {
+   "description": "Líquidos: la semana y el aceite que entró a Ricardone",
+   "start": "liq-semana"
+  },
+  "s4": {
+   "description": "Sectores: calada, volcables del puerto y silos",
+   "start": "div-sectores"
+  },
+  "s5": {
+   "description": "Cierre",
+   "start": "cruces"
+  }
+ }
+}

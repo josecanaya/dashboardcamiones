@@ -1,0 +1,682 @@
+[
+  {
+    "patente": "AI195ZP",
+    "clase": "sospechoso",
+    "enGrano": [
+      "23:23 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-13 16:44",
+      "hasta": "2026-10-14 00:58",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicEgrCamFrente",
+        "RicPreIngInFr",
+        "RicCal03",
+        "SLZIngCamFrente",
+        "SLZBalIngTras",
+        "SLZSalidaC1Fte"
+      ]
+    },
+    "tipo": "LargeTruck",
+    "marca": "Volkswagen",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "no_esta_en_sgc"
+  },
+  {
+    "patente": "DLZ455",
+    "clase": "sospechoso",
+    "enGrano": [
+      "23:19 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-13 23:19",
+      "hasta": "2026-10-14 00:12",
+      "camaras": [
+        "RicCal03",
+        "SLZSalidaC1Fte"
+      ]
+    },
+    "tipo": "LargeTruck",
+    "marca": "Naveco",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "no_esta_en_sgc"
+  },
+  {
+    "patente": "JZY051",
+    "clase": "sospechoso",
+    "enGrano": [
+      "02:19 RicCal01"
+    ],
+    "visita": {
+      "desde": "2026-10-14 00:37",
+      "hasta": "2026-10-14 09:17",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal01",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "MidTruck",
+    "marca": "Ford",
+    "sistema": null,
+    "notas": "tiene cartas de otros viajes",
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "no_esta_en_sgc"
+  },
+  {
+    "patente": "AB377GC",
+    "clase": "sospechoso",
+    "enGrano": [
+      "02:13 RicCal01"
+    ],
+    "visita": {
+      "desde": "2026-10-14 02:13",
+      "hasta": "2026-10-14 09:17",
+      "camaras": [
+        "RicCal01",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "no_esta_en_sgc"
+  },
+  {
+    "patente": "AB175BZ",
+    "clase": "sospechoso",
+    "enGrano": [
+      "03:56 RicCal01"
+    ],
+    "visita": {
+      "desde": "2026-10-14 03:28",
+      "hasta": "2026-10-14 09:18",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal01",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "altaGemela": [
+      {
+        "patente": "EED511",
+        "ingreso": "2026-10-14 03:31",
+        "producto": "GIRASOL",
+        "mov": "INGRESO"
+      }
+    ],
+    "sgc": null,
+    "explicacion": "no_esta_en_sgc"
+  },
+  {
+    "patente": "AG534QA",
+    "clase": "sospechoso",
+    "enGrano": [
+      "04:42 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-14 23:43",
+      "hasta": "2026-10-15 11:10",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal03",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "LargeTruck",
+    "marca": "Naveco",
+    "sistema": null,
+    "notas": "tiene cartas de otros viajes",
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "no_esta_en_sgc"
+  },
+  {
+    "patente": "OUN733",
+    "clase": "sospechoso",
+    "enGrano": [
+      "07:57 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-15 07:18",
+      "hasta": "2026-10-15 11:23",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal03",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "LargeTruck",
+    "marca": "Volvo",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "no_esta_en_sgc"
+  },
+  {
+    "patente": "RNC875",
+    "clase": "sospechoso",
+    "enGrano": [
+      "11:06 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-15 08:37",
+      "hasta": "2026-10-15 14:14",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal03",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "no_esta_en_sgc"
+  },
+  {
+    "patente": "AE189YW",
+    "clase": "sospechoso",
+    "enGrano": [
+      "15:26 RicCal04"
+    ],
+    "visita": {
+      "desde": "2026-10-15 14:55",
+      "hasta": "2026-10-15 16:15",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal04",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": {
+      "patente": "AE189YW",
+      "acoplado": "AE280QH",
+      "producto": "SOJA",
+      "planta": "PLANTA SAN LORENZO",
+      "ingreso": "2026-10-15T14:58:45",
+      "salida": "2026-10-15T15:59:34",
+      "condicion": "RECHAZADO",
+      "baja": "BAJA",
+      "pesoBruto": null,
+      "deposito": null
+    },
+    "explicacion": "rechazado_o_baja"
+  },
+  {
+    "patente": "TOW398",
+    "clase": "sospechoso",
+    "enGrano": [
+      "05:11 RicCal04"
+    ],
+    "visita": {
+      "desde": "2026-10-16 04:03",
+      "hasta": "2026-10-16 09:36",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal04",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "MidTruck",
+    "marca": "Scania",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": {
+      "patente": "TOW398",
+      "acoplado": "WRT923",
+      "producto": "SOJA",
+      "planta": "PLANTA SAN LORENZO",
+      "ingreso": "2026-10-16T04:07:13",
+      "salida": "2026-10-16T07:49:51",
+      "condicion": "RECHAZADO",
+      "baja": "BAJA",
+      "pesoBruto": null,
+      "deposito": null
+    },
+    "explicacion": "rechazado_o_baja"
+  },
+  {
+    "patente": "OGF364",
+    "clase": "sospechoso",
+    "enGrano": [
+      "08:12 RicCal04"
+    ],
+    "visita": {
+      "desde": "2026-10-16 07:24",
+      "hasta": "2026-10-16 19:29",
+      "camaras": [
+        "RicPreIngInFr",
+        "RicCal04",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "MidTruck",
+    "marca": "Naveco",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": {
+      "patente": "OGF364",
+      "acoplado": "AF091VE",
+      "producto": "SOJA",
+      "planta": "PLANTA SAN LORENZO",
+      "ingreso": "2026-10-16T07:25:58",
+      "salida": "2026-10-16T08:46:42",
+      "condicion": "RECHAZADO",
+      "baja": "BAJA",
+      "pesoBruto": null,
+      "deposito": null
+    },
+    "explicacion": "rechazado_o_baja"
+  },
+  {
+    "patente": "KFJ723",
+    "clase": "sospechoso",
+    "enGrano": [
+      "11:46 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-16 10:29",
+      "hasta": "2026-10-16 20:22",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal03",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "MidTruck",
+    "marca": "Renault",
+    "sistema": null,
+    "notas": "tiene cartas de otros viajes",
+    "altaGemela": null,
+    "sgc": {
+      "patente": "KFJ723",
+      "acoplado": "AF261XE",
+      "producto": "SOJA",
+      "planta": "PLANTA SAN LORENZO",
+      "ingreso": "2026-10-16T10:33:15",
+      "salida": null,
+      "condicion": "RECHAZADO",
+      "baja": null,
+      "pesoBruto": null,
+      "deposito": null
+    },
+    "explicacion": "rechazado_o_baja"
+  },
+  {
+    "patente": "JYY048",
+    "clase": "sospechoso",
+    "enGrano": [
+      "11:46 RicCal04"
+    ],
+    "visita": {
+      "desde": "2026-10-16 10:30",
+      "hasta": "2026-10-16 11:46",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicPreIngEgFr",
+        "RicCal04"
+      ]
+    },
+    "tipo": "Unknown",
+    "marca": "Unknown",
+    "sistema": null,
+    "notas": "tiene cartas de otros viajes",
+    "altaGemela": null,
+    "sgc": {
+      "patente": "JYY048",
+      "acoplado": "AH092RE",
+      "producto": "SOJA",
+      "planta": "PLANTA SAN LORENZO",
+      "ingreso": "2026-10-16T10:34:19",
+      "salida": null,
+      "condicion": "RECHAZADO",
+      "baja": null,
+      "pesoBruto": null,
+      "deposito": null
+    },
+    "explicacion": "rechazado_o_baja"
+  },
+  {
+    "patente": "AB445SZ",
+    "clase": "sospechoso",
+    "enGrano": [
+      "18:00 RicCal04"
+    ],
+    "visita": {
+      "desde": "2026-10-16 16:08",
+      "hasta": "2026-10-16 18:59",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal04",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "no_esta_en_sgc"
+  },
+  {
+    "patente": "AI208DY",
+    "clase": "sospechoso",
+    "enGrano": [
+      "18:01 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-16 16:54",
+      "hasta": "2026-10-17 10:26",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal03",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "LargeTruck",
+    "marca": "Volkswagen",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "no_esta_en_sgc"
+  },
+  {
+    "patente": "OUR798",
+    "clase": "sospechoso",
+    "enGrano": [
+      "18:04 RicCal04"
+    ],
+    "visita": {
+      "desde": "2026-10-16 17:12",
+      "hasta": "2026-10-16 18:04",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal04"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "no_esta_en_sgc"
+  },
+  {
+    "patente": "EFV834",
+    "clase": "sospechoso",
+    "enGrano": [
+      "11:20 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-17 06:00",
+      "hasta": "2026-10-17 12:32",
+      "camaras": [
+        "RicPreIngInFr",
+        "RicCal03",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "notas": "tiene cartas de otros viajes",
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "no_esta_en_sgc"
+  },
+  {
+    "patente": "KAM304",
+    "clase": "sospechoso",
+    "enGrano": [
+      "07:44 RicCal04"
+    ],
+    "visita": {
+      "desde": "2026-10-17 06:57",
+      "hasta": "2026-10-17 07:44",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal04"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "no_esta_en_sgc"
+  },
+  {
+    "patente": "NIQ372",
+    "clase": "sospechoso",
+    "enGrano": [
+      "11:58 RicCal04"
+    ],
+    "visita": {
+      "desde": "2026-10-17 11:03",
+      "hasta": "2026-10-17 11:58",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal04"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "no_esta_en_sgc"
+  },
+  {
+    "patente": "AE713ZX",
+    "clase": "sospechoso",
+    "enGrano": [
+      "11:59 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-17 11:25",
+      "hasta": "2026-10-17 11:59",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal03"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "no_esta_en_sgc"
+  },
+  {
+    "patente": "BLJ016",
+    "clase": "sospechoso",
+    "enGrano": [
+      "14:51 RicCal04"
+    ],
+    "visita": {
+      "desde": "2026-10-17 14:18",
+      "hasta": "2026-10-17 17:17",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal04",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "notas": "tiene cartas de otros viajes",
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "no_esta_en_sgc"
+  },
+  {
+    "patente": "LXK897",
+    "clase": "sospechoso",
+    "enGrano": [
+      "17:28 RicCal04"
+    ],
+    "visita": {
+      "desde": "2026-10-17 15:13",
+      "hasta": "2026-10-17 19:32",
+      "camaras": [
+        "RicPreIngInFr",
+        "RicCal04",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "MidTruck",
+    "marca": "Naveco",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "no_esta_en_sgc"
+  },
+  {
+    "patente": "MWF568",
+    "clase": "sospechoso",
+    "enGrano": [
+      "19:56 RicCal04"
+    ],
+    "visita": {
+      "desde": "2026-10-17 18:10",
+      "hasta": "2026-10-18 18:02",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicCal04",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "LargeTruck",
+    "marca": "Naveco",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "no_esta_en_sgc"
+  },
+  {
+    "patente": "AH107TF",
+    "clase": "sospechoso",
+    "enGrano": [
+      "08:10 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-18 06:12",
+      "hasta": "2026-10-18 18:03",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal03",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "LargeTruck",
+    "marca": "Foton",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": null,
+    "explicacion": "no_esta_en_sgc"
+  },
+  {
+    "patente": "NKZ824",
+    "clase": "sospechoso",
+    "enGrano": [
+      "14:26 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-18 13:13",
+      "hasta": "2026-10-18 17:34",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal03",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "LargeTruck",
+    "marca": "Scania",
+    "sistema": null,
+    "altaGemela": null,
+    "sgc": {
+      "patente": "NKZ824",
+      "acoplado": "AE323YH",
+      "producto": "SOJA",
+      "planta": "PLANTA SAN LORENZO",
+      "ingreso": "2026-10-18T13:19:20",
+      "salida": "2026-10-18T14:52:21",
+      "condicion": "RECHAZADO",
+      "baja": "BAJA",
+      "pesoBruto": null,
+      "deposito": null
+    },
+    "explicacion": "rechazado_o_baja"
+  },
+  {
+    "patente": "VFU873",
+    "clase": "sospechoso",
+    "enGrano": [
+      "17:43 RicCal03"
+    ],
+    "visita": {
+      "desde": "2026-10-18 16:56",
+      "hasta": "2026-10-19 07:38",
+      "camaras": [
+        "RicIngCamFrente",
+        "RicPreIngInFr",
+        "RicCal03",
+        "RicEgrCamFrente"
+      ]
+    },
+    "tipo": "",
+    "marca": "",
+    "sistema": null,
+    "notas": "tiene cartas de otros viajes",
+    "altaGemela": null,
+    "sgc": {
+      "patente": "VFU873",
+      "acoplado": "RHF524",
+      "producto": "SOJA",
+      "planta": "PLANTA SAN LORENZO",
+      "ingreso": "2026-10-18T17:00:28",
+      "salida": "2026-10-18T20:15:36",
+      "condicion": "RECHAZADO",
+      "baja": "BAJA",
+      "pesoBruto": null,
+      "deposito": null
+    },
+    "explicacion": "rechazado_o_baja"
+  }
+]

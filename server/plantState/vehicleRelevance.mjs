@@ -46,6 +46,9 @@ export function splitNonTrucks(events, items, { noCamiones = null, padron = null
     if (it.rule === 'no_camion') flagged.set(it.readPlate, { kind: 'no_camion', label: 'base de no camiones' })
     else if (it.attributes?.vehicleClass === 'liviano' && it.level === 'fuera_sistema') flagged.set(it.readPlate, { kind: 'liviano', label: 'auto o camioneta (cámara)' })
     else if (['liviano', 'maquinaria', 'colectivo'].includes(it.ia?.vehicleType) && !it.ia?.plate) flagged.set(it.readPlate, { kind: it.ia.vehicleType, label: `${it.ia.vehicleType} (IA)` })
+    // Lectura que no es una patente y nadie la asignó: es un camión mal leído que ya está en planta, no uno
+    // nuevo (IHRU293 en Volcable C5 SL, 29/10, era HPQ293). Queda en la bandeja de Patentes hasta corregirla.
+    else if (!it.validFormat && !it.assignedPlate && ['pendiente', 'provisorio'].includes(it.level)) flagged.set(it.readPlate, { kind: 'ilegible', label: 'lectura ilegible sin asignar (corregir en Patentes)' })
   }
   const why = new Map()
   const whyOf = (plate, t) => {

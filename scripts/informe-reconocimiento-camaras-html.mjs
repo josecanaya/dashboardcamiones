@@ -128,6 +128,11 @@ const puntosRows = (planta) =>
     })
     .join('')
 
+/** Desde el 15/10/2026 los movimientos vienen del SGC (balanza Vicentin), no del Excel. */
+const esSgc = desde >= '2026-10-15'
+const fuenteCorta = esSgc ? 'SGC' : 'Excel'
+const fuenteLarga = esSgc ? 'del SGC (sistema de balanza Vicentin)' : 'del Excel de Movimientos por Contrato'
+
 const camRows = R.camaras
   .map((c) => {
     const f = c.fallasLpr
@@ -403,7 +408,7 @@ tr.grp > * { border-top: 2px solid var(--line); }
   <div class="kpi"><span class="v">${pctOf(tot)}%</span><span class="l">pasos leídos: ${n(tot.leidos)} de ${n(tot.esperados)}</span></div>
   <div class="kpi dia"><span class="v">${pctOf(totDia)}%</span><span class="l">de día (06 a 18 h): ${n(totDia.leidos)} de ${n(totDia.esperados)}</span></div>
   <div class="kpi noche"><span class="v">${pctOf(totNoche)}%</span><span class="l">de noche (18 a 06 h): ${n(totNoche.leidos)} de ${n(totNoche.esperados)}</span></div>
-  <div class="kpi"><span class="v">${n(R.universo.movimientosEvaluados)}</span><span class="l">movimientos Excel evaluados</span></div>
+  <div class="kpi"><span class="v">${n(R.universo.movimientosEvaluados)}</span><span class="l">movimientos ${fuenteCorta} evaluados</span></div>
 </div>
 
 ${semanasSection}
@@ -436,7 +441,7 @@ ${camionesSection}
 
 <section>
   <h2>Reconocimiento por cámara</h2>
-  <p class="lede">Solo cámaras por las que el camión pasa sí o sí: puntos de un solo carril y las calles del volcable del puerto, donde la calle sale del Excel (VOLCABLE PTO 1 a 5). Fallas LPR: veces que la cámara detectó un vehículo pero no pudo leer una patente válida.</p>
+  <p class="lede">Solo cámaras por las que el camión pasa sí o sí: puntos de un solo carril y las calles del volcable del puerto, donde la calle sale del Excel (VOLCABLE PTO 1 a 5; el SGC no informa la calle, así que desde el 15/10 el volcable se mide como punto). Fallas LPR: veces que la cámara detectó un vehículo pero no pudo leer una patente válida.</p>
   <div class="scroll"><table>
     <thead><tr><th>Cámara</th><th class="num">Esperados</th><th class="num">Total</th><th class="num">Día</th><th class="num">Noche</th><th class="num">Fallas LPR día</th><th class="num">Fallas LPR noche</th></tr></thead>
     <tbody>${camRows}</tbody>
@@ -467,7 +472,7 @@ ${camionesSection}
 <section class="method">
   <h2>Cómo se calcula</h2>
   <ul>
-    <li><b>Universo:</b> ${n(R.universo.movimientosEvaluados)} movimientos del Excel de Movimientos por Contrato con salida del ${fmtRange(desde, hasta)} y circuito asignado por el Excel (${esc(circList)}). Quedan fuera ${n(excluded)} movimientos sin circuito resuelto, ${n(R.universo.patentesFicticiasExcluidas)} con patente ficticia (XXXXXX, PPPPPP, TTTTTT) y los de plantas sin cámaras del Nodo Sur (${Object.entries(R.universo.otraPlantaExcluidos ?? {}).map(([k, v]) => `${esc(k)} ${n(v)}`).join(', ')}).</li>
+    <li><b>Universo:</b> ${n(R.universo.movimientosEvaluados)} movimientos ${fuenteLarga} con salida del ${fmtRange(desde, hasta)} y circuito asignado por el Excel (${esc(circList)}). Quedan fuera ${n(excluded)} movimientos sin circuito resuelto, ${n(R.universo.patentesFicticiasExcluidas)} con patente ficticia (XXXXXX, PPPPPP, TTTTTT) y los de plantas sin cámaras del Nodo Sur (${Object.entries(R.universo.otraPlantaExcluidos ?? {}).map(([k, v]) => `${esc(k)} ${n(v)}`).join(', ')}).</li>
     <li><b>Cámaras esperadas:</b> los puntos con cámara del recorrido de cada circuito en el modelo de nodos del Nodo Sur. Las plataformas volcables del puerto se esperan solo si el Excel indica VOLCABLE PTO.</li>
     <li><b>Leído:</b> una lectura de una cámara frontal del punto con la patente del movimiento, exacta o con un error de OCR tolerable, entre 45 minutos antes del ingreso y 45 minutos después de la salida del Excel. Se usan eventos de journey y también alertas (ruta inválida, inicio inválido), porque en esos casos la cámara leyó la patente aunque el sistema no la asignó a un recorrido.</li>
     <li><b>Día y noche:</b> día de 06 a 18 h, noche de 18 a 06 h, hora Argentina, según la hora de la lectura. Si la cámara no leyó, se toma la hora estimada entre las lecturas vecinas del mismo camión.</li>

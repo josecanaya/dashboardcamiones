@@ -274,8 +274,9 @@ function expectedNodes(circuit: string, platform: string): NodoSurNode[] {
     if (!n?.hasCamera || n.optional) continue
     if (PUNTOS_NO_MEDIBLES.has(n.id)) continue
     if (out.some((o) => o.id === n.id)) continue
-    // Plataformas volcables SL: solo camiones con plataforma VOLCABLE_PTO_n en el Excel.
-    if (n.id === 'san_lorenzo:Plataformas Volcables' && !/^VOLCABLE_PTO_\d/.test(platform)) continue
+    // Plataformas volcables SL: solo camiones con plataforma VOLCABLE_PTO_n en el Excel. El SGC
+    // (desde 15/10) no trae la calle → VOLCABLE_PTO_SGC: se espera en cualquiera de las 5 calles.
+    if (n.id === 'san_lorenzo:Plataformas Volcables' && !/^VOLCABLE_PTO_(\d|SGC)/.test(platform)) continue
     out.push(n)
   }
   return out

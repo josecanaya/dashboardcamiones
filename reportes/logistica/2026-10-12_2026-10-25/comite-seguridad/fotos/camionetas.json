@@ -1,0 +1,3579 @@
+[
+ {
+  "patente": "AE264XY",
+  "viajes": 109,
+  "dias": 13,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "RicEgrCamFrente / RicIngCamFrente / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": true,
+  "porCamara": {
+   "SLZSalidaC2Fte": 37,
+   "SLZBalLiq2a": 1,
+   "SLZBalLiq2b": 8,
+   "SLZSalidaC1Fte": 29,
+   "RicB2Egreso": 6,
+   "RicEgrCamFrente": 45,
+   "RicIngCamFrente": 41,
+   "RicB3Ingreso": 7,
+   "RicB3Egreso": 7,
+   "SLZTK400": 28,
+   "SLZBalSC1Fte": 17,
+   "SLZBalLiq1a": 1,
+   "RicPreIngInFr": 5,
+   "SLZBalLiq1b": 1
+  },
+  "fotos": [
+   {
+    "device": "RicIngCamFrente",
+    "at": "2026-10-25T15:41:57.411Z",
+    "hora": "12:41",
+    "dia": "25/10"
+   },
+   {
+    "device": "SLZBalLiq2b",
+    "at": "2026-10-22T15:53:51.837Z",
+    "hora": "12:53",
+    "dia": "22/10"
+   }
+  ],
+  "diaEjemplo": "17/10",
+  "visitas": [
+   {
+    "planta": "ric",
+    "items": [
+     {
+      "t": 1792234140972,
+      "punto": "Ingreso",
+      "hora": "07:49",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "RicIngCamFrente",
+      "at": "2026-10-17T10:49:00.972Z"
+     }
+    ]
+   },
+   {
+    "planta": "sl",
+    "items": [
+     {
+      "t": 1792236108274,
+      "punto": "Salida puerto",
+      "hora": "08:21",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "SLZSalidaC2Fte",
+      "at": "2026-10-17T11:21:48.274Z"
+     },
+     {
+      "t": 1792236207390,
+      "punto": "Cámara sin punto",
+      "hora": "08:23",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "SLZTK400",
+      "at": "2026-10-17T11:23:27.390Z"
+     },
+     {
+      "t": 1792241525160,
+      "punto": "Salida puerto",
+      "hora": "09:52",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "SLZSalidaC2Fte",
+      "at": "2026-10-17T12:52:05.160Z"
+     },
+     {
+      "t": 1792244923041,
+      "punto": "Cámara sin punto",
+      "hora": "10:48",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "SLZTK400",
+      "at": "2026-10-17T13:48:43.041Z"
+     },
+     {
+      "t": 1792246715473,
+      "punto": "Salida puerto",
+      "hora": "11:18",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "SLZSalidaC2Fte",
+      "at": "2026-10-17T14:18:35.473Z"
+     }
+    ]
+   },
+   {
+    "planta": "ric",
+    "items": [
+     {
+      "t": 1792247288014,
+      "punto": "Ingreso",
+      "hora": "11:28",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "RicIngCamFrente",
+      "at": "2026-10-17T14:28:08.014Z"
+     },
+     {
+      "t": 1792248428816,
+      "punto": "Egreso",
+      "hora": "11:47",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "RicEgrCamFrente",
+      "at": "2026-10-17T14:47:08.816Z"
+     },
+     {
+      "t": 1792250456703,
+      "punto": "Balanza egreso",
+      "hora": "12:20",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "RicB2Egreso",
+      "at": "2026-10-17T15:20:56.703Z"
+     }
+    ]
+   },
+   {
+    "planta": "sl",
+    "items": [
+     {
+      "t": 1792251051136,
+      "punto": "Salida puerto",
+      "hora": "12:30",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "SLZSalidaC2Fte",
+      "at": "2026-10-17T15:30:51.136Z"
+     },
+     {
+      "t": 1792251136306,
+      "punto": "Cámara sin punto",
+      "hora": "12:32",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "SLZTK400",
+      "at": "2026-10-17T15:32:16.306Z"
+     },
+     {
+      "t": 1792254715504,
+      "punto": "Balanza salida puerto",
+      "hora": "13:31",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "SLZBalSC1Fte",
+      "at": "2026-10-17T16:31:55.504Z"
+     },
+     {
+      "t": 1792255029375,
+      "punto": "Cámara sin punto",
+      "hora": "13:37",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "SLZBalLiq2b",
+      "at": "2026-10-17T16:37:09.375Z"
+     },
+     {
+      "t": 1792256551693,
+      "punto": "Balanza salida puerto",
+      "hora": "14:02",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "SLZBalSC1Fte",
+      "at": "2026-10-17T17:02:31.693Z"
+     },
+     {
+      "t": 1792258929292,
+      "punto": "Cámara sin punto",
+      "hora": "14:42",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "SLZTK400",
+      "at": "2026-10-17T17:42:09.292Z"
+     },
+     {
+      "t": 1792262489011,
+      "punto": "Salida puerto",
+      "hora": "15:41",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "SLZSalidaC2Fte",
+      "at": "2026-10-17T18:41:29.011Z"
+     }
+    ]
+   },
+   {
+    "planta": "ric",
+    "items": [
+     {
+      "t": 1792263255503,
+      "punto": "Ingreso",
+      "hora": "15:54",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "RicIngCamFrente",
+      "at": "2026-10-17T18:54:15.503Z"
+     },
+     {
+      "t": 1792272095049,
+      "punto": "Egreso",
+      "hora": "18:21",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "RicEgrCamFrente",
+      "at": "2026-10-17T21:21:35.049Z"
+     }
+    ]
+   },
+   {
+    "planta": "sl",
+    "items": [
+     {
+      "t": 1792272813157,
+      "punto": "Salida puerto",
+      "hora": "18:33",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "SLZSalidaC2Fte",
+      "at": "2026-10-17T21:33:33.157Z"
+     },
+     {
+      "t": 1792276219656,
+      "punto": "Balanza salida puerto",
+      "hora": "19:30",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "SLZBalSC1Fte",
+      "at": "2026-10-17T22:30:19.656Z"
+     },
+     {
+      "t": 1792276557675,
+      "punto": "Salida puerto",
+      "hora": "19:35",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "SLZSalidaC2Fte",
+      "at": "2026-10-17T22:35:57.675Z"
+     }
+    ]
+   },
+   {
+    "planta": "ric",
+    "items": [
+     {
+      "t": 1792280101437,
+      "punto": "Egreso",
+      "hora": "20:35",
+      "dia": "17/10",
+      "estado": "camara",
+      "leyo": "AE264XY",
+      "device": "RicEgrCamFrente",
+      "at": "2026-10-17T23:35:01.437Z"
+     }
+    ]
+   }
+  ],
+  "deducidos": [],
+  "found": true,
+  "archivo": "AE264XY_1410_0815_RicEgrCamFrente.jpg",
+  "dispositivo": "RicEgrCamFrente",
+  "cuando": "14/10 08:15",
+  "leida": "AE264XY",
+  "tipo": "Sedan",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "IMH787",
+  "viajes": 92,
+  "dias": 14,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / RicB3Ingreso",
+  "parecida": "",
+  "registro": true,
+  "porCamara": {
+   "SLZSalidaC1Fte": 55,
+   "RicB3Ingreso": 25,
+   "RicB3Egreso": 24,
+   "SLZSalidaC2Fte": 40,
+   "RicB2Egreso": 11
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-25T18:18:43.300Z",
+    "hora": "15:18",
+    "dia": "25/10"
+   }
+  ],
+  "diaEjemplo": "21/10",
+  "visitas": [
+   {
+    "planta": "sl",
+    "items": [
+     {
+      "t": 1792577976160,
+      "punto": "Salida puerto",
+      "hora": "07:19",
+      "dia": "21/10",
+      "estado": "camara",
+      "leyo": "IMH787",
+      "device": "SLZSalidaC2Fte",
+      "at": "2026-10-21T10:19:36.160Z"
+     }
+    ]
+   },
+   {
+    "planta": "ric",
+    "items": [
+     {
+      "t": 1792579062174,
+      "punto": "Balanza ingreso",
+      "hora": "07:37",
+      "dia": "21/10",
+      "estado": "camara",
+      "leyo": "IMH787",
+      "device": "RicB3Ingreso",
+      "at": "2026-10-21T10:37:42.174Z"
+     },
+     {
+      "t": 1792579505967,
+      "punto": "Balanza egreso",
+      "hora": "07:45",
+      "dia": "21/10",
+      "estado": "camara",
+      "leyo": "IMH787",
+      "device": "RicB3Egreso",
+      "at": "2026-10-21T10:45:05.967Z"
+     }
+    ]
+   },
+   {
+    "planta": "sl",
+    "items": [
+     {
+      "t": 1792580285546,
+      "punto": "Salida puerto",
+      "hora": "07:58",
+      "dia": "21/10",
+      "estado": "camara",
+      "leyo": "IMH787",
+      "device": "SLZSalidaC1Fte",
+      "at": "2026-10-21T10:58:05.546Z"
+     }
+    ]
+   },
+   {
+    "planta": "ric",
+    "items": [
+     {
+      "t": 1792593462716,
+      "punto": "Balanza ingreso",
+      "hora": "11:37",
+      "dia": "21/10",
+      "estado": "camara",
+      "leyo": "IMH787",
+      "device": "RicB3Ingreso",
+      "at": "2026-10-21T14:37:42.716Z"
+     },
+     {
+      "t": 1792593894271,
+      "punto": "Balanza egreso",
+      "hora": "11:44",
+      "dia": "21/10",
+      "estado": "camara",
+      "leyo": "IMH787",
+      "device": "RicB3Egreso",
+      "at": "2026-10-21T14:44:54.271Z"
+     }
+    ]
+   },
+   {
+    "planta": "sl",
+    "items": [
+     {
+      "t": 1792594440808,
+      "punto": "Salida puerto",
+      "hora": "11:54",
+      "dia": "21/10",
+      "estado": "camara",
+      "leyo": "IMH787",
+      "device": "SLZSalidaC2Fte",
+      "at": "2026-10-21T14:54:00.808Z"
+     }
+    ]
+   },
+   {
+    "planta": "ric",
+    "items": [
+     {
+      "t": 1792606746551,
+      "punto": "Balanza ingreso",
+      "hora": "15:19",
+      "dia": "21/10",
+      "estado": "camara",
+      "leyo": "IMH787",
+      "device": "RicB3Ingreso",
+      "at": "2026-10-21T18:19:06.551Z"
+     },
+     {
+      "t": 1792606940275,
+      "punto": "Balanza egreso",
+      "hora": "15:22",
+      "dia": "21/10",
+      "estado": "camara",
+      "leyo": "IMH787",
+      "device": "RicB3Egreso",
+      "at": "2026-10-21T18:22:20.275Z"
+     }
+    ]
+   },
+   {
+    "planta": "sl",
+    "items": [
+     {
+      "t": 1792607818653,
+      "punto": "Salida puerto",
+      "hora": "15:36",
+      "dia": "21/10",
+      "estado": "camara",
+      "leyo": "IMH787",
+      "device": "SLZSalidaC2Fte",
+      "at": "2026-10-21T18:36:58.653Z"
+     }
+    ]
+   }
+  ],
+  "deducidos": [],
+  "found": true,
+  "archivo": "IMH787_1310_1123_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "13/10 11:23",
+  "leida": "IMH787",
+  "tipo": "MPV",
+  "marca": "Renault",
+  "color": "Silver"
+ },
+ {
+  "patente": "AG622BE",
+  "viajes": 81,
+  "dias": 11,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 40,
+   "SLZSalidaC1Fte": 44
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-22T18:37:21.548Z",
+    "hora": "15:37",
+    "dia": "22/10"
+   }
+  ],
+  "diaEjemplo": "16/10",
+  "visitas": [
+   {
+    "planta": "sl",
+    "items": [
+     {
+      "t": 1792143711070,
+      "punto": "Salida puerto",
+      "hora": "06:41",
+      "dia": "16/10",
+      "estado": "camara",
+      "leyo": "AG622BE",
+      "device": "SLZSalidaC2Fte",
+      "at": "2026-10-16T09:41:51.070Z"
+     }
+    ]
+   }
+  ],
+  "deducidos": [],
+  "found": true,
+  "archivo": "AG622BE_1310_1539_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 15:39",
+  "leida": "AG622BE",
+  "tipo": "Bus",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "NAH953",
+  "viajes": 78,
+  "dias": 12,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB3Egreso",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC1Fte": 38,
+   "RicB2Egreso": 3,
+   "SLZSalidaC2Fte": 40,
+   "RicB3Ingreso": 6,
+   "RicB3Egreso": 7,
+   "SLZTK400": 6,
+   "SLZBalSC1Fte": 5,
+   "SLZBalLiq1b": 1,
+   "SLZBalLiq2a": 2
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-24T19:17:39.856Z",
+    "hora": "16:17",
+    "dia": "24/10"
+   }
+  ],
+  "diaEjemplo": "14/10",
+  "visitas": [
+   {
+    "planta": "sl",
+    "items": [
+     {
+      "t": 1791975858287,
+      "punto": "Salida puerto",
+      "hora": "08:04",
+      "dia": "14/10",
+      "estado": "camara",
+      "leyo": "NAH953",
+      "device": "SLZSalidaC1Fte",
+      "at": "2026-10-14T11:04:18.287Z"
+     }
+    ]
+   },
+   {
+    "planta": "ric",
+    "items": [
+     {
+      "t": 1791981941422,
+      "punto": "Balanza ingreso",
+      "hora": "09:45",
+      "dia": "14/10",
+      "estado": "camara",
+      "leyo": "NAH953",
+      "device": "RicB3Ingreso",
+      "at": "2026-10-14T12:45:41.422Z"
+     },
+     {
+      "t": 1791983934021,
+      "punto": "Balanza egreso",
+      "hora": "10:18",
+      "dia": "14/10",
+      "estado": "camara",
+      "leyo": "NAH953",
+      "device": "RicB3Egreso",
+      "at": "2026-10-14T13:18:54.021Z"
+     }
+    ]
+   },
+   {
+    "planta": "sl",
+    "items": [
+     {
+      "t": 1791985684900,
+      "punto": "Salida puerto",
+      "hora": "10:48",
+      "dia": "14/10",
+      "estado": "camara",
+      "leyo": "NAH953",
+      "device": "SLZSalidaC2Fte",
+      "at": "2026-10-14T13:48:04.900Z"
+     }
+    ]
+   },
+   {
+    "planta": "ric",
+    "items": [
+     {
+      "t": 1791990166165,
+      "punto": "Balanza egreso",
+      "hora": "12:02",
+      "dia": "14/10",
+      "estado": "camara",
+      "leyo": "NAH953",
+      "device": "RicB3Egreso",
+      "at": "2026-10-14T15:02:46.165Z"
+     }
+    ]
+   },
+   {
+    "planta": "sl",
+    "items": [
+     {
+      "t": 1791991888455,
+      "punto": "Salida puerto",
+      "hora": "12:31",
+      "dia": "14/10",
+      "estado": "camara",
+      "leyo": "NAH953",
+      "device": "SLZSalidaC2Fte",
+      "at": "2026-10-14T15:31:28.455Z"
+     },
+     {
+      "t": 1792005675239,
+      "punto": "Cámara sin punto",
+      "hora": "16:21",
+      "dia": "14/10",
+      "estado": "camara",
+      "leyo": "NAH953",
+      "device": "SLZTK400",
+      "at": "2026-10-14T19:21:15.239Z"
+     },
+     {
+      "t": 1792008710330,
+      "punto": "Salida puerto",
+      "hora": "17:11",
+      "dia": "14/10",
+      "estado": "camara",
+      "leyo": "NAH953",
+      "device": "SLZSalidaC2Fte",
+      "at": "2026-10-14T20:11:50.330Z"
+     }
+    ]
+   }
+  ],
+  "deducidos": [],
+  "found": true,
+  "archivo": "NAH953_1210_1117_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "12/10 11:17",
+  "leida": "NAH953",
+  "tipo": "Sedan",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "OCB815",
+  "viajes": 68,
+  "dias": 14,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / RicB2Egreso / SLZSalidaC2Fte",
+  "parecida": "CCB815",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 28,
+   "SLZSalidaC1Fte": 40,
+   "RicB2Egreso": 35,
+   "RicB3Egreso": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-18T18:14:16.389Z",
+    "hora": "15:14",
+    "dia": "18/10"
+   }
+  ],
+  "diaEjemplo": "18/10",
+  "visitas": [
+   {
+    "planta": "sl",
+    "items": [
+     {
+      "t": 1792304182980,
+      "punto": "Salida puerto",
+      "hora": "03:16",
+      "dia": "18/10",
+      "estado": "camara",
+      "leyo": "OCB815",
+      "device": "SLZSalidaC1Fte",
+      "at": "2026-10-18T06:16:22.980Z"
+     }
+    ]
+   },
+   {
+    "planta": "ric",
+    "items": [
+     {
+      "t": 1792304924841,
+      "punto": "Balanza egreso",
+      "hora": "03:28",
+      "dia": "18/10",
+      "estado": "camara",
+      "leyo": "OCB815",
+      "device": "RicB2Egreso",
+      "at": "2026-10-18T06:28:44.841Z"
+     }
+    ]
+   },
+   {
+    "planta": "sl",
+    "items": [
+     {
+      "t": 1792347256389,
+      "punto": "Salida puerto",
+      "hora": "15:14",
+      "dia": "18/10",
+      "estado": "camara",
+      "leyo": "OCB815",
+      "device": "SLZSalidaC1Fte",
+      "at": "2026-10-18T18:14:16.389Z"
+     }
+    ]
+   },
+   {
+    "planta": "ric",
+    "items": [
+     {
+      "t": 1792348031971,
+      "punto": "Balanza egreso",
+      "hora": "15:27",
+      "dia": "18/10",
+      "estado": "camara",
+      "leyo": "OCB815",
+      "device": "RicB2Egreso",
+      "at": "2026-10-18T18:27:11.971Z"
+     }
+    ]
+   },
+   {
+    "planta": "sl",
+    "items": [
+     {
+      "t": 1792361990168,
+      "punto": "Salida puerto",
+      "hora": "19:19",
+      "dia": "18/10",
+      "estado": "camara",
+      "leyo": "OCB815",
+      "device": "SLZSalidaC1Fte",
+      "at": "2026-10-18T22:19:50.168Z"
+     }
+    ]
+   },
+   {
+    "planta": "ric",
+    "items": [
+     {
+      "t": 1792362742748,
+      "punto": "Balanza egreso",
+      "hora": "19:32",
+      "dia": "18/10",
+      "estado": "camara",
+      "leyo": "OCB815",
+      "device": "RicB2Egreso",
+      "at": "2026-10-18T22:32:22.748Z"
+     }
+    ]
+   },
+   {
+    "planta": "sl",
+    "items": [
+     {
+      "t": 1792375964354,
+      "punto": "Salida puerto",
+      "hora": "23:12",
+      "dia": "18/10",
+      "estado": "camara",
+      "leyo": "OCB815",
+      "device": "SLZSalidaC2Fte",
+      "at": "2026-10-19T02:12:44.354Z"
+     }
+    ]
+   },
+   {
+    "planta": "ric",
+    "items": [
+     {
+      "t": 1792377105666,
+      "punto": "Balanza egreso",
+      "hora": "23:31",
+      "dia": "18/10",
+      "estado": "camara",
+      "leyo": "OCB815",
+      "device": "RicB2Egreso",
+      "at": "2026-10-19T02:31:45.666Z"
+     }
+    ]
+   },
+   {
+    "planta": "sl",
+    "items": [
+     {
+      "t": 1792390421823,
+      "punto": "Salida puerto",
+      "hora": "03:13",
+      "dia": "19/10",
+      "estado": "camara",
+      "leyo": "OCB815",
+      "device": "SLZSalidaC1Fte",
+      "at": "2026-10-19T06:13:41.823Z"
+     }
+    ]
+   }
+  ],
+  "deducidos": [],
+  "found": true,
+  "archivo": "OCB815_1810_1514_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "18/10 15:14",
+  "leida": "OCB815",
+  "tipo": "Sedan",
+  "marca": "Chevrolet",
+  "color": "Silver"
+ },
+ {
+  "patente": "AF778YL",
+  "viajes": 63,
+  "dias": 9,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB2Egreso",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "RicB2Egreso": 2,
+   "SLZSalidaC2Fte": 32,
+   "SLZSalidaC1Fte": 32
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-20T18:45:19.502Z",
+    "hora": "15:45",
+    "dia": "20/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AF778YL_1910_1552_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "19/10 15:52",
+  "leida": "AF778YL",
+  "tipo": "Bus",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AF529RF",
+  "viajes": 61,
+  "dias": 14,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "AF529TF AF529RI",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 29,
+   "SLZSalidaC1Fte": 32
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-25T21:40:40.187Z",
+    "hora": "18:40",
+    "dia": "25/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AF529RF_1210_0712_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "12/10 07:12",
+  "leida": "AF529RF",
+  "tipo": "Van",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AE036AM",
+  "viajes": 49,
+  "dias": 14,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 23,
+   "SLZSalidaC1Fte": 26
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-25T22:06:49.214Z",
+    "hora": "19:06",
+    "dia": "25/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AE036AM_1210_0715_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "12/10 07:15",
+  "leida": "AE036AM",
+  "tipo": "Van",
+  "marca": "Mitsubishi",
+  "color": "White"
+ },
+ {
+  "patente": "JLQ557",
+  "viajes": 46,
+  "dias": 9,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZTK400",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZTK400": 12,
+   "SLZSalidaC2Fte": 27,
+   "SLZSalidaC1Fte": 21
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T18:10:19.295Z",
+    "hora": "15:10",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "JLQ557_1310_1655_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 16:55",
+  "leida": "JLQ557",
+  "tipo": "Pickup",
+  "marca": null,
+  "color": "Silver"
+ },
+ {
+  "patente": "AF566OP",
+  "viajes": 44,
+  "dias": 12,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZTK400 / SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 23,
+   "SLZTK400": 65,
+   "SLZSalidaC1Fte": 21,
+   "SLZBalSC1Fte": 2,
+   "RicB3Ingreso": 3,
+   "RicB3Egreso": 2
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-24T15:58:17.826Z",
+    "hora": "12:58",
+    "dia": "24/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AF566OP_1310_0807_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "13/10 08:07",
+  "leida": "AF566OP",
+  "tipo": "SUV",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AA208QN",
+  "viajes": 43,
+  "dias": 12,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZBalSC1Fte / SLZTK400 / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 22,
+   "SLZTK400": 33,
+   "SLZSalidaC1Fte": 21,
+   "SLZBalSC1Fte": 36,
+   "SLZBalSC2Fte": 1,
+   "SLZBalLiq2a": 6,
+   "SLZBalLiq1a": 1,
+   "SLZBalLiq2b": 4,
+   "RicB3Ingreso": 1,
+   "RicB3Egreso": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZBalLiq2b",
+    "at": "2026-10-24T14:08:55.280Z",
+    "hora": "11:08",
+    "dia": "24/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AA208QN_1210_1316_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "12/10 13:16",
+  "leida": "AA208QN",
+  "tipo": "Pickup",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "JUE083",
+  "viajes": 43,
+  "dias": 9,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB3Ingreso",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 25,
+   "SLZSalidaC1Fte": 20,
+   "RicB3Ingreso": 6,
+   "RicB3Egreso": 6,
+   "RicB2Egreso": 2
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T15:51:03.648Z",
+    "hora": "12:51",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "JUE083_1310_1031_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 10:31",
+  "leida": "JUE083",
+  "tipo": "Sedan",
+  "marca": null,
+  "color": "Silver"
+ },
+ {
+  "patente": "AG688FB",
+  "viajes": 41,
+  "dias": 12,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 20,
+   "SLZSalidaC1Fte": 24
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T17:55:04.635Z",
+    "hora": "14:55",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AG688FB_1210_1732_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "12/10 17:32",
+  "leida": "AG688FB",
+  "tipo": "Van",
+  "marca": "Ford",
+  "color": "White"
+ },
+ {
+  "patente": "LJB988",
+  "viajes": 41,
+  "dias": 8,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZBalSC1Fte",
+  "parecida": "",
+  "registro": true,
+  "porCamara": {
+   "SLZSalidaC2Fte": 23,
+   "SLZBalSC1Fte": 18,
+   "SLZSalidaC1Fte": 19,
+   "SLZTK400": 15,
+   "SLZIngCamFrente": 5,
+   "SLZBalSC2Fte": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZIngCamFrente",
+    "at": "2026-10-16T16:05:21.883Z",
+    "hora": "13:05",
+    "dia": "16/10"
+   }
+  ],
+  "found": true,
+  "archivo": "LJB988_1310_0824_SLZBalSC1Fte.jpg",
+  "dispositivo": "SLZBalSC1Fte",
+  "cuando": "13/10 08:24",
+  "leida": "LJB988",
+  "tipo": "Pickup",
+  "marca": "Ford",
+  "color": "Black"
+ },
+ {
+  "patente": "AB785UY",
+  "viajes": 40,
+  "dias": 9,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZTK400",
+  "parecida": "AB785NY",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 26,
+   "SLZSalidaC1Fte": 18,
+   "SLZTK400": 11
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-22T18:27:15.906Z",
+    "hora": "15:27",
+    "dia": "22/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AB785UY_1310_0900_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 09:00",
+  "leida": "AB785UY",
+  "tipo": "Van",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AI065WC",
+  "viajes": 40,
+  "dias": 12,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "AH065WC",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 20,
+   "SLZSalidaC1Fte": 20
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-12T17:57:07.592Z",
+    "hora": "14:57",
+    "dia": "12/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AI065WC_1210_1046_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "12/10 10:46",
+  "leida": "AI065WC",
+  "tipo": "Van",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AE827VZ",
+  "viajes": 37,
+  "dias": 7,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 17,
+   "SLZSalidaC1Fte": 20
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T09:44:39.305Z",
+    "hora": "06:44",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AE827VZ_1210_0637_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "12/10 06:37",
+  "leida": "AE827VZ",
+  "tipo": "Bus",
+  "marca": "Fiat",
+  "color": "Gray"
+ },
+ {
+  "patente": "AH090IH",
+  "viajes": 37,
+  "dias": 9,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 19,
+   "SLZSalidaC1Fte": 19
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T10:27:49.839Z",
+    "hora": "07:27",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AH090IH_1310_0632_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 06:32",
+  "leida": "AH090IH",
+  "tipo": "Bus",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AE040HU",
+  "viajes": 36,
+  "dias": 9,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZBalSC1Fte / SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 20,
+   "SLZBalSC1Fte": 26,
+   "SLZSalidaC1Fte": 16,
+   "RicB3Ingreso": 1,
+   "RicB2Egreso": 1,
+   "RicB3Egreso": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T19:44:44.132Z",
+    "hora": "16:44",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AE040HU_1310_1211_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 12:11",
+  "leida": "AE040HU",
+  "tipo": "Pickup",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AF282QI",
+  "viajes": 35,
+  "dias": 13,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 29,
+   "SLZSalidaC1Fte": 7
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T18:16:27.362Z",
+    "hora": "15:16",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AF282QI_1310_1615_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 16:15",
+  "leida": "AF282QI",
+  "tipo": "Van",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "IJN886",
+  "viajes": 34,
+  "dias": 8,
+  "zona": "San Lorenzo",
+  "camaras": "SLZBalSC1Fte / SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 19,
+   "SLZBalSC1Fte": 25,
+   "SLZSalidaC1Fte": 17,
+   "SLZTK400": 4
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-22T13:02:52.186Z",
+    "hora": "10:02",
+    "dia": "22/10"
+   }
+  ],
+  "found": true,
+  "archivo": "IJN886_1310_0909_SLZBalSC1Fte.jpg",
+  "dispositivo": "SLZBalSC1Fte",
+  "cuando": "13/10 09:09",
+  "leida": "IJN886",
+  "tipo": "SUV",
+  "marca": "Ford",
+  "color": "Gray"
+ },
+ {
+  "patente": "AG361MP",
+  "viajes": 33,
+  "dias": 13,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 16,
+   "SLZSalidaC1Fte": 17
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-21T17:56:04.878Z",
+    "hora": "14:56",
+    "dia": "21/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AG361MP_2010_0825_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 08:25",
+  "leida": "AG361MP",
+  "tipo": "MPV",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AH456NL",
+  "viajes": 33,
+  "dias": 7,
+  "zona": "San Lorenzo",
+  "camaras": "SLZTK400 / SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 19,
+   "SLZTK400": 25,
+   "SLZSalidaC1Fte": 14
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T19:59:23.124Z",
+    "hora": "16:59",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AH456NL_1410_1031_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "14/10 10:31",
+  "leida": "AH456NL",
+  "tipo": "SUV",
+  "marca": "Hyundai",
+  "color": "White"
+ },
+ {
+  "patente": "JZW724",
+  "viajes": 33,
+  "dias": 11,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZBalSC1Fte / SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 16,
+   "SLZBalSC1Fte": 19,
+   "SLZSalidaC1Fte": 17,
+   "SLZTK400": 6,
+   "RicB3Ingreso": 16,
+   "RicB3Egreso": 15,
+   "RicB2Egreso": 2,
+   "RicIngCamFrente": 1,
+   "RicEgrCamFrente": 1,
+   "SLZVolcableC3": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-25T14:42:06.080Z",
+    "hora": "11:42",
+    "dia": "25/10"
+   }
+  ],
+  "found": true,
+  "archivo": "JZW724_1310_0903_SLZBalSC1Fte.jpg",
+  "dispositivo": "SLZBalSC1Fte",
+  "cuando": "13/10 09:03",
+  "leida": "JZW724",
+  "tipo": "Pickup",
+  "marca": "Volkswagen",
+  "color": "Green"
+ },
+ {
+  "patente": "AE937SG",
+  "viajes": 32,
+  "dias": 10,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 17,
+   "SLZSalidaC1Fte": 17
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T17:45:15.880Z",
+    "hora": "14:45",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AE937SG_1610_1449_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "16/10 14:49",
+  "leida": "AE937SG",
+  "tipo": "Bus",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AG142JP",
+  "viajes": 32,
+  "dias": 9,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 18,
+   "SLZSalidaC1Fte": 17
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T18:16:19.119Z",
+    "hora": "15:16",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AG142JP_1310_1615_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 16:15",
+  "leida": "AG142JP",
+  "tipo": "Bus",
+  "marca": "Hyundai",
+  "color": "White"
+ },
+ {
+  "patente": "HLT270",
+  "viajes": 30,
+  "dias": 10,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZTK400 / SLZSalidaC1Fte",
+  "parecida": "HLD270 HLX270",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 20,
+   "SLZSalidaC1Fte": 10,
+   "RicB3Ingreso": 6,
+   "RicB3Egreso": 6,
+   "SLZTK400": 11
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-24T17:25:15.205Z",
+    "hora": "14:25",
+    "dia": "24/10"
+   }
+  ],
+  "found": true,
+  "archivo": "HLT270_1310_1207_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "13/10 12:07",
+  "leida": "HLT270",
+  "tipo": "Small Truck",
+  "marca": "Hyundai",
+  "color": "White"
+ },
+ {
+  "patente": "AH540BR",
+  "viajes": 28,
+  "dias": 12,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 14,
+   "SLZSalidaC1Fte": 14
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-25T21:47:33.992Z",
+    "hora": "18:47",
+    "dia": "25/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AH540BR_1310_0641_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 06:41",
+  "leida": "AH540BR",
+  "tipo": "Van",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AC169LG",
+  "viajes": 27,
+  "dias": 10,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZTK400",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 14,
+   "SLZSalidaC1Fte": 13,
+   "SLZTK400": 5,
+   "RicB3Ingreso": 5,
+   "RicB3Egreso": 5,
+   "SLZBalSC1Fte": 1,
+   "RicB2Egreso": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-21T18:21:36.170Z",
+    "hora": "15:21",
+    "dia": "21/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AC169LG_1210_1027_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "12/10 10:27",
+  "leida": "AC169LG",
+  "tipo": "Small Truck",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "INE931",
+  "viajes": 27,
+  "dias": 11,
+  "zona": "San Lorenzo",
+  "camaras": "SLZTK400 / SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 14,
+   "SLZTK400": 25,
+   "SLZSalidaC1Fte": 14,
+   "SLZBalSC1Fte": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-24T19:57:28.011Z",
+    "hora": "16:57",
+    "dia": "24/10"
+   }
+  ],
+  "found": true,
+  "archivo": "INE931_1310_1658_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 16:58",
+  "leida": "INE931",
+  "tipo": "Pickup",
+  "marca": null,
+  "color": "Gray"
+ },
+ {
+  "patente": "AG128YL",
+  "viajes": 26,
+  "dias": 6,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC1Fte": 13,
+   "SLZSalidaC2Fte": 13
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-25T22:25:30.182Z",
+    "hora": "19:25",
+    "dia": "25/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AG128YL_1510_0629_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "15/10 06:29",
+  "leida": "AG128YL",
+  "tipo": "Bus",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AG428EL",
+  "viajes": 26,
+  "dias": 5,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 14,
+   "SLZSalidaC1Fte": 13
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T16:18:51.515Z",
+    "hora": "13:18",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AG428EL_1910_1222_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "19/10 12:22",
+  "leida": "AG428EL",
+  "tipo": "Small Truck",
+  "marca": null,
+  "color": "Blue"
+ },
+ {
+  "patente": "AH700ET",
+  "viajes": 26,
+  "dias": 10,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 13,
+   "SLZSalidaC1Fte": 13
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T14:06:26.310Z",
+    "hora": "11:06",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AH700ET_1310_1200_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 12:00",
+  "leida": "AH700ET",
+  "tipo": "Van",
+  "marca": "Renault",
+  "color": "White"
+ },
+ {
+  "patente": "GCW191",
+  "viajes": 26,
+  "dias": 14,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZTK400",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 14,
+   "SLZSalidaC1Fte": 13,
+   "SLZTK400": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-25T13:27:59.169Z",
+    "hora": "10:27",
+    "dia": "25/10"
+   }
+  ],
+  "found": true,
+  "archivo": "GCW191_1210_1114_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "12/10 11:14",
+  "leida": "GCW191",
+  "tipo": "Medium Truck",
+  "marca": "Chevrolet",
+  "color": "White"
+ },
+ {
+  "patente": "AH763WD",
+  "viajes": 24,
+  "dias": 9,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZTK400",
+  "parecida": "AH763FD",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 12,
+   "SLZBalSC1Fte": 3,
+   "SLZSalidaC1Fte": 11,
+   "SLZTK400": 9,
+   "RicB3Ingreso": 4,
+   "RicB3Egreso": 4
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T13:25:48.662Z",
+    "hora": "10:25",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AH763WD_1210_0849_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "12/10 08:49",
+  "leida": "AH763WD",
+  "tipo": "Pickup",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AF881FZ",
+  "viajes": 23,
+  "dias": 12,
+  "zona": "San Lorenzo",
+  "camaras": "SLZTK400 / SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 11,
+   "SLZTK400": 29,
+   "SLZSalidaC1Fte": 12
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-20T14:51:41.460Z",
+    "hora": "11:51",
+    "dia": "20/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AF881FZ_1510_1727_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "15/10 17:27",
+  "leida": "AF881FZ",
+  "tipo": "SUV",
+  "marca": "Volkswagen",
+  "color": "White"
+ },
+ {
+  "patente": "AG294KA",
+  "viajes": 23,
+  "dias": 5,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB3Ingreso",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 15,
+   "SLZSalidaC1Fte": 8,
+   "RicB3Ingreso": 1,
+   "RicB3Egreso": 1,
+   "SLZTK400": 1,
+   "SLZBalSC1Fte": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-22T13:53:11.993Z",
+    "hora": "10:53",
+    "dia": "22/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AG294KA_1310_0847_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 08:47",
+  "leida": "AG294KA",
+  "tipo": "Van",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AG575TD",
+  "viajes": 23,
+  "dias": 10,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / SLZTK400",
+  "parecida": "AA575TD",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 11,
+   "SLZTK400": 11,
+   "SLZSalidaC1Fte": 12
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-24T15:24:01.564Z",
+    "hora": "12:24",
+    "dia": "24/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AG575TD_1310_1119_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 11:19",
+  "leida": "AG575TD",
+  "tipo": "Van",
+  "marca": "Renault",
+  "color": "White"
+ },
+ {
+  "patente": "AH933LO",
+  "viajes": 23,
+  "dias": 8,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB3Ingreso",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 13,
+   "SLZSalidaC1Fte": 12,
+   "RicB3Ingreso": 4,
+   "RicB3Egreso": 4
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-21T14:17:26.554Z",
+    "hora": "11:17",
+    "dia": "21/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AH933LO_1310_0818_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "13/10 08:18",
+  "leida": "AH933LO",
+  "tipo": "MPV",
+  "marca": "BMW",
+  "color": "White"
+ },
+ {
+  "patente": "AB148YJ",
+  "viajes": 22,
+  "dias": 8,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZBalSC1Fte",
+  "parecida": "AB148YV",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 12,
+   "SLZSalidaC1Fte": 10,
+   "SLZBalSC1Fte": 2,
+   "SLZTK400": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-21T18:28:28.495Z",
+    "hora": "15:28",
+    "dia": "21/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AB148YJ_1210_1030_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "12/10 10:30",
+  "leida": "AB148YJ",
+  "tipo": "Small Truck",
+  "marca": "Mitsubishi",
+  "color": "White"
+ },
+ {
+  "patente": "AD545MJ",
+  "viajes": 19,
+  "dias": 9,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB3Ingreso",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "RicB3Ingreso": 3,
+   "RicB3Egreso": 3,
+   "SLZSalidaC2Fte": 11,
+   "SLZSalidaC1Fte": 9,
+   "SLZTK400": 2
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T16:12:55.613Z",
+    "hora": "13:12",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AD545MJ_1410_1042_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "14/10 10:42",
+  "leida": "AD545MJ",
+  "tipo": "Pickup",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "PFA290",
+  "viajes": 19,
+  "dias": 6,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 8,
+   "SLZSalidaC1Fte": 12
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-21T17:32:55.842Z",
+    "hora": "14:32",
+    "dia": "21/10"
+   }
+  ],
+  "found": true,
+  "archivo": "PFA290_1410_1752_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "14/10 17:52",
+  "leida": "PFA290",
+  "tipo": "Van",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AF211ER",
+  "viajes": 18,
+  "dias": 10,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZTK400 / SLZBalSC1Fte",
+  "parecida": "AI211ER",
+  "registro": true,
+  "porCamara": {
+   "SLZSalidaC2Fte": 16,
+   "SLZBalSC1Fte": 5,
+   "SLZTK400": 9
+  },
+  "fotos": [
+   {
+    "device": "SLZTK400",
+    "at": "2026-10-16T18:08:32.319Z",
+    "hora": "15:08",
+    "dia": "16/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AF211ER_1310_0932_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 09:32",
+  "leida": "AF211ER",
+  "tipo": "Pickup",
+  "marca": null,
+  "color": "Silver"
+ },
+ {
+  "patente": "AH911RJ",
+  "viajes": 18,
+  "dias": 9,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 10,
+   "SLZSalidaC1Fte": 9
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T16:09:53.380Z",
+    "hora": "13:09",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AH911RJ_1210_0858_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "12/10 08:58",
+  "leida": "AH911RJ",
+  "tipo": "Pickup",
+  "marca": null,
+  "color": "Black"
+ },
+ {
+  "patente": "AI456GB",
+  "viajes": 18,
+  "dias": 10,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "AI456GI",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 10,
+   "SLZSalidaC1Fte": 9
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T13:42:26.901Z",
+    "hora": "10:42",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AI456GB_1210_1141_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "12/10 11:41",
+  "leida": "AI456GB",
+  "tipo": "Van",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "PQK206",
+  "viajes": 18,
+  "dias": 8,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZTK400 / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZBalLiq2a": 4,
+   "SLZSalidaC2Fte": 10,
+   "SLZSalidaC1Fte": 8,
+   "SLZTK400": 9,
+   "SLZBalSC1Fte": 7
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T17:49:50.669Z",
+    "hora": "14:49",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "PQK206_1310_1137_SLZBalSC1Fte.jpg",
+  "dispositivo": "SLZBalSC1Fte",
+  "cuando": "13/10 11:37",
+  "leida": "PQK206",
+  "tipo": "Van",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AF316PR",
+  "viajes": 17,
+  "dias": 10,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 8,
+   "SLZSalidaC1Fte": 11
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-22T18:35:02.332Z",
+    "hora": "15:35",
+    "dia": "22/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AF316PR_1310_1539_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 15:39",
+  "leida": "AF316PR",
+  "tipo": "Van",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AH185MZ",
+  "viajes": 16,
+  "dias": 8,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "RicB3Ingreso / RicB3Egreso / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": true,
+  "porCamara": {
+   "RicB3Ingreso": 9,
+   "RicB3Egreso": 9,
+   "SLZSalidaC2Fte": 8,
+   "SLZSalidaC1Fte": 9,
+   "RicB2Egreso": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T18:10:35.061Z",
+    "hora": "15:10",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AH185MZ_1310_1547_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 15:47",
+  "leida": "AH185MZ",
+  "tipo": "Van",
+  "marca": "Renault",
+  "color": "Red"
+ },
+ {
+  "patente": "AA689GI",
+  "viajes": 15,
+  "dias": 4,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZBalSC1Fte / SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 6,
+   "SLZBalSC1Fte": 9,
+   "SLZTK400": 4,
+   "SLZSalidaC1Fte": 9,
+   "RicB3Egreso": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T13:32:04.892Z",
+    "hora": "10:32",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AA689GI_1310_0805_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "13/10 08:05",
+  "leida": "AA689GI",
+  "tipo": "Pickup",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AF446TN",
+  "viajes": 15,
+  "dias": 8,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 6,
+   "SLZSalidaC1Fte": 10
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T17:50:20.001Z",
+    "hora": "14:50",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AF446TN_1310_1534_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "13/10 15:34",
+  "leida": "AF446TN",
+  "tipo": "Pickup",
+  "marca": "ISUZU",
+  "color": "White"
+ },
+ {
+  "patente": "AG275GX",
+  "viajes": 15,
+  "dias": 7,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZTK400",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 10,
+   "SLZSalidaC1Fte": 6,
+   "SLZTK400": 4
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-21T15:01:50.073Z",
+    "hora": "12:01",
+    "dia": "21/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AG275GX_1310_0956_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "13/10 09:56",
+  "leida": "AG275GX",
+  "tipo": "Pickup",
+  "marca": "Ford",
+  "color": "Black"
+ },
+ {
+  "patente": "AH149NK",
+  "viajes": 15,
+  "dias": 7,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "AH149NB",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 8,
+   "SLZSalidaC1Fte": 8
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-24T13:57:44.960Z",
+    "hora": "10:57",
+    "dia": "24/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AH149NK_1210_1030_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "12/10 10:30",
+  "leida": "AH149NK",
+  "tipo": "Van",
+  "marca": "Renault",
+  "color": "White"
+ },
+ {
+  "patente": "DVT968",
+  "viajes": 15,
+  "dias": 9,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / RicB3Egreso",
+  "parecida": "DVH968",
+  "registro": false,
+  "porCamara": {
+   "RicB3Ingreso": 3,
+   "RicB3Egreso": 5,
+   "SLZSalidaC2Fte": 6,
+   "SLZSalidaC1Fte": 10,
+   "SLZBalSC1Fte": 1,
+   "RicB2Egreso": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-24T14:49:20.838Z",
+    "hora": "11:49",
+    "dia": "24/10"
+   }
+  ],
+  "found": true,
+  "archivo": "DVT968_1310_1207_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "13/10 12:07",
+  "leida": "DVT968",
+  "tipo": "Pickup",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "KDG543",
+  "viajes": 15,
+  "dias": 3,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZTK400 / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 11,
+   "SLZTK400": 9,
+   "SLZSalidaC1Fte": 6
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-19T18:29:00.574Z",
+    "hora": "15:29",
+    "dia": "19/10"
+   }
+  ],
+  "found": true,
+  "archivo": "KDG543_1510_1225_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "15/10 12:25",
+  "leida": "KDG543",
+  "tipo": "Pickup",
+  "marca": null,
+  "color": "Black"
+ },
+ {
+  "patente": "AB947SF",
+  "viajes": 14,
+  "dias": 4,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 7,
+   "SLZSalidaC1Fte": 7
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-24T15:04:40.804Z",
+    "hora": "12:04",
+    "dia": "24/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AB947SF_1610_0807_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "16/10 08:07",
+  "leida": "AB947SF",
+  "tipo": "Van",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AD001TD",
+  "viajes": 14,
+  "dias": 8,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZBalSC1Fte / SLZSalidaC2Fte / RicS6Playa3",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZBalSC1Fte": 13,
+   "SLZTK400": 6,
+   "SLZSalidaC2Fte": 9,
+   "SLZSalidaC1Fte": 6,
+   "RicB3Ingreso": 6,
+   "RicS6Playa3": 7,
+   "RicB3Egreso": 7,
+   "RicS7Carga": 1,
+   "RicC16Carga2": 1,
+   "RicIngCamFrente": 1,
+   "RicEgrCamFrente": 1
+  },
+  "fotos": [
+   {
+    "device": "RicIngCamFrente",
+    "at": "2026-10-23T13:17:00.671Z",
+    "hora": "10:17",
+    "dia": "23/10"
+   },
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-20T16:51:56.217Z",
+    "hora": "13:51",
+    "dia": "20/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AD001TD_1310_1104_SLZBalSC1Fte.jpg",
+  "dispositivo": "SLZBalSC1Fte",
+  "cuando": "13/10 11:04",
+  "leida": "AD001TD",
+  "tipo": "Pickup",
+  "marca": "Fiat",
+  "color": "Gray"
+ },
+ {
+  "patente": "AD373WR",
+  "viajes": 14,
+  "dias": 8,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC1Fte": 8,
+   "SLZSalidaC2Fte": 8
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T21:42:14.321Z",
+    "hora": "18:42",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AD373WR_1310_1841_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "13/10 18:41",
+  "leida": "AD373WR",
+  "tipo": "Bus",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AE772KD",
+  "viajes": 14,
+  "dias": 7,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "AE772ID",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 7,
+   "SLZSalidaC1Fte": 7
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-21T18:31:20.243Z",
+    "hora": "15:31",
+    "dia": "21/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AE772KD_1310_1537_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 15:37",
+  "leida": "AE772KD",
+  "tipo": "Bus",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AF544UV",
+  "viajes": 14,
+  "dias": 8,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 6,
+   "SLZSalidaC1Fte": 8
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T09:54:12.374Z",
+    "hora": "06:54",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AF544UV_2010_0853_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "20/10 08:53",
+  "leida": "AF544UV",
+  "tipo": "MPV",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AG361MX",
+  "viajes": 14,
+  "dias": 6,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 8,
+   "SLZSalidaC1Fte": 7
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-20T21:10:24.839Z",
+    "hora": "18:10",
+    "dia": "20/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AG361MX_1310_1714_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 17:14",
+  "leida": "AG361MX",
+  "tipo": "Pickup",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AG696QV",
+  "viajes": 14,
+  "dias": 4,
+  "zona": "San Lorenzo",
+  "camaras": "SLZTK400 / SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 9,
+   "SLZTK400": 10,
+   "SLZSalidaC1Fte": 5
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-22T13:39:00.053Z",
+    "hora": "10:39",
+    "dia": "22/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AG696QV_1310_0818_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 08:18",
+  "leida": "AG696QV",
+  "tipo": "Pickup",
+  "marca": "Ford",
+  "color": "White"
+ },
+ {
+  "patente": "AG978PR",
+  "viajes": 14,
+  "dias": 7,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZTK400",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "RicB3Ingreso": 4,
+   "RicB3Egreso": 4,
+   "SLZSalidaC2Fte": 7,
+   "SLZTK400": 5,
+   "SLZSalidaC1Fte": 7,
+   "RicB2Egreso": 2
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-24T15:20:18.314Z",
+    "hora": "12:20",
+    "dia": "24/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AG978PR_1410_1442_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "14/10 14:42",
+  "leida": "AG978PR",
+  "tipo": "Small Truck",
+  "marca": "Renault",
+  "color": "White"
+ },
+ {
+  "patente": "AB349QJ",
+  "viajes": 13,
+  "dias": 3,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZBalSC1Fte / SLZSalidaC1Fte",
+  "parecida": "AB349CJ AB349QT",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 8,
+   "SLZBalSC1Fte": 8,
+   "SLZSalidaC1Fte": 5,
+   "SLZBalSC2Fte": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T16:46:40.797Z",
+    "hora": "13:46",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AB349QJ_1510_1125_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "15/10 11:25",
+  "leida": "AB349QJ",
+  "tipo": "Pickup",
+  "marca": "Fiat",
+  "color": "Red"
+ },
+ {
+  "patente": "AE264AY",
+  "viajes": 13,
+  "dias": 12,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "RicIngCamFrente / RicEgrCamFrente / SLZTK400",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "RicIngCamFrente": 26,
+   "SLZTK400": 10,
+   "RicEgrCamFrente": 11,
+   "SLZBalLiq2a": 6,
+   "SLZBalLiq2b": 1,
+   "SLZSalidaC2Fte": 1
+  },
+  "fotos": [
+   {
+    "device": "RicIngCamFrente",
+    "at": "2026-10-19T15:49:04.557Z",
+    "hora": "12:49",
+    "dia": "19/10"
+   },
+   {
+    "device": "SLZTK400",
+    "at": "2026-10-21T15:53:09.918Z",
+    "hora": "12:53",
+    "dia": "21/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AE264AY_1710_1616_RicEgrCamFrente.jpg",
+  "dispositivo": "RicEgrCamFrente",
+  "cuando": "17/10 16:16",
+  "leida": "AE264AY",
+  "tipo": "Sedan",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AF261AQ",
+  "viajes": 13,
+  "dias": 6,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 7,
+   "SLZSalidaC1Fte": 6
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-21T18:14:51.648Z",
+    "hora": "15:14",
+    "dia": "21/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AF261AQ_1310_0913_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 09:13",
+  "leida": "AF261AQ",
+  "tipo": "Sedan",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AF909MM",
+  "viajes": 13,
+  "dias": 10,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC1Fte": 11,
+   "SLZSalidaC2Fte": 3
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-25T21:39:51.927Z",
+    "hora": "18:39",
+    "dia": "25/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AF909MM_1310_1841_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "13/10 18:41",
+  "leida": "AF909MM",
+  "tipo": "MPV",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AG066KT",
+  "viajes": 13,
+  "dias": 7,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 7,
+   "SLZSalidaC1Fte": 7
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-21T18:42:08.951Z",
+    "hora": "15:42",
+    "dia": "21/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AG066KT_1310_1542_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 15:42",
+  "leida": "AG066KT",
+  "tipo": "Van",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "JBF932",
+  "viajes": 13,
+  "dias": 4,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / SLZBalSC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC1Fte": 6,
+   "SLZSalidaC2Fte": 7,
+   "SLZBalSC1Fte": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-22T13:13:46.447Z",
+    "hora": "10:13",
+    "dia": "22/10"
+   }
+  ],
+  "found": true,
+  "archivo": "JBF932_1310_0941_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 09:41",
+  "leida": "JBF932",
+  "tipo": "Pickup",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AA703EO",
+  "viajes": 12,
+  "dias": 6,
+  "zona": "San Lorenzo",
+  "camaras": "SLZBalSC1Fte / SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZBalSC1Fte": 9,
+   "SLZSalidaC2Fte": 8,
+   "SLZSalidaC1Fte": 3
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-15T16:39:20.910Z",
+    "hora": "13:39",
+    "dia": "15/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AA703EO_1310_1149_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 11:49",
+  "leida": "AA703EO",
+  "tipo": "Pickup",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AE580ZP",
+  "viajes": 12,
+  "dias": 4,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 6,
+   "SLZSalidaC1Fte": 6
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-24T21:37:32.549Z",
+    "hora": "18:37",
+    "dia": "24/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AE580ZP_1210_0639_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "12/10 06:39",
+  "leida": "AE580ZP",
+  "tipo": "Van",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AG408SM",
+  "viajes": 12,
+  "dias": 5,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZTK400 / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZTK400": 6,
+   "SLZSalidaC2Fte": 6,
+   "SLZSalidaC1Fte": 7,
+   "RicB3Ingreso": 2,
+   "RicB3Egreso": 2
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-24T18:37:40.440Z",
+    "hora": "15:37",
+    "dia": "24/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AG408SM_1510_1026_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "15/10 10:26",
+  "leida": "AG408SM",
+  "tipo": "Small Truck",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AG700CR",
+  "viajes": 12,
+  "dias": 6,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB3Ingreso",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 6,
+   "SLZSalidaC1Fte": 6,
+   "RicB3Ingreso": 2,
+   "RicB3Egreso": 2
+  },
+  "fotos": [],
+  "found": true,
+  "archivo": "AG700CR_1310_0946_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 09:46",
+  "leida": "AG700CR",
+  "tipo": "Van",
+  "marca": "Renault",
+  "color": "White"
+ },
+ {
+  "patente": "AH540BL",
+  "viajes": 12,
+  "dias": 5,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC1Fte": 9,
+   "SLZSalidaC2Fte": 3
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-20T09:35:23.895Z",
+    "hora": "06:35",
+    "dia": "20/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AH540BL_1610_1902_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "16/10 19:02",
+  "leida": "AH540BL",
+  "tipo": "Pickup",
+  "marca": "Ford",
+  "color": "White"
+ },
+ {
+  "patente": "AH733KN",
+  "viajes": 12,
+  "dias": 4,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZBalLiq2b / SLZTK400",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 5,
+   "SLZBalSC1Fte": 2,
+   "SLZBalLiq2b": 4,
+   "SLZTK400": 4,
+   "SLZSalidaC1Fte": 4,
+   "RicB3Ingreso": 4,
+   "RicIngCamFrente": 3,
+   "RicPreIngInFr": 2,
+   "RicEgrCamFrente": 3,
+   "SLZBalLiq1b": 1,
+   "RicB3Egreso": 2
+  },
+  "fotos": [
+   {
+    "device": "RicIngCamFrente",
+    "at": "2026-10-23T14:45:57.383Z",
+    "hora": "11:45",
+    "dia": "23/10"
+   },
+   {
+    "device": "SLZBalLiq2b",
+    "at": "2026-10-20T13:25:43.965Z",
+    "hora": "10:25",
+    "dia": "20/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AH733KN_1410_1042_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "14/10 10:42",
+  "leida": "AH733KN",
+  "tipo": "Medium Truck",
+  "marca": null,
+  "color": "Green"
+ },
+ {
+  "patente": "AI217QP",
+  "viajes": 12,
+  "dias": 6,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / RicB3Ingreso / RicB3Egreso",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 7,
+   "SLZSalidaC1Fte": 4,
+   "RicB3Ingreso": 5,
+   "RicB3Egreso": 5
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-14T18:18:28.159Z",
+    "hora": "15:18",
+    "dia": "14/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AI217QP_1310_0808_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 08:08",
+  "leida": "AI217QP",
+  "tipo": "Pickup",
+  "marca": "Fiat",
+  "color": "Black"
+ },
+ {
+  "patente": "AI238IS",
+  "viajes": 12,
+  "dias": 4,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZBalSC1Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 8,
+   "SLZBalSC1Fte": 7,
+   "SLZSalidaC1Fte": 4
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-16T18:43:11.255Z",
+    "hora": "15:43",
+    "dia": "16/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AI238IS_1310_0850_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 08:50",
+  "leida": "AI238IS",
+  "tipo": "Small Truck",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "OJD501",
+  "viajes": 12,
+  "dias": 5,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB3Ingreso",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 7,
+   "SLZSalidaC1Fte": 5,
+   "RicB3Ingreso": 3,
+   "RicB3Egreso": 3
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T15:09:46.767Z",
+    "hora": "12:09",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "OJD501_1310_0941_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 09:41",
+  "leida": "OJD501",
+  "tipo": "Pickup",
+  "marca": "Volkswagen",
+  "color": "White"
+ },
+ {
+  "patente": "AA492OU",
+  "viajes": 11,
+  "dias": 9,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte / RicEgrCamFrente",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC1Fte": 6,
+   "SLZSalidaC2Fte": 5,
+   "SLZTK400": 1,
+   "RicIngCamFrente": 1,
+   "RicEgrCamFrente": 2
+  },
+  "fotos": [
+   {
+    "device": "RicIngCamFrente",
+    "at": "2026-10-19T16:54:12.707Z",
+    "hora": "13:54",
+    "dia": "19/10"
+   },
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T13:45:08.845Z",
+    "hora": "10:45",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AA492OU_1310_1726_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 17:26",
+  "leida": "AA492OU",
+  "tipo": "Van",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AD468VC",
+  "viajes": 11,
+  "dias": 6,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "RicB3Ingreso / RicB3Egreso / SLZSalidaC2Fte",
+  "parecida": "AD468VV",
+  "registro": false,
+  "porCamara": {
+   "RicB3Ingreso": 12,
+   "RicB3Egreso": 12,
+   "SLZSalidaC2Fte": 6,
+   "SLZSalidaC1Fte": 5,
+   "RicS6Playa3": 1,
+   "SLZBalSC1Fte": 2
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-15T17:45:54.246Z",
+    "hora": "14:45",
+    "dia": "15/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AD468VC_1310_1130_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 11:30",
+  "leida": "AD468VC",
+  "tipo": "Pickup",
+  "marca": "Ford",
+  "color": "White"
+ },
+ {
+  "patente": "AD686SH",
+  "viajes": 11,
+  "dias": 7,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 6,
+   "SLZSalidaC1Fte": 7
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T17:51:32.550Z",
+    "hora": "14:51",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AD686SH_1310_1550_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 15:50",
+  "leida": "AD686SH",
+  "tipo": "Bus",
+  "marca": "Hyundai",
+  "color": "White"
+ },
+ {
+  "patente": "AE040HT",
+  "viajes": 11,
+  "dias": 3,
+  "zona": "San Lorenzo",
+  "camaras": "SLZBalSC1Fte / SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZBalSC1Fte": 6,
+   "SLZSalidaC2Fte": 6,
+   "SLZSalidaC1Fte": 6
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-16T15:37:17.273Z",
+    "hora": "12:37",
+    "dia": "16/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AE040HT_1310_1523_SLZBalSC1Fte.jpg",
+  "dispositivo": "SLZBalSC1Fte",
+  "cuando": "13/10 15:23",
+  "leida": "AE040HT",
+  "tipo": "Pickup",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "AE747HZ",
+  "viajes": 11,
+  "dias": 5,
+  "zona": "San Lorenzo",
+  "camaras": "SLZBalSC1Fte / SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 7,
+   "SLZBalSC1Fte": 9,
+   "SLZSalidaC1Fte": 4,
+   "SLZBalSC2Fte": 1,
+   "SLZTK400": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T16:47:01.955Z",
+    "hora": "13:47",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AE747HZ_1310_1102_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 11:02",
+  "leida": "AE747HZ",
+  "tipo": "SUV",
+  "marca": "Citroën",
+  "color": "White"
+ },
+ {
+  "patente": "AG692JE",
+  "viajes": 11,
+  "dias": 6,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "AG692JX",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 6,
+   "SLZSalidaC1Fte": 6
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T17:47:32.014Z",
+    "hora": "14:47",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AG692JE_1310_1531_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 15:31",
+  "leida": "AG692JE",
+  "tipo": "Bus",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "AG767CT",
+  "viajes": 11,
+  "dias": 2,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC1Fte": 6,
+   "SLZSalidaC2Fte": 6
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T22:26:31.361Z",
+    "hora": "19:26",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AG767CT_1810_0633_SLZSalidaC1Fte.jpg",
+  "dispositivo": "SLZSalidaC1Fte",
+  "cuando": "18/10 06:33",
+  "leida": "AG767CT",
+  "tipo": "Bus",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "HTK722",
+  "viajes": 11,
+  "dias": 5,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB3Ingreso",
+  "parecida": "",
+  "registro": true,
+  "porCamara": {
+   "SLZSalidaC2Fte": 5,
+   "SLZSalidaC1Fte": 5,
+   "RicB3Ingreso": 4,
+   "RicB3Egreso": 4
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T14:06:56.427Z",
+    "hora": "11:06",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "HTK722_1310_1112_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 11:12",
+  "leida": "HTK722",
+  "tipo": "Pickup",
+  "marca": "Ford",
+  "color": "White"
+ },
+ {
+  "patente": "ONS723",
+  "viajes": 11,
+  "dias": 8,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "RicB3Ingreso / RicB3Egreso / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "RicB3Ingreso": 6,
+   "RicB3Egreso": 6,
+   "SLZSalidaC2Fte": 6,
+   "SLZBalSC1Fte": 3,
+   "SLZSalidaC1Fte": 4,
+   "SLZTK400": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-22T14:01:07.503Z",
+    "hora": "11:01",
+    "dia": "22/10"
+   }
+  ],
+  "found": true,
+  "archivo": "ONS723_1310_1009_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 10:09",
+  "leida": "ONS723",
+  "tipo": "Small Truck",
+  "marca": null,
+  "color": "Blue"
+ },
+ {
+  "patente": "OTB580",
+  "viajes": 11,
+  "dias": 3,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / RicIngCamFrente / RicEgrCamFrente",
+  "parecida": "OWB580",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 1,
+   "SLZSalidaC1Fte": 5,
+   "RicIngCamFrente": 5,
+   "RicB3Ingreso": 1,
+   "RicB3Egreso": 1,
+   "SLZBalLiq2b": 1,
+   "SLZTK400": 2,
+   "RicEgrCamFrente": 5,
+   "SLZBalLiq2a": 2,
+   "SLZBalSC1Fte": 2,
+   "RicB2Egreso": 1
+  },
+  "fotos": [
+   {
+    "device": "RicIngCamFrente",
+    "at": "2026-10-24T15:59:55.966Z",
+    "hora": "12:59",
+    "dia": "24/10"
+   },
+   {
+    "device": "SLZBalLiq2b",
+    "at": "2026-10-23T15:34:01.159Z",
+    "hora": "12:34",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "OTB580_2010_1343_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "20/10 13:43",
+  "leida": "OTB580",
+  "tipo": "Pickup",
+  "marca": null,
+  "color": "Black"
+ },
+ {
+  "patente": "AA682QZ",
+  "viajes": 10,
+  "dias": 5,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB3Ingreso",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "RicB3Ingreso": 2,
+   "RicB3Egreso": 2,
+   "SLZSalidaC2Fte": 5,
+   "SLZSalidaC1Fte": 5,
+   "SLZTK400": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-22T18:09:00.548Z",
+    "hora": "15:09",
+    "dia": "22/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AA682QZ_1310_1125_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 11:25",
+  "leida": "AA682QZ",
+  "tipo": "Van",
+  "marca": "Mercedes-Benz",
+  "color": "White"
+ },
+ {
+  "patente": "AE532MU",
+  "viajes": 10,
+  "dias": 10,
+  "zona": "San Lorenzo",
+  "camaras": "SLZTK400 / SLZSalidaC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC1Fte": 5,
+   "SLZSalidaC2Fte": 5,
+   "SLZTK400": 7,
+   "SLZCalado": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T16:09:43.936Z",
+    "hora": "13:09",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AE532MU_1210_0955_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "12/10 09:55",
+  "leida": "AE532MU",
+  "tipo": "Small Truck",
+  "marca": "Mitsubishi",
+  "color": "Blue"
+ },
+ {
+  "patente": "AG245ND",
+  "viajes": 10,
+  "dias": 4,
+  "zona": "San Lorenzo",
+  "camaras": "SLZBalSC1Fte / SLZSalidaC2Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 6,
+   "SLZTK400": 1,
+   "SLZSalidaC1Fte": 4,
+   "SLZBalSC1Fte": 10
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-15T19:25:28.581Z",
+    "hora": "16:25",
+    "dia": "15/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AG245ND_1310_0812_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "13/10 08:12",
+  "leida": "AG245ND",
+  "tipo": "Pickup",
+  "marca": "Ford",
+  "color": "White"
+ },
+ {
+  "patente": "AI276FZ",
+  "viajes": 10,
+  "dias": 7,
+  "zona": "Ricardone y San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZSalidaC1Fte / RicB3Ingreso",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 5,
+   "SLZTK400": 3,
+   "SLZBalSC1Fte": 2,
+   "SLZSalidaC1Fte": 4,
+   "RicB3Ingreso": 4,
+   "RicB3Egreso": 4,
+   "RicB2Egreso": 1
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-21T14:09:47.771Z",
+    "hora": "11:09",
+    "dia": "21/10"
+   }
+  ],
+  "found": true,
+  "archivo": "AI276FZ_1210_0837_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "12/10 08:37",
+  "leida": "AI276FZ",
+  "tipo": "Small Truck",
+  "marca": null,
+  "color": "White"
+ },
+ {
+  "patente": "FAF824",
+  "viajes": 10,
+  "dias": 5,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC1Fte / SLZBalSC1Fte / SLZSalidaC2Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC1Fte": 7,
+   "SLZBalSC1Fte": 7,
+   "SLZSalidaC2Fte": 3
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-19T19:39:29.323Z",
+    "hora": "16:39",
+    "dia": "19/10"
+   }
+  ],
+  "found": true,
+  "archivo": "FAF824_1510_0834_SLZBalSC1Fte.jpg",
+  "dispositivo": "SLZBalSC1Fte",
+  "cuando": "15/10 08:34",
+  "leida": "FAF824",
+  "tipo": "Pickup",
+  "marca": "Toyota",
+  "color": "White"
+ },
+ {
+  "patente": "FYJ679",
+  "viajes": 10,
+  "dias": 5,
+  "zona": "San Lorenzo",
+  "camaras": "SLZSalidaC2Fte / SLZBalSC1Fte / SLZSalidaC1Fte",
+  "parecida": "",
+  "registro": false,
+  "porCamara": {
+   "SLZSalidaC2Fte": 8,
+   "SLZBalSC1Fte": 8,
+   "SLZSalidaC1Fte": 2
+  },
+  "fotos": [
+   {
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-23T14:47:51.361Z",
+    "hora": "11:47",
+    "dia": "23/10"
+   }
+  ],
+  "found": true,
+  "archivo": "FYJ679_1510_0838_SLZSalidaC2Fte.jpg",
+  "dispositivo": "SLZSalidaC2Fte",
+  "cuando": "15/10 08:38",
+  "leida": "FYJ679",
+  "tipo": "Pickup",
+  "marca": null,
+  "color": "White"
+ }
+]
