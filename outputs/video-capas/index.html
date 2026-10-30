@@ -1,0 +1,116 @@
+<title>Capas del reconocedor</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Una sola columna: el video manda; debajo, las capas como índice y las alertas del día con su decisión */
+:root{
+  --bg:#f2f5ee; --fg:#14261c; --muted:#5f6e64; --line:#d5dcd3; --card:#ffffff;
+  --green:#1e6b3c; --blue:#2a5ea8; --red:#b42323; --amber:#a86a0c; --gray:#6b7a70; --frame:#10271d;
+  --redBg:#f8dede; --amberBg:#f6ead2; --grayBg:#e7ebe6;
+  --display:"Arial Narrow",Arial,sans-serif; --body:Arial,Helvetica,sans-serif; --mono:Consolas,"Courier New",monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d1d15; --fg:#e8efe9; --muted:#9db0a3; --line:#294236; --card:#14281e;
+  --green:#7cc79a; --blue:#8fb2ea; --red:#ee8f8f; --amber:#e6b35c; --gray:#a7b4ab; --frame:#07130d;
+  --redBg:#3a1c1c; --amberBg:#3a2d14; --grayBg:#1f2e26; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1d15; --fg:#e8efe9; --muted:#9db0a3; --line:#294236; --card:#14281e;
+  --green:#7cc79a; --blue:#8fb2ea; --red:#ee8f8f; --amber:#e6b35c; --gray:#a7b4ab; --frame:#07130d;
+  --redBg:#3a1c1c; --amberBg:#3a2d14; --grayBg:#1f2e26; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body)}
+main{max-width:1100px;margin:0 auto;padding-block:32px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:20px}
+.kicker{font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--green)}
+h1{font-family:var(--display);font-stretch:condensed;font-size:clamp(30px,5vw,48px);line-height:1.05;margin:6px 0 0;text-wrap:balance}
+h2{font-family:var(--display);font-stretch:condensed;font-size:clamp(26px,4vw,38px);line-height:1.1;margin:6px 0 0;text-wrap:balance}
+.lead{color:var(--muted);font-size:16px;line-height:1.5;max-width:65ch;margin:0}
+.player{background:var(--frame);border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+video{display:block;width:100%;max-width:100%;aspect-ratio:16/9;background:var(--frame)}
+.chapters{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.chapters button{font:inherit;font-size:13px;font-weight:700;border:1.5px solid var(--line);background:var(--card);color:var(--fg);
+  border-radius:999px;padding:7px 14px;cursor:pointer;display:flex;gap:8px;align-items:center}
+.chapters button:hover{border-color:var(--muted)}
+.chapters button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.chapters button.on{border-color:currentColor}
+.chapters time{font-weight:400;color:var(--muted);font-variant-numeric:tabular-nums}
+.c2{color:var(--green)} .c3{color:var(--blue)} .c4{color:var(--red)}
+.foot{font-size:13px;color:var(--muted)}
+.alerts{display:grid;gap:28px;margin-top:24px;padding-top:28px;border-top:1px solid var(--line)}
+.sum{display:flex;flex-wrap:wrap;gap:10px}
+.sum div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-width:0}
+.sum b{display:block;font-size:26px;font-variant-numeric:tabular-nums}
+.sum span{font-size:13px;color:var(--muted)}
+.group{display:grid;gap:12px}
+.dec{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px}
+.pill{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:5px 11px}
+.g-red .pill{background:var(--redBg);color:var(--red)} .g-amber .pill{background:var(--amberBg);color:var(--amber)} .g-gray .pill{background:var(--grayBg);color:var(--gray)}
+.dec h3{margin:0;font-size:20px}
+.why{margin:0;color:var(--muted);font-size:15px;line-height:1.5;max-width:75ch}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:grid;min-width:0}
+.g-red .card{border-left:4px solid var(--red)} .g-amber .card{border-left:4px solid var(--amber)} .g-gray .card{border-left:4px solid var(--gray)}
+.ph{position:relative;aspect-ratio:16/9;background:var(--frame)}
+.ph img.sc{width:100%;height:100%;object-fit:cover;display:block}
+.ph img.pt{position:absolute;right:8px;bottom:8px;max-width:45%;max-height:38%;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.ph .none{position:absolute;inset:0;display:grid;place-items:center;color:#9db0a3;font-size:13px}
+.info{padding:10px 12px;display:grid;gap:3px}
+.info .pl{font-family:var(--mono);font-weight:700;font-size:20px}
+.info small{color:var(--muted);font-size:13px;line-height:1.4}
+</style>
+<main>
+  <header>
+    <div class="kicker">Nodo Sur · Ricardone y San Lorenzo</div>
+    <h1>Cada captura, un camión</h1>
+  </header>
+  <p class="lead">Cómo el reconocedor de patentes identifica cada lectura de cámara, capa por capa: un caso real por capa, el modelo de las dos plantas con cada captura resolviéndose en vivo, y el 29/10 completo con todas las capturas y los camiones agrupados por capa. 88 segundos.</p>
+  <div class="player">
+    <video id="v" src="capas-reconocedor.mp4" poster="poster.jpg" controls playsinline preload="metadata"></video>
+  </div>
+  <ul class="chapters" id="ch" aria-label="Saltar a una parte del video"></ul>
+
+  <section class="alerts" id="alertas">
+    <header>
+      <div class="kicker">Después del video · 29/10/2026</div>
+      <h2>Las 20 alertas del día y qué hacer con cada una</h2>
+    </header>
+    <p class="why">De 3.069 capturas, 45 terminaron en alerta: patentes que ninguna capa llevó a una carta, a Vehículos Permitidos, a un remito ni al sistema de camiones (SGC desde el 14/10 y movimientos desde mayo). Son 20 patentes. La cámara trasera no se cuenta aparte: lee el acoplado del mismo paso que la frontal, y solo suma cuando la frontal no leyó. Cada alerta tiene la foto de la cámara y el recorte de la patente del DSS.</p>
+    <div class="sum">
+      <div><b>1</b><span>investigar</span></div>
+      <div><b>8</b><span>confirmar y dar de alta</span></div>
+      <div><b>11</b><span>descartar la lectura</span></div>
+    </div>
+    <div id="groups"></div>
+  </section>
+  <p class="foot">Casos del 22 al 29 de octubre de 2026. Fotos y recortes: DSS de las cámaras de patentes.</p>
+</main>
+<script>
+const CH=[["Recorrido",3,""],["2 · ¿Quién es?",11,"c2"],["3.1 · Parecidas",15,"c3"],["3.2 · Metadatos",19,"c3"],["3.3 · Banco",23,"c3"],["3.4 · IA",27.1,"c3"],["4 · Alerta",31.5,"c4"],["En vivo",35.8,""],["Día 29/10",58.3,""],["No es un camión",81.3,""]];
+const v=document.getElementById('v'),ul=document.getElementById('ch');
+const fmt=t=>`${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,'0')}`;
+const btns=CH.map(([n,t,c])=>{const li=document.createElement('li');const b=document.createElement('button');b.type='button';b.className=c;
+  b.innerHTML=`<span>${n}</span><time>${fmt(t)}</time>`;b.onclick=()=>{v.currentTime=t;v.play().catch(()=>{})};li.appendChild(b);ul.appendChild(li);return b});
+v.addEventListener('timeupdate',()=>{let k=0;CH.forEach(([,t],i)=>{if(v.currentTime>=t-.05)k=i});btns.forEach((b,i)=>b.classList.toggle('on',i===k))});
+
+const AL=[{"p":"APW924","n":1,"site":"Ricardone","nodos":"Balanza Egreso","h":"00:10","marca":null,"img":"alertas/APW924.jpg","pat":"alertas/APW924_pat.jpg"},{"p":"MHC712","n":1,"site":"Ricardone","nodos":"Salida 2","h":"01:57","marca":null,"img":"alertas/MHC712.jpg","pat":"alertas/MHC712_pat.jpg"},{"p":"FTC550","n":1,"site":"Ricardone","nodos":"Calada","h":"04:32","marca":"Hino","img":"alertas/FTC550.jpg","pat":"alertas/FTC550_pat.jpg"},{"p":"KZS251","n":2,"site":"Ricardone","nodos":"Balanza Ingreso, Balanza Egreso","h":"07:38–16:38","marca":null,"img":"alertas/KZS251.jpg","pat":"alertas/KZS251_pat.jpg"},{"p":"HLT270","n":3,"site":"San Lorenzo","nodos":"Egreso, Balanza Ingreso, Balanza Egreso","h":"07:41–15:03","marca":"Hyundai","img":"alertas/HLT270.jpg","pat":"alertas/HLT270_pat.jpg"},{"p":"JCT961","n":2,"site":"San Lorenzo","nodos":"Carga/Descarga Renova, Egreso","h":"07:48–08:39","marca":null,"img":"alertas/JCT961.jpg","pat":"alertas/JCT961_pat.jpg"},{"p":"AC169LG","n":7,"site":"San Lorenzo","nodos":"Egreso, Carga/Descarga Renova, Balanza Egreso","h":"08:07–12:29","marca":null,"img":"alertas/AC169LG.jpg","pat":"alertas/AC169LG_pat.jpg"},{"p":"ONS723","n":2,"site":"San Lorenzo","nodos":"Egreso","h":"08:19–11:07","marca":null,"img":"alertas/ONS723.jpg","pat":"alertas/ONS723_pat.jpg"},{"p":"NBJ986","n":8,"site":"San Lorenzo","nodos":"Ingreso, Calada, Balanza Ingreso, Carga/Descarga Renova, Balanza Egreso, Egreso","h":"08:52–09:44","marca":"Iveco","img":"alertas/NBJ986.jpg","pat":"alertas/NBJ986_pat.jpg"},{"p":"AI276FZ","n":2,"site":"Ricardone","nodos":"Balanza Ingreso, Balanza Egreso","h":"09:15–09:32","marca":"Dongfeng","img":"alertas/AI276FZ.jpg","pat":"alertas/AI276FZ_pat.jpg"},{"p":"GCW191","n":2,"site":"San Lorenzo","nodos":"Egreso","h":"10:57–11:19","marca":"Mercedes-Benz","img":"alertas/GCW191.jpg","pat":"alertas/GCW191_pat.jpg"},{"p":"AH346LP","n":1,"site":"San Lorenzo","nodos":"Egreso","h":"12:51","marca":"Isuzu","img":"alertas/AH346LP.jpg","pat":"alertas/AH346LP_pat.jpg"},{"p":"PPP855","n":1,"site":"San Lorenzo","nodos":"Balanza Egreso","h":"13:53","marca":null,"img":"alertas/PPP855.jpg","pat":"alertas/PPP855_pat.jpg"},{"p":"HFF574","n":2,"site":"San Lorenzo","nodos":"Balanza Ingreso","h":"17:29","marca":null,"img":"alertas/HFF574.jpg","pat":"alertas/HFF574_pat.jpg"},{"p":"VUE305","n":1,"site":"Ricardone","nodos":"Playa 3","h":"20:11","marca":null,"img":"alertas/VUE305.jpg","pat":null},{"p":"PGV357","n":1,"site":"San Lorenzo","nodos":"Balanza Egreso","h":"20:17","marca":"Ford","img":"alertas/PGV357.jpg","pat":"alertas/PGV357_pat.jpg"},{"p":"HWX561","n":1,"site":"Ricardone","nodos":"Ingreso","h":"20:25","marca":null,"img":null,"pat":null},{"p":"GVN377","n":2,"site":"San Lorenzo","nodos":"Calada, Egreso","h":"21:32–21:53","marca":"Iveco","img":"alertas/GVN377.jpg","pat":"alertas/GVN377_pat.jpg"},{"p":"MDD526","n":1,"site":"San Lorenzo","nodos":"Balanza Egreso","h":"22:32","marca":"Mercedes-Benz","img":"alertas/MDD526.jpg","pat":"alertas/MDD526_pat.jpg"},{"p":"UGE742","n":1,"site":"San Lorenzo","nodos":"Balanza Egreso","h":"23:03","marca":"Mercedes-Benz","img":"alertas/UGE742.jpg","pat":"alertas/UGE742_pat.jpg"},{"p":"OE911IT","n":1,"site":"San Lorenzo","nodos":"Egreso","h":"23:19","marca":null,"img":"alertas/OE911IT.jpg","pat":"alertas/OE911IT_pat.jpg"},{"p":"PNF819","n":1,"site":"Ricardone","nodos":"Balanza Ingreso","h":"23:36","marca":null,"img":"alertas/PNF819.jpg","pat":"alertas/PNF819_pat.jpg"},{"p":"FIL298","n":1,"site":"Ricardone","nodos":"Calada","h":"23:49","marca":"Ford","img":"alertas/FIL298.jpg","pat":"alertas/FIL298_pat.jpg"}];
+const GROUPS=[
+  {cls:'g-red',pill:'Investigar',title:'Buscar el ingreso de NBJ986 en la balanza de San Lorenzo',
+   why:'Camión Iveco de carga con la patente bien leída 8 veces por las cámaras frontales. Hizo el circuito completo de San Lorenzo, ingreso, calada, las dos balanzas, Renova y egreso, entre las 08:52 y las 09:44, y no tiene carta, remito ni registro en el SGC. Hay que encontrar su pesaje en esa franja y saber qué cargó o descargó.',
+   plates:['NBJ986']},
+  {cls:'g-amber',pill:'Confirmar y dar de alta',title:'Confirmar con Portería quién es y, si es prestador, darlo de alta en Vehículos Permitidos',
+   why:'Camiones chicos de servicio con la patente bien leída: utilitarios, una grúa (JCT961) y uno de Raicos Servicios Industriales (AI276FZ). AI276FZ y KZS251 hasta pasaron por las balanzas de Ricardone. Con el alta, la próxima vez los resuelve la capa 2 y no llegan a alerta.',
+   plates:['AC169LG','AI276FZ','JCT961','HLT270','KZS251','ONS723','GCW191','AH346LP']},
+  {cls:'g-gray',pill:'Descartar la lectura',title:'Descartar y revisar las cámaras de noche',
+   why:'Ni en la foto se lee la patente, así que no hay nada que verificar. 10 de las 11 son entre las 20 y las 5 de la mañana; 3 salen de la Balanza Egreso de San Lorenzo (SLZBalSC2) y 2 de Calada 3 de Ricardone. Se descartan y se revisan iluminación y enfoque de esas cámaras.',
+   plates:['PGV357','MDD526','PPP855','FTC550','FIL298','APW924','MHC712','VUE305','HWX561','GVN377','PNF819']},
+];
+const byP=Object.fromEntries(AL.map(a=>[a.p,a]));
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+document.getElementById('groups').innerHTML=GROUPS.map(g=>`<div class="group ${g.cls}">
+  <div class="dec"><span class="pill">${g.pill}</span><h3>${esc(g.title)}</h3></div>
+  <p class="why">${esc(g.why)}</p>
+  <div class="cards">${g.plates.map(p=>{const a=byP[p];return `<article class="card">
+    <div class="ph">${a.img?`<img class="sc" loading="lazy" src="${a.img}" alt="Captura de ${a.p}">`:'<div class="none">sin foto en el DSS</div>'}${a.pat?`<img class="pt" loading="lazy" src="${a.pat}" alt="Recorte de la patente">`:''}</div>
+    <div class="info"><span class="pl">${a.p}</span><small>${a.site} · ${esc(a.nodos)}</small><small>${a.h} · ${a.n} ${a.n===1?'lectura':'lecturas'}${a.marca?' · '+a.marca:''}</small></div>
+  </article>`}).join('')}</div>
+</div>`).join('');
+</script>

@@ -1,0 +1,1001 @@
+camara,planta,patente,confianza,carril,velocidad,origen,color,tipo,marca,hora_camara
+SLZBalIngFte,San Lorenzo,OYN370,82,1,0,COL,White,Medium Truck,Iveco,2026-10-29 19:50:48
+RicS6Playa3,Ricardone,SBY377,74,1,0,BRA,White,Medium Truck,Unrecognized,2026-10-29 19:51:30
+RicS6Playa3,Ricardone,TOE184,82,1,0,BRA,White,Large Truck,Unrecognized,2026-10-29 19:51:44
+RicIngCamFrente,Ricardone,RD445,18,1,19,BRA,Silver,Sedan,Unrecognized,2026-10-29 19:51:57
+SLZBalIngTras,San Lorenzo,G99,22,1,0,COL,White,Sedan,Unrecognized,2026-10-29 19:52:01
+RicIngCamTrasera,Ricardone,VCX01,78,1,2,ARG,Red,Unrecognized,Unrecognized,2026-10-29 19:52:05
+RenCargTras,San Lorenzo,2141,58,1,0,COL,White,Unrecognized,Unrecognized,2026-10-29 19:52:13
+RenCargFte,San Lorenzo,EGV380,82,1,5,COL,White,Large Truck,Unrecognized,2026-10-29 19:52:16
+RenCargTras,San Lorenzo,A040,22,1,0,PRY,White,Unrecognized,Unrecognized,2026-10-29 19:52:26
+SLZBalIngTras,San Lorenzo,AE880CH,70,1,0,BRA,Black,Sedan,Unrecognized,2026-10-29 19:53:02
+RicS6Playa3,Ricardone,PASELC6,14,1,0,BRA,Black,Medium Truck,GMC,2026-10-29 19:53:06
+SLZBalIngTras,San Lorenzo,AF183OR,82,1,0,BRA,White,Bus,Golden Dragon,2026-10-29 19:53:08
+RicPreIngInFr,Ricardone,RDL4U15,58,1,1,BRA,Silver,Medium Truck,Mercedes-Benz,2026-10-29 19:53:18
+RicPreIngInTr,Ricardone,VCX012,14,1,4,ARG,Black,Unrecognized,Unrecognized,2026-10-29 19:53:41
+SLZBalIngTras,San Lorenzo,METR,30,1,0,PRY,White,Large Truck,Honda,2026-10-29 19:54:07
+SLZBalIngFte,San Lorenzo,IDQ28,62,1,0,BRA,White,Sedan,Unrecognized,2026-10-29 19:54:19
+RicCalLiq,Ricardone,CRJ139,86,1,0,ARG,White,Sedan,Unrecognized,2026-10-29 19:55:00
+SLZBalIngFte,San Lorenzo,DOD926,82,1,0,BRA,White,Bus,Mercedes-Benz,2026-10-29 19:55:03
+RicCal04,Ricardone,AB625ZI,74,1,0,BRA,White,Large Truck,Victory Auto,2026-10-29 19:55:39
+RicIngCamTrasera,Ricardone,UEY782,74,1,1,BRA,Blue,Medium Truck,Mitsubishi,2026-10-29 19:56:42
+RicCalLiq,Ricardone,SNE399,78,1,0,BRA,White,Bus,Chenglong,2026-10-29 19:57:12
+RicEgrCamFrente,Ricardone,CRJ139,82,1,8,ARG,White,Medium Truck,Scania,2026-10-29 19:57:25
+SLZBalSC2Fte,San Lorenzo,AE880CH,50,1,0,BRA,Black,Bus,Unrecognized,2026-10-29 19:58:05
+RicPreIngInFr,Ricardone,ROS380,82,1,5,BRA,Red,Medium Truck,Unrecognized,2026-10-29 19:58:55
+RicCalLiq,Ricardone,RDLA45,38,1,0,BRA,Silver,Small Truck,Unrecognized,2026-10-29 19:59:06
+SLZBalSC2Tras,San Lorenzo,AF183OR,58,1,0,BRA,White,Large Truck,Toyota,2026-10-29 19:59:17
+RicPreIngInFr,Ricardone,ROS380,78,1,5,BRA,Red,Unrecognized,Unrecognized,2026-10-29 19:59:25
+RicPreIngInTr,Ricardone,IEY782,42,1,0,COL,Black,Unrecognized,Unrecognized,2026-10-29 19:59:40
+RicEgrCamFrente,Ricardone,M39,34,1,10,COL,Unrecognized,Large Truck,Chenglong,2026-10-29 19:59:49
+RicB1Ingreso,Ricardone,CRJ139,66,1,5,BRA,White,Medium Truck,Unrecognized,2026-10-29 20:00:12
+RicEgrCamTraser,Ricardone,IEJ75E9,26,1,0,COL,Red,Unrecognized,Unrecognized,2026-10-29 20:00:22
+SLZSalidaC1Fte,San Lorenzo,AE880CH,86,1,0,BOL,White,Large Truck,Mercedes-Benz,2026-10-29 20:00:46
+SLZSalidaC1Tras,San Lorenzo,AF183OR,86,1,0,BRA,Gray,Large Truck,Renault,2026-10-29 20:01:10
+RicEgrCamFrente,Ricardone,RDL445,30,1,7,PRY,Silver,Medium Truck,Mercedes-Benz,2026-10-29 20:01:28
+RicIngCamFrente,Ricardone,BVS300,54,1,1,COL,White,Medium Truck,Infiniti,2026-10-29 20:01:44
+RicIngCamTrasera,Ricardone,OPO723,66,1,9,BRA,Red,Unrecognized,Unrecognized,2026-10-29 20:01:58
+RicCal03,Ricardone,NHE440,78,1,0,BRA,Gray,Large Truck,Mercedes-Benz,2026-10-29 20:02:28
+RicB1Ingreso,Ricardone,SIR103,34,1,5,PRY,White,Unrecognized,Unrecognized,2026-10-29 20:03:01
+RicCal04,Ricardone,AB058KD,86,1,0,BRA,White,Large Truck,Volkswagen,2026-10-29 20:03:07
+RicPreIngInFr,Ricardone,AB4252X,70,1,5,BRA,White,Unrecognized,Unrecognized,2026-10-29 20:03:11
+RicPreIngInTr,Ricardone,AE411ZY,18,1,1,BRA,Black,Unrecognized,Unrecognized,2026-10-29 20:03:26
+RicPreIngInFr,Ricardone,BVS300,82,1,5,BRA,Black,Unrecognized,Unrecognized,2026-10-29 20:03:54
+SLZTK400,San Lorenzo,331208,18,1,0,BRA,Black,Large Truck,Volkswagen,2026-10-29 20:04:01
+SLZSalidaC1Tras,San Lorenzo,L29,28,1,0,DXB,White,Sedan,Unrecognized,2026-10-29 20:04:09
+RicPreIngInFr,Ricardone,BVS300,66,1,5,PRY,White,Medium Truck,ISUZU,2026-10-29 20:04:11
+RicS6Playa3,Ricardone,CRJ139,86,1,0,BRA,White,Large Truck,Unrecognized,2026-10-29 20:04:15
+RicIngCamTrasera,Ricardone,IT707,46,1,9,ARG,White,Bus,Unrecognized,2026-10-29 20:04:24
+RicPreIngInTr,Ricardone,RMA,26,1,7,BRA,Black,Unrecognized,Unrecognized,2026-10-29 20:04:27
+RicB1Ingreso,Ricardone,DL4,34,1,5,BRA,Black,Unrecognized,Unrecognized,2026-10-29 20:05:03
+RicIngCamFrente,Ricardone,AA539HA,34,1,1,BRA,Black,Sedan,Unrecognized,2026-10-29 20:05:14
+RicIngCamTrasera,Ricardone,VULCANQ,74,1,17,BRA,White,Unrecognized,Unrecognized,2026-10-29 20:05:38
+RenCargFte,San Lorenzo,AD887XZ,82,1,3,CHL,Silver,Large Truck,Iveco,2026-10-29 20:07:07
+SLZIngCamFrente,San Lorenzo,SN211,50,1,1,COL,White,Sedan,Mercedes-Benz,2026-10-29 20:07:22
+RicCal03,Ricardone,AA577DP,82,1,0,BRA,White,Large Truck,Ford,2026-10-29 20:07:34
+RicB1Ingreso,Ricardone,90W,62,1,5,BRA,Black,Sedan,Fiat,2026-10-29 20:07:41
+RicCal03,Ricardone,AA577DP,70,1,0,BRA,White,Large Truck,Ford,2026-10-29 20:07:46
+RicS6Playa3,Ricardone,VUE305,32,1,0,BRA,Black,Large Truck,Unrecognized,2026-10-29 20:07:52
+RicCal03,Ricardone,AA577P,78,1,0,BRA,Black,Large Truck,Chevrolet,2026-10-29 20:07:53
+RicCal04,Ricardone,BGP773,70,1,0,ARG,White,Medium Truck,Hino,2026-10-29 20:08:38
+RicS6Playa3,Ricardone,L65,18,1,0,URY,White,Medium Truck,Unrecognized,2026-10-29 20:08:40
+SLZBalSC2Fte,San Lorenzo,AG332BP,66,1,0,BRA,White,Large Truck,Unrecognized,2026-10-29 20:09:07
+RicPreIngInFr,Ricardone,FGX032,74,1,5,DXB,White,Medium Truck,Opel,2026-10-29 20:09:23
+RicPreIngInTr,Ricardone,OA1311,14,1,12,PRY,White,Unrecognized,Unrecognized,2026-10-29 20:09:44
+SLZBalSC2Tras,San Lorenzo,KMU651,66,1,0,BRA,Black,Bus,Toyota,2026-10-29 20:10:12
+RicPreIngInFr,Ricardone,AA539HA,42,1,5,BRA,Red,Unrecognized,Unrecognized,2026-10-29 20:10:16
+RicPreIngInTr,Ricardone,VULCAN0,46,1,28,BRA,White,Unrecognized,Unrecognized,2026-10-29 20:10:37
+RicCal03,Ricardone,KQN188,78,1,0,BRA,Silver,Medium Truck,Iveco,2026-10-29 20:10:57
+SLZSalidaC1Fte,San Lorenzo,AG332BP,86,1,0,DXB,White,Large Truck,Iveco,2026-10-29 20:11:16
+SLZSalidaC1Tras,San Lorenzo,KMU651,74,1,0,ARG,Black,Large Truck,Toyota,2026-10-29 20:11:37
+SLZIngCamTrasera,San Lorenzo,F22,78,1,0,BRA,Black,Medium Truck,Unrecognized,2026-10-29 20:11:51
+RicCal04,Ricardone,ATQ076,58,1,0,BRA,White,Medium Truck,Volvo,2026-10-29 20:12:06
+SLZBalSC2Fte,San Lorenzo,PGV357,46,1,0,PRY,White,Large Truck,Ford,2026-10-29 20:13:19
+RicCal04,Ricardone,VIS6,50,1,0,BRA,White,Small Truck,Unrecognized,2026-10-29 20:13:21
+RicCal03,Ricardone,DFJ467,54,1,0,BRA,White,Large Truck,Volkswagen,2026-10-29 20:13:31
+SLZBalSC2Tras,San Lorenzo,PD50,78,1,0,BRA,White,Large Truck,Unrecognized,2026-10-29 20:15:26
+RicCal04,Ricardone,AD720BQ,90,1,0,BRA,White,Large Truck,Mercedes-Benz,2026-10-29 20:15:40
+RenDescFte,San Lorenzo,ICP519,82,1,5,BRA,White,Medium Truck,Mercedes-Benz,2026-10-29 20:15:54
+RicS6Playa3,Ricardone,VUELTA,50,1,0,BRA,Black,Large Truck,Unrecognized,2026-10-29 20:16:34
+SLZSalidaC1Fte,San Lorenzo,EGV380,82,1,0,ARG,White,Large Truck,Ford,2026-10-29 20:16:40
+SLZSalidaC1Tras,San Lorenzo,VXH483,74,1,0,BRA,Black,Large Truck,Unrecognized,2026-10-29 20:17:00
+RicCal03,Ricardone,AA147MM,66,1,0,BRA,White,Medium Truck,Mercedes-Benz,2026-10-29 20:17:07
+RicIngCamFrente,Ricardone,HLV862,62,1,2,PRY,White,Medium Truck,Iveco,2026-10-29 20:18:16
+RicIngCamTrasera,Ricardone,BFG545,78,1,57,PRY,Red,Unrecognized,Unrecognized,2026-10-29 20:18:23
+RicCal04,Ricardone,KCD720,74,1,0,BRA,White,Large Truck,Iveco,2026-10-29 20:18:35
+RicCal04,Ricardone,KCD720,86,1,0,ARG,White,Large Truck,Iveco,2026-10-29 20:18:51
+RicCal04,Ricardone,KCD720,42,1,0,ARG,Gray,Large Truck,Iveco,2026-10-29 20:19:26
+RicCal04,Ricardone,KCD720,62,1,0,ARG,Gray,Large Truck,Iveco,2026-10-29 20:19:32
+RicEgrCamFrente,Ricardone,AB058KO,74,1,4,BRA,Unrecognized,Medium Truck,Volkswagen,2026-10-29 20:19:36
+RicCal04,Ricardone,4UBE1,0,1,0,URY,White,Medium Truck,Unrecognized,2026-10-29 20:19:40
+RicCalLiq,Ricardone,AF308DS,86,1,0,BRA,White,Sedan,Unrecognized,2026-10-29 20:20:09
+RicEgrCamTraser,Ricardone,AF859TU,82,1,15,BRA,Red,Sedan,Unrecognized,2026-10-29 20:20:15
+RicCal03,Ricardone,JAI537,66,1,0,BRA,White,Large Truck,Iveco,2026-10-29 20:20:16
+RicPreIngInFr,Ricardone,HLV862,78,1,5,ARG,White,Bus,Golden Dragon,2026-10-29 20:20:26
+RicPreIngInTr,Ricardone,BFG545,18,1,49,COL,White,Medium Truck,Unrecognized,2026-10-29 20:20:41
+RicEgrCamFrente,Ricardone,KQN188,74,1,12,ARG,White,Medium Truck,Iveco,2026-10-29 20:20:53
+RicEgrCamFrente,Ricardone,467,46,1,0,PER,White,Medium Truck,Volkswagen,2026-10-29 20:21:18
+RicEgrCamTraser,Ricardone,FEU358,42,1,8,BRA,Blue,Unrecognized,Unrecognized,2026-10-29 20:21:22
+RicEgrCamTraser,Ricardone,GQ9,42,1,83,BRA,Black,Sedan,Unrecognized,2026-10-29 20:21:43
+RicIngCamTrasera,Ricardone,HWX561,42,1,46,CHL,Black,Unrecognized,Unrecognized,2026-10-29 20:21:44
+RicCal04,Ricardone,AD863BG,86,1,0,BRA,White,Medium Truck,Volkswagen,2026-10-29 20:21:53
+RicEgrCamFrente,Ricardone,G003,54,1,15,BRA,White,Medium Truck,Unrecognized,2026-10-29 20:22:40
+RicCal03,Ricardone,ENG699,74,1,0,BRA,White,Large Truck,Iveco,2026-10-29 20:23:33
+RicS6Playa3,Ricardone,VZ00RH,66,1,0,BRA,Black,Sedan,Toyota,2026-10-29 20:23:47
+RicCal03,Ricardone,VEC0,46,1,0,BRA,White,Bus,Iveco,2026-10-29 20:24:17
+RicCal03,Ricardone,VEC0,42,1,0,BRA,White,Pickup,Iveco,2026-10-29 20:24:23
+RicCal03,Ricardone,VEC0,34,1,0,BRA,White,Bus,Iveco,2026-10-29 20:24:31
+RicPreIngInFr,Ricardone,IHHX195,18,1,5,PER,White,Medium Truck,Unrecognized,2026-10-29 20:24:54
+RicPreIngInTr,Ricardone,PMX581,22,1,28,ARG,Black,Unrecognized,Unrecognized,2026-10-29 20:25:07
+RicCal04,Ricardone,DRV933,78,1,0,PRY,White,Large Truck,Mercedes-Benz,2026-10-29 20:25:13
+RicEgrCamFrente,Ricardone,KCD720,78,1,4,ARG,Blue,Large Truck,Mitsubishi,2026-10-29 20:25:24
+RicEgrCamTraser,Ricardone,ISG718,38,1,10,ARG,Blue,Unrecognized,Unrecognized,2026-10-29 20:25:51
+RicIngCamTrasera,Ricardone,IPX478,54,1,1,ARG,Blue,Unrecognized,Unrecognized,2026-10-29 20:25:52
+RicEgrCamFrente,Ricardone,AD720BQ,82,1,7,ARG,White,Medium Truck,Mercedes-Benz,2026-10-29 20:25:58
+RicB2Egreso,Ricardone,D991,18,1,0,COL,Black,SUV,Unrecognized,2026-10-29 20:26:02
+RenCargTras,San Lorenzo,ELL370,30,1,0,BRA,Gray,Unrecognized,Unrecognized,2026-10-29 20:26:16
+RicEgrCamTraser,Ricardone,AF226AQ,50,1,11,BRA,Blue,Unrecognized,Unrecognized,2026-10-29 20:26:29
+RicCal03,Ricardone,THI2,74,1,0,PRY,White,Medium Truck,Unrecognized,2026-10-29 20:26:36
+RicEgrCamFrente,Ricardone,JAI537,82,1,8,COL,White,Medium Truck,Iveco,2026-10-29 20:27:21
+RicIngCamFrente,Ricardone,DGR440,54,1,1,ARG,Silver,Medium Truck,Mercedes-Benz,2026-10-29 20:27:24
+RicIngCamTrasera,Ricardone,FKV659,82,1,1,ARG,Blue,Unrecognized,Unrecognized,2026-10-29 20:27:40
+RicCal04,Ricardone,AA539HA,86,1,0,BRA,White,Large Truck,Volkswagen,2026-10-29 20:28:09
+RicEgrCamTraser,Ricardone,JDF,74,1,0,ECU,Blue,Sedan,Unrecognized,2026-10-29 20:28:23
+RicEgrCamFrente,Ricardone,ATP876,18,1,5,BRA,White,Medium Truck,Volvo,2026-10-29 20:29:08
+RicPreIngInFr,Ricardone,DGR440,70,1,5,BRA,Silver,Bus,Unrecognized,2026-10-29 20:29:24
+RicEgrCamTraser,Ricardone,JGB649,18,1,26,BRA,White,Unrecognized,Unrecognized,2026-10-29 20:29:52
+RicEgrCamFrente,Ricardone,AD863BG,78,1,2,BRA,Unrecognized,Medium Truck,Unrecognized,2026-10-29 20:30:01
+RicIngCamFrente,Ricardone,AG607WK,42,1,1,ARG,White,Medium Truck,Mercedes-Benz,2026-10-29 20:30:03
+RicPreIngInTr,Ricardone,DGR440,14,1,18,ARG,Black,Medium Truck,Unrecognized,2026-10-29 20:30:03
+SLZIngCamFrente,San Lorenzo,AB0989,86,1,5,BRA,Black,Medium Truck,Dongfeng,2026-10-29 20:30:14
+RicIngCamTrasera,Ricardone,AI091,50,1,29,COL,Red,Unrecognized,Unrecognized,2026-10-29 20:30:16
+RicEgrCamTraser,Ricardone,393VN,38,1,2,DXB,Blue,Bus,Unrecognized,2026-10-29 20:30:31
+SLZIngCamFrente,San Lorenzo,UYM942,30,1,5,BRA,Black,Unrecognized,Unrecognized,2026-10-29 20:31:52
+SLZIngCamTrasera,San Lorenzo,BRLS,42,1,5,PRY,Black,Unrecognized,Unrecognized,2026-10-29 20:31:57
+RicPreIngInFr,Ricardone,AG607WK,62,1,5,ARG,White,Medium Truck,Mercedes-Benz,2026-10-29 20:32:13
+RicIngCamFrente,Ricardone,AE941EB,54,1,1,ARG,White,Bus,Iveco,2026-10-29 20:32:14
+RicIngCamTrasera,Ricardone,AF034YR,14,1,175,BRA,Red,Unrecognized,Unrecognized,2026-10-29 20:32:20
+SLZIngCamFrente,San Lorenzo,KQN188,82,1,5,ARG,Black,Medium Truck,Iveco,2026-10-29 20:32:29
+SLZIngCamTrasera,San Lorenzo,JLL3,58,1,5,URY,Black,Unrecognized,Unrecognized,2026-10-29 20:32:29
+RicPreIngInTr,Ricardone,AI091CG,42,1,42,BRA,Black,Unrecognized,Unrecognized,2026-10-29 20:32:30
+SLZIngCamFrente,San Lorenzo,DFJ467,86,1,5,ARG,White,Medium Truck,Volkswagen,2026-10-29 20:33:18
+SLZIngCamTrasera,San Lorenzo,CP05,62,1,5,BRA,Black,Unrecognized,Unrecognized,2026-10-29 20:33:22
+SLZBalSC2Fte,San Lorenzo,AD887XZ,42,1,0,BRA,Gray,Bus,Unrecognized,2026-10-29 20:33:24
+RicPreIngInFr,Ricardone,AE941EB,54,1,5,BRA,White,Medium Truck,Unrecognized,2026-10-29 20:33:44
+RicPreIngInTr,Ricardone,AF034YR,42,1,3,BRA,Black,Unrecognized,Unrecognized,2026-10-29 20:33:55
+SLZBalIngFte,San Lorenzo,UYM942,34,1,0,COL,White,Small Truck,Chevrolet,2026-10-29 20:34:01
+RicEgrCamFrente,Ricardone,GRV933,62,1,1,BRA,White,Medium Truck,Mercedes-Benz,2026-10-29 20:35:04
+SLZBalSC2Tras,San Lorenzo,CDDIFCA00,48,1,0,BRA,White,Small Truck,Fiat,2026-10-29 20:35:15
+RicEgrCamTraser,Ricardone,ZZ7,46,1,0,GUY,Blue,Unrecognized,Unrecognized,2026-10-29 20:35:40
+SLZIngCamFrente,San Lorenzo,KCD720,86,1,5,ARG,Gray,Pickup,Unrecognized,2026-10-29 20:35:58
+RicEgrCamTraser,Ricardone,OIY765,66,1,57,ARG,Blue,Unrecognized,Unrecognized,2026-10-29 20:36:09
+RicEgrCamFrente,Ricardone,ENG699,70,1,1,BRA,White,Medium Truck,Iveco,2026-10-29 20:36:11
+RenCargFte,San Lorenzo,CDF727,78,1,5,PER,White,SUV,Chevrolet,2026-10-29 20:36:41
+RicEgrCamTraser,Ricardone,HTA965,66,1,655,PRY,Blue,Unrecognized,Unrecognized,2026-10-29 20:36:43
+SLZSalidaC1Fte,San Lorenzo,AD887XZ,86,1,0,BRA,White,Large Truck,Unrecognized,2026-10-29 20:36:46
+RenCargTras,San Lorenzo,4228,34,1,0,BRA,Black,Unrecognized,Unrecognized,2026-10-29 20:36:50
+SLZVolcableC4,San Lorenzo,UM942,46,1,0,ARG,Blue,Small Truck,Mercedes-Benz,2026-10-29 20:37:01
+SLZIngCamTrasera,San Lorenzo,ISG718,54,1,5,BRA,Black,Unrecognized,Unrecognized,2026-10-29 20:37:07
+RicCal04,Ricardone,A9895,22,1,0,PRY,White,Medium Truck,Iveco,2026-10-29 20:37:45
+RicB1Ingreso,Ricardone,OTV765,78,1,14,BRA,White,Sedan,Renault,2026-10-29 20:37:52
+SLZIngCamFrente,San Lorenzo,AD720BQ,86,1,5,BRA,White,Bus,Mercedes-Benz,2026-10-29 20:38:15
+RenDescFte,San Lorenzo,AA46010,34,1,4,COL,White,Large Truck,Volvo,2026-10-29 20:38:38
+RicEgrCamFrente,Ricardone,IHS192,74,1,5,ARG,White,Medium Truck,Unrecognized,2026-10-29 20:38:45
+RicEgrCamTraser,Ricardone,EIB,42,1,0,BRA,Black,Unrecognized,Unrecognized,2026-10-29 20:39:17
+SLZIngCamTrasera,San Lorenzo,AF226AQ,34,1,1,BRA,White,Unrecognized,Unrecognized,2026-10-29 20:39:27
+RicIngCamFrente,Ricardone,LBN850,14,1,1,ARG,Blue,Medium Truck,Kia,2026-10-29 20:39:48
+RicIngCamTrasera,Ricardone,OIMLU,42,1,11,BRA,Gray,Unrecognized,Unrecognized,2026-10-29 20:40:00
+RicIngCamFrente,Ricardone,AG609UT,74,1,1,ARG,White,Medium Truck,Unrecognized,2026-10-29 20:40:02
+RicIngCamTrasera,Ricardone,AF457,66,1,17,BRA,Black,Unrecognized,Unrecognized,2026-10-29 20:40:14
+RicIngCamFrente,Ricardone,LTK064,38,1,1,ARG,White,Medium Truck,Iveco,2026-10-29 20:40:29
+RicIngCamTrasera,Ricardone,AC4284J,42,1,1,BRA,Red,Medium Truck,Unrecognized,2026-10-29 20:40:42
+RicIngCamFrente,Ricardone,DTN089,66,1,1,ARG,Blue,Medium Truck,Renault,2026-10-29 20:41:24
+RicIngCamTrasera,Ricardone,DJU549,78,1,18,PRY,Black,Unrecognized,Unrecognized,2026-10-29 20:41:36
+SLZIngCamFrente,San Lorenzo,AIU0,46,1,0,DXB,White,Bus,Unrecognized,2026-10-29 20:41:53
+RicIngCamTrasera,Ricardone,UQJ192,62,1,26,BRA,White,Unrecognized,Unrecognized,2026-10-29 20:41:58
+RicIngCamFrente,Ricardone,QP615,50,1,0,PRY,Red,Unrecognized,Unrecognized,2026-10-29 20:42:01
+RicIngCamFrente,Ricardone,63B,26,1,0,BRA,White,Bus,Unrecognized,2026-10-29 20:42:12
+RicIngCamTrasera,Ricardone,IJLI1,70,1,57,BRA,White,Unrecognized,Unrecognized,2026-10-29 20:42:36
+RicPreIngInFr,Ricardone,LBN850,70,1,5,PRY,Silver,Medium Truck,Unrecognized,2026-10-29 20:42:48
+SLZIngCamFrente,San Lorenzo,AD863BG,86,1,5,BRA,Green,Bus,Dongfeng,2026-10-29 20:42:49
+SLZCalado,San Lorenzo,LCP515,82,1,0,BRA,White,Large Truck,Mercedes-Benz,2026-10-29 20:42:54
+SLZIngCamTrasera,San Lorenzo,JGB649,22,1,2,COL,Black,Unrecognized,Unrecognized,2026-10-29 20:42:56
+RicPreIngInTr,Ricardone,OAMB0,54,1,20,BRA,Black,Sedan,Unrecognized,2026-10-29 20:43:00
+RicIngCamTrasera,Ricardone,EWM09,30,1,0,BRA,White,Unrecognized,Unrecognized,2026-10-29 20:43:18
+SLZIngCamTrasera,San Lorenzo,AF393VN,54,1,3,BRA,Black,Unrecognized,Unrecognized,2026-10-29 20:43:23
+RicPreIngInFr,Ricardone,AG609UT,78,1,5,BRA,Red,Medium Truck,Renault,2026-10-29 20:43:29
+RicPreIngInFr,Ricardone,OMBU,66,1,2,BRA,Black,Sedan,Unrecognized,2026-10-29 20:43:35
+RicPreIngInTr,Ricardone,AG609UT,18,1,11,BRA,Black,Unrecognized,Unrecognized,2026-10-29 20:43:44
+SLZIngCamFrente,San Lorenzo,UUO981,86,1,1,PER,White,Large Truck,Mercedes-Benz,2026-10-29 20:43:56
+RicPreIngInFr,Ricardone,LTK064,34,1,5,ARG,White,Medium Truck,Iveco,2026-10-29 20:44:05
+RicPreIngInTr,Ricardone,AC428NJ,46,1,60,BRA,Black,Unrecognized,Unrecognized,2026-10-29 20:44:16
+RicS6Playa3,Ricardone,96570,22,1,0,BRA,Black,Sedan,Unrecognized,2026-10-29 20:44:18
+RicPreIngInFr,Ricardone,DTN089,82,1,5,PER,Black,Unrecognized,Unrecognized,2026-10-29 20:44:56
+RicEgrCamFrente,Ricardone,GES056,78,1,5,GUY,White,Medium Truck,Scania,2026-10-29 20:45:13
+RicPreIngInFr,Ricardone,CKJ479,26,1,5,PER,Black,Pickup,Unrecognized,2026-10-29 20:45:42
+RicPreIngInTr,Ricardone,003192,14,1,0,BRA,Black,Unrecognized,Unrecognized,2026-10-29 20:46:02
+SLZIngCamFrente,San Lorenzo,JAI537,82,1,5,ARG,Black,Medium Truck,Iveco,2026-10-29 20:46:07
+SLZBalIngFte,San Lorenzo,UUO981,86,1,0,BRA,White,Large Truck,Mercedes-Benz,2026-10-29 20:46:34
+SLZBalIngTras,San Lorenzo,WJV265,78,1,0,ARG,Black,Bus,Unrecognized,2026-10-29 20:46:36
+SLZBalIngFte,San Lorenzo,UUO981,50,1,0,GUY,White,Large Truck,Mercedes-Benz,2026-10-29 20:46:48
+SLZBalIngTras,San Lorenzo,LCP506,66,1,0,COL,White,SUV,Unrecognized,2026-10-29 20:47:30
+RicPreIngInFr,Ricardone,BQP615,26,1,5,BRA,Red,Unrecognized,Unrecognized,2026-10-29 20:47:36
+SLZBalIngTras,San Lorenzo,INDECAR,22,1,0,BRA,White,Bus,Unrecognized,2026-10-29 20:47:38
+SLZBalIngFte,San Lorenzo,LCP5176,82,1,0,BRA,White,Van,Mercedes-Benz,2026-10-29 20:47:39
+RicPreIngInTr,Ricardone,MVA,62,1,26,BRA,Gray,Unrecognized,Unrecognized,2026-10-29 20:47:49
+RenCargTras,San Lorenzo,VXY228,66,1,5,ARG,White,Unrecognized,Unrecognized,2026-10-29 20:47:52
+SLZIngCamTrasera,San Lorenzo,6ST0,14,1,210,URY,White,Unrecognized,Unrecognized,2026-10-29 20:48:09
+SLZIngCamFrente,San Lorenzo,T33,54,1,5,COL,White,Medium Truck,Peugeot,2026-10-29 20:48:10
+RenCargTras,San Lorenzo,PXX228,42,1,0,BRA,White,Unrecognized,Unrecognized,2026-10-29 20:48:32
+RicPreIngInFr,Ricardone,ETS185,66,1,5,PRY,White,Bus,Unrecognized,2026-10-29 20:48:36
+RicIngCamFrente,Ricardone,RXV065,38,1,1,COL,White,Medium Truck,Scania,2026-10-29 20:49:06
+SLZIngCamTrasera,San Lorenzo,CFGS,46,1,5,PRY,Black,Unrecognized,Unrecognized,2026-10-29 20:49:17
+SLZIngCamFrente,San Lorenzo,ENG699,46,1,1,BRA,Black,Medium Truck,Iveco,2026-10-29 20:49:22
+SLZVolcableC4,San Lorenzo,UUO981,82,1,0,BRA,White,Medium Truck,Mercedes-Benz,2026-10-29 20:49:25
+RicIngCamTrasera,Ricardone,AA166UA,54,1,15,BRA,White,Unrecognized,Unrecognized,2026-10-29 20:49:25
+SLZIngCamTrasera,San Lorenzo,BR8SA,78,1,5,BRA,Black,Unrecognized,Unrecognized,2026-10-29 20:50:05
+SLZIngCamFrente,San Lorenzo,IHS192,78,1,6,COL,White,Sedan,Unrecognized,2026-10-29 20:50:07
+SLZIngCamTrasera,San Lorenzo,BB0,34,1,1,PER,Black,Unrecognized,Unrecognized,2026-10-29 20:50:48
+RicIngCamFrente,Ricardone,OJA626,42,1,20,PRY,Gray,Medium Truck,Scania,2026-10-29 20:51:37
+RicIngCamTrasera,Ricardone,DZP771,34,1,1,ARG,Black,Unrecognized,Unrecognized,2026-10-29 20:51:45
+SLZCalado,San Lorenzo,JAT537,86,1,0,BRA,White,Medium Truck,Iveco,2026-10-29 20:52:46
+RicCal03,Ricardone,RXV065,82,1,0,BRA,Silver,Medium Truck,Scania,2026-10-29 20:52:54
+SLZBalSC2Fte,San Lorenzo,ICP711,66,1,0,BRA,Silver,Van,Audi,2026-10-29 20:53:51
+RicPreIngInFr,Ricardone,UJA626,34,1,5,BRA,White,Unrecognized,Unrecognized,2026-10-29 20:54:27
+RicPreIngInTr,Ricardone,UJA626,18,1,1,COL,Black,Unrecognized,Unrecognized,2026-10-29 20:54:49
+SLZBalSC2Tras,San Lorenzo,INDECAR,30,1,0,BRA,Black,Large Truck,Unrecognized,2026-10-29 20:55:28
+RicIngCamFrente,Ricardone,AH745,34,1,0,PRY,Black,Medium Truck,Renault,2026-10-29 20:55:30
+RicIngCamTrasera,Ricardone,OMB0,78,1,16,GUY,Red,Unrecognized,Unrecognized,2026-10-29 20:55:47
+RicIngCamTrasera,Ricardone,AC722VK,62,1,0,ARG,Red,Unrecognized,Unrecognized,2026-10-29 20:55:48
+RicCal04,Ricardone,HLV862,82,1,0,BRA,Brown,Medium Truck,Iveco,2026-10-29 20:55:51
+RicCal04,Ricardone,HLV862,86,1,0,ARG,White,Medium Truck,Iveco,2026-10-29 20:56:10
+SLZBalSC2Tras,San Lorenzo,G00,48,1,0,BRA,Gray,Small Truck,Toyota,2026-10-29 20:57:10
+SLZBalSC2Fte,San Lorenzo,CDF727,62,1,0,BRA,Black,Medium Truck,Unrecognized,2026-10-29 20:57:26
+SLZBalIngTras,San Lorenzo,ULCAN0,54,1,0,PRY,Black,Sedan,Unrecognized,2026-10-29 20:57:51
+SLZBalIngFte,San Lorenzo,JAI537,74,1,0,ARG,White,Large Truck,Iveco,2026-10-29 20:57:54
+RicPreIngInFr,Ricardone,AH7453,62,1,5,BRA,White,Bus,Chevrolet,2026-10-29 20:57:54
+RicPreIngInFr,Ricardone,AH7453,74,1,5,BRA,White,Bus,Unrecognized,2026-10-29 20:58:16
+SLZBalIngFte,San Lorenzo,JAI537,26,1,0,COL,Black,Bus,Unrecognized,2026-10-29 20:58:16
+SLZSalidaC1Tras,San Lorenzo,UYM942,28,1,0,BRA,Black,Small Truck,Unrecognized,2026-10-29 20:58:22
+RicPreIngInTr,Ricardone,OA1BU,42,1,36,BRA,Black,Medium Truck,Unrecognized,2026-10-29 20:58:34
+RicCal03,Ricardone,AG607WK,66,1,0,BRA,White,Large Truck,Mercedes-Benz,2026-10-29 20:58:45
+SLZBalSC2Tras,San Lorenzo,HKAC326,50,1,0,COL,White,Large Truck,MG,2026-10-29 20:58:56
+RicPreIngInFr,Ricardone,ROS380,82,1,5,BRA,Unrecognized,Sedan,Unrecognized,2026-10-29 20:59:02
+RenCargFte,San Lorenzo,AVI1,58,1,5,BRA,White,Medium Truck,Iveco,2026-10-29 20:59:12
+RicPreIngInTr,Ricardone,TET782,30,1,4,URY,Black,Sedan,Unrecognized,2026-10-29 20:59:17
+RenCargTras,San Lorenzo,961,34,1,14,BRA,White,Sedan,Unrecognized,2026-10-29 20:59:20
+RicS6Playa3,Ricardone,24JP,34,1,0,CHL,Black,Sedan,Unrecognized,2026-10-29 20:59:53
+SLZSalidaC1Fte,San Lorenzo,LCP515,62,1,0,BRA,White,Large Truck,Mercedes-Benz,2026-10-29 20:59:54
+RicS6Playa3,Ricardone,Z00RH,66,1,0,BRA,White,Sedan,Tesla,2026-10-29 20:59:56
+SLZSalidaC1Tras,San Lorenzo,LCP506,26,1,0,COL,White,Medium Truck,Unrecognized,2026-10-29 21:00:15
+SLZSalidaC1Tras,San Lorenzo,UNDECAR,18,1,0,BRA,White,Small Truck,Unrecognized,2026-10-29 21:00:23
+SLZSalidaC1Fte,San Lorenzo,CDF727,62,1,0,BRA,White,Van,Unrecognized,2026-10-29 21:00:27
+RicB2Egreso,Ricardone,DTV75,54,1,10,BRA,White,Sedan,Unrecognized,2026-10-29 21:00:28
+SLZSalidaC1Tras,San Lorenzo,VXY228,78,1,0,COL,White,Small Truck,Toyota,2026-10-29 21:00:49
+RicCalLiq,Ricardone,ROS380,46,1,0,BRA,White,Medium Truck,Unrecognized,2026-10-29 21:01:24
+SLZBalIngTras,San Lorenzo,AB056KO,74,1,0,BRA,White,SUV,Unrecognized,2026-10-29 21:02:20
+RenDescTras,San Lorenzo,WM111,58,1,5,BRA,White,Unrecognized,Unrecognized,2026-10-29 21:02:27
+SLZBalIngFte,San Lorenzo,AB058K8,66,1,0,BRA,Black,Medium Truck,Unrecognized,2026-10-29 21:02:28
+SLZBalIngFte,San Lorenzo,AB058KO,46,1,0,BRA,White,Large Truck,Unrecognized,2026-10-29 21:02:43
+SLZBalIngTras,San Lorenzo,BRUSA,38,1,0,BRA,White,Small Truck,Unrecognized,2026-10-29 21:03:02
+SLZBalIngFte,San Lorenzo,AB158KO,74,1,0,BRA,White,Medium Truck,Unrecognized,2026-10-29 21:03:05
+RenDescFte,San Lorenzo,OY370,74,1,5,ARG,White,Large Truck,Iveco,2026-10-29 21:03:19
+SLZBalIngTras,San Lorenzo,VEC0,18,1,0,BRA,Black,Sedan,Unrecognized,2026-10-29 21:03:34
+RicIngCamFrente,Ricardone,OTV765,66,1,11,ARG,Silver,SUV,Renault,2026-10-29 21:03:37
+SLZBalIngFte,San Lorenzo,KQN188,86,1,0,ARG,White,Small Truck,Iveco,2026-10-29 21:03:45
+SLZBalSC2Fte,San Lorenzo,UUO981,50,1,0,ARG,Gray,Bus,Unrecognized,2026-10-29 21:04:03
+SLZIngCamFrente,San Lorenzo,WGG348,26,1,5,ARG,Black,SUV,Unrecognized,2026-10-29 21:04:19
+RicCal04,Ricardone,LBN050,78,1,0,ARG,White,Large Truck,Scania,2026-10-29 21:04:35
+RicCal03,Ricardone,AE941EB,86,1,0,BRA,White,Large Truck,Iveco,2026-10-29 21:04:39
+SLZBalIngFte,San Lorenzo,DFJ467,70,1,0,ARG,Black,Van,Unrecognized,2026-10-29 21:04:42
+SLZBalIngFte,San Lorenzo,DFJ467,74,1,0,COL,White,Van,Unrecognized,2026-10-29 21:04:51
+SLZBalSC2Tras,San Lorenzo,WV265,66,1,0,BRA,White,Small Truck,Unrecognized,2026-10-29 21:04:53
+SLZBalIngTras,San Lorenzo,KCD720,50,1,0,BRA,White,Medium Truck,Unrecognized,2026-10-29 21:05:30
+SLZBalIngTras,San Lorenzo,ISG718,54,1,0,BRA,Silver,Pickup,Fiat,2026-10-29 21:05:40
+SLZBalIngFte,San Lorenzo,KCD720,82,1,0,ARG,White,Medium Truck,Unrecognized,2026-10-29 21:05:43
+SLZSalidaC1Fte,San Lorenzo,UUO981,86,1,0,BRA,White,Large Truck,Mercedes-Benz,2026-10-29 21:05:43
+SLZCalado,San Lorenzo,AA463TC,58,1,0,CHL,White,Large Truck,Volvo,2026-10-29 21:05:47
+SLZBalIngTras,San Lorenzo,CILGP11WD,34,1,0,BRA,White,Medium Truck,Unrecognized,2026-10-29 21:05:49
+SLZSalidaC1Tras,San Lorenzo,WJV265,74,1,0,ARG,Black,Small Truck,Unrecognized,2026-10-29 21:06:00
+SLZBalIngTras,San Lorenzo,AD720BQ,78,1,0,BRA,White,Sedan,Unrecognized,2026-10-29 21:06:42
+SLZBalIngTras,San Lorenzo,AF226AQ,30,1,0,CHL,Gray,Sedan,Unrecognized,2026-10-29 21:06:53
+SLZBalIngFte,San Lorenzo,AD720BQ,82,1,0,BRA,Gray,SUV,Unrecognized,2026-10-29 21:06:54
+SLZBalIngTras,San Lorenzo,AF226AQ,0,1,0,COL,Silver,Bus,Škoda,2026-10-29 21:07:10
+RicCal04,Ricardone,AG609UT,86,1,0,ARG,White,Large Truck,Volkswagen,2026-10-29 21:07:11
+RicEgrCamFrente,Ricardone,HLV862,82,1,3,BRA,White,Large Truck,Iveco,2026-10-29 21:07:50
+SLZBalIngTras,San Lorenzo,ATO876,38,1,0,COL,White,Bus,Unrecognized,2026-10-29 21:07:50
+SLZBalIngTras,San Lorenzo,JGB649,70,1,0,ARG,White,Small Truck,Unrecognized,2026-10-29 21:08:01
+SLZBalIngFte,San Lorenzo,IAWTCM84776,78,1,0,COL,White,Pickup,Unrecognized,2026-10-29 21:08:16
+RicCal03,Ricardone,LTK064,90,1,0,BRA,White,Large Truck,Iveco,2026-10-29 21:08:21
+SLZBalIngFte,San Lorenzo,AAWTCG81776,82,1,0,COL,Black,SUV,Unrecognized,2026-10-29 21:08:38
+SLZIngCamTrasera,San Lorenzo,TMIT4,14,1,2,COL,Black,Unrecognized,Unrecognized,2026-10-29 21:08:45
+RicEgrCamTraser,Ricardone,979,70,1,0,PRY,White,Medium Truck,Unrecognized,2026-10-29 21:08:58
+RicEgrCamFrente,Ricardone,RXV065,74,1,8,ARG,Silver,Medium Truck,Scania,2026-10-29 21:09:11
+RicIngCamFrente,Ricardone,WPB419,26,1,16,ARG,Red,Bus,Unrecognized,2026-10-29 21:09:11
+RicIngCamTrasera,Ricardone,WNS277,46,1,13,BRA,Red,Unrecognized,Unrecognized,2026-10-29 21:09:30
+SLZBalIngTras,San Lorenzo,AF393VN,50,1,0,BRA,Gray,Small Truck,Unrecognized,2026-10-29 21:09:31
+SLZBalIngFte,San Lorenzo,AD863BG,66,1,0,BRA,Black,Sedan,Unrecognized,2026-10-29 21:09:34
+SLZBalIngFte,San Lorenzo,AD863BG,74,1,0,BRA,White,Pickup,Toyota,2026-10-29 21:09:42
+RicCal04,Ricardone,DTN089,74,1,0,PRY,White,Medium Truck,Renault,2026-10-29 21:09:45
+RicEgrCamTraser,Ricardone,AA166U,78,1,4,BRA,Blue,Medium Truck,Suzuki,2026-10-29 21:09:56
+SLZVolcableC5,San Lorenzo,JI537,70,1,0,BRA,Silver,Large Truck,Iveco,2026-10-29 21:10:01
+SLZIngCamFrente,San Lorenzo,SZG666,74,1,5,ARG,Yellow,Unrecognized,Unrecognized,2026-10-29 21:10:10
+SLZBalIngTras,San Lorenzo,GRV933,82,1,0,DXB,White,Sedan,Unrecognized,2026-10-29 21:10:25
+RicCal03,Ricardone,CF0079,34,1,0,BRA,White,Medium Truck,Renault,2026-10-29 21:11:10
+SLZBalIngFte,San Lorenzo,AA463TC,50,1,0,BRA,Black,Large Truck,Volvo,2026-10-29 21:11:31
+RicEgrCamFrente,Ricardone,AE941EB,70,1,6,ARG,White,Large Truck,Iveco,2026-10-29 21:11:47
+RicPreIngInFr,Ricardone,WPB415,50,1,2,PER,Red,Unrecognized,Unrecognized,2026-10-29 21:12:06
+RicEgrCamTraser,Ricardone,96531,74,1,1,BRA,Black,Unrecognized,Unrecognized,2026-10-29 21:12:15
+RicPreIngInTr,Ricardone,WNS277,38,1,2,URY,Black,Unrecognized,Unrecognized,2026-10-29 21:12:42
+RicCal04,Ricardone,BQP615,18,1,0,PRY,Red,Medium Truck,Ford,2026-10-29 21:12:45
+SLZBalIngTras,San Lorenzo,ENG699,54,1,0,BRA,White,Sedan,Unrecognized,2026-10-29 21:12:49
+SLZBalIngFte,San Lorenzo,ENG699,46,1,0,BRA,White,Medium Truck,Iveco,2026-10-29 21:13:01
+SLZBalIngTras,San Lorenzo,DR965,18,1,0,COL,White,Small Truck,Unrecognized,2026-10-29 21:13:04
+RicEgrCamFrente,Ricardone,LTK064,74,1,9,ARG,White,Medium Truck,Iveco,2026-10-29 21:13:05
+SLZBalIngFte,San Lorenzo,ENG699,78,1,0,BRA,White,Small Truck,Unrecognized,2026-10-29 21:13:08
+RicIngCamFrente,Ricardone,UUO981,30,1,2,BRA,White,Sedan,Unrecognized,2026-10-29 21:13:28
+SLZBalSC1Fte,San Lorenzo,ATTE4,16,1,0,CHL,White,Small Truck,Unrecognized,2026-10-29 21:13:30
+SLZIngCamTrasera,San Lorenzo,EMG070,46,1,6,COL,White,Unrecognized,Unrecognized,2026-10-29 21:13:31
+RicEgrCamTraser,Ricardone,D33,46,1,23,COL,Black,Unrecognized,Unrecognized,2026-10-29 21:13:31
+RicIngCamTrasera,Ricardone,WJV265,78,1,0,ARG,White,Unrecognized,Unrecognized,2026-10-29 21:13:43
+RicCal03,Ricardone,ETS185,62,1,0,URY,White,Medium Truck,Unrecognized,2026-10-29 21:13:46
+SLZBalIngTras,San Lorenzo,THS192,42,1,0,COL,Black,Small Truck,Unrecognized,2026-10-29 21:13:59
+SLZBalIngFte,San Lorenzo,THS192,74,1,0,BRA,White,Pickup,Unrecognized,2026-10-29 21:14:09
+SLZBalIngTras,San Lorenzo,QC2742,12,1,0,COL,Green,Small Truck,Unrecognized,2026-10-29 21:14:33
+SLZBalIngFte,San Lorenzo,THS192,74,1,0,BRA,White,Pickup,Chevrolet,2026-10-29 21:14:35
+SLZBalIngFte,San Lorenzo,THS192,78,1,0,COL,White,Pickup,GMC,2026-10-29 21:14:40
+RicCal04,Ricardone,SCAN4,18,1,0,BRA,White,Large Truck,Scania,2026-10-29 21:15:13
+SLZBalIngTras,San Lorenzo,EMG070,86,1,0,BRA,White,Sedan,Unrecognized,2026-10-29 21:15:19
+SLZBalIngFte,San Lorenzo,SZG666,82,1,0,BRA,White,Medium Truck,Mercedes-Benz,2026-10-29 21:15:21
+RicPreIngInFr,Ricardone,UUO981,46,1,2,BRA,White,Medium Truck,Unrecognized,2026-10-29 21:15:28
+SLZBalSC2Fte,San Lorenzo,PZT0,30,1,0,BRA,Black,Large Truck,Volvo,2026-10-29 21:15:44
+RicPreIngInTr,Ricardone,WJV265,14,1,7,ARG,White,Unrecognized,Unrecognized,2026-10-29 21:15:54
+RicCal03,Ricardone,ELZ15,54,1,0,BRA,Silver,Medium Truck,Mercedes-Benz,2026-10-29 21:16:51
+SLZTK400,San Lorenzo,SZG666,74,1,0,BRA,White,Large Truck,Unrecognized,2026-10-29 21:16:59
+SLZBalSC2Tras,San Lorenzo,M117,28,1,0,BRA,White,Large Truck,Unrecognized,2026-10-29 21:17:12
+SLZIngCamFrente,San Lorenzo,HLV862,86,1,5,ARG,White,Medium Truck,Iveco,2026-10-29 21:17:27
+RicEgrCamFrente,Ricardone,ROS380,62,1,25,ARG,Unrecognized,Medium Truck,Unrecognized,2026-10-29 21:17:48
+RicEgrCamTraser,Ricardone,DEY72,30,1,4,PER,Blue,Sedan,Unrecognized,2026-10-29 21:18:45
+SLZBalSC2Tras,San Lorenzo,CY759,14,1,0,BRA,White,Bus,Unrecognized,2026-10-29 21:19:08
+RicCal04,Ricardone,WPB41,46,1,0,DXB,Unrecognized,Medium Truck,Unrecognized,2026-10-29 21:19:25
+SLZVolcableC5,San Lorenzo,COTCQ11,38,1,0,BRA,White,Large Truck,Volvo,2026-10-29 21:19:41
+RicEgrCamFrente,Ricardone,DTN089,82,1,13,PRY,Unrecognized,Medium Truck,Renault,2026-10-29 21:19:47
+SLZSalidaC1Fte,San Lorenzo,AA463TC,54,1,0,CHL,White,Large Truck,Volvo,2026-10-29 21:19:52
+SLZSalidaC1Tras,San Lorenzo,FM111,42,1,0,BRA,Black,Sedan,Unrecognized,2026-10-29 21:20:11
+SLZSalidaC1Fte,San Lorenzo,IIVEC0,26,1,0,CHL,White,Large Truck,Iveco,2026-10-29 21:20:17
+RicEgrCamFrente,Ricardone,CKJ479,82,1,2,ARG,White,Medium Truck,Renault,2026-10-29 21:20:20
+RicEgrCamTraser,Ricardone,DIU549,34,1,20,PRY,Black,Unrecognized,Unrecognized,2026-10-29 21:20:23
+RicIngCamFrente,Ricardone,OIX585,42,1,2,ARG,Pink,Medium Truck,Volkswagen,2026-10-29 21:20:30
+SLZSalidaC1Tras,San Lorenzo,CIM752,34,1,0,BRA,White,Sedan,Unrecognized,2026-10-29 21:20:34
+SLZSalidaC1Fte,San Lorenzo,AG696QV,82,1,0,CHL,White,Pickup,Ford,2026-10-29 21:20:43
+RicIngCamTrasera,Ricardone,MLX638,42,1,37,CHL,Silver,Unrecognized,Unrecognized,2026-10-29 21:20:45
+RicEgrCamTraser,Ricardone,808,30,1,5,COL,Blue,Unrecognized,Unrecognized,2026-10-29 21:20:48
+RicB1Ingreso,Ricardone,R0S380,58,1,5,BRA,Black,Medium Truck,Unrecognized,2026-10-29 21:21:24
+SLZSalidaC1Tras,San Lorenzo,AG696QV,74,1,0,BRA,White,Pickup,Unrecognized,2026-10-29 21:21:46
+SLZIngCamFrente,San Lorenzo,AE941EB,86,1,5,BRA,White,Medium Truck,Iveco,2026-10-29 21:21:57
+SLZIngCamTrasera,San Lorenzo,TEAN0,14,1,0,DXB,Black,Unrecognized,Unrecognized,2026-10-29 21:21:58
+RicPreIngInFr,Ricardone,OIX585,82,1,1,ARG,Red,SUV,Volkswagen,2026-10-29 21:22:26
+SLZIngCamTrasera,San Lorenzo,AF034YR,62,1,2,PRY,Black,Medium Truck,Unrecognized,2026-10-29 21:22:33
+SLZIngCamFrente,San Lorenzo,LTK064,86,1,5,PER,White,Medium Truck,Iveco,2026-10-29 21:22:37
+RicCalLiq,Ricardone,UUO981,86,1,0,BRA,White,Medium Truck,Mercedes-Benz,2026-10-29 21:22:47
+SLZIngCamTrasera,San Lorenzo,AC428NJ,50,1,3,BRA,Black,Unrecognized,Unrecognized,2026-10-29 21:23:10
+SLZCalado,San Lorenzo,WGG348,82,1,0,ARG,Black,Sedan,Mitsubishi,2026-10-29 21:23:39
+SLZBalIngTras,San Lorenzo,AE41EB,30,1,0,BRA,White,Bus,Mercedes-Benz,2026-10-29 21:23:44
+RicIngCamFrente,Ricardone,RA989,42,1,2,DXB,White,Sedan,Unrecognized,2026-10-29 21:23:47
+SLZBalIngFte,San Lorenzo,AE941EB,82,1,0,BRA,Black,Sedan,Unrecognized,2026-10-29 21:23:55
+RicIngCamTrasera,Ricardone,TUN001,78,1,15,ARG,White,Unrecognized,Unrecognized,2026-10-29 21:23:58
+SLZBalIngTras,San Lorenzo,AF034YR,34,1,0,DXB,Gray,Sedan,Unrecognized,2026-10-29 21:24:05
+RenDescTras,San Lorenzo,AC399QI,22,1,1,BRA,Black,Unrecognized,Unrecognized,2026-10-29 21:24:08
+RicIngCamTrasera,Ricardone,UNX760,54,1,1,COL,White,Unrecognized,Unrecognized,2026-10-29 21:24:16
+SLZBalIngTras,San Lorenzo,AF034YR,30,1,0,BRA,Silver,Sedan,Unrecognized,2026-10-29 21:24:16
+RicEgrCamFrente,Ricardone,UUO981,82,1,10,PRY,White,Medium Truck,Mercedes-Benz,2026-10-29 21:24:28
+RicEgrCamTraser,Ricardone,WJV265,42,1,6,ARG,Blue,Sedan,Unrecognized,2026-10-29 21:24:59
+RicIngCamFrente,Ricardone,MWK216,46,1,2,ARG,Blue,Medium Truck,Mercedes-Benz,2026-10-29 21:25:00
+RicIngCamTrasera,Ricardone,CYU78,38,1,1,GUY,Blue,Unrecognized,Unrecognized,2026-10-29 21:25:11
+RenDescTras,San Lorenzo,SLT958,26,1,18,BRA,White,Unrecognized,Unrecognized,2026-10-29 21:25:21
+SLZBalIngTras,San Lorenzo,AC428NJ,74,1,0,BRA,White,Sedan,Unrecognized,2026-10-29 21:25:22
+RicEgrCamFrente,Ricardone,819,62,1,7,COL,Red,Medium Truck,Unrecognized,2026-10-29 21:25:28
+RicS6Playa3,Ricardone,RDS380,74,1,0,BRA,Gray,Bus,Unrecognized,2026-10-29 21:25:37
+RicCal03,Ricardone,7999,22,1,0,COL,White,Large Truck,Unrecognized,2026-10-29 21:26:13
+SLZCalado,San Lorenzo,SMPP11,58,1,0,COL,White,Large Truck,Mercedes-Benz,2026-10-29 21:26:38
+RicEgrCamFrente,Ricardone,367,22,1,0,URY,Blue,Medium Truck,Unrecognized,2026-10-29 21:27:22
+RicEgrCamTraser,Ricardone,LW1,50,1,32,BRA,White,Unrecognized,Unrecognized,2026-10-29 21:27:26
+SLZBalSC2Fte,San Lorenzo,JAI537,78,1,0,BRA,Silver,Medium Truck,Iveco,2026-10-29 21:27:31
+SLZVolcableC5,San Lorenzo,KQN188,86,1,0,ARG,White,Medium Truck,Iveco,2026-10-29 21:27:45
+RicB1Ingreso,Ricardone,UUO981,78,1,5,ARG,Black,Unrecognized,Unrecognized,2026-10-29 21:28:22
+RicPreIngInFr,Ricardone,OIX585,74,1,5,ARG,Black,Medium Truck,Tata Motors,2026-10-29 21:28:26
+SLZBalSC2Tras,San Lorenzo,GST054,54,1,0,BRA,White,Medium Truck,MG,2026-10-29 21:28:40
+RicPreIngInTr,Ricardone,L27,18,1,28,PRY,White,Unrecognized,Unrecognized,2026-10-29 21:28:41
+SLZCalado,San Lorenzo,GVN377,78,1,0,BRA,White,Large Truck,Iveco,2026-10-29 21:28:52
+SLZIngCamFrente,San Lorenzo,DIN089,14,1,5,BRA,Black,Medium Truck,Renault,2026-10-29 21:29:26
+SLZIngCamFrente,San Lorenzo,CXJ979,66,1,0,BRA,Black,Medium Truck,Renault,2026-10-29 21:30:03
+SLZIngCamTrasera,San Lorenzo,BM9,54,1,2,DXB,Black,Unrecognized,Unrecognized,2026-10-29 21:30:15
+SLZIngCamTrasera,San Lorenzo,CFZ17,46,1,3,PRY,Black,Unrecognized,Unrecognized,2026-10-29 21:30:47
+RicPreIngInFr,Ricardone,MWK218,74,1,1,ARG,White,Medium Truck,Unrecognized,2026-10-29 21:30:48
+SLZBalSC2Fte,San Lorenzo,4579,42,1,0,PRY,White,Large Truck,Volkswagen,2026-10-29 21:31:01
+SLZBalSC2Tras,San Lorenzo,AF859TU,78,1,0,BRA,Black,Medium Truck,Unrecognized,2026-10-29 21:32:13
+SLZBalIngTras,San Lorenzo,DTN089,22,1,0,COL,White,SUV,Fiat,2026-10-29 21:32:15
+SLZBalIngTras,San Lorenzo,DJ549,34,1,0,COL,Green,Sedan,Unrecognized,2026-10-29 21:32:27
+SLZBalIngTras,San Lorenzo,DJU549,78,1,0,BRA,Black,Sedan,Unrecognized,2026-10-29 21:32:44
+RicS6Playa3,Ricardone,UUD981,42,1,0,BRA,Black,Sedan,Unrecognized,2026-10-29 21:32:54
+RenDescFte,San Lorenzo,SLT958,74,1,5,ARG,White,Medium Truck,Dodge Caliber,2026-10-29 21:33:07
+SLZBalIngTras,San Lorenzo,CKJ479,34,1,0,BRA,Black,Sedan,Unrecognized,2026-10-29 21:33:23
+SLZBalIngTras,San Lorenzo,UOJ192,78,1,0,BRA,Black,Sedan,Unrecognized,2026-10-29 21:33:29
+SLZBalIngFte,San Lorenzo,W475,38,1,0,BRA,Gray,Medium Truck,Unrecognized,2026-10-29 21:33:30
+SLZSalidaC1Fte,San Lorenzo,AB058K0,74,1,0,BRA,White,Large Truck,Volkswagen,2026-10-29 21:33:49
+SLZSalidaC1Tras,San Lorenzo,AF859TU,66,1,0,BRA,Black,Small Truck,Suzuki,2026-10-29 21:34:22
+RicEgrCamFrente,Ricardone,DR440,58,1,62,BRA,Blue,Sedan,Unrecognized,2026-10-29 21:34:24
+SLZBalIngTras,San Lorenzo,WGG348,62,1,0,COL,Gray,Sedan,Unrecognized,2026-10-29 21:34:30
+SLZBalIngTras,San Lorenzo,OO1074,78,1,0,COL,Black,Sedan,Unrecognized,2026-10-29 21:34:36
+RicCalLiq,Ricardone,RAW481,86,1,0,BRA,Black,Large Truck,Unrecognized,2026-10-29 21:34:58
+SLZBalIngTras,San Lorenzo,BZH333,78,1,0,COL,White,Large Truck,Unrecognized,2026-10-29 21:35:44
+SLZBalIngFte,San Lorenzo,SNP1211,70,1,0,COL,White,Large Truck,Mercedes-Benz,2026-10-29 21:35:45
+SLZVolcableC5,San Lorenzo,DFJ087,66,1,0,URY,White,Medium Truck,Unrecognized,2026-10-29 21:35:57
+RenCargFte,San Lorenzo,WGG348,66,1,4,ARG,Black,Medium Truck,Unrecognized,2026-10-29 21:37:00
+SLZBalIngTras,San Lorenzo,AC399QI,74,1,0,BRA,White,Sedan,Unrecognized,2026-10-29 21:38:13
+SLZBalIngFte,San Lorenzo,OYW370,86,1,0,COL,White,Medium Truck,Iveco,2026-10-29 21:38:17
+SLZTK400,San Lorenzo,EF50,54,1,0,PRY,White,Large Truck,Mercedes-Benz,2026-10-29 21:38:39
+SLZIngCamFrente,San Lorenzo,FOJ11,50,1,0,BRA,Black,Unrecognized,Unrecognized,2026-10-29 21:40:12
+RicIngCamFrente,Ricardone,VJG112,30,1,2,BRA,Red,Unrecognized,Unrecognized,2026-10-29 21:40:29
+RicIngCamTrasera,Ricardone,0744,14,1,0,BRA,Silver,Unrecognized,Unrecognized,2026-10-29 21:40:38
+SLZIngCamFrente,San Lorenzo,ETS185,78,1,1,ARG,Black,Unrecognized,Unrecognized,2026-10-29 21:40:52
+SLZIngCamTrasera,San Lorenzo,OJSB,58,1,0,BRA,Black,Unrecognized,Unrecognized,2026-10-29 21:40:59
+SLZIngCamTrasera,San Lorenzo,PZZ7,30,1,2,BRA,Black,Medium Truck,Unrecognized,2026-10-29 21:41:19
+RicIngCamFrente,Ricardone,KWN990,54,1,12,ARG,Black,Bus,Scania,2026-10-29 21:42:19
+RicPreIngInFr,Ricardone,VJG112,66,1,3,ARG,Unrecognized,Unrecognized,Unrecognized,2026-10-29 21:42:22
+RicIngCamFrente,Ricardone,JYB336,78,1,1,CHL,Red,Medium Truck,Iveco,2026-10-29 21:42:43
+RicIngCamTrasera,Ricardone,PHO237,82,1,6,BRA,Red,Medium Truck,Unrecognized,2026-10-29 21:43:10
+SLZBalSC2Fte,San Lorenzo,GW370,82,1,0,BRA,White,Large Truck,Iveco,2026-10-29 21:43:16
+SLZSalidaC1Fte,San Lorenzo,JAI537,86,1,0,BRA,White,Large Truck,Iveco,2026-10-29 21:43:23
+RicPreIngInTr,Ricardone,CD9,70,1,11,DXB,Black,Unrecognized,Unrecognized,2026-10-29 21:43:24
+SLZSalidaC1Tras,San Lorenzo,GST054,42,1,0,BRA,White,Bus,Unrecognized,2026-10-29 21:43:52
+SLZBalIngTras,San Lorenzo,HLV86,34,1,0,COL,White,Sedan,Unrecognized,2026-10-29 21:44:07
+SLZBalIngFte,San Lorenzo,HLV862,78,1,0,ARG,Black,Medium Truck,Iveco,2026-10-29 21:44:19
+SLZBalIngTras,San Lorenzo,BFG545,30,1,0,BRA,White,Sedan,Unrecognized,2026-10-29 21:44:19
+SLZBalSC2Tras,San Lorenzo,AC399QI,86,1,0,BRA,Gray,Medium Truck,Toyota,2026-10-29 21:44:26
+RicEgrCamFrente,Ricardone,VRA989,82,1,9,COL,White,Medium Truck,Unrecognized,2026-10-29 21:44:42
+RicPreIngInFr,Ricardone,KWN994,34,1,5,COL,Black,Unrecognized,Unrecognized,2026-10-29 21:46:03
+RicEgrCamFrente,Ricardone,VIC12,30,1,10,PRY,Red,Medium Truck,Iveco,2026-10-29 21:46:29
+RicPreIngInTr,Ricardone,HERMANN,70,1,1,BRA,Black,Unrecognized,Unrecognized,2026-10-29 21:46:32
+RicPreIngInFr,Ricardone,JYB336,78,1,5,ARG,White,Pickup,Iveco,2026-10-29 21:46:55
+RicPreIngInTr,Ricardone,ERMAN,50,1,2,BRA,Black,Unrecognized,Unrecognized,2026-10-29 21:47:14
+SLZTK400,San Lorenzo,IK907,56,1,0,BRA,White,Sedan,Unrecognized,2026-10-29 21:47:15
+RicIngCamFrente,Ricardone,EUV766,22,1,2,ARG,Black,Sedan,Unrecognized,2026-10-29 21:47:52
+RicIngCamTrasera,Ricardone,GRK860,54,1,46,COL,Red,Unrecognized,Unrecognized,2026-10-29 21:48:03
+RicIngCamFrente,Ricardone,AH611NL,46,1,10,ARG,Black,Pickup,Scania,2026-10-29 21:48:09
+RicIngCamTrasera,Ricardone,AH776JN,34,1,1,BRA,Red,Unrecognized,Unrecognized,2026-10-29 21:48:21
+SLZTK400,San Lorenzo,Z1N07,22,1,0,URY,White,Large Truck,Unrecognized,2026-10-29 21:48:35
+RenDescTras,San Lorenzo,SZG927,46,1,5,BRA,Gray,Unrecognized,Unrecognized,2026-10-29 21:48:42
+SLZBalIngFte,San Lorenzo,ML75,42,1,0,COL,Black,Sedan,Unrecognized,2026-10-29 21:48:55
+SLZBalIngFte,San Lorenzo,BII2615,46,1,0,BRA,White,Medium Truck,Unrecognized,2026-10-29 21:49:00
+RicEgrCamTraser,Ricardone,AB272,58,1,75,PRY,Gray,Sedan,Chevrolet,2026-10-29 21:49:15
+SLZBalIngFte,San Lorenzo,BOP615,18,1,0,BRA,White,Medium Truck,Unrecognized,2026-10-29 21:49:18
+RenDescFte,San Lorenzo,IT228,66,1,3,COL,Silver,Medium Truck,Tianye,2026-10-29 21:49:35
+SLZSalidaC1Fte,San Lorenzo,GYN373,74,1,0,BRA,White,Large Truck,Iveco,2026-10-29 21:49:47
+RenDescTras,San Lorenzo,QAM22,26,1,0,BRA,Black,Unrecognized,Unrecognized,2026-10-29 21:49:48
+SLZBalIngTras,San Lorenzo,EWM056,50,1,0,COL,White,Sedan,Unrecognized,2026-10-29 21:49:51
+SLZSalidaC1Tras,San Lorenzo,AC399QI,90,1,0,BRA,Black,Large Truck,Toyota,2026-10-29 21:50:10
+RicPreIngInFr,Ricardone,EUV766,70,1,5,ARG,White,Medium Truck,Unrecognized,2026-10-29 21:50:19
+RicPreIngInTr,Ricardone,G70S58,50,1,7,BRA,Black,Unrecognized,Unrecognized,2026-10-29 21:50:29
+RicPreIngInFr,Ricardone,AH611NL,78,1,5,BRA,White,Unrecognized,Unrecognized,2026-10-29 21:51:03
+RicPreIngInTr,Ricardone,AH611NL,38,1,4,BRA,Black,Unrecognized,Unrecognized,2026-10-29 21:51:19
+RicEgrCamFrente,Ricardone,RAW481,70,1,20,PRY,Red,Sedan,Unrecognized,2026-10-29 21:51:57
+RicIngCamTrasera,Ricardone,EOR969,82,1,26,BRA,Red,Unrecognized,Unrecognized,2026-10-29 21:52:02
+RicEgrCamFrente,Ricardone,MWK218,62,1,10,URY,White,Medium Truck,Unrecognized,2026-10-29 21:52:17
+SLZCalado,San Lorenzo,SLT958,62,1,0,BRA,Silver,MPV,Unrecognized,2026-10-29 21:52:52
+SLZVolcableC5,San Lorenzo,KCD720,82,1,0,ARG,White,Large Truck,Unrecognized,2026-10-29 21:52:57
+RicEgrCamFrente,Ricardone,OTV704,54,1,8,ARG,Silver,Sedan,Renault,2026-10-29 21:53:09
+RicEgrCamTraser,Ricardone,OIY765,54,1,28,ARG,Blue,Unrecognized,Unrecognized,2026-10-29 21:53:31
+RicPreIngInFr,Ricardone,EDQ876,58,1,5,BRA,Blue,Sedan,Unrecognized,2026-10-29 21:54:03
+RicIngCamFrente,Ricardone,IXD983,26,1,2,ARG,White,Medium Truck,Mercedes-Benz,2026-10-29 21:54:11
+RicPreIngInTr,Ricardone,B47,30,1,0,BRA,Black,Unrecognized,Unrecognized,2026-10-29 21:54:16
+RicIngCamFrente,Ricardone,AF653C,54,1,7,PRY,White,Medium Truck,Scania,2026-10-29 21:54:28
+RicIngCamTrasera,Ricardone,AF428YT,50,1,5,BRA,Red,Unrecognized,Unrecognized,2026-10-29 21:54:31
+RicIngCamTrasera,Ricardone,AE832LF,66,1,8,BRA,Red,Unrecognized,Unrecognized,2026-10-29 21:54:56
+RicIngCamFrente,Ricardone,HNE318,62,1,11,COL,Red,Bus,Iveco,2026-10-29 21:54:57
+RicCalLiq,Ricardone,EUV766,78,1,0,ARG,White,Small Truck,Hyundai,2026-10-29 21:55:08
+RicIngCamTrasera,Ricardone,AF064AG,62,1,14,BRA,White,Unrecognized,Unrecognized,2026-10-29 21:55:10
+RicIngCamFrente,Ricardone,BJI730,34,1,1,BRA,White,Medium Truck,Unrecognized,2026-10-29 21:56:25
+RicIngCamTrasera,Ricardone,AE094PQ,46,1,18,BRA,Red,Unrecognized,Unrecognized,2026-10-29 21:56:42
+RicIngCamTrasera,Ricardone,VULCANO,66,1,11,BRA,White,Unrecognized,Unrecognized,2026-10-29 21:56:58
+RicPreIngInTr,Ricardone,BRL1S4,62,1,18,URY,White,Unrecognized,Unrecognized,2026-10-29 21:57:21
+RicPreIngInFr,Ricardone,AF653CK,70,1,5,BRA,White,Medium Truck,Unrecognized,2026-10-29 21:57:36
+RicPreIngInFr,Ricardone,HNE318,74,1,1,ARG,Red,Medium Truck,Unrecognized,2026-10-29 21:57:54
+RicPreIngInTr,Ricardone,AE832LF,18,1,2,BRA,Black,Unrecognized,Unrecognized,2026-10-29 21:57:54
+RicPreIngEgFr,Ricardone,AE832L,42,1,0,BRA,Black,Unrecognized,Unrecognized,2026-10-29 21:57:56
+RicPreIngInTr,Ricardone,AF064AG,70,1,41,BRA,White,Unrecognized,Unrecognized,2026-10-29 21:58:35
+RicPreIngInFr,Ricardone,HJU461,18,1,5,BRA,Blue,Medium Truck,Iveco,2026-10-29 21:59:12
+SLZBalIngTras,San Lorenzo,SVG99,50,1,0,DXB,White,Large Truck,Unrecognized,2026-10-29 21:59:14
+RicPreIngInTr,Ricardone,6810,14,1,0,GUY,White,Unrecognized,Unrecognized,2026-10-29 21:59:30
+RicPreIngInFr,Ricardone,BJJ730,78,1,1,BRA,White,Pickup,Unrecognized,2026-10-29 21:59:33
+RicPreIngInTr,Ricardone,OA1B4,46,1,47,BRA,Black,Unrecognized,Unrecognized,2026-10-29 22:00:17
+RicIngCamFrente,Ricardone,AH671BL,78,1,13,BRA,Silver,Pickup,Iveco,2026-10-29 22:00:49
+RicPreIngInFr,Ricardone,AE297UD,58,1,5,BRA,Black,Medium Truck,Unrecognized,2026-10-29 22:00:51
+RicPreIngInTr,Ricardone,9VU1CAN,46,1,22,BRA,Gray,Medium Truck,Unrecognized,2026-10-29 22:01:09
+RicIngCamTrasera,Ricardone,AH671BL,82,1,11,ARG,White,Unrecognized,Unrecognized,2026-10-29 22:02:17
+RenCargTras,San Lorenzo,OOI074,62,1,20,ARG,Blue,Unrecognized,Unrecognized,2026-10-29 22:02:20
+SLZBalSC2Fte,San Lorenzo,KCD720,86,1,0,ARG,White,Large Truck,Scania,2026-10-29 22:02:23
+SLZVolcableC1,San Lorenzo,KQN188,66,1,12,PRY,Blue,Medium Truck,Iveco,2026-10-29 22:02:42
+SLZBalSC2Tras,San Lorenzo,ISG718,86,1,0,ARG,White,Medium Truck,Unrecognized,2026-10-29 22:03:42
+RicIngCamFrente,Ricardone,FZS649,50,1,2,BRA,White,Sedan,Unrecognized,2026-10-29 22:03:46
+RicIngCamTrasera,Ricardone,AC092CG,74,1,26,PRY,White,Medium Truck,FAW,2026-10-29 22:03:57
+RicIngCamFrente,Ricardone,IBJ653,66,1,2,ARG,White,Medium Truck,Mercedes-Benz,2026-10-29 22:04:09
+RicIngCamTrasera,Ricardone,VULCAN0,34,1,0,BRA,Black,Sedan,Unrecognized,2026-10-29 22:04:17
+SLZVolcableC5,San Lorenzo,AD7200,74,1,0,URY,Black,Sedan,JMC,2026-10-29 22:04:21
+RenCargFte,San Lorenzo,SNP01,78,1,1,COL,Silver,Medium Truck,Mercedes-Benz,2026-10-29 22:04:27
+SLZSalidaC1Fte,San Lorenzo,KCD720,82,1,0,ARG,White,Large Truck,Unrecognized,2026-10-29 22:05:18
+RenCargTras,San Lorenzo,H333,30,1,5,BRA,White,Unrecognized,Unrecognized,2026-10-29 22:05:30
+SLZSalidaC1Tras,San Lorenzo,ISG718,70,1,0,ARG,White,Large Truck,Unrecognized,2026-10-29 22:05:44
+RicPreIngInFr,Ricardone,FZS649,78,1,5,ARG,Black,Large Truck,Volkswagen,2026-10-29 22:05:54
+RicPreIngInTr,Ricardone,BRLSA,54,1,21,CHL,Black,Unrecognized,Unrecognized,2026-10-29 22:06:13
+RicPreIngInFr,Ricardone,IBJ653,22,1,5,ARG,White,Medium Truck,Mercedes-Benz,2026-10-29 22:06:48
+RicPreIngInTr,Ricardone,VUICAN0,46,1,28,BRA,Black,Medium Truck,Unrecognized,2026-10-29 22:07:03
+RicEgrCamFrente,Ricardone,AN411L,74,1,4,BRA,White,Bus,Iveco,2026-10-29 22:07:23
+RicEgrCamFrente,Ricardone,AH671BL,74,1,5,ARG,White,Bus,Iveco,2026-10-29 22:08:46
+RicEgrCamTraser,Ricardone,IWGZ1BL,46,1,0,BRA,Black,Unrecognized,Unrecognized,2026-10-29 22:08:57
+SLZBalSC2Tras,San Lorenzo,SZG937,86,1,0,COL,Black,Medium Truck,MG,2026-10-29 22:09:46
+RicIngCamTrasera,Ricardone,NXT67,26,1,1,BRA,Silver,Unrecognized,Unrecognized,2026-10-29 22:09:58
+SLZBalSC2Fte,San Lorenzo,WGG348,78,1,0,BRA,Black,Van,Unrecognized,2026-10-29 22:10:09
+SLZSalidaC1Fte,San Lorenzo,SLT958,26,1,0,BRA,White,Medium Truck,Unrecognized,2026-10-29 22:11:17
+SLZBalSC2Tras,San Lorenzo,OOI874,34,1,0,BRA,White,Van,Unrecognized,2026-10-29 22:11:52
+SLZSalidaC1Tras,San Lorenzo,SZG987,74,1,0,BRA,White,Large Truck,Volkswagen,2026-10-29 22:12:46
+SLZSalidaC1Fte,San Lorenzo,WGG348,74,1,0,BRA,Black,Van,Unrecognized,2026-10-29 22:13:11
+SLZTK400,San Lorenzo,EMC070,32,1,0,BRA,White,Large Truck,Unrecognized,2026-10-29 22:13:21
+SLZSalidaC1Tras,San Lorenzo,OOI674,74,1,0,ARG,Black,Sedan,Unrecognized,2026-10-29 22:13:36
+SLZVolcableC5,San Lorenzo,JAXV,14,1,0,BRA,White,Medium Bus,Unrecognized,2026-10-29 22:13:46
+SLZIngCamFrente,San Lorenzo,EEW075,78,1,1,BRA,White,Medium Truck,Mercedes-Benz,2026-10-29 22:15:54
+RenDescTras,San Lorenzo,YI71,54,1,2,COL,Black,Unrecognized,Unrecognized,2026-10-29 22:15:56
+SLZIngCamTrasera,San Lorenzo,G69,34,1,5,GUY,Black,Bus,Unrecognized,2026-10-29 22:16:35
+RicIngCamFrente,Ricardone,MWK218,70,1,2,PRY,White,Sedan,Unrecognized,2026-10-29 22:16:47
+RicIngCamTrasera,Ricardone,CYU7,66,1,1,GUY,Blue,Unrecognized,Unrecognized,2026-10-29 22:16:57
+SLZBalIngFte,San Lorenzo,EEW075,82,1,0,BRA,White,Medium Truck,Mercedes-Benz,2026-10-29 22:17:52
+SLZBalSC2Fte,San Lorenzo,SZG666,86,1,0,BRA,White,Medium Truck,Suzuki,2026-10-29 22:18:34
+RicCalLiq,Ricardone,EDQ876,82,1,0,BRA,White,Medium Truck,Iveco,2026-10-29 22:19:19
+RicEgrCamFrente,Ricardone,EUV766,46,1,11,URY,Blue,Medium Truck,ISUZU,2026-10-29 22:19:35
+SLZBalSC2Tras,San Lorenzo,EMG070,82,1,0,BRA,Black,Large Truck,Unrecognized,2026-10-29 22:19:42
+SLZCalado,San Lorenzo,DQD926,70,1,0,BRA,White,Medium Truck,Hino,2026-10-29 22:19:57
+SLZBalSC2Fte,San Lorenzo,AD720BQ,90,1,0,BRA,White,Large Truck,Fiat,2026-10-29 22:20:03
+SLZVolcableC1,San Lorenzo,GV933,58,1,5,BRA,Blue,Medium Truck,Mercedes-Benz,2026-10-29 22:20:14
+RicEgrCamTraser,Ricardone,EFE,54,1,5,BRA,Black,Unrecognized,Unrecognized,2026-10-29 22:20:15
+RicCal04,Ricardone,OIX585,82,1,0,ARG,White,Large Truck,Volkswagen,2026-10-29 22:20:23
+RicEgrCamFrente,Ricardone,NHE440,78,1,7,COL,Silver,Medium Truck,Mercedes-Benz,2026-10-29 22:20:39
+SLZSalidaC1Fte,San Lorenzo,SZG666,66,1,0,BRA,White,Large Truck,Mercedes-Benz,2026-10-29 22:20:42
+SLZSalidaC1Fte,San Lorenzo,SZG666,74,1,0,PER,White,Bus,Unrecognized,2026-10-29 22:20:47
+SLZVolcableC4,San Lorenzo,EEW075,66,1,0,BRA,White,Large Truck,Mercedes-Benz,2026-10-29 22:20:51
+RicCal03,Ricardone,KWN994,82,1,0,ARG,White,Large Truck,Scania,2026-10-29 22:21:00
+SLZBalSC2Tras,San Lorenzo,AF226AQ,78,1,0,BRA,White,Small Truck,Chevrolet,2026-10-29 22:21:05
+SLZSalidaC1Tras,San Lorenzo,EMG070,26,1,0,BRA,Black,Large Truck,Unrecognized,2026-10-29 22:21:06
+RicEgrCamFrente,Ricardone,AA577DP,74,1,5,BRA,White,Large Truck,Unrecognized,2026-10-29 22:21:22
+RicEgrCamTraser,Ricardone,051,58,1,0,BRA,Black,Unrecognized,Unrecognized,2026-10-29 22:21:24
+RicEgrCamFrente,Ricardone,BGP773,54,1,6,COL,White,Medium Truck,Ford,2026-10-29 22:21:47
+RicEgrCamTraser,Ricardone,CA90,62,1,5,GUY,Black,Unrecognized,Unrecognized,2026-10-29 22:22:14
+RicEgrCamFrente,Ricardone,AA147MM,74,1,11,ARG,White,Medium Truck,Mercedes-Benz,2026-10-29 22:22:23
+RicCalLiq,Ricardone,RAW481,82,1,0,BRA,Gray,Large Truck,Unrecognized,2026-10-29 22:22:40
+SLZBalIngTras,San Lorenzo,ETR1,22,1,0,PRY,White,Small Truck,Unrecognized,2026-10-29 22:22:47
+SLZSalidaC1Fte,San Lorenzo,AD720BQ,90,1,0,BRA,White,Large Truck,Mercedes-Benz,2026-10-29 22:22:48
+RicEgrCamTraser,Ricardone,OAB0,22,1,9,BRA,Blue,Unrecognized,Unrecognized,2026-10-29 22:22:57
+SLZBalIngFte,San Lorenzo,DOD926,46,1,0,BRA,Silver,Medium Truck,Unrecognized,2026-10-29 22:22:57
+RicEgrCamFrente,Ricardone,AA539HA,62,1,6,URY,White,Medium Truck,Volkswagen,2026-10-29 22:22:58
+SLZVolcableC5,San Lorenzo,AD86JBB,78,1,0,BRA,White,Large Truck,Unrecognized,2026-10-29 22:23:07
+RicIngCamFrente,Ricardone,GD964,62,1,1,PRY,White,Medium Truck,Mercedes-Benz,2026-10-29 22:23:07
+RicEgrCamFrente,Ricardone,LBN850,78,1,5,ARG,Green,Medium Truck,Scania,2026-10-29 22:23:20
+SLZSalidaC1Tras,San Lorenzo,AF226AQ,74,1,0,BRA,Black,Large Truck,Mitsubishi,2026-10-29 22:23:22
+RicIngCamTrasera,Ricardone,DDQ585,82,1,13,ARG,Black,Unrecognized,Unrecognized,2026-10-29 22:23:28
+RicEgrCamTraser,Ricardone,O1VZ2,18,1,9,BRA,Black,Sedan,Unrecognized,2026-10-29 22:23:44
+RicEgrCamFrente,Ricardone,AG609UT,78,1,6,BRA,White,Medium Truck,Volkswagen,2026-10-29 22:23:44
+RicEgrCamTraser,Ricardone,AF457,22,1,7,BRA,Black,Medium Truck,Unrecognized,2026-10-29 22:24:08
+RicEgrCamFrente,Ricardone,UJA626,78,1,4,ARG,Blue,Medium Truck,Scania,2026-10-29 22:24:12
+RicEgrCamTraser,Ricardone,DZP771,26,1,2,BRA,Unrecognized,Unrecognized,Unrecognized,2026-10-29 22:24:40
+RicEgrCamFrente,Ricardone,AHZ453,14,1,4,PRY,White,Large Truck,Mercedes-Benz,2026-10-29 22:24:41
+SLZBalSC2Fte,San Lorenzo,DFJ467,54,1,0,ARG,White,Large Truck,Renault,2026-10-29 22:24:41
+RicCal03,Ricardone,IXD983,86,1,0,BRA,White,Large Truck,Mercedes-Benz,2026-10-29 22:24:47
+RicCalLiq,Ricardone,MWK218,86,1,0,COL,White,Medium Truck,Mercedes-Benz,2026-10-29 22:25:04
+RicEgrCamTraser,Ricardone,AC722VK,62,1,7,BRA,Red,Unrecognized,Unrecognized,2026-10-29 22:25:16
+RicEgrCamFrente,Ricardone,EDQ876,78,1,19,ARG,Blue,Medium Truck,Iveco,2026-10-29 22:25:18
+RicPreIngInFr,Ricardone,GVI964,46,1,1,BRA,White,Medium Truck,Unrecognized,2026-10-29 22:25:37
+RicEgrCamFrente,Ricardone,RAW481,54,1,18,ARG,Red,Medium Truck,Unrecognized,2026-10-29 22:26:00
+RicEgrCamTraser,Ricardone,OR969,30,1,46,BRA,Blue,Unrecognized,Unrecognized,2026-10-29 22:26:00
+RicS6Playa3,Ricardone,EUV766,86,1,0,ARG,White,Medium Truck,Unrecognized,2026-10-29 22:26:05
+RicCal04,Ricardone,JYB336,82,1,0,ARG,White,Medium Truck,Iveco,2026-10-29 22:26:22
+RicPreIngInTr,Ricardone,GVJ960,22,1,8,ARG,White,Unrecognized,Unrecognized,2026-10-29 22:26:23
+SLZBalSC2Fte,San Lorenzo,KQN188,62,1,0,ARG,White,Medium Truck,Iveco,2026-10-29 22:26:56
+RicEgrCamTraser,Ricardone,PZ772,22,1,0,ARG,Blue,Unrecognized,Unrecognized,2026-10-29 22:26:59
+SLZSalidaC1Fte,San Lorenzo,DFJ467,46,1,0,ARG,White,Large Truck,Volkswagen,2026-10-29 22:27:10
+SLZSalidaC1Tras,San Lorenzo,UD359,30,1,0,DXB,White,Large Truck,Unrecognized,2026-10-29 22:27:26
+RicEgrCamFrente,Ricardone,MWK218,82,1,23,COL,Unrecognized,Medium Truck,Mercedes-Benz,2026-10-29 22:28:14
+SLZBalSC2Fte,San Lorenzo,MDD526,62,1,0,BRA,Gray,Medium Truck,Mercedes-Benz,2026-10-29 22:28:16
+SLZSalidaC1Fte,San Lorenzo,KQN188,66,1,0,BOL,White,Medium Truck,Iveco,2026-10-29 22:28:50
+SLZSalidaC1Tras,San Lorenzo,KQN188,30,1,0,ARG,Black,Small Truck,Unrecognized,2026-10-29 22:29:27
+SLZBalSC2Tras,San Lorenzo,BAK418,12,1,0,COL,Black,Large Truck,Unrecognized,2026-10-29 22:29:35
+SLZBalSC2Fte,San Lorenzo,EEW075,74,1,0,BRA,White,Medium Truck,Mercedes-Benz,2026-10-29 22:29:43
+RicB1Ingreso,Ricardone,VUEL,18,1,5,CHL,Black,Unrecognized,Unrecognized,2026-10-29 22:30:16
+SLZBalSC2Tras,San Lorenzo,969,68,1,0,GUY,White,Large Truck,Buick,2026-10-29 22:30:33
+RicIngCamFrente,Ricardone,RYJ562,54,1,1,ARG,Red,Sedan,Unrecognized,2026-10-29 22:30:38
+RicIngCamTrasera,Ricardone,GUZ829,42,1,1,ARG,Black,Unrecognized,Unrecognized,2026-10-29 22:30:51
+RicCal03,Ricardone,HI401,30,1,0,URY,White,Medium Truck,Iveco,2026-10-29 22:31:20
+SLZSalidaC1Fte,San Lorenzo,EEW075,62,1,0,BRA,White,Large Truck,Mercedes-Benz,2026-10-29 22:31:21
+SLZSalidaC1Tras,San Lorenzo,HERVAVN1,22,1,0,BRA,Black,Small Truck,Unrecognized,2026-10-29 22:31:38
+SLZIngCamFrente,San Lorenzo,NHE440,78,1,1,COL,White,Medium Truck,Mercedes-Benz,2026-10-29 22:31:42
+RicCal03,Ricardone,HJU461,66,1,0,BRA,White,Large Truck,Iveco,2026-10-29 22:31:46
+RicIngCamFrente,Ricardone,TAC436,22,1,1,DXB,Black,Sedan,Unrecognized,2026-10-29 22:31:51
+RicCal03,Ricardone,HJU461,66,1,0,BRA,White,Large Truck,Iveco,2026-10-29 22:32:04
+RicIngCamTrasera,Ricardone,RDU872,50,1,19,BRA,Black,Bus,Unrecognized,2026-10-29 22:32:08
+SLZBalSC2Tras,San Lorenzo,JGB649,86,1,0,BRA,Black,Small Truck,Unrecognized,2026-10-29 22:32:15
+RicCal04,Ricardone,AF653CK,90,1,0,BRA,White,Large Truck,Scania,2026-10-29 22:32:59
+RicPreIngInFr,Ricardone,RYJ562,78,1,5,BRA,Black,Bus,Mercedes-Benz,2026-10-29 22:33:03
+RicPreIngInTr,Ricardone,RYJ562,14,1,7,CHL,Black,Unrecognized,Unrecognized,2026-10-29 22:33:18
+SLZIngCamFrente,San Lorenzo,AA5770P,66,1,5,BRA,White,Large Truck,Ford,2026-10-29 22:33:24
+SLZIngCamTrasera,San Lorenzo,OX80,50,1,3,PRY,Black,Bus,Kia,2026-10-29 22:33:26
+SLZIngCamFrente,San Lorenzo,BGP773,78,1,5,COL,Silver,Medium Truck,Ford,2026-10-29 22:34:07
+RicCal04,Ricardone,VI6S6,42,1,0,BRA,Silver,SUV,Iveco,2026-10-29 22:34:10
+SLZBalSC2Fte,San Lorenzo,AD863BG,82,1,0,BRA,White,Medium Bus,Unrecognized,2026-10-29 22:34:12
+RicPreIngInFr,Ricardone,TAC436,82,1,1,BRA,Black,Unrecognized,Unrecognized,2026-10-29 22:34:25
+RicCal03,Ricardone,BJJ730,82,1,0,BRA,White,Large Truck,Scania,2026-10-29 22:34:28
+RicCalLiq,Ricardone,RYJ562,62,1,0,BRA,Black,Pickup,Unrecognized,2026-10-29 22:34:38
+RicS6Playa3,Ricardone,DTD,36,1,0,BRA,Black,Sedan,Unrecognized,2026-10-29 22:34:41
+SLZIngCamFrente,San Lorenzo,AA147MM,86,1,5,URY,White,Bus,Mercedes-Benz,2026-10-29 22:34:41
+SLZIngCamTrasera,San Lorenzo,CBEHB,42,1,0,URY,Black,Unrecognized,Unrecognized,2026-10-29 22:34:46
+RicEgrCamFrente,Ricardone,IXD983,50,1,9,ARG,White,Medium Truck,Mercedes-Benz,2026-10-29 22:34:55
+RicPreIngInTr,Ricardone,RDU872,34,1,11,BRA,Black,Unrecognized,Unrecognized,2026-10-29 22:35:09
+RicB2Egreso,Ricardone,SBY377,78,1,1,ARG,Black,Medium Truck,Unrecognized,2026-10-29 22:35:14
+SLZBalSC2Tras,San Lorenzo,AF393VN,50,1,0,BRA,White,Large Truck,Unrecognized,2026-10-29 22:35:18
+RicEgrCamTraser,Ricardone,AF428VT,42,1,24,BRA,Red,Bus,Unrecognized,2026-10-29 22:35:23
+RicEgrCamFrente,Ricardone,OIX585,78,1,15,PRY,White,Medium Truck,Volkswagen,2026-10-29 22:35:25
+RicS6Playa3,Ricardone,MWK218,42,1,0,BRA,Gray,Large Truck,Mercedes-Benz,2026-10-29 22:35:28
+SLZIngCamFrente,San Lorenzo,AA539HA,82,1,5,ARG,Blue,Small Truck,Dongfeng,2026-10-29 22:35:42
+SLZIngCamTrasera,San Lorenzo,OMBU,58,1,5,BRA,Black,Medium Truck,Unrecognized,2026-10-29 22:35:45
+RicCal04,Ricardone,AE297UD,86,1,0,ARG,White,Large Truck,Scania,2026-10-29 22:35:55
+RicIngCamTrasera,Ricardone,EOR969,58,1,28,BRA,Red,Unrecognized,Unrecognized,2026-10-29 22:36:01
+RicEgrCamTraser,Ricardone,9B9,38,1,3,BRA,Black,Unrecognized,Unrecognized,2026-10-29 22:36:04
+RicIngCamFrente,Ricardone,IMX998,34,1,1,ARG,Blue,Unrecognized,Unrecognized,2026-10-29 22:36:13
+RicIngCamTrasera,Ricardone,UZS130,50,1,37,ARG,Blue,Unrecognized,Unrecognized,2026-10-29 22:36:27
+SLZIngCamFrente,San Lorenzo,LBN850,86,1,5,ARG,Blue,Unrecognized,Unrecognized,2026-10-29 22:36:31
+SLZBalIngTras,San Lorenzo,AJ57700,58,1,0,BRA,Black,Small Truck,Unrecognized,2026-10-29 22:36:39
+SLZIngCamTrasera,San Lorenzo,VUACAN0,50,1,1,BRA,Black,Unrecognized,Unrecognized,2026-10-29 22:36:43
+SLZBalIngFte,San Lorenzo,AA577BP,70,1,0,BRA,White,Bus,Unrecognized,2026-10-29 22:36:47
+SLZBalIngFte,San Lorenzo,AA577BP,46,1,0,BRA,White,Large Truck,Unrecognized,2026-10-29 22:36:53
+SLZBalIngFte,San Lorenzo,AA577BP,74,1,0,BRA,White,Sedan,Unrecognized,2026-10-29 22:36:59
+SLZSalidaC1Fte,San Lorenzo,CXS7,14,1,0,BRA,White,Medium Truck,Unrecognized,2026-10-29 22:37:04
+SLZBalIngFte,San Lorenzo,AA577BP,78,1,0,CHL,White,Sedan,Unrecognized,2026-10-29 22:37:05
+RicIngCamTrasera,Ricardone,ERM276,74,1,17,BRA,White,Unrecognized,Unrecognized,2026-10-29 22:37:06
+SLZBalIngFte,San Lorenzo,AA577DP,62,1,0,BRA,White,Sedan,Unrecognized,2026-10-29 22:37:15
+SLZVolcableC5,San Lorenzo,VEC0,30,1,0,URY,White,Pickup,Iveco,2026-10-29 22:37:22
+SLZBalIngFte,San Lorenzo,AA577DP,74,1,0,CHL,White,Small Truck,Unrecognized,2026-10-29 22:37:27
+SLZSalidaC1Tras,San Lorenzo,JGB649,54,1,0,ARG,White,Small Truck,Unrecognized,2026-10-29 22:37:27
+SLZBalIngFte,San Lorenzo,AA577PP,62,1,0,CHL,White,Sedan,Unrecognized,2026-10-29 22:37:34
+SLZBalIngFte,San Lorenzo,AA577DP,74,1,0,DXB,White,SUV,Unrecognized,2026-10-29 22:37:46
+SLZSalidaC1Fte,San Lorenzo,ROD926,46,1,0,BRA,White,Medium Truck,Mercedes-Benz,2026-10-29 22:37:49
+SLZBalIngFte,San Lorenzo,AA5779P,30,1,0,BRA,White,SUV,Unrecognized,2026-10-29 22:37:53
+SLZBalIngTras,San Lorenzo,AE991KT,74,1,0,BRA,Black,Bus,Unrecognized,2026-10-29 22:37:57
+SLZBalIngFte,San Lorenzo,AA577BP,86,1,0,BRA,White,SUV,Chevrolet,2026-10-29 22:38:00
+SLZBalIngFte,San Lorenzo,AA577VP,86,1,0,BRA,White,SUV,Toyota,2026-10-29 22:38:07
+RicEgrCamFrente,Ricardone,RYJ562,54,1,6,GUY,Black,Medium Truck,Mercedes-Benz,2026-10-29 22:38:08
+RicPreIngInFr,Ricardone,UWX938,66,1,2,ARG,Black,Unrecognized,Unrecognized,2026-10-29 22:38:11
+SLZBalIngTras,San Lorenzo,AE991KT,66,1,0,BRA,Black,Bus,Unrecognized,2026-10-29 22:38:12
+SLZSalidaC1Tras,San Lorenzo,BAK418,28,1,0,BRA,Silver,Sedan,Unrecognized,2026-10-29 22:38:15
+RicCal03,Ricardone,FZS649,82,1,0,ARG,Gray,Large Truck,Volkswagen,2026-10-29 22:38:23
+SLZBalIngTras,San Lorenzo,AE991KT,54,1,0,BRA,Black,Bus,Nissan,2026-10-29 22:38:27
+SLZIngCamFrente,San Lorenzo,AG609UT,86,1,5,BRA,Blue,Medium Truck,Unrecognized,2026-10-29 22:38:37
+RicPreIngInTr,Ricardone,UNX98,46,1,8,COL,Black,Unrecognized,Unrecognized,2026-10-29 22:38:39
+RicEgrCamFrente,Ricardone,AF653CK,82,1,5,ARG,Blue,Medium Truck,Scania,2026-10-29 22:38:42
+RicCal03,Ricardone,FZS649,66,1,0,ARG,Gray,Large Truck,Volkswagen,2026-10-29 22:38:54
+RicCal03,Ricardone,FZS649,78,1,0,BRA,Gray,Large Truck,Volkswagen,2026-10-29 22:39:00
+SLZBalIngTras,San Lorenzo,BGP2773,34,1,0,BRA,Gray,Large Truck,Unrecognized,2026-10-29 22:39:08
+RicEgrCamTraser,Ricardone,AE832LF,70,1,7,BRA,Red,Unrecognized,Unrecognized,2026-10-29 22:39:13
+SLZIngCamFrente,San Lorenzo,UJA626,58,1,1,PRY,White,Sedan,Unrecognized,2026-10-29 22:39:15
+SLZIngCamTrasera,San Lorenzo,AF457,38,1,2,BRA,Black,Unrecognized,Unrecognized,2026-10-29 22:39:15
+SLZBalIngFte,San Lorenzo,BGP773,82,1,0,ARG,Black,Large Truck,Mazda,2026-10-29 22:39:17
+SLZBalIngTras,San Lorenzo,EH8,32,1,0,BRA,White,Small Truck,Unrecognized,2026-10-29 22:39:18
+RicIngCamFrente,Ricardone,SBY377,54,1,1,COL,White,Sedan,Unrecognized,2026-10-29 22:39:25
+SLZBalIngFte,San Lorenzo,BGP773,78,1,0,BRA,White,Van,Mercedes-Benz,2026-10-29 22:39:26
+RicEgrCamFrente,Ricardone,KWN994,74,1,3,ARG,Blue,Large Truck,Scania,2026-10-29 22:39:29
+SLZSalidaC1Fte,San Lorenzo,AD863BG,78,1,0,BRA,White,Medium Truck,Hino,2026-10-29 22:39:36
+SLZBalIngFte,San Lorenzo,BGPP773,78,1,0,BRA,White,Small Truck,Mitsubishi,2026-10-29 22:39:37
+RicPreIngInFr,Ricardone,RRE349,78,1,1,ARG,Black,Unrecognized,Unrecognized,2026-10-29 22:39:37
+RicIngCamTrasera,Ricardone,T93,46,1,2,BRA,White,Unrecognized,Unrecognized,2026-10-29 22:39:39
+RicCal04,Ricardone,IBJ653,74,1,0,ARG,White,Large Truck,Mercedes-Benz,2026-10-29 22:39:41
+RicCalLiq,Ricardone,E0Q876,70,1,0,COL,Black,SUV,Unrecognized,2026-10-29 22:39:41
+RicCal04,Ricardone,IBJ653,46,1,0,ARG,White,Large Truck,Mercedes-Benz,2026-10-29 22:39:52
+RicEgrCamFrente,Ricardone,JYB336,86,1,6,ARG,White,Medium Truck,Iveco,2026-10-29 22:39:56
+RicIngCamFrente,Ricardone,EEW075,42,1,2,BRA,White,Sedan,Unrecognized,2026-10-29 22:39:56
+SLZSalidaC1Tras,San Lorenzo,AF393VN,46,1,0,BRA,White,SUV,Unrecognized,2026-10-29 22:40:00
+RicEgrCamTraser,Ricardone,AD361DC,42,1,6,BRA,Black,Unrecognized,Unrecognized,2026-10-29 22:40:03
+SLZIngCamFrente,San Lorenzo,F7Z03,82,1,5,COL,White,Medium Truck,Mercedes-Benz,2026-10-29 22:40:05
+RicPreIngInTr,Ricardone,ERM276,42,1,5,BRA,Black,Medium Truck,Unrecognized,2026-10-29 22:40:10
+SLZIngCamTrasera,San Lorenzo,DZP771,42,1,2,BRA,Black,Unrecognized,Unrecognized,2026-10-29 22:40:13
+RicCal04,Ricardone,IBJ653,82,1,0,ARG,White,Large Truck,Mercedes-Benz,2026-10-29 22:40:25
+RicEgrCamTraser,Ricardone,P237,78,1,9,BRA,Red,Medium Truck,Mitsubishi,2026-10-29 22:40:25
+RicCal04,Ricardone,IBJ653,86,1,0,ARG,White,Medium Truck,Mercedes-Benz,2026-10-29 22:40:32
+RicCal04,Ricardone,IBJ653,90,1,0,ARG,White,Large Truck,Mercedes-Benz,2026-10-29 22:40:40
+SLZIngCamTrasera,San Lorenzo,AC722VK,54,1,3,BRA,Black,Unrecognized,Unrecognized,2026-10-29 22:40:55
+RicPreIngInFr,Ricardone,EEW075,50,1,2,BRA,Gray,Medium Truck,Hino,2026-10-29 22:41:23
+RicCal03,Ricardone,DE030,20,1,0,BRA,Gray,Medium Truck,Volvo,2026-10-29 22:41:25
+RicEgrCamFrente,Ricardone,AE297UD,38,1,22,URY,Black,Medium Truck,Scania,2026-10-29 22:41:25
+RicPreIngInTr,Ricardone,8080,14,1,0,COL,Black,Unrecognized,Unrecognized,2026-10-29 22:41:46
+SLZBalSC2Tras,San Lorenzo,DXO326,34,1,0,BRA,Black,Medium Truck,Unrecognized,2026-10-29 22:41:48
+RicCalLiq,Ricardone,RRE349,90,1,0,ARG,Gray,Small Truck,Unrecognized,2026-10-29 22:42:08
+RicEgrCamFrente,Ricardone,EDQ876,82,1,10,PRY,White,Medium Truck,Iveco,2026-10-29 22:42:34
+RicEgrCamTraser,Ricardone,OR969,30,1,71,BRA,Black,Unrecognized,Unrecognized,2026-10-29 22:42:56
+SLZSalidaC1Fte,San Lorenzo,GRV933,34,1,0,PRY,White,Medium Truck,Unrecognized,2026-10-29 22:43:10
+SLZIngCamFrente,San Lorenzo,IXD983,82,1,5,COL,White,Bus,Mercedes-Benz,2026-10-29 22:43:10
+RicCal04,Ricardone,AH611NL,78,1,0,ARG,Blue,Large Truck,Scania,2026-10-29 22:43:46
+SLZSalidaC1Tras,San Lorenzo,D326,58,1,0,BRA,Black,Pickup,Unrecognized,2026-10-29 22:43:50
+SLZIngCamFrente,San Lorenzo,OIX585,86,1,1,ARG,Blue,Medium Truck,Volkswagen,2026-10-29 22:44:06
+SLZIngCamTrasera,San Lorenzo,839,34,1,4,COL,Black,Unrecognized,Unrecognized,2026-10-29 22:44:13
+RicIngCamFrente,Ricardone,VJG112,22,1,1,ARG,Red,Sedan,Unrecognized,2026-10-29 22:44:32
+RicEgrCamFrente,Ricardone,BJJ730,66,1,9,ARG,Blue,Medium Truck,Scania,2026-10-29 22:44:35
+RicIngCamTrasera,Ricardone,DIB9,22,1,0,BRA,Black,Unrecognized,Unrecognized,2026-10-29 22:44:48
+RicEgrCamTraser,Ricardone,AE094PQ,50,1,9,BRA,Red,Unrecognized,Unrecognized,2026-10-29 22:45:05
+RicIngCamFrente,Ricardone,BWV144,62,1,1,ARG,Blue,Van,Porsche,2026-10-29 22:45:56
+RicPreIngInFr,Ricardone,BVS300,82,1,1,BRA,Gray,Unrecognized,Unrecognized,2026-10-29 22:46:04
+RicIngCamTrasera,Ricardone,MKG,38,1,1,BRA,White,Unrecognized,Unrecognized,2026-10-29 22:46:09
+RicCal03,Ricardone,SBY377,78,1,0,BRA,White,Large Truck,Unrecognized,2026-10-29 22:46:18
+RicCalLiq,Ricardone,EEW075,86,1,0,BRA,Silver,Medium Truck,Mercedes-Benz,2026-10-29 22:46:18
+RicS6Playa3,Ricardone,PY562,18,1,0,URY,Black,Small Truck,Unrecognized,2026-10-29 22:46:18
+RicPreIngInFr,Ricardone,BVS300,54,1,5,BRA,White,Unrecognized,Unrecognized,2026-10-29 22:46:19
+RicPreIngInTr,Ricardone,MANA,62,1,21,BRA,Black,Medium Truck,Unrecognized,2026-10-29 22:46:33
+RicEgrCamFrente,Ricardone,RRE349,62,1,15,ARG,Red,Bus,Toyota,2026-10-29 22:46:54
+RicCal03,Ricardone,SBY377,66,1,0,BRA,White,Medium Truck,Unrecognized,2026-10-29 22:47:07
+RicEgrCamTraser,Ricardone,JC355,30,1,0,DXB,Blue,Unrecognized,Unrecognized,2026-10-29 22:47:18
+RicPreIngInFr,Ricardone,BWV144,54,1,1,ARG,Blue,Unrecognized,Unrecognized,2026-10-29 22:47:32
+RicCal03,Ricardone,SBY377,82,1,0,BRA,White,Medium Truck,Unrecognized,2026-10-29 22:47:47
+RicCal04,Ricardone,AH611NI,34,1,0,BRA,Silver,Bus,Unrecognized,2026-10-29 22:47:48
+SLZIngCamFrente,San Lorenzo,AF653CK,86,1,7,BRA,Silver,Bus,Scania,2026-10-29 22:47:49
+RicCal03,Ricardone,SBY377,78,1,0,BRA,White,Medium Truck,Unrecognized,2026-10-29 22:47:52
+RicPreIngInTr,Ricardone,277,22,1,11,PER,Black,Medium Truck,Fiat,2026-10-29 22:47:55
+SLZBalSC2Fte,San Lorenzo,N58,18,1,0,DXB,White,Large Truck,Iveco,2026-10-29 22:48:11
+SLZIngCamTrasera,San Lorenzo,AE832LF,70,1,5,BRA,Black,Unrecognized,Unrecognized,2026-10-29 22:48:53
+SLZBalSC2Tras,San Lorenzo,BRS4,34,1,0,BRA,White,Small Truck,Mitsubishi,2026-10-29 22:48:57
+RicB1Ingreso,Ricardone,RRE349,74,1,5,BRA,Black,Medium Truck,Unrecognized,2026-10-29 22:49:30
+RicEgrCamFrente,Ricardone,HJU461,86,1,20,BRA,Silver,Medium Truck,Iveco,2026-10-29 22:49:30
+SLZIngCamFrente,San Lorenzo,KWN994,70,1,10,COL,Blue,Bus,Unrecognized,2026-10-29 22:49:56
+RicEgrCamTraser,Ricardone,U554,30,1,55,BRA,Blue,Unrecognized,Unrecognized,2026-10-29 22:50:01
+RicEgrCamFrente,Ricardone,FZS649,78,1,10,ARG,White,Large Truck,Volkswagen,2026-10-29 22:50:11
+SLZSalidaC1Fte,San Lorenzo,ENG699,12,1,0,BRA,White,Medium Truck,Iveco,2026-10-29 22:50:28
+RicEgrCamFrente,Ricardone,IBJ653,78,1,0,ARG,White,Large Truck,Mercedes-Benz,2026-10-29 22:50:37
+SLZIngCamFrente,San Lorenzo,JYB336,86,1,5,ARG,White,Medium Truck,Iveco,2026-10-29 22:50:42
+RicEgrCamTraser,Ricardone,AC092CG,14,1,2,PRY,Red,Unrecognized,Unrecognized,2026-10-29 22:50:42
+SLZIngCamTrasera,San Lorenzo,ERMAN,74,1,5,BRA,Black,Unrecognized,Unrecognized,2026-10-29 22:50:47
+RicS6Playa3,Ricardone,IUF6001,74,1,0,CHL,White,Medium Truck,Unrecognized,2026-10-29 22:50:49
+SLZSalidaC1Tras,San Lorenzo,BRUS4,42,1,0,BRA,Black,Small Truck,Unrecognized,2026-10-29 22:50:57
+RicEgrCamFrente,Ricardone,P245,78,1,16,COL,White,Small Truck,Mercedes-Benz,2026-10-29 22:51:01
+SLZIngCamFrente,San Lorenzo,AE297UD,82,1,10,BRA,White,Bus,Scania,2026-10-29 22:51:17
+SLZIngCamTrasera,San Lorenzo,3BMAM,66,1,5,BRA,Black,Unrecognized,Unrecognized,2026-10-29 22:51:24
+RicEgrCamTraser,Ricardone,55N7,42,1,0,GUY,Black,MPV,Audi,2026-10-29 22:51:30
+SLZBalSC2Fte,San Lorenzo,CHP117,30,1,0,BRA,White,Van,Mustang,2026-10-29 22:51:39
+SLZIngCamTrasera,San Lorenzo,VU1CAM,66,1,8,BRA,Black,Unrecognized,Unrecognized,2026-10-29 22:52:18
+SLZBalSC2Tras,San Lorenzo,BZH333,66,1,0,BRA,Gray,Large Truck,Unrecognized,2026-10-29 22:52:45
+RicS6Playa3,Ricardone,BMZ39,58,1,0,URY,Black,SUV,Unrecognized,2026-10-29 22:53:32
+RicS6Playa3,Ricardone,RRE349,0,1,0,BRA,Black,Medium Truck,Unrecognized,2026-10-29 22:53:34
+SLZIngCamFrente,San Lorenzo,BJJ730,78,1,12,PRY,Silver,Medium Truck,Scania,2026-10-29 22:53:52
+SLZVolcableC5,San Lorenzo,AE941EB,66,1,0,URY,Black,Medium Truck,Unrecognized,2026-10-29 22:54:49
+SLZIngCamTrasera,San Lorenzo,AE094PQ,54,1,3,BRA,Black,Unrecognized,Unrecognized,2026-10-29 22:55:02
+RicIngCamTrasera,Ricardone,RHP214,74,1,19,BRA,White,Unrecognized,Unrecognized,2026-10-29 22:56:26
+RicPreIngInFr,Ricardone,LQV071,38,1,1,ARG,White,Bus,Unrecognized,2026-10-29 22:57:40
+RicPreIngInFr,Ricardone,TT00,38,1,5,CHL,White,Bus,Toyota,2026-10-29 22:57:58
+RicPreIngInFr,Ricardone,000,42,1,5,CHL,White,Medium Truck,Unrecognized,2026-10-29 22:58:10
+RicPreIngInTr,Ricardone,LDV071,26,1,2,PRY,Black,Unrecognized,Unrecognized,2026-10-29 22:58:24
+SLZBalSC2Fte,San Lorenzo,CL9E,70,1,0,CHL,White,Medium Truck,Unrecognized,2026-10-29 22:58:31
+RicIngCamFrente,Ricardone,TOE184,46,1,1,ARG,Blue,Sedan,Unrecognized,2026-10-29 22:59:03
+RicEgrCamFrente,Ricardone,WPB419,62,1,7,COL,Red,Medium Truck,Unrecognized,2026-10-29 22:59:06
+RicIngCamTrasera,Ricardone,TWH091,66,1,2,BRA,Blue,Unrecognized,Unrecognized,2026-10-29 22:59:11
+RicIngCamFrente,Ricardone,PS3P,14,1,0,GUY,Green,Sedan,Unrecognized,2026-10-29 22:59:22
+RicIngCamTrasera,Ricardone,CNK29,66,1,1,GUY,Blue,Unrecognized,Unrecognized,2026-10-29 22:59:27
+SLZIngCamFrente,San Lorenzo,HJU461,86,1,5,COL,Gray,Medium Truck,Iveco,2026-10-29 22:59:33
+SLZBalSC2Tras,San Lorenzo,UGE742,14,1,0,BRA,Black,Small Truck,Mercedes-Benz,2026-10-29 22:59:44
+RicIngCamFrente,Ricardone,RQN829,74,1,6,ARG,Blue,Medium Truck,Unrecognized,2026-10-29 22:59:51
+RicEgrCamTraser,Ricardone,G69,54,1,0,BRA,Black,Unrecognized,Unrecognized,2026-10-29 23:00:01
+RicIngCamTrasera,Ricardone,AE361LR,50,1,10,BRA,Red,Unrecognized,Unrecognized,2026-10-29 23:00:06
+RicIngCamFrente,Ricardone,EV899,70,1,2,PRY,White,Medium Truck,Ford,2026-10-29 23:00:13
+RicIngCamTrasera,Ricardone,LFT,78,1,27,BRA,Yellow,Unrecognized,Unrecognized,2026-10-29 23:00:29
+SLZIngCamFrente,San Lorenzo,FZS649,86,1,5,PER,Brown,Medium Truck,Volkswagen,2026-10-29 23:00:35
+SLZIngCamTrasera,San Lorenzo,T16,26,1,0,BRA,White,Unrecognized,Unrecognized,2026-10-29 23:00:37
+SLZSalidaC2Tras,San Lorenzo,OCB815,86,1,0,ARG,White,SUV,Unrecognized,2026-10-29 23:00:42
+SLZSalidaC1Fte,San Lorenzo,THS192,78,1,0,DXB,White,Medium Truck,Unrecognized,2026-10-29 23:00:48
+SLZSalidaC2Fte,San Lorenzo,OCB815,78,1,0,BRA,Black,SUV,Chevrolet,2026-10-29 23:00:52
+RicCal04,Ricardone,TOE184,86,1,0,ARG,Blue,Medium Truck,Unrecognized,2026-10-29 23:00:54
+SLZIngCamFrente,San Lorenzo,IBJ653,82,1,5,ARG,White,Medium Truck,Mercedes-Benz,2026-10-29 23:01:11
+RicCal03,Ricardone,SC550,30,1,0,CHL,Black,Medium Truck,Nissan,2026-10-29 23:01:15
+SLZSalidaC1Tras,San Lorenzo,CQG742,70,1,0,COL,White,Sedan,Unrecognized,2026-10-29 23:01:16
+SLZIngCamFrente,San Lorenzo,O965,66,1,5,COL,White,Bus,Mercedes-Benz,2026-10-29 23:02:01
+RicPreIngInFr,Ricardone,RQN829,82,1,1,BRA,Gray,Medium Truck,Chevrolet,2026-10-29 23:02:14
+SLZIngCamTrasera,San Lorenzo,OODD58,42,1,6,BRA,Black,Unrecognized,Unrecognized,2026-10-29 23:02:45
+RicCalLiq,Ricardone,VJG112,82,1,0,BRA,Gray,Medium Truck,Unrecognized,2026-10-29 23:02:55
+RicPreIngInTr,Ricardone,BONANO,38,1,2,BRA,Black,Unrecognized,Unrecognized,2026-10-29 23:02:57
+RicEgrCamFrente,Ricardone,EEW075,54,1,13,COL,White,Medium Truck,Suzuki,2026-10-29 23:03:14
+RicPreIngInFr,Ricardone,EIV890,62,1,5,BRA,White,Pickup,Ford,2026-10-29 23:03:30
+RicEgrCamTraser,Ricardone,SC6,54,1,0,BRA,Black,Unrecognized,Unrecognized,2026-10-29 23:03:37
+RicPreIngInTr,Ricardone,PJI141,30,1,1,BRA,Black,Unrecognized,Unrecognized,2026-10-29 23:03:50
+SLZBalSC2Fte,San Lorenzo,AE941EB,66,1,0,BRA,White,Large Truck,Iveco,2026-10-29 23:04:35
+SLZSalidaC1Fte,San Lorenzo,C211,54,1,0,COL,White,Medium Truck,Mercedes-Benz,2026-10-29 23:05:16
+RicCalLiq,Ricardone,BVS300,86,1,0,BRA,White,Bus,Unrecognized,2026-10-29 23:05:35
+RicB1Ingreso,Ricardone,EEW075,58,1,5,BRA,White,Medium Truck,Mercedes-Benz,2026-10-29 23:05:35
+SLZBalSC2Tras,San Lorenzo,F34W,78,1,0,BRA,White,Small Truck,Unrecognized,2026-10-29 23:05:35
+RicB1Egreso,Ricardone,EHTTN,22,1,0,BRA,White,Unrecognized,Unrecognized,2026-10-29 23:05:46
+SLZSalidaC1Tras,San Lorenzo,BZH333,82,1,0,BRA,Black,Large Truck,Unrecognized,2026-10-29 23:05:47
+SLZSalidaC1Fte,San Lorenzo,AE941EB,54,1,0,CHL,White,Large Truck,Iveco,2026-10-29 23:06:38
+SLZSalidaC1Tras,San Lorenzo,AF034YR,66,1,0,BRA,White,Small Truck,Jeep,2026-10-29 23:06:54
+RicEgrCamFrente,Ricardone,VJC712,66,1,5,PRY,Red,Medium Truck,Chrysler,2026-10-29 23:06:57
+SLZSalidaC1Fte,San Lorenzo,OCB815,78,1,0,BRA,White,Sedan,Chevrolet,2026-10-29 23:07:00
+SLZSalidaC1Tras,San Lorenzo,OCB815,54,1,0,BRA,White,Medium Truck,Chevrolet,2026-10-29 23:07:33
+RicCalLiq,Ricardone,BWV144,90,1,0,ARG,Gray,Medium Truck,Unrecognized,2026-10-29 23:07:56
+RicB2Egreso,Ricardone,4B13,22,1,0,URY,Black,Medium Truck,Porsche,2026-10-29 23:08:21
+RicS6Playa3,Ricardone,EEW075,62,1,0,BRA,White,Large Truck,Chevrolet,2026-10-29 23:08:38
+RicEgrCamFrente,Ricardone,BVS300,66,1,8,BRA,White,Medium Truck,Mercedes-Benz,2026-10-29 23:08:48
+RicEgrCamTraser,Ricardone,2ER,34,1,0,BRA,Blue,Unrecognized,Unrecognized,2026-10-29 23:09:09
+SLZVolcableC5,San Lorenzo,LTK070,18,1,0,COL,Gray,Medium Truck,Unrecognized,2026-10-29 23:09:15
+RicS6Playa3,Ricardone,0QRP,62,1,0,BRA,Black,Sedan,Tesla,2026-10-29 23:09:47
+RicEgrCamFrente,Ricardone,BWV144,50,1,35,DXB,Blue,Medium Truck,Unrecognized,2026-10-29 23:09:51
+RicB2Egreso,Ricardone,CRJ139,74,1,4,COL,Black,Medium Truck,Unrecognized,2026-10-29 23:10:58
+RicEgrCamFrente,Ricardone,SBY377,42,1,7,PRY,White,Medium Truck,ISUZU,2026-10-29 23:10:59
+RicEgrCamFrente,Ricardone,174,74,1,10,ARG,Blue,Large Truck,Unrecognized,2026-10-29 23:11:46
+RicIngCamFrente,Ricardone,SM399,26,1,15,PRY,White,Medium Truck,Mercedes-Benz,2026-10-29 23:11:52
+RicIngCamTrasera,Ricardone,EYR879,54,1,28,BRA,Red,Unrecognized,Unrecognized,2026-10-29 23:12:05
+RicEgrCamFrente,Ricardone,STF654,82,1,9,DXB,Red,Pickup,Mercedes-Benz,2026-10-29 23:12:20
+SLZBalSC2Fte,San Lorenzo,AA5779P,66,1,0,CHL,White,Large Truck,Unrecognized,2026-10-29 23:13:01
+SLZBalSC2Tras,San Lorenzo,AE991KT,74,1,0,BRA,White,Small Truck,Nissan,2026-10-29 23:13:56
+SLZVolcableC5,San Lorenzo,GCP,22,1,0,DXB,White,Small Truck,Chevrolet,2026-10-29 23:13:57
+RicCal03,Ricardone,S99,42,1,0,COL,Silver,Large Truck,Nissan,2026-10-29 23:14:00
+SLZBalSC2Fte,San Lorenzo,LTK064,86,1,0,BRA,Gray,Large Truck,Iveco,2026-10-29 23:14:14
+SLZBalSC2Tras,San Lorenzo,AC428NJ,74,1,0,BRA,White,Large Truck,Volkswagen,2026-10-29 23:15:05
+SLZSalidaC1Fte,San Lorenzo,AA577DP,78,1,0,CHL,White,Large Truck,Ford,2026-10-29 23:15:09
+SLZSalidaC1Tras,San Lorenzo,AE991KT,86,1,0,BRA,White,SUV,Unrecognized,2026-10-29 23:15:33
+SLZSalidaC2Tras,San Lorenzo,OE911IT,42,1,0,BRA,White,Bus,Unrecognized,2026-10-29 23:15:37
+SLZSalidaC1Fte,San Lorenzo,LTK064,86,1,0,DXB,White,Large Truck,Iveco,2026-10-29 23:15:56
+SLZSalidaC1Tras,San Lorenzo,AC428NJ,74,1,0,BRA,White,Sedan,Nissan,2026-10-29 23:16:13
+RicCalLiq,Ricardone,TAC436,86,1,0,ARG,Black,Sedan,Unrecognized,2026-10-29 23:16:59
+RicIngCamTrasera,Ricardone,MOM654,86,1,70,ARG,White,Unrecognized,Unrecognized,2026-10-29 23:17:24
+RicS6Playa3,Ricardone,BVG200,74,1,0,PRY,White,Medium Truck,Unrecognized,2026-10-29 23:18:26
+RicB1Ingreso,Ricardone,OCB815,74,1,16,ARG,White,Sedan,Chevrolet,2026-10-29 23:18:45
+SLZIngCamFrente,San Lorenzo,AC925UP,90,1,3,BRA,White,Medium Truck,Scania,2026-10-29 23:19:19
+RicPreIngInFr,Ricardone,AB612OF,62,1,5,BRA,Red,Medium Truck,Volvo,2026-10-29 23:19:32
+RicPreIngInTr,Ricardone,AB612OF,54,1,3,BRA,Gray,Unrecognized,Unrecognized,2026-10-29 23:19:49
+RicCalLiq,Ricardone,UX998,86,1,0,BRA,Black,Medium Truck,Unrecognized,2026-10-29 23:20:36
+RicB2Egreso,Ricardone,DCB815,66,1,13,COL,Gray,Sedan,Unrecognized,2026-10-29 23:20:39
+SLZVolcableC5,San Lorenzo,RN411,14,1,0,URY,Gray,Large Truck,Unrecognized,2026-10-29 23:21:07
+RicEgrCamFrente,Ricardone,TAC436,82,1,17,ARG,Brown,Unrecognized,Unrecognized,2026-10-29 23:21:33
+SLZIngCamTrasera,San Lorenzo,AD058YX,38,1,1,BRA,Black,Unrecognized,Unrecognized,2026-10-29 23:21:33
+RicEgrCamTraser,Ricardone,A79,46,1,20,BRA,Blue,Unrecognized,Unrecognized,2026-10-29 23:21:54
+RicPreIngInFr,Ricardone,HNE318,54,1,1,COL,Red,Bus,Unrecognized,2026-10-29 23:22:34
+RicPreIngInTr,Ricardone,AF064AG,66,1,23,BRA,Black,Unrecognized,Unrecognized,2026-10-29 23:23:01
+SLZBalIngTras,San Lorenzo,AC925UP,86,1,0,BRA,Black,Sedan,Unrecognized,2026-10-29 23:23:22
+SLZBalIngFte,San Lorenzo,AC925UP,78,1,0,BRA,Gray,Large Truck,Scania,2026-10-29 23:23:29
+RicEgrCamFrente,Ricardone,EX948,50,1,11,GUY,Red,Unrecognized,Unrecognized,2026-10-29 23:24:32
+SLZBalSC2Fte,San Lorenzo,BGP773,82,1,0,BRA,White,Medium Truck,Hino,2026-10-29 23:24:39
+SLZTK400,San Lorenzo,AC925U,14,1,0,URY,White,Medium Truck,Smart,2026-10-29 23:25:32
+RicEgrCamFrente,Ricardone,G395,14,1,7,COL,Brown,Medium Truck,Mercedes-Benz,2026-10-29 23:25:49
+SLZBalSC2Tras,San Lorenzo,FP18,42,1,0,BRA,Gray,Small Truck,Unrecognized,2026-10-29 23:26:00
+RenCargTras,San Lorenzo,IE42,50,1,5,BRA,White,MPV,Unrecognized,2026-10-29 23:27:02
+SLZSalidaC1Fte,San Lorenzo,BGP773,62,1,0,BRA,White,Pickup,Ford,2026-10-29 23:27:03
+RicCalLiq,Ricardone,AVEC0,14,1,0,CHL,Black,Large Truck,Unrecognized,2026-10-29 23:27:18
+SLZSalidaC1Tras,San Lorenzo,HER18,14,1,0,BRA,White,Sedan,Unrecognized,2026-10-29 23:27:27
+RicIngCamFrente,Ricardone,EHP821,42,1,1,BRA,White,Sedan,Unrecognized,2026-10-29 23:27:54
+RicIngCamTrasera,Ricardone,IQQ712,22,1,5,ARG,White,Unrecognized,Unrecognized,2026-10-29 23:28:10
+RicIngCamFrente,Ricardone,IYZ184,74,1,1,DXB,White,Medium Truck,Ford,2026-10-29 23:28:10
+SLZIngCamFrente,San Lorenzo,CRJ139,82,1,8,BRA,White,Medium Truck,Scania,2026-10-29 23:28:16
+RicIngCamTrasera,Ricardone,GPO089,70,1,1,ARG,Black,Unrecognized,Unrecognized,2026-10-29 23:28:27
+SLZVolcableC5,San Lorenzo,CP97,66,1,0,BRA,White,Medium Truck,Renault,2026-10-29 23:28:32
+SLZTK400,San Lorenzo,NAGR0,66,1,0,PRY,Black,Sedan,Unrecognized,2026-10-29 23:29:20
+RicIngCamFrente,Ricardone,BQI495,50,1,2,PRY,White,Medium Truck,Unrecognized,2026-10-29 23:29:57
+RicIngCamTrasera,Ricardone,TAHN0S,82,1,45,ARG,White,Unrecognized,Unrecognized,2026-10-29 23:30:05
+RicEgrCamFrente,Ricardone,MME318,66,1,9,PRY,Red,Medium Truck,Iveco,2026-10-29 23:30:21
+RicPreIngInFr,Ricardone,EHP821,78,1,1,ARG,Gray,Sedan,Unrecognized,2026-10-29 23:30:28
+RicS6Playa3,Ricardone,54E,12,1,0,BRA,Black,Sedan,Unrecognized,2026-10-29 23:30:35
+RicEgrCamTraser,Ricardone,AF064AG,22,1,15,BRA,Blue,Unrecognized,Unrecognized,2026-10-29 23:30:43
+SLZIngCamTrasera,San Lorenzo,SO8,46,1,8,BRA,Gray,Unrecognized,Unrecognized,2026-10-29 23:30:45
+RicPreIngInFr,Ricardone,IYZ184,82,1,5,GUY,White,Medium Truck,Volvo,2026-10-29 23:31:53
+RicS6Playa3,Ricardone,I62405,66,1,0,BRA,Black,Medium Truck,Unrecognized,2026-10-29 23:31:58
+RicPreIngInTr,Ricardone,GPO039,26,1,2,ARG,Black,Unrecognized,Unrecognized,2026-10-29 23:32:10
+RicPreIngInFr,Ricardone,BQI495,58,1,5,ARG,White,Medium Truck,Unrecognized,2026-10-29 23:32:28
+RicB1Ingreso,Ricardone,PNF819,34,1,6,BRA,White,Medium Truck,Unrecognized,2026-10-29 23:32:41
+RicPreIngInTr,Ricardone,AFNO5,46,1,2,BRA,White,Unrecognized,Unrecognized,2026-10-29 23:32:45
+RicIngCamFrente,Ricardone,DBN545,58,1,1,BRA,Blue,Medium Truck,Scania,2026-10-29 23:33:11
+RicIngCamTrasera,Ricardone,FCK140,58,1,18,ARG,Blue,Medium Truck,Unrecognized,2026-10-29 23:33:22
+RicIngCamFrente,Ricardone,IQC846,66,1,1,PRY,Yellow,Medium Truck,Mercedes-Benz,2026-10-29 23:33:29
+RicIngCamTrasera,Ricardone,AA226LR,78,1,0,BRA,Black,Unrecognized,Unrecognized,2026-10-29 23:33:43
+SLZBalSC1Fte,San Lorenzo,I1111111,14,1,0,URY,White,Large Truck,Unrecognized,2026-10-29 23:33:49
+RicIngCamFrente,Ricardone,JKG753,26,1,2,PRY,Green,Medium Truck,Mercedes-Benz,2026-10-29 23:33:54
+RicIngCamTrasera,Ricardone,LWQ982,74,1,5,ARG,White,Bus,Yaris,2026-10-29 23:34:12
+SLZBalIngFte,San Lorenzo,CRJ139,86,1,0,ARG,White,Large Truck,Scania,2026-10-29 23:34:16
+RicIngCamTrasera,Ricardone,FEN758,74,1,1,BRA,White,Unrecognized,Unrecognized,2026-10-29 23:34:26
+RicIngCamFrente,Ricardone,LUC401,46,1,5,PRY,White,Medium Truck,Iveco,2026-10-29 23:34:29
+RicIngCamTrasera,Ricardone,ICY020,66,1,5,ARG,Red,Unrecognized,Unrecognized,2026-10-29 23:34:46
+RicIngCamFrente,Ricardone,DBP116,30,1,0,PRY,White,Medium Truck,Chevrolet,2026-10-29 23:34:46
+RicIngCamTrasera,Ricardone,RQK661,58,1,19,BRA,Red,Unrecognized,Unrecognized,2026-10-29 23:35:02
+RicPreIngInFr,Ricardone,DBN515,82,1,5,COL,White,Bus,Unrecognized,2026-10-29 23:35:35
+RicPreIngInTr,Ricardone,SCAN4,26,1,5,BRA,Black,Unrecognized,Unrecognized,2026-10-29 23:35:48
+RicS6Playa3,Ricardone,AVAC0,62,1,0,CHL,White,Large Truck,Iveco,2026-10-29 23:35:57
+RenCargFte,San Lorenzo,C51,42,1,17,PRY,White,Unrecognized,Unrecognized,2026-10-29 23:36:06
+RenCargTras,San Lorenzo,ITE1EX,54,1,1,BRA,White,Small Truck,Unrecognized,2026-10-29 23:36:08
+RicIngCamFrente,Ricardone,ROS380,50,1,1,PER,Unrecognized,Sedan,Unrecognized,2026-10-29 23:36:19
+RicPreIngInFr,Ricardone,IQC846,82,1,5,ARG,Yellow,Sedan,Unrecognized,2026-10-29 23:36:31
+RicIngCamTrasera,Ricardone,Y77,74,1,0,PER,Blue,Unrecognized,Unrecognized,2026-10-29 23:36:35
+RicIngCamTrasera,Ricardone,UEY782,78,1,0,BRA,Purple,Bus,Unrecognized,2026-10-29 23:36:36
+RicPreIngInTr,Ricardone,AA226LR,38,1,44,BRA,Black,Unrecognized,Unrecognized,2026-10-29 23:36:53
+SLZVolcableC4,San Lorenzo,CRJ139,74,1,0,ARG,White,Large Truck,Scania,2026-10-29 23:37:10
+RicPreIngInTr,Ricardone,OAW8U,42,1,21,BRA,Gray,Unrecognized,Unrecognized,2026-10-29 23:37:23
+RicPreIngInFr,Ricardone,KED500,78,1,5,ARG,Red,Medium Truck,Iveco,2026-10-29 23:37:44
+RicPreIngInTr,Ricardone,KED500,22,1,7,BRA,White,Unrecognized,Unrecognized,2026-10-29 23:38:00
+SLZBalIngTras,San Lorenzo,NHE440,46,1,0,BRA,White,Bus,Unrecognized,2026-10-29 23:38:14
+RicIngCamFrente,Ricardone,BWV144,46,1,1,ARG,Blue,Sedan,Unrecognized,2026-10-29 23:38:15
+SLZBalIngTras,San Lorenzo,O44607,42,1,0,COL,Gray,Sedan,Unrecognized,2026-10-29 23:38:17
+RicPreIngInFr,Ricardone,LUC401,50,1,5,ARG,White,Medium Truck,Unrecognized,2026-10-29 23:38:18
+SLZBalIngFte,San Lorenzo,NHE440,82,1,0,ARG,White,Medium Truck,Mercedes-Benz,2026-10-29 23:38:21
+SLZBalIngTras,San Lorenzo,AH795XX,70,1,0,BRA,Black,Bus,Chevrolet,2026-10-29 23:38:25
+RicIngCamTrasera,Ricardone,KK3G080,34,1,1,COL,White,Unrecognized,Unrecognized,2026-10-29 23:38:31
+RicPreIngInTr,Ricardone,CJ038,34,1,1,PRY,Black,Unrecognized,Unrecognized,2026-10-29 23:38:36
+SLZBalIngTras,San Lorenzo,AH795XX,50,1,0,PRY,Black,Bus,Unrecognized,2026-10-29 23:38:41
+RicPreIngInFr,Ricardone,DBF116,54,1,0,BRA,Blue,Bus,Unrecognized,2026-10-29 23:38:54
+RicCal04,Ricardone,ROS380,82,1,0,ARG,Yellow,Small Truck,Unrecognized,2026-10-29 23:39:06
+RicPreIngInTr,Ricardone,RQK661,14,1,0,ARG,Black,Unrecognized,Unrecognized,2026-10-29 23:39:09
+SLZBalIngTras,San Lorenzo,AA262ON,74,1,0,PRY,White,Pickup,Unrecognized,2026-10-29 23:39:29
+SLZBalIngTras,San Lorenzo,OMB0,58,1,0,URY,White,Sedan,Unrecognized,2026-10-29 23:39:37
+SLZBalIngFte,San Lorenzo,O7767,22,1,0,PRY,White,Sedan,Unrecognized,2026-10-29 23:39:55
+RicPreIngInFr,Ricardone,BWV144,54,1,1,ARG,Blue,Unrecognized,Unrecognized,2026-10-29 23:40:10
+SLZBalIngFte,San Lorenzo,AA539HA,74,1,0,BRA,White,Large Truck,Mercedes-Benz,2026-10-29 23:40:26
+SLZBalIngFte,San Lorenzo,AA539HA,50,1,0,BRA,Black,SUV,Unrecognized,2026-10-29 23:40:32
+RicPreIngInTr,Ricardone,4LC,26,1,6,ARG,Black,Unrecognized,Unrecognized,2026-10-29 23:40:32
+RicCal03,Ricardone,LOH071,46,1,0,URY,White,Large Truck,Unrecognized,2026-10-29 23:41:31
+SLZBalIngTras,San Lorenzo,LBN850,62,1,0,COL,White,Small Truck,Unrecognized,2026-10-29 23:41:46
+RicCalLiq,Ricardone,BWV144,86,1,0,BRA,Gray,Medium Truck,Unrecognized,2026-10-29 23:41:49
+SLZBalIngTras,San Lorenzo,OM7B0,34,1,0,DXB,White,Sedan,Unrecognized,2026-10-29 23:41:51
+RicCal04,Ricardone,RQN829,90,1,0,ARG,White,Medium Truck,Scania,2026-10-29 23:42:31
+SLZBalIngTras,San Lorenzo,AG609UT,90,1,0,BRA,White,Sedan,Unrecognized,2026-10-29 23:42:44
+SLZBalIngFte,San Lorenzo,AG609UT,50,1,0,BRA,Black,Sedan,Unrecognized,2026-10-29 23:42:58
+SLZVolcableC5,San Lorenzo,HLV862,86,1,0,BRA,White,Large Truck,Iveco,2026-10-29 23:43:32
+SLZBalIngTras,San Lorenzo,UJA626,62,1,0,BRA,White,Bus,Mitsubishi,2026-10-29 23:43:43
+SLZBalIngTras,San Lorenzo,DZP771,34,1,0,ARG,White,Sedan,Unrecognized,2026-10-29 23:43:53
+SLZBalIngFte,San Lorenzo,UJA628,82,1,0,BRA,White,Pickup,Unrecognized,2026-10-29 23:43:53
+RicIngCamFrente,Ricardone,HVG284,78,1,1,ARG,White,Medium Truck,Mercedes-Benz,2026-10-29 23:44:42
+SLZBalIngTras,San Lorenzo,MERC,50,1,0,URY,Black,Pickup,Unrecognized,2026-10-29 23:44:44
+RicIngCamFrente,Ricardone,OMM811,46,1,0,PRY,Black,Unrecognized,Unrecognized,2026-10-29 23:44:51
+SLZBalIngTras,San Lorenzo,AC722VK,86,1,0,BRA,Black,Small Truck,Jeep,2026-10-29 23:45:02
+RicIngCamTrasera,Ricardone,AE327DL,62,1,12,BRA,Black,Unrecognized,Unrecognized,2026-10-29 23:45:06
+RicEgrCamFrente,Ricardone,BWV144,86,1,11,ARG,Blue,Medium Truck,Hyundai,2026-10-29 23:45:20
+RicCal03,Ricardone,FIL298,54,1,0,BRA,Silver,Medium Truck,Ford,2026-10-29 23:45:35
+SLZBalIngFte,San Lorenzo,IXD983,86,1,0,BRA,White,Medium Truck,Unrecognized,2026-10-29 23:46:06
+SLZSalidaC1Tras,San Lorenzo,A249,78,1,0,URY,White,Sedan,Unrecognized,2026-10-29 23:46:08
+SLZSalidaC1Tras,San Lorenzo,AE4PHD,42,1,0,DXB,White,Van,Unrecognized,2026-10-29 23:46:37
+RicCal04,Ricardone,AB6120F,82,1,0,BRA,White,Large Truck,Iveco,2026-10-29 23:47:21
+RicPreIngInFr,Ricardone,HVG284,74,1,5,BRA,White,Medium Bus,Unrecognized,2026-10-29 23:47:52
+RicPreIngInFr,Ricardone,OAM811,58,1,0,DXB,Blue,Medium Truck,Renault,2026-10-29 23:47:58
+RicPreIngInTr,Ricardone,OAW84,54,1,85,BRA,Black,Unrecognized,Unrecognized,2026-10-29 23:48:12
+RicIngCamFrente,Ricardone,AD093RS,14,1,8,BRA,White,Medium Truck,Volvo,2026-10-29 23:48:26
+RicIngCamTrasera,Ricardone,LEC046,30,1,30,BRA,White,Unrecognized,Unrecognized,2026-10-29 23:48:57
+RicCal03,Ricardone,EHP821,78,1,0,ARG,Black,Large Truck,Mercedes-Benz,2026-10-29 23:49:02
+SLZBalIngTras,San Lorenzo,MLX638,34,1,0,BRA,White,Sedan,Unrecognized,2026-10-29 23:50:07
+SLZBalSC2Fte,San Lorenzo,DTN089,38,1,0,BRA,Black,Large Truck,Jeep,2026-10-29 23:50:22
+SLZBalIngTras,San Lorenzo,MLX638,46,1,0,BRA,White,Sedan,Unrecognized,2026-10-29 23:50:28
+SLZBalIngTras,San Lorenzo,MLX638,74,1,0,ARG,White,Sedan,Unrecognized,2026-10-29 23:50:39
+RicCal04,Ricardone,IYZ184,82,1,0,ARG,White,Medium Truck,Daihatsu,2026-10-29 23:50:42
+RicEgrCamFrente,Ricardone,HVG284,58,1,24,ARG,White,Bus,Iveco,2026-10-29 23:50:42
+SLZBalIngTras,San Lorenzo,MLX639,82,1,0,BRA,White,Sedan,Unrecognized,2026-10-29 23:51:20
+SLZBalSC2Tras,San Lorenzo,DJI549,78,1,0,BRA,Black,Small Truck,Unrecognized,2026-10-29 23:51:22
+SLZBalSC2Fte,San Lorenzo,EF076,34,1,0,BRA,White,Medium Truck,Renault,2026-10-29 23:51:44
+RicEgrCamFrente,Ricardone,LDV071,74,1,6,PRY,White,Medium Truck,Mercedes-Benz,2026-10-29 23:51:49
+RicEgrCamTraser,Ricardone,AE327DL,46,1,20,BRA,Blue,Unrecognized,Unrecognized,2026-10-29 23:51:52
+SLZBalIngFte,San Lorenzo,AF653CK,82,1,0,BRA,White,Large Truck,Scania,2026-10-29 23:52:07
+RicPreIngInFr,Ricardone,AD093RS,34,1,5,BRA,Silver,Medium Truck,Unrecognized,2026-10-29 23:52:11
+SLZBalIngTras,San Lorenzo,AE832LF,74,1,0,BRA,Black,Small Truck,Nissan,2026-10-29 23:52:21
+RicPreIngInTr,Ricardone,ITG0091,22,1,111,PRY,Gray,Unrecognized,Unrecognized,2026-10-29 23:52:26
+RicCal03,Ricardone,BQI495,86,1,0,BRA,White,Medium Truck,Ford,2026-10-29 23:52:27
+SLZBalSC2Tras,San Lorenzo,UOJ192,82,1,0,BRA,Black,Small Truck,Unrecognized,2026-10-29 23:52:52
+SLZBalIngTras,San Lorenzo,KWV994,42,1,0,COL,Black,Bus,Unrecognized,2026-10-29 23:52:55
+SLZBalSC1Fte,San Lorenzo,TTE,16,1,0,CHL,White,Pickup,Unrecognized,2026-10-29 23:52:57
+SLZBalIngTras,San Lorenzo,ERMAN,42,1,0,BRA,White,Sedan,Unrecognized,2026-10-29 23:53:00
+SLZBalIngFte,San Lorenzo,KWN994,78,1,0,BRA,White,SUV,Unrecognized,2026-10-29 23:53:05
+SLZBalIngTras,San Lorenzo,AE361DC,78,1,0,PRY,Black,Medium Truck,GMC,2026-10-29 23:53:22
+SLZSalidaC1Fte,San Lorenzo,DTN089,82,1,0,BRA,White,Medium Truck,Renault,2026-10-29 23:53:32
+RicEgrCamFrente,Ricardone,RQN829,46,1,6,ARG,Unrecognized,Medium Truck,JMC,2026-10-29 23:53:44
+SLZBalLiq1a,San Lorenzo,IELEX,42,1,0,CHL,White,Bus,Unrecognized,2026-10-29 23:53:46
+SLZSalidaC1Fte,San Lorenzo,BEG875,14,1,0,BRA,White,Large Truck,Mercedes-Benz,2026-10-29 23:54:11
+RicCal04,Ricardone,NB45,12,1,0,COL,White,Large Truck,Scania,2026-10-29 23:54:12
+SLZSalidaC1Tras,San Lorenzo,DJU549,82,1,0,ARG,Black,Bus,Unrecognized,2026-10-29 23:54:14
+RicEgrCamTraser,Ricardone,AE361LR,74,1,9,BRA,Red,Unrecognized,Unrecognized,2026-10-29 23:54:22
+SLZSalidaC1Tras,San Lorenzo,AD249HD,82,1,0,BRA,White,Van,Unrecognized,2026-10-29 23:54:24
+SLZSalidaC1Tras,San Lorenzo,UOJ192,90,1,0,BRA,White,Small Truck,Unrecognized,2026-10-29 23:54:36
+RicS6Playa3,Ricardone,BWV144,46,1,0,URY,Gray,Bus,Unrecognized,2026-10-29 23:54:45
+SLZBalIngTras,San Lorenzo,AE361DC,74,1,0,BRA,Black,Bus,Nissan,2026-10-29 23:55:00
+RicEgrCamFrente,Ricardone,EHP821,82,1,9,ARG,Blue,Medium Truck,Mercedes-Benz,2026-10-29 23:55:21
+RicEgrCamFrente,Ricardone,ROS380,78,1,4,ARG,Unrecognized,Medium Truck,Unrecognized,2026-10-29 23:55:53
+RicEgrCamTraser,Ricardone,866,46,1,0,CHL,White,Unrecognized,Unrecognized,2026-10-29 23:55:53
+RicEgrCamTraser,Ricardone,UE782,46,1,19,BRA,Black,Unrecognized,Unrecognized,2026-10-29 23:56:26
+SLZBalIngTras,San Lorenzo,HERMANN,74,1,0,BRA,Gray,Sedan,Unrecognized,2026-10-29 23:56:40
+SLZBalIngFte,San Lorenzo,JYB336,78,1,0,ARG,Black,Pickup,Unrecognized,2026-10-29 23:56:46
+SLZBalIngTras,San Lorenzo,PHO237,62,1,0,BRA,White,Medium Truck,Subaru,2026-10-29 23:56:50
+SLZBalIngFte,San Lorenzo,JYB336,46,1,0,ARG,White,Large Truck,Mitsubishi,2026-10-29 23:56:52
+SLZBalIngTras,San Lorenzo,PHD237,78,1,0,BRA,Black,Small Truck,Toyota,2026-10-29 23:57:02
+SLZBalIngTras,San Lorenzo,AE297,14,1,0,CHL,White,Small Truck,Unrecognized,2026-10-29 23:57:30
+SLZBalIngTras,San Lorenzo,VUICAN0,26,1,0,BRA,Black,SUV,Unrecognized,2026-10-29 23:57:37
+SLZBalIngFte,San Lorenzo,AE297UD,90,1,0,BRA,White,Medium Truck,Unrecognized,2026-10-29 23:57:38
+SLZBalIngFte,San Lorenzo,AE297UD,86,1,0,BRA,White,Large Truck,Scania,2026-10-29 23:57:46
+RicEgrCamFrente,Ricardone,IYZ184,70,1,14,ARG,White,Medium Truck,Ford,2026-10-29 23:58:08
+RicCal03,Ricardone,IQC846,86,1,0,ARG,White,Large Truck,Volkswagen,2026-10-29 23:58:28
+RicEgrCamTraser,Ricardone,4747,46,1,0,BRA,Blue,Unrecognized,Unrecognized,2026-10-29 23:58:35
+SLZBalIngFte,San Lorenzo,BJJ730,86,1,0,ARG,White,Large Truck,Scania,2026-10-29 23:58:36
+SLZBalIngTras,San Lorenzo,AE094PQ,82,1,0,BRA,White,Sedan,Unrecognized,2026-10-29 23:58:50
+RicEgrCamFrente,Ricardone,AB612OF,74,1,9,BRA,White,Medium Truck,Iveco,2026-10-29 23:58:55
+RicEgrCamTraser,Ricardone,HELVETC4,50,1,2,BRA,White,Sedan,Unrecognized,2026-10-29 23:59:27
+SLZBalSC2Fte,San Lorenzo,HLV862,82,1,0,ARG,White,Medium Truck,Iveco,2026-10-29 23:59:32
+RicEgrCamFrente,Ricardone,DIZE,22,1,5,PRY,Yellow,Medium Truck,Daewoo,2026-10-29 23:59:36
+SLZBalIngTras,San Lorenzo,HFU554,78,1,0,ARG,White,Sedan,Unrecognized,2026-10-29 23:59:52

@@ -1,0 +1,1570 @@
+{
+ "APW924": {
+  "lecturas": 1,
+  "near": [],
+  "same": [],
+  "fotos": [
+   {
+    "f": "APW924_0_patente.jpg",
+    "kind": "patente",
+    "dev": "RicB2Egreso",
+    "nodo": "Balanza Egreso",
+    "hora": "00:10"
+   },
+   {
+    "f": "APW924_1_escena.jpg",
+    "kind": "escena",
+    "dev": "RicB2Egreso",
+    "nodo": "Balanza Egreso",
+    "hora": "00:10"
+   }
+  ]
+ },
+ "UWC140": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "UWC148",
+    "src": "carta",
+    "dist": 1
+   },
+   {
+    "plate": "UWC149",
+    "src": "carta",
+    "dist": 1
+   },
+   {
+    "plate": "UWC138",
+    "src": "carta",
+    "dist": 2
+   },
+   {
+    "plate": "UWC184",
+    "src": "carta",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "UWC148"
+  ],
+  "fotos": [
+   {
+    "f": "UWC140_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZBalSC2Fte",
+    "nodo": "Balanza Egreso",
+    "hora": "00:36"
+   },
+   {
+    "f": "UWC140_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZBalSC2Fte",
+    "nodo": "Balanza Egreso",
+    "hora": "00:36"
+   }
+  ]
+ },
+ "IYT772": {
+  "lecturas": 1,
+  "near": [],
+  "same": [
+   "CMF111"
+  ],
+  "fotos": [
+   {
+    "f": "IYT772_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZBalSC2Tras",
+    "nodo": "Balanza Egreso",
+    "hora": "01:16"
+   },
+   {
+    "f": "IYT772_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZBalSC2Tras",
+    "nodo": "Balanza Egreso",
+    "hora": "01:16"
+   }
+  ]
+ },
+ "MHC712": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "MBC718",
+    "src": "Permitidos",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "AG669JE"
+  ],
+  "fotos": [
+   {
+    "f": "MHC712_0_patente.jpg",
+    "kind": "patente",
+    "dev": "RicEgrCamFrente",
+    "nodo": "Salida 2",
+    "hora": "01:57"
+   },
+   {
+    "f": "MHC712_1_escena.jpg",
+    "kind": "escena",
+    "dev": "RicEgrCamFrente",
+    "nodo": "Salida 2",
+    "hora": "01:57"
+   }
+  ]
+ },
+ "FTC550": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "FMC555",
+    "src": "remito · heno de pastura calidad inferior",
+    "dist": 2
+   }
+  ],
+  "same": [],
+  "fotos": [
+   {
+    "f": "FTC550_0_patente.jpg",
+    "kind": "patente",
+    "dev": "RicCal03",
+    "nodo": "Calada",
+    "hora": "04:32"
+   },
+   {
+    "f": "FTC550_1_escena.jpg",
+    "kind": "escena",
+    "dev": "RicCal03",
+    "nodo": "Calada",
+    "hora": "04:32"
+   }
+  ]
+ },
+ "EVS603": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "HVS603",
+    "src": "carta",
+    "dist": 1
+   }
+  ],
+  "same": [],
+  "fotos": [
+   {
+    "f": "EVS603_0_patente.jpg",
+    "kind": "patente",
+    "dev": "RicCal04",
+    "nodo": "Calada",
+    "hora": "05:19"
+   },
+   {
+    "f": "EVS603_1_escena.jpg",
+    "kind": "escena",
+    "dev": "RicCal04",
+    "nodo": "Calada",
+    "hora": "05:19"
+   }
+  ]
+ },
+ "KZS251": {
+  "lecturas": 2,
+  "near": [
+   {
+    "plate": "JZK251",
+    "src": "carta",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "IMH787",
+   "EEW075"
+  ],
+  "fotos": [
+   {
+    "f": "KZS251_0_patente.jpg",
+    "kind": "patente",
+    "dev": "RicB3Ingreso",
+    "nodo": "Balanza Ingreso",
+    "hora": "07:38"
+   },
+   {
+    "f": "KZS251_1_escena.jpg",
+    "kind": "escena",
+    "dev": "RicB3Ingreso",
+    "nodo": "Balanza Ingreso",
+    "hora": "07:38"
+   },
+   {
+    "f": "KZS251_2_patente.jpg",
+    "kind": "patente",
+    "dev": "RicB2Egreso",
+    "nodo": "Balanza Egreso",
+    "hora": "16:38"
+   },
+   {
+    "f": "KZS251_3_escena.jpg",
+    "kind": "escena",
+    "dev": "RicB2Egreso",
+    "nodo": "Balanza Egreso",
+    "hora": "16:38"
+   }
+  ]
+ },
+ "HLT270": {
+  "lecturas": 3,
+  "near": [
+   {
+    "plate": "HLV230",
+    "src": "remito · soja",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "AH763WD"
+  ],
+  "fotos": [
+   {
+    "f": "HLT270_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZSalidaC2Fte",
+    "nodo": "Egreso",
+    "hora": "07:41"
+   },
+   {
+    "f": "HLT270_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZSalidaC2Fte",
+    "nodo": "Egreso",
+    "hora": "07:41"
+   },
+   {
+    "f": "HLT270_2_patente.jpg",
+    "kind": "patente",
+    "dev": "RicB3Ingreso",
+    "nodo": "Balanza Ingreso",
+    "hora": "08:35"
+   },
+   {
+    "f": "HLT270_3_escena.jpg",
+    "kind": "escena",
+    "dev": "RicB3Ingreso",
+    "nodo": "Balanza Ingreso",
+    "hora": "08:35"
+   }
+  ]
+ },
+ "JCT961": {
+  "lecturas": 2,
+  "near": [],
+  "same": [
+   "JXU590",
+   "AD863BA"
+  ],
+  "fotos": [
+   {
+    "f": "JCT961_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZTK400",
+    "nodo": "Carga/Descarga Renova",
+    "hora": "07:48"
+   },
+   {
+    "f": "JCT961_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZTK400",
+    "nodo": "Carga/Descarga Renova",
+    "hora": "07:48"
+   },
+   {
+    "f": "JCT961_2_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZSalidaC1Fte",
+    "nodo": "Egreso",
+    "hora": "08:39"
+   },
+   {
+    "f": "JCT961_3_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZSalidaC1Fte",
+    "nodo": "Egreso",
+    "hora": "08:39"
+   }
+  ]
+ },
+ "AC169LG": {
+  "lecturas": 7,
+  "near": [
+   {
+    "plate": "AG169HG",
+    "src": "Permitidos",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "EFA323",
+   "MXH374",
+   "OIY765",
+   "AF785ZF",
+   "AG575TD",
+   "AB127BY",
+   "IMH787"
+  ],
+  "fotos": [
+   {
+    "f": "AC169LG_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZSalidaC2Fte",
+    "nodo": "Egreso",
+    "hora": "08:07"
+   },
+   {
+    "f": "AC169LG_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZSalidaC2Fte",
+    "nodo": "Egreso",
+    "hora": "08:07"
+   },
+   {
+    "f": "AC169LG_2_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZTK400",
+    "nodo": "Carga/Descarga Renova",
+    "hora": "08:25"
+   },
+   {
+    "f": "AC169LG_3_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZTK400",
+    "nodo": "Carga/Descarga Renova",
+    "hora": "08:25"
+   }
+  ]
+ },
+ "ONS723": {
+  "lecturas": 2,
+  "near": [
+   {
+    "plate": "OPO723",
+    "src": "remito · pellets girasol",
+    "dist": 2
+   },
+   {
+    "plate": "OTS728",
+    "src": "carta",
+    "dist": 2
+   }
+  ],
+  "same": [],
+  "fotos": [
+   {
+    "f": "ONS723_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZSalidaC2Fte",
+    "nodo": "Egreso",
+    "hora": "08:19"
+   },
+   {
+    "f": "ONS723_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZSalidaC2Fte",
+    "nodo": "Egreso",
+    "hora": "08:19"
+   },
+   {
+    "f": "ONS723_2_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZSalidaC1Fte",
+    "nodo": "Egreso",
+    "hora": "11:07"
+   },
+   {
+    "f": "ONS723_3_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZSalidaC1Fte",
+    "nodo": "Egreso",
+    "hora": "11:07"
+   }
+  ]
+ },
+ "NBJ986": {
+  "lecturas": 12,
+  "near": [
+   {
+    "plate": "NDJ386",
+    "src": "carta",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "JGC553",
+   "AH916PV",
+   "AI237JL",
+   "AB535NA",
+   "ADO731",
+   "KIB325"
+  ],
+  "fotos": [
+   {
+    "f": "NBJ986_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZSalidaC2Tras",
+    "nodo": "Egreso",
+    "hora": "08:52"
+   },
+   {
+    "f": "NBJ986_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZSalidaC2Tras",
+    "nodo": "Egreso",
+    "hora": "08:52"
+   },
+   {
+    "f": "NBJ986_2_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZSalidaC2Fte",
+    "nodo": "Egreso",
+    "hora": "08:52"
+   },
+   {
+    "f": "NBJ986_3_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZSalidaC2Fte",
+    "nodo": "Egreso",
+    "hora": "08:52"
+   }
+  ]
+ },
+ "SLF772": {
+  "lecturas": 1,
+  "near": [],
+  "same": [
+   "JGC553",
+   "NAH953",
+   "KWE568"
+  ],
+  "fotos": [
+   {
+    "f": "SLF772_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZSalidaC1Fte",
+    "nodo": "Egreso",
+    "hora": "08:54"
+   },
+   {
+    "f": "SLF772_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZSalidaC1Fte",
+    "nodo": "Egreso",
+    "hora": "08:54"
+   }
+  ]
+ },
+ "AI276FZ": {
+  "lecturas": 2,
+  "near": [
+   {
+    "plate": "AI276KL",
+    "src": "carta",
+    "dist": 2
+   }
+  ],
+  "same": [],
+  "fotos": [
+   {
+    "f": "AI276FZ_0_patente.jpg",
+    "kind": "patente",
+    "dev": "RicB3Ingreso",
+    "nodo": "Balanza Ingreso",
+    "hora": "09:15"
+   },
+   {
+    "f": "AI276FZ_1_escena.jpg",
+    "kind": "escena",
+    "dev": "RicB3Ingreso",
+    "nodo": "Balanza Ingreso",
+    "hora": "09:15"
+   },
+   {
+    "f": "AI276FZ_2_patente.jpg",
+    "kind": "patente",
+    "dev": "RicB3Egreso",
+    "nodo": "Balanza Egreso",
+    "hora": "09:32"
+   },
+   {
+    "f": "AI276FZ_3_escena.jpg",
+    "kind": "escena",
+    "dev": "RicB3Egreso",
+    "nodo": "Balanza Egreso",
+    "hora": "09:32"
+   }
+  ]
+ },
+ "SKM535": {
+  "lecturas": 2,
+  "near": [
+   {
+    "plate": "SIK535",
+    "src": "Permitidos",
+    "dist": 2
+   },
+   {
+    "plate": "SMK535",
+    "src": "remito · glicerina substandard",
+    "dist": 2
+   },
+   {
+    "plate": "SIM565",
+    "src": "carta",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "EIG352",
+   "AE747HZ",
+   "UUO981"
+  ],
+  "fotos": [
+   {
+    "f": "SKM535_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZBalSC1Tras",
+    "nodo": "Balanza Egreso",
+    "hora": "10:40"
+   },
+   {
+    "f": "SKM535_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZBalSC1Tras",
+    "nodo": "Balanza Egreso",
+    "hora": "10:40"
+   },
+   {
+    "f": "SKM535_2_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZBalSC2Tras",
+    "nodo": "Balanza Egreso",
+    "hora": "10:53"
+   },
+   {
+    "f": "SKM535_3_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZBalSC2Tras",
+    "nodo": "Balanza Egreso",
+    "hora": "10:53"
+   }
+  ]
+ },
+ "STM565": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "CTM505",
+    "src": "Permitidos",
+    "dist": 2
+   },
+   {
+    "plate": "SIM565",
+    "src": "carta",
+    "dist": 1
+   }
+  ],
+  "same": [
+   "EIG352"
+  ],
+  "fotos": [
+   {
+    "f": "STM565_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZBalSC1Fte",
+    "nodo": "Balanza Egreso",
+    "hora": "10:49"
+   },
+   {
+    "f": "STM565_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZBalSC1Fte",
+    "nodo": "Balanza Egreso",
+    "hora": "10:49"
+   }
+  ]
+ },
+ "GCW191": {
+  "lecturas": 2,
+  "near": [
+   {
+    "plate": "GVW791",
+    "src": "carta",
+    "dist": 2
+   },
+   {
+    "plate": "GNE191",
+    "src": "carta",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "JZW724"
+  ],
+  "fotos": [
+   {
+    "f": "GCW191_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZSalidaC2Fte",
+    "nodo": "Egreso",
+    "hora": "10:57"
+   },
+   {
+    "f": "GCW191_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZSalidaC2Fte",
+    "nodo": "Egreso",
+    "hora": "10:57"
+   },
+   {
+    "f": "GCW191_2_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZSalidaC1Fte",
+    "nodo": "Egreso",
+    "hora": "11:19"
+   },
+   {
+    "f": "GCW191_3_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZSalidaC1Fte",
+    "nodo": "Egreso",
+    "hora": "11:19"
+   }
+  ]
+ },
+ "IEC333": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "ICC335",
+    "src": "carta",
+    "dist": 2
+   },
+   {
+    "plate": "ISI333",
+    "src": "remito · soja",
+    "dist": 2
+   }
+  ],
+  "same": [],
+  "fotos": [
+   {
+    "f": "IEC333_0_patente.jpg",
+    "kind": "patente",
+    "dev": "RicB2Egreso",
+    "nodo": "Balanza Egreso",
+    "hora": "11:14"
+   },
+   {
+    "f": "IEC333_1_escena.jpg",
+    "kind": "escena",
+    "dev": "RicB2Egreso",
+    "nodo": "Balanza Egreso",
+    "hora": "11:14"
+   }
+  ]
+ },
+ "AF785ZF": {
+  "lecturas": 3,
+  "near": [
+   {
+    "plate": "AF585AF",
+    "src": "carta",
+    "dist": 2
+   },
+   {
+    "plate": "AF465ZF",
+    "src": "carta",
+    "dist": 2
+   },
+   {
+    "plate": "AF785YR",
+    "src": "remito · semilla de camelina",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "RDL445"
+  ],
+  "fotos": [
+   {
+    "f": "AF785ZF_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZSalidaC1Fte",
+    "nodo": "Egreso",
+    "hora": "11:47"
+   },
+   {
+    "f": "AF785ZF_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZSalidaC1Fte",
+    "nodo": "Egreso",
+    "hora": "11:47"
+   },
+   {
+    "f": "AF785ZF_2_patente.jpg",
+    "kind": "patente",
+    "dev": "RicB3Ingreso",
+    "nodo": "Balanza Ingreso",
+    "hora": "12:00"
+   },
+   {
+    "f": "AF785ZF_3_escena.jpg",
+    "kind": "escena",
+    "dev": "RicB3Ingreso",
+    "nodo": "Balanza Ingreso",
+    "hora": "12:00"
+   }
+  ]
+ },
+ "AH346LP": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "AH396HP",
+    "src": "Permitidos",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "JZW724"
+  ],
+  "fotos": [
+   {
+    "f": "AH346LP_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZSalidaC1Fte",
+    "nodo": "Egreso",
+    "hora": "12:51"
+   },
+   {
+    "f": "AH346LP_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZSalidaC1Fte",
+    "nodo": "Egreso",
+    "hora": "12:51"
+   }
+  ]
+ },
+ "OYO513": {
+  "lecturas": 2,
+  "near": [
+   {
+    "plate": "OYO511",
+    "src": "Permitidos",
+    "dist": 1
+   },
+   {
+    "plate": "OAO533",
+    "src": "carta",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "TOE184"
+  ],
+  "fotos": [
+   {
+    "f": "OYO513_0_patente.jpg",
+    "kind": "patente",
+    "dev": "RicB1Ingreso",
+    "nodo": "Balanza Ingreso",
+    "hora": "13:01"
+   },
+   {
+    "f": "OYO513_1_escena.jpg",
+    "kind": "escena",
+    "dev": "RicB1Ingreso",
+    "nodo": "Balanza Ingreso",
+    "hora": "13:01"
+   },
+   {
+    "f": "OYO513_2_patente.jpg",
+    "kind": "patente",
+    "dev": "RicB2Egreso",
+    "nodo": "Balanza Egreso",
+    "hora": "15:08"
+   },
+   {
+    "f": "OYO513_3_escena.jpg",
+    "kind": "escena",
+    "dev": "RicB2Egreso",
+    "nodo": "Balanza Egreso",
+    "hora": "15:08"
+   }
+  ]
+ },
+ "GTI382": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "GXT382",
+    "src": "remito · glicerina refinada",
+    "dist": 2
+   },
+   {
+    "plate": "GMK382",
+    "src": "carta",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "KAD727",
+   "EPH797"
+  ],
+  "fotos": [
+   {
+    "f": "GTI382_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZTK400",
+    "nodo": "Carga/Descarga Renova",
+    "hora": "13:28"
+   },
+   {
+    "f": "GTI382_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZTK400",
+    "nodo": "Carga/Descarga Renova",
+    "hora": "13:28"
+   }
+  ]
+ },
+ "PPP855": {
+  "lecturas": 1,
+  "near": [],
+  "same": [],
+  "fotos": [
+   {
+    "f": "PPP855_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZBalSC2Tras",
+    "nodo": "Balanza Egreso",
+    "hora": "13:53"
+   },
+   {
+    "f": "PPP855_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZBalSC2Tras",
+    "nodo": "Balanza Egreso",
+    "hora": "13:53"
+   }
+  ]
+ },
+ "ZIM000": {
+  "lecturas": 1,
+  "near": [],
+  "same": [],
+  "fotos": [
+   {
+    "f": "ZIM000_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZTK400",
+    "nodo": "Carga/Descarga Renova",
+    "hora": "16:32"
+   },
+   {
+    "f": "ZIM000_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZTK400",
+    "nodo": "Carga/Descarga Renova",
+    "hora": "16:32"
+   }
+  ]
+ },
+ "ATE165": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "AYE169",
+    "src": "remito · glicerina refinada",
+    "dist": 2
+   },
+   {
+    "plate": "AZE161",
+    "src": "Permitidos",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "CGS172",
+   "EEW075"
+  ],
+  "fotos": [
+   {
+    "f": "ATE165_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZBalSC2Tras",
+    "nodo": "Balanza Egreso",
+    "hora": "17:08"
+   },
+   {
+    "f": "ATE165_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZBalSC2Tras",
+    "nodo": "Balanza Egreso",
+    "hora": "17:08"
+   }
+  ]
+ },
+ "INV209": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "IKV208",
+    "src": "remito · aceite girasol refinado",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "AH677ID"
+  ],
+  "fotos": [
+   {
+    "f": "INV209_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZBalSC2Tras",
+    "nodo": "Balanza Egreso",
+    "hora": "17:12"
+   },
+   {
+    "f": "INV209_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZBalSC2Tras",
+    "nodo": "Balanza Egreso",
+    "hora": "17:12"
+   }
+  ]
+ },
+ "HFF574": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "HFU554",
+    "src": "remito · soja",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "RNM392",
+   "CFF574"
+  ],
+  "fotos": [
+   {
+    "f": "HFF574_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZBalIngTras",
+    "nodo": "Balanza Ingreso",
+    "hora": "17:29"
+   },
+   {
+    "f": "HFF574_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZBalIngTras",
+    "nodo": "Balanza Ingreso",
+    "hora": "17:29"
+   }
+  ]
+ },
+ "CFF574": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "CFT534",
+    "src": "carta",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "RNM392",
+   "HFF574"
+  ],
+  "fotos": [
+   {
+    "f": "CFF574_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZBalIngTras",
+    "nodo": "Balanza Ingreso",
+    "hora": "17:29"
+   },
+   {
+    "f": "CFF574_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZBalIngTras",
+    "nodo": "Balanza Ingreso",
+    "hora": "17:29"
+   }
+  ]
+ },
+ "VUE305": {
+  "lecturas": 1,
+  "near": [],
+  "same": [
+   "CRJ139"
+  ],
+  "fotos": [
+   {
+    "f": "VUE305_0_escena.jpg",
+    "kind": "escena",
+    "dev": "RicS6Playa3",
+    "nodo": "Playa 3",
+    "hora": "20:11"
+   }
+  ]
+ },
+ "FGX032": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "KGX035",
+    "src": "Permitidos",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "AA539HA"
+  ],
+  "fotos": [
+   {
+    "f": "FGX032_0_patente.jpg",
+    "kind": "patente",
+    "dev": "RicPreIngInFr",
+    "nodo": "Pre ingreso",
+    "hora": "20:13"
+   },
+   {
+    "f": "FGX032_1_escena.jpg",
+    "kind": "escena",
+    "dev": "RicPreIngInFr",
+    "nodo": "Pre ingreso",
+    "hora": "20:13"
+   }
+  ]
+ },
+ "PGV357": {
+  "lecturas": 1,
+  "near": [],
+  "same": [],
+  "fotos": [
+   {
+    "f": "PGV357_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZBalSC2Fte",
+    "nodo": "Balanza Egreso",
+    "hora": "20:17"
+   },
+   {
+    "f": "PGV357_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZBalSC2Fte",
+    "nodo": "Balanza Egreso",
+    "hora": "20:17"
+   }
+  ]
+ },
+ "HWX561": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "HMX581",
+    "src": "remito · semilla de camelina",
+    "dist": 2
+   }
+  ],
+  "same": [],
+  "fotos": []
+ },
+ "VXY228": {
+  "lecturas": 2,
+  "near": [
+   {
+    "plate": "VDY928",
+    "src": "carta",
+    "dist": 2
+   },
+   {
+    "plate": "XVY228",
+    "src": "remito · aceite girasol refinado",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "LCP506",
+   "UYM942",
+   "CDF727"
+  ],
+  "fotos": [
+   {
+    "f": "VXY228_0_patente.jpg",
+    "kind": "patente",
+    "dev": "RenCargTras",
+    "nodo": "Carga / Descarga OSL",
+    "hora": "20:51"
+   },
+   {
+    "f": "VXY228_1_escena.jpg",
+    "kind": "escena",
+    "dev": "RenCargTras",
+    "nodo": "Carga / Descarga OSL",
+    "hora": "20:51"
+   },
+   {
+    "f": "VXY228_2_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZSalidaC1Tras",
+    "nodo": "Egreso",
+    "hora": "21:04"
+   },
+   {
+    "f": "VXY228_3_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZSalidaC1Tras",
+    "nodo": "Egreso",
+    "hora": "21:04"
+   }
+  ]
+ },
+ "TET782": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "UEY782",
+    "src": "remito · pellets girasol",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "AHZ453",
+   "ROS380"
+  ],
+  "fotos": [
+   {
+    "f": "TET782_0_patente.jpg",
+    "kind": "patente",
+    "dev": "RicPreIngInTr",
+    "nodo": "Pre ingreso",
+    "hora": "21:03"
+   },
+   {
+    "f": "TET782_1_escena.jpg",
+    "kind": "escena",
+    "dev": "RicPreIngInTr",
+    "nodo": "Pre ingreso",
+    "hora": "21:03"
+   }
+  ]
+ },
+ "GVN377": {
+  "lecturas": 2,
+  "near": [
+   {
+    "plate": "HVJ377",
+    "src": "carta",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "AC399QI"
+  ],
+  "fotos": [
+   {
+    "f": "GVN377_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZCalado",
+    "nodo": "Calada",
+    "hora": "21:32"
+   },
+   {
+    "f": "GVN377_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZCalado",
+    "nodo": "Calada",
+    "hora": "21:32"
+   },
+   {
+    "f": "GVN377_2_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZSalidaC1Fte",
+    "nodo": "Egreso",
+    "hora": "21:53"
+   },
+   {
+    "f": "GVN377_3_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZSalidaC1Fte",
+    "nodo": "Egreso",
+    "hora": "21:53"
+   }
+  ]
+ },
+ "MDD526": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "NDD521",
+    "src": "carta",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "KQN188",
+   "BAK418",
+   "EEW075"
+  ],
+  "fotos": [
+   {
+    "f": "MDD526_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZBalSC2Fte",
+    "nodo": "Balanza Egreso",
+    "hora": "22:32"
+   },
+   {
+    "f": "MDD526_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZBalSC2Fte",
+    "nodo": "Balanza Egreso",
+    "hora": "22:32"
+   }
+  ]
+ },
+ "IMX998": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "UWX998",
+    "src": "remito · pellets girasol",
+    "dist": 2
+   },
+   {
+    "plate": "VEX998",
+    "src": "carta",
+    "dist": 2
+   },
+   {
+    "plate": "IDX978",
+    "src": "carta",
+    "dist": 2
+   },
+   {
+    "plate": "HMX995",
+    "src": "remito · semilla de camelina",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "EOR969",
+   "UZS130",
+   "ERM276"
+  ],
+  "fotos": [
+   {
+    "f": "IMX998_0_patente.jpg",
+    "kind": "patente",
+    "dev": "RicIngCamFrente",
+    "nodo": "Ingreso",
+    "hora": "22:40"
+   },
+   {
+    "f": "IMX998_1_escena.jpg",
+    "kind": "escena",
+    "dev": "RicIngCamFrente",
+    "nodo": "Ingreso",
+    "hora": "22:40"
+   }
+  ]
+ },
+ "CFM117": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "CFM117",
+    "src": "carta",
+    "dist": 0
+   },
+   {
+    "plate": "KFK117",
+    "src": "carta",
+    "dist": 2
+   },
+   {
+    "plate": "LFM111",
+    "src": "remito · aceite soja crudo desgomado",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "BZH333"
+  ],
+  "fotos": [
+   {
+    "f": "CFM117_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZBalSC2Fte",
+    "nodo": "Balanza Egreso",
+    "hora": "22:55"
+   },
+   {
+    "f": "CFM117_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZBalSC2Fte",
+    "nodo": "Balanza Egreso",
+    "hora": "22:55"
+   }
+  ]
+ },
+ "UGE742": {
+  "lecturas": 1,
+  "near": [],
+  "same": [
+   "THS192"
+  ],
+  "fotos": [
+   {
+    "f": "UGE742_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZBalSC2Tras",
+    "nodo": "Balanza Egreso",
+    "hora": "23:03"
+   },
+   {
+    "f": "UGE742_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZBalSC2Tras",
+    "nodo": "Balanza Egreso",
+    "hora": "23:03"
+   }
+  ]
+ },
+ "OE911IT": {
+  "lecturas": 1,
+  "near": [],
+  "same": [],
+  "fotos": [
+   {
+    "f": "OE911IT_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZSalidaC2Tras",
+    "nodo": "Egreso",
+    "hora": "23:19"
+   },
+   {
+    "f": "OE911IT_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZSalidaC2Tras",
+    "nodo": "Egreso",
+    "hora": "23:19"
+   }
+  ]
+ },
+ "BVG200": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "BVS300",
+    "src": "remito · pellets girasol",
+    "dist": 2
+   },
+   {
+    "plate": "NHG200",
+    "src": "carta",
+    "dist": 2
+   }
+  ],
+  "same": [],
+  "fotos": [
+   {
+    "f": "BVG200_0_patente.jpg",
+    "kind": "patente",
+    "dev": "RicS6Playa3",
+    "nodo": "Playa 3",
+    "hora": "23:22"
+   },
+   {
+    "f": "BVG200_1_escena.jpg",
+    "kind": "escena",
+    "dev": "RicS6Playa3",
+    "nodo": "Playa 3",
+    "hora": "23:22"
+   }
+  ]
+ },
+ "PNF819": {
+  "lecturas": 1,
+  "near": [],
+  "same": [],
+  "fotos": [
+   {
+    "f": "PNF819_0_patente.jpg",
+    "kind": "patente",
+    "dev": "RicB1Ingreso",
+    "nodo": "Balanza Ingreso",
+    "hora": "23:36"
+   },
+   {
+    "f": "PNF819_1_escena.jpg",
+    "kind": "escena",
+    "dev": "RicB1Ingreso",
+    "nodo": "Balanza Ingreso",
+    "hora": "23:36"
+   }
+  ]
+ },
+ "USA628": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "HZA628",
+    "src": "carta",
+    "dist": 2
+   },
+   {
+    "plate": "UJA626",
+    "src": "remito · soja",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "AG609UT",
+   "UJA626",
+   "DZP771",
+   "AHZ453",
+   "AC722VK"
+  ],
+  "fotos": [
+   {
+    "f": "USA628_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZBalIngFte",
+    "nodo": "Balanza Ingreso",
+    "hora": "23:47"
+   },
+   {
+    "f": "USA628_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZBalIngFte",
+    "nodo": "Balanza Ingreso",
+    "hora": "23:47"
+   }
+  ]
+ },
+ "OMM811": {
+  "lecturas": 1,
+  "near": [],
+  "same": [
+   "HVG284",
+   "AE327DL"
+  ],
+  "fotos": [
+   {
+    "f": "OMM811_0_patente.jpg",
+    "kind": "patente",
+    "dev": "RicIngCamFrente",
+    "nodo": "Ingreso",
+    "hora": "23:48"
+   },
+   {
+    "f": "OMM811_1_escena.jpg",
+    "kind": "escena",
+    "dev": "RicIngCamFrente",
+    "nodo": "Ingreso",
+    "hora": "23:48"
+   }
+  ]
+ },
+ "FIL298": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "FIH292",
+    "src": "remito · leña eucaliptus 220 240",
+    "dist": 2
+   },
+   {
+    "plate": "CJL298",
+    "src": "carta",
+    "dist": 2
+   }
+  ],
+  "same": [],
+  "fotos": [
+   {
+    "f": "FIL298_0_patente.jpg",
+    "kind": "patente",
+    "dev": "RicCal03",
+    "nodo": "Calada",
+    "hora": "23:49"
+   },
+   {
+    "f": "FIL298_1_escena.jpg",
+    "kind": "escena",
+    "dev": "RicCal03",
+    "nodo": "Calada",
+    "hora": "23:49"
+   }
+  ]
+ },
+ "OAM811": {
+  "lecturas": 1,
+  "near": [],
+  "same": [
+   "HVG284"
+  ],
+  "fotos": [
+   {
+    "f": "OAM811_0_patente.jpg",
+    "kind": "patente",
+    "dev": "RicPreIngInFr",
+    "nodo": "Pre ingreso",
+    "hora": "23:51"
+   },
+   {
+    "f": "OAM811_1_escena.jpg",
+    "kind": "escena",
+    "dev": "RicPreIngInFr",
+    "nodo": "Pre ingreso",
+    "hora": "23:51"
+   }
+  ]
+ },
+ "BEG875": {
+  "lecturas": 1,
+  "near": [
+   {
+    "plate": "EDG875",
+    "src": "remito · aceite girasol refinado",
+    "dist": 2
+   }
+  ],
+  "same": [
+   "DTN089",
+   "DJU549",
+   "AD249HD",
+   "UQJ192"
+  ],
+  "fotos": [
+   {
+    "f": "BEG875_0_patente.jpg",
+    "kind": "patente",
+    "dev": "SLZSalidaC1Fte",
+    "nodo": "Egreso",
+    "hora": "23:58"
+   },
+   {
+    "f": "BEG875_1_escena.jpg",
+    "kind": "escena",
+    "dev": "SLZSalidaC1Fte",
+    "nodo": "Egreso",
+    "hora": "23:58"
+   }
+  ]
+ }
+}

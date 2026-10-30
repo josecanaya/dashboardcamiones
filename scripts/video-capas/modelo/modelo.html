@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>Modelo en vivo</title>
+<style>
+:root{--dark:#10271d;--mint:#8fd3a8;--ink:#14261c;--muted:#6b7a70;--line:#d5dcd3;
+--green:#1e6b3c;--greenBg:#dcefe2;--blue:#2a5ea8;--blueBg:#dde8f6;--red:#b42323;--redBg:#f8dede;--slate:#4a5560;--slateBg:#e3e7ea;--amber:#e8a317}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#fff;font-family:Arial,Helvetica,sans-serif;color:var(--ink)}
+canvas{position:absolute;inset:0}
+#ov{position:absolute;inset:0;pointer-events:none}
+.hdr{position:absolute;left:70px;top:38px}
+.hdr .k{font-weight:700;letter-spacing:4px;font-size:22px;color:var(--green);text-transform:uppercase}
+.hdr h1{font-family:"Arial Narrow",Arial,sans-serif;font-stretch:condensed;font-size:64px;color:var(--dark);margin-top:6px;letter-spacing:-.5px}
+.live{display:inline-flex;align-items:center;gap:10px;background:var(--dark);color:#fff;border-radius:999px;padding:8px 18px;font-size:22px;font-weight:700;position:absolute;left:70px;top:168px}
+.live i{width:12px;height:12px;border-radius:50%;background:#4fd17f;display:inline-block}
+.feed{position:absolute;right:40px;top:40px;width:440px;bottom:70px;background:#fff;border:2px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:22px 22px;overflow:hidden}
+.feed h3{font-size:20px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.fi{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:#fff}
+.fi b{font-family:Consolas,monospace;font-size:26px}
+.fi small{display:block;font-size:17px;color:var(--muted);margin-top:3px}
+.chip{font-size:17px;font-weight:700;border-radius:999px;padding:6px 12px;white-space:nowrap}
+.c-green{background:var(--greenBg);color:var(--green)} .c-blue{background:var(--blueBg);color:var(--blue)} .c-red{background:var(--redBg);color:var(--red)} .c-slate{background:var(--slateBg);color:var(--slate)}
+.ring{position:absolute;border:4px solid var(--amber);border-radius:50%;transform:translate(-50%,-50%)}
+.cam{position:absolute;width:30px;height:30px;border-radius:50%;background:var(--dark);border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3);transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center}
+.cam::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--mint)}
+.camlab{position:absolute;transform:translate(-50%,0);font-size:17px;font-weight:700;color:var(--dark);background:rgba(255,255,255,.85);padding:2px 8px;border-radius:6px;white-space:nowrap}
+.plate{position:absolute;transform:translate(-50%,-100%);font-family:Consolas,monospace;font-weight:700;font-size:16px;color:#fff;padding:2px 7px;border-radius:6px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.card{position:absolute;width:470px;background:#fff;border-radius:16px;box-shadow:0 14px 40px rgba(0,0,0,.25);padding:18px 20px;border:2px solid var(--line)}
+.card .cn{font-size:16px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.card .rd{display:flex;align-items:center;gap:12px;margin:8px 0 12px;font-size:20px;color:var(--muted);white-space:nowrap}
+.card .rd b{font-family:Consolas,monospace;font-size:32px;color:var(--ink)}
+.card .rd .res{font-family:Consolas,monospace;font-size:32px;font-weight:700}
+.card .rd .res.t{font-family:Arial;font-size:26px}
+.steps{display:flex;flex-wrap:wrap;gap:6px}
+.st{font-size:16px;font-weight:700;border-radius:8px;padding:6px 9px;background:#eef1ec;color:#9aa59d;border:1.5px solid #e1e6df}
+.st.no{background:#e9ece8;color:#59655c;border-color:#d3d9d2}
+.st.green{background:var(--greenBg);color:var(--green);border-color:var(--green)}
+.st.blue{background:var(--blueBg);color:var(--blue);border-color:var(--blue)}
+.st.red{background:var(--redBg);color:var(--red);border-color:var(--red)}
+.st.slate{background:var(--slateBg);color:var(--slate);border-color:var(--slate)}
+.lead{position:absolute;height:3px;background:var(--dark);transform-origin:0 50%}
+</style></head><body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<div id="ov"></div>
+<script type="module">
+import * as THREE from './three.module.min.js';
+const W=1920,H=1080;
+const renderer=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(1);renderer.setSize(W,H,false);
+const COLOR={background:'#ffffff',terrain:'#e4f4e2',floor:'#f6f7f4',building:'#ffffff',edge:'#2f3437',band:'#f2c4cb'};
+const ST={pending:'#e8a317',green:'#1e6b3c',blue:'#2a5ea8',red:'#b42323',slate:'#4a5560',done:'#2f7a4e'};
+const clamp=x=>Math.max(0,Math.min(1,x)),ease=x=>{x=clamp(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2},eo=x=>{x=clamp(x);return 1-Math.pow(1-x,3)};
+
+function bandsMesh(bands,z){let x0=1/0,x1=-1/0,y0=1/0,y1=-1/0;for(const img of bands)for(const p of img)for(let i=0;i<p.length;i+=2){x0=Math.min(x0,p[i]);x1=Math.max(x1,p[i]);y0=Math.min(y0,p[i+1]);y1=Math.max(y1,p[i+1])}
+ const R=.5,cv=document.createElement('canvas');cv.width=Math.ceil((x1-x0)/R);cv.height=Math.ceil((y1-y0)/R);const ctx=cv.getContext('2d');ctx.fillStyle=COLOR.band;ctx.filter='blur(1.5px)';
+ for(const img of bands){ctx.beginPath();for(const p of img){for(let i=0;i<p.length;i+=2){const px=(p[i]-x0)/R,py=(y1-p[i+1])/R;i?ctx.lineTo(px,py):ctx.moveTo(px,py)}ctx.closePath()}ctx.fill('evenodd')}
+ const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;const m=new THREE.Mesh(new THREE.PlaneGeometry(x1-x0,y1-y0),new THREE.MeshBasicMaterial({map:tex,alphaTest:.5,depthTest:false,depthWrite:false}));m.position.set((x0+x1)/2,(y0+y1)/2,z);m.renderOrder=2;return m}
+function merge(parts){const n=parts.reduce((a,g)=>a+g.getAttribute('position').count,0),pos=new Float32Array(n*3);let o=0;for(const g of parts){const a=g.getAttribute('position').array;pos.set(a,o);o+=a.length}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));return g}
+function harea(v){let x0=1/0,x1=-1/0,y0=1/0,y1=-1/0;for(let i=0;i<v.length;i+=3){x0=Math.min(x0,v[i]);x1=Math.max(x1,v[i]);y0=Math.min(y0,v[i+1]);y1=Math.max(y1,v[i+1])}return(x1-x0)*(y1-y0)}
+
+function buildSite(model){
+ const r=new THREE.Vector3(...model.camera.right),u=new THREE.Vector3(...model.camera.up),back=new THREE.Vector3().crossVectors(r,u);
+ const ti=model.meshes.reduce((b,m,i)=>(m.t==='IfcSlab'&&harea(m.v)>(b<0?0:harea(model.meshes[b].v))?i:b),-1);
+ const groups={terrain:[],floor:[],building:[]},edges=[];let minX=1/0,maxX=-1/0,minY=1/0,maxY=-1/0;const p=new THREE.Vector3();
+ for(const [i,m] of model.meshes.entries()){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(m.v),3));g.setIndex(m.f);
+  groups[i===ti?'terrain':m.n==='Floors'?'floor':'building'].push(g.toNonIndexed());edges.push(new THREE.EdgesGeometry(g,25));
+  for(let k=0;k<m.v.length;k+=3){p.set(m.v[k],m.v[k+1],m.v[k+2]);const X=p.dot(r),Y=p.dot(u);minX=Math.min(minX,X);maxX=Math.max(maxX,X);minY=Math.min(minY,Y);maxY=Math.max(maxY,Y)}}
+ const scene=new THREE.Scene();scene.background=new THREE.Color(COLOR.background);
+ scene.add(new THREE.HemisphereLight('#ffffff','#c9ccd0',2.2));const sun=new THREE.DirectionalLight('#ffffff',1.4);
+ sun.position.copy(u.clone().multiplyScalar(.6).add(r.clone().multiplyScalar(-.5)).add(back.clone().multiplyScalar(.6)).add(new THREE.Vector3(0,0,1)));scene.add(sun);
+ const mat=c=>new THREE.MeshLambertMaterial({color:c,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1});
+ const ORD={terrain:0,floor:1,building:3};for(const k of ['terrain','floor','building']){if(!groups[k].length)continue;const g=merge(groups[k]);g.computeVertexNormals();const ms=new THREE.Mesh(g,mat(COLOR[k]));ms.renderOrder=ORD[k];scene.add(ms)}
+ if(model.bands?.length)scene.add(bandsMesh(model.bands,model.groundZ));
+ const lines=new THREE.LineSegments(merge(edges),new THREE.LineBasicMaterial({color:COLOR.edge,transparent:true,opacity:.5}));lines.renderOrder=4;scene.add(lines);
+ // encuadre: el modelo ocupa la zona izquierda (sin el panel de capturas)
+ const RX0=40,RX1=1430,RY0=230,RY1=1020;const k=Math.max((maxX-minX)/(RX1-RX0),(maxY-minY)/(RY1-RY0));
+ const cx=(minX+maxX)/2,cy=(minY+maxY)/2;const pcx=(RX0+RX1)/2,pcy=(RY0+RY1)/2;
+ const camX=cx+(W/2-pcx)*k,camY=cy+(pcy-H/2)*k;
+ const cam=new THREE.OrthographicCamera(-W/2*k,W/2*k,H/2*k,-H/2*k,1,20000);cam.up.copy(u);
+ const site={model,scene,cam,r,u,back,k,base:[camX,camY],trucks:{}};
+ site.setView=(zoom,fx,fy,amt)=>{ // acerca hacia el punto (fx,fy en coordenadas de pantalla-modelo X/Y)
+   const X=camX+(fx-camX)*amt,Y=camY+(fy-camY)*amt;const c=r.clone().multiplyScalar(X).add(u.clone().multiplyScalar(Y));
+   cam.position.copy(c.clone().add(back.clone().multiplyScalar(5000)));cam.lookAt(c);cam.zoom=zoom;cam.updateProjectionMatrix()};
+ site.setView(1,camX,camY,0);
+ site.toXY=(v)=>{p.set(v[0],v[1],v[2]);return [p.dot(r),p.dot(u)]};
+ site.px=(v)=>{const q=new THREE.Vector3(v[0],v[1],v[2]).project(cam);return [(q.x+1)/2*W,(1-q.y)/2*H]};
+ // grafo de ejes viales por nombre de nodo
+ const G={};for(const e of model.edges){const a=e.from.split(':')[1],b=e.to.split(':')[1];(G[a]??=[]).push({to:b,pts:e.points,len:e.lengthM});(G[b]??=[]).push({to:a,pts:[...e.points].reverse(),len:e.lengthM})}
+ site.path=(A,B)=>{const t=model.tramos.find(t=>t.id===A+'::'+B)||model.tramos.find(t=>t.id===B+'::'+A);
+   const a=model.pointNodes[A].at,b=model.pointNodes[B].at;
+   if(t){const pts=t.fromPointId===A?t.points:[...t.points].reverse();return [a,...pts,b]}
+   const na=model.pointNodes[A].node,nb=model.pointNodes[B].node;const dist={[na]:0},prev={},Q=new Set([na]);
+   while(Q.size){let cur=null;for(const q of Q)if(cur==null||dist[q]<dist[cur])cur=q;Q.delete(cur);if(cur===nb)break;for(const e of G[cur]||[]){const d=dist[cur]+e.len;if(d<(dist[e.to]??1/0)){dist[e.to]=d;prev[e.to]={from:cur,e};Q.add(e.to)}}}
+   if(!prev[nb])return [a,b];const segs=[];let c=nb;while(c!==na){segs.unshift(prev[c].e.pts);c=prev[c].from}return [a,...segs.flat(),b]};
+ return site}
+
+function polyline(pts){const L=[0];for(let i=1;i<pts.length;i++)L.push(L[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));
+ return {pts,L,len:L[L.length-1],at(s){s=Math.max(0,Math.min(this.len,s));let i=1;while(i<this.L.length-1&&this.L[i]<s)i++;const a=this.pts[i-1],b=this.pts[i],seg=this.L[i]-this.L[i-1]||1,f=(s-this.L[i-1])/seg;
+  return {p:[a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f,a[2]+(b[2]-a[2])*f],ang:Math.atan2(b[1]-a[1],b[0]-a[0])}}}}
+
+const SCALE=1.35,V=26; // metros del modelo por segundo de video
+function makeTruck(site,kind='truck'){const g=new THREE.Group();const m=c=>new THREE.MeshLambertMaterial({color:c});
+ if(kind==='moto'){const b=new THREE.Mesh(new THREE.BoxGeometry(2.4,.9,1.6),m('#3b4146'));b.position.set(0,0,.8);g.add(b);g.userData.cab=b}
+ else{const tr=new THREE.Mesh(new THREE.BoxGeometry(14,2.6,3.6),m('#e9ecee'));tr.position.set(-3.5,0,2.3);const cab=new THREE.Mesh(new THREE.BoxGeometry(3.2,2.6,3.4),m(ST.done));cab.position.set(5.6,0,2.2);
+  const lineMat=new THREE.LineBasicMaterial({color:'#2f3437'});g.add(tr,cab,new THREE.LineSegments(new THREE.EdgesGeometry(tr.geometry),lineMat).translateX(-3.5).translateZ(2.3));g.userData.cab=cab}
+ g.scale.setScalar(SCALE);g.renderOrder=6;site.scene.add(g);return g}
+
+const sites={};
+const SCEN={
+ ricardone:{title:'Ricardone',dur:13.5,cams:{S0:'Ingreso',S2:'Calada',S3:'Salida 2'},
+  zooms:[[0,1,null],[0.3,1.25,'S0'],[3.3,1.25,'S2'],[6.3,1.25,'S3'],[9.1,1.25,'S0'],[13.5,1,null]],
+  trucks:[
+   {id:'B',legs:[['S0','S1',1.6,9.5]],plate:'AU327DS',cap:{t:.6,pid:'S0',cam:'Ingreso · cámara frontal',read:'AU327DS',res:'AD327DS',kind:'blue',steps:[['2','no'],['3.1','blue']],layer:'3.1 parecidas'}},
+   {id:'A',legs:[['S1','S2',0,3.6],['S2','S4',6.2,10.5]],plate:'TAC436',cap:{t:3.6,pid:'S2',cam:'Calada · cámara frontal',read:'TAC436',res:'TAC436',kind:'green',steps:[['2','green']],layer:'capa 2 · carta'}},
+   {id:'C',legs:[['S2','S3',0,6.6],['S3','S0',9.6,14]],plate:'HUH233',cap:{t:6.6,pid:'S3',cam:'Salida 2 · cámara trasera',read:'HUH233',res:'HQB528',kind:'green',steps:[['2','green']],layer:'capa 2 · acoplado'}},
+   {id:'D',legs:[['S0','S1',11.6,17]],appear:8.8,plate:'UER485',cap:{t:9.4,pid:'S0',cam:'Ingreso · cámara frontal',read:'UER485',res:'Alerta',kind:'red',steps:[['2','no'],['3.1','no'],['3.2','no'],['3.3','no'],['3.4','no'],['4','red']],layer:'alerta'}},
+   {id:'E',legs:[['S2','S9-V1',0,4.5],['S9-V1','S10',6,11]]},
+   {id:'F',legs:[['S10','S6',0,12.5]]},
+   {id:'G',legs:[['S6','S7-A',.5,5],['S7-A','S10',7,12.5]]},
+   {id:'H',legs:[['S2-LIQ','S10',1,8]]},
+   {id:'I',legs:[['S5','S6',0,12.5]]},
+  ]},
+ san_lorenzo:{title:'San Lorenzo',dur:9,cams:{S1:'Balanza ingreso',S7:'Egreso'},
+  zooms:[[0,1,null],[0.3,1.25,'S1'],[4.4,1.25,'S7'],[9,1,null]],
+  trucks:[
+   {id:'R',legs:[['S1','S2',3.6,7.5]],appear:0,plate:'ROL445',cap:{t:.9,pid:'S1',cam:'Balanza ingreso · cámara frontal',read:'ROL445',res:'RDL445',kind:'blue',steps:[['2','no'],['3.1','no'],['3.2','no'],['3.3','blue']],layer:'3.3 banco'}},
+   {id:'M',kind:'moto',legs:[],appear:4.0,vanish:8.6,park:'S7',plate:'AE772ID',cap:{t:5.0,pid:'S7',cam:'Egreso · cámara trasera',below:1,read:'AE772ID',res:'moto',kind:'slate',steps:[['2','no'],['3.1','no'],['3.2','no'],['3.3','no'],['3.4','slate']],layer:'3.4 IA · no es camión'}},
+   {id:'N',legs:[['S4','S5',0,4]]},{id:'O',legs:[['S5','S6',4.2,8.5]]},{id:'P',legs:[['S1','S8',1.5,8]]},{id:'Q',legs:[['S2','S1',0,2.8]]},
+  ]},
+};
+const ORDER=['ricardone','san_lorenzo'];
+const ov=document.getElementById('ov');const el=(c,h='')=>{const d=document.createElement('div');d.className=c;d.innerHTML=h;ov.appendChild(d);return d};
+
+async function init(){
+ for(const s of ORDER){const model=await (await fetch(`/public/plant/${s}/modelo-3d.json`)).json();const site=buildSite(model);sites[s]=site;
+  for(const t of SCEN[s].trucks){t.obj=makeTruck(site,t.kind);t.paths=t.legs.map(([a,b,t0,t1])=>({pl:polyline(site.path(a,b)),t0,t1,arrive:!!(t.cap&&b===t.cap.pid&&t1<=t.cap.t+.01)}))}}
+ // DOM fijo
+ window.hdr=el('hdr','<div class="k">En vivo · recreación con casos reales</div><h1></h1>');
+ window.livePill=el('live','<i></i> 4 cámaras leyendo');
+ window.feed=el('feed','<h3>Capturas identificadas</h3><div class="list"></div>');
+ window.__ready=true}
+await init();
+
+let dynamic=[];
+function seek(T){
+ for(const d of dynamic)d.remove();dynamic=[];
+ let t=T,si=0;while(si<ORDER.length-1&&t>=SCEN[ORDER[si]].dur){t-=SCEN[ORDER[si]].dur;si++}
+ const s=ORDER[si],S=SCEN[s],site=sites[s];
+ hdr.querySelector('h1').textContent=S.title;livePill.innerHTML=`<i style="opacity:${.4+.6*Math.abs(Math.sin(T*3))}"></i> ${Object.keys(S.cams).length} cámaras leyendo`;
+ // cámara: acerca al punto de la captura activa
+ const Z=S.zooms;let zi=0;while(zi<Z.length-2&&t>=Z[zi+1][0])zi++;
+ const [ta,za,pa]=Z[zi],[tb,zb,pb]=Z[zi+1];const f=ease((t-ta)/Math.min(1.1,tb-ta));
+ const foc=pid=>pid?site.toXY(site.model.pointNodes[pid].at):site.base;
+ const [ax,ay]=foc(pa),[bx,by]=foc(pb);const zoom=za+(zb-za)*f;
+ site.setView(zoom,ax+(bx-ax)*f,ay+(by-ay)*f,.55*((pa?1:0)+((pb?1:0)-(pa?1:0))*f));
+ // camiones
+ const feedItems=[];
+ for(const tr of S.trucks){let pos=null,ang=0,vis=1;
+  const legs=tr.paths;
+  if(tr.park){pos=site.model.pointNodes[tr.park].at;ang=-.6}
+  else{let cur=legs[0];for(const L of legs){if(t>=L.t0)cur=L}
+   const soft=u=>u<=0?0:u<1?V*u*u/2:V*(u-.5);const sv=cur.arrive?cur.pl.len-soft(cur.t1-t):soft(t-cur.t0);const q=cur.pl.at(sv);pos=q.p;ang=q.ang}
+  if(tr.appear!=null)vis=clamp((t-tr.appear)/.4);if(tr.vanish!=null)vis=Math.min(vis,clamp((tr.vanish-t)/.4));
+  tr.obj.visible=vis>.02;tr.obj.scale.setScalar(SCALE*(.4+.6*vis));
+  tr.obj.position.set(pos[0],pos[1],pos[2]);tr.obj.rotation.z=ang;
+  const cap=tr.cap;let state='done';
+  if(cap){const tRes=cap.t+.5+cap.steps.length*.3;state=t<tRes?'pending':cap.kind;if(t>=tRes)feedItems.push({tr,tRes});
+   tr.obj.userData.cab.material.color.set(ST[state]);
+   if(tr.obj.visible){const [x,y]=site.px([pos[0],pos[1],pos[2]+14]);const lab=el('plate',t<tRes?`${cap.read} ?`:cap.res==='Alerta'?`${cap.read} ⚠`:cap.res==='moto'?'moto':cap.res);lab.style.cssText+=`left:${x}px;top:${y}px;background:${ST[state]};opacity:${vis}`;dynamic.push(lab)}
+   // tarjeta de la captura
+   const c0=cap.t,c1=tRes+1.5;if(t>=c0-.2&&t<c1+.3){const o=Math.min(eo((t-c0+.2)/.35),clamp((c1+.3-t)/.3));
+    const [px,py]=site.px(site.model.pointNodes[cap.pid].at);
+    const ring=el('ring');const rp=clamp((t-c0)/.7);ring.style.cssText+=`left:${px}px;top:${py}px;width:${30+rp*120}px;height:${30+rp*120}px;opacity:${t>=c0?(1-rp):0}`;dynamic.push(ring);
+    let cxp=px+70,cyp=py-260;if(cxp+470>1440)cxp=px-500;if(cyp<230||cap.below)cyp=py+70;if(cyp+230>1020)cyp=1020-230;
+    const steps=cap.steps.map(([n,k],j)=>{const on=t>=c0+.5+j*.3;return `<span class="st ${on?k:''}">${{'2':'2 · Carta / Permitidos / Remitos','3.1':'3.1 Parecidas','3.2':'3.2 Metadatos','3.3':'3.3 Banco','3.4':'3.4 IA','4':'4 · Alerta'}[n]}</span>`}).join('');
+    const showRes=t>=tRes;const isTxt=!/^[A-Z0-9]+$/.test(cap.res);
+    const card=el('card',`<div class="cn">${cap.cam}</div><div class="rd">Leyó <b>${cap.read}</b>${showRes?`→ <span class="res ${isTxt?'t':''}" style="color:${ST[cap.kind]}">${cap.res==='moto'?'no es camión':cap.res}</span>`:''}</div><div class="steps"><span class="st done" style="background:#fff;color:#14261c;border-color:#d5dcd3">1 · Cámara</span>${steps}${showRes&&cap.kind!=='red'&&cap.kind!=='slate'&&cap.steps.length>1?'<span class="st green">↺ 2 · sí</span>':''}</div>`);
+    card.style.cssText+=`left:${cxp}px;top:${cyp}px;opacity:${o};transform:translateY(${(1-o)*14}px)`;dynamic.push(card);
+    const lx=cxp<px?cxp+470:cxp,ly=cyp<py?cyp+120:cyp+30;const ln=el('lead');const dx=lx-px,dy=ly-py;ln.style.cssText+=`left:${px}px;top:${py}px;width:${Math.hypot(dx,dy)}px;transform:rotate(${Math.atan2(dy,dx)}rad);opacity:${o*.8}`;dynamic.push(ln)}}}
+ // cámaras del escenario
+ for(const [pid,name] of Object.entries(S.cams)){const [x,y]=site.px(site.model.pointNodes[pid].at);const c=el('cam');c.style.cssText+=`left:${x}px;top:${y}px`;const l=el('camlab',name);l.style.cssText+=`left:${x}px;top:${y+20}px`;dynamic.push(c,l)}
+ // panel de capturas: las de esta planta y las anteriores
+ const all=[];for(let i=0;i<=si;i++){const SS=SCEN[ORDER[i]];const tt=i<si?SS.dur+99:t;for(const tr of SS.trucks){const cap=tr.cap;if(!cap)continue;const tRes=cap.t+.5+cap.steps.length*.3;if(tt>=tRes)all.push({cap,site:SS.title,when:i*100+tRes,age:tt-tRes})}}
+ all.sort((a,b)=>b.when-a.when);
+ feed.querySelector('.list').innerHTML=all.map(({cap,site:sn,age})=>`<div class="fi" style="opacity:${eo(age/.4)};transform:translateX(${(1-eo(age/.4))*30}px)"><div><b>${cap.res==='moto'||cap.res==='Alerta'?cap.read:cap.res}</b><small>${sn} · ${cap.cam.split(' · ')[0]}</small></div><span class="chip c-${cap.kind}">${cap.layer}</span></div>`).join('');
+ renderer.render(site.scene,site.cam);
+}
+
+// ================= un día completo: 29/10 =================
+const DAY=await (await fetch('./dia29c.json')).json();
+const D0=Date.parse('2026-10-29T00:00:00-03:00');
+const DA=14,DB=9,DC=7,DDUR=DA+DB+DC;
+const LAY=[['c2','2 · Carta / Permitidos / Remitos','#1e6b3c'],['p31','3.1 · Parecidas','#2a5ea8'],['m32','3.2 · Metadatos','#4f86d9'],['b33','3.3 · Banco','#7a5bc4'],['ia34','3.4 · IA','#2b9aa8'],['al4','4 · Alerta','#b42323'],['nc','No es un camión','#8a7f72'],['nr','Patente ilegible','#9aa3a0']];
+const LC=Object.fromEntries(LAY.map(l=>[l[0],l[2]]));
+const c3=document.getElementById('c');
+const dayCv=document.createElement('canvas');dayCv.width=W;dayCv.height=H;dayCv.style.cssText='position:absolute;inset:0;display:none';document.body.insertBefore(dayCv,ov);const dc=dayCv.getContext('2d');
+const dayHdr=el('hdr','');dayHdr.style.display='none';
+function frameCam(site,RX0,RX1,RY0,RY1){const m=site.model,r=site.r,u=site.u,back=site.back,p=new THREE.Vector3();let minX=1/0,maxX=-1/0,minY=1/0,maxY=-1/0;
+ for(const ms of m.meshes)for(let k=0;k<ms.v.length;k+=3){p.set(ms.v[k],ms.v[k+1],ms.v[k+2]);const X=p.dot(r),Y=p.dot(u);minX=Math.min(minX,X);maxX=Math.max(maxX,X);minY=Math.min(minY,Y);maxY=Math.max(maxY,Y)}
+ const k=Math.max((maxX-minX)/(RX1-RX0),(maxY-minY)/(RY1-RY0)),cx=(minX+maxX)/2,cy=(minY+maxY)/2,X=cx+(W/2-(RX0+RX1)/2)*k,Y=cy+((RY0+RY1)/2-H/2)*k;
+ const cam=new THREE.OrthographicCamera(-W/2*k,W/2*k,H/2*k,-H/2*k,1,20000);cam.up.copy(u);const c=r.clone().multiplyScalar(X).add(u.clone().multiplyScalar(Y));cam.position.copy(c.clone().add(back.clone().multiplyScalar(5000)));cam.lookAt(c);cam.updateProjectionMatrix();cam.updateMatrixWorld(true);
+ return {cam,px:(v)=>{const q=new THREE.Vector3(v[0],v[1],v[2]).project(cam);return [(q.x+1)/2*W,(1-q.y)/2*H]}}}
+const DV=[frameCam(sites.ricardone,60,930,250,720),frameCam(sites.san_lorenzo,990,1860,250,720)];
+// sector / nodo de la captura → punto del modelo
+const PT={0:{S0:'S0',S1:'S1',S2:'S2',S3:'S3',S4:'S4',S6:'S6',S7:'S7-A',S8:'S8'},1:{S0:'S1',S1:'S1',S2:'S2',S4:'S4',S5:'S5',S6:'S6',S7:'S7',S8:'S8',S10:'S10'}};
+const BYNAME=[{},{}];for(const [i,s] of [[0,'ricardone'],[1,'san_lorenzo']])for(const [id,pn] of Object.entries(sites[s].model.pointNodes))BYNAME[i][pn.node]=id;
+const ALIAS=[{'Balanza Egreso':'S4','Volcable Silo Keppler':'S7-A'},{'Ingreso':'S1'}];
+const capPx=DAY.caps.map((c,i)=>{const site=c.s?sites.san_lorenzo:sites.ricardone;const pid=BYNAME[c.s][c.n]||ALIAS[c.s][c.n]||Object.keys(site.model.pointNodes)[0];
+ const [x,y]=DV[c.s].px(site.model.pointNodes[pid].at);const h=Math.sin(i*12.9898)*43758.5453;const j=h-Math.floor(h),j2=(h*7.3)-Math.floor(h*7.3);
+ return [x+(j-.5)*34,y+(j2-.5)*24]});
+const order=DAY.caps.map((c,i)=>i).sort((a,b)=>DAY.caps[a].t-DAY.caps[b].t);const times=order.map(i=>DAY.caps[i].t);
+// camiones agrupados
+const TRK=Object.entries(DAY.trucks).map(([p,v])=>({p,...v}));const GORD=['c2','p31','m32','b33','ia34','al4'];
+const slots=[];{let y=235;const X0=470,PER=58,SP=24,RH=22;for(const g of GORD){const tr=TRK.filter(t=>t.layer===g);const rows=Math.max(1,Math.ceil(tr.length/PER));tr.forEach((t,i)=>{t.tx=X0+(i%PER)*SP;t.ty=y+Math.floor(i/PER)*RH});slots.push({g,y,n:tr.length,rows});y+=Math.max(rows*RH,46)+24}}
+const siteCenter=[DV[0].px(sites.ricardone.model.pointNodes.S2.at),DV[1].px(sites.san_lorenzo.model.pointNodes.S1.at)];
+TRK.forEach((t,i)=>{const sc=siteCenter[t.site==='ricardone'?0:1];t.sx=sc[0];t.sy=sc[1];const h=Math.sin(i*78.233)*12345.678;t.d=(h-Math.floor(h))});
+const fmt=n=>n.toLocaleString('es-AR');
+function truckGlyph(x,y,c,a){dc.globalAlpha=a;dc.fillStyle=c;dc.fillRect(x-9,y-5,13,10);dc.fillRect(x+5,y-2,6,7);dc.globalAlpha=1}
+const partC=el('pc',`<div class="k" style="position:absolute;left:70px;top:38px;font-weight:700;letter-spacing:4px;font-size:22px;color:#1e6b3c;text-transform:uppercase">29/10/2026 · ${fmt(DAY.caps.filter(c=>c.l==='nc').length)} capturas</div><h1 style="position:absolute;left:70px;top:84px;font-family:'Arial Narrow',Arial,sans-serif;font-stretch:condensed;font-size:64px;color:#10271d">No es una patente de camión: no es una alerta</h1>`+[['ej_moto.jpg','Moto','Portería San Lorenzo · 07:05 · el DSS dice «Motorcycle»'],['ej_maquina.jpg','Minicargadora','Balanza Egreso Ricardone · 07:57 · sin tipo en el DSS']].map(([f,t,s],i)=>`<figure class="ej" style="position:absolute;left:${70+i*900}px;top:230px;width:870px;margin:0"><img src="${f}" style="width:870px;height:420px;object-fit:cover;border-radius:14px;display:block"><figcaption style="margin-top:14px"><b style="font-size:30px;color:#10271d">${t}</b><div style="font-size:21px;color:#6b7a70;margin-top:6px">${s}</div></figcaption></figure>`).join('')+`<p style="position:absolute;left:70px;top:800px;width:1700px;font-size:28px;line-height:1.45;color:#14261c">La cámara también lee motos, autos y máquinas. Si el tipo de vehículo del DSS o la foto dicen que no es un camión, la captura se descarta sin alerta. Las ${fmt(DAY.caps.filter(c=>c.l==='nr').length)} de patente ilegible sí son camiones vistos de atrás o de noche: el algoritmo los busca por el paso y la marca.</p>`);partC.style.cssText='position:absolute;inset:0;display:none';
+function seekDay(t){
+ for(const d of dynamic)d.remove();dynamic=[];feed.style.display='none';livePill.style.display='none';hdr.style.display='none';dayHdr.style.display='block';dayCv.style.display='block';
+ dc.clearRect(0,0,W,H);
+ const A=t<DA;const now=D0+clamp(t/(DA-.6))*86400000;const hh=new Date(now-3*3600e3);const clock=String(hh.getUTCHours()).padStart(2,'0')+':'+String(hh.getUTCMinutes()).padStart(2,'0');
+ const mA=A?1:clamp(1-(t-DA)/.8);
+ renderer.autoClear=false;renderer.setClearColor('#ffffff',1);renderer.clear();
+ if(mA>0){for(const [i,s] of [[0,'ricardone'],[1,'san_lorenzo']]){const sc=sites[s].scene;const bg=sc.background;sc.background=null;renderer.clearDepth();renderer.render(sc,DV[i].cam);sc.background=bg}}
+ renderer.autoClear=true;
+ c3.style.opacity=mA;
+ const C=t>=DA+DB;partC.style.display=C?'block':'none';if(C){const u=t-DA-DB;partC.style.opacity=clamp(u/.5);[...partC.querySelectorAll('.ej')].forEach((e,i)=>{const f=eo((u-.3-i*.35)/.5);e.style.opacity=f;e.style.transform=`translateY(${(1-f)*24}px)`});dc.clearRect(0,0,W,H);dayHdr.style.display='none';return}
+ let k=0;while(k<times.length&&times[k]<=now)k++;
+ const cnt={};for(let q=0;q<k;q++){const l=DAY.caps[order[q]].l;cnt[l]=(cnt[l]||0)+1}
+ if(mA>0){const WIN=50*60e3;for(let q=k-1;q>=0&&times[q]>now-WIN;q--){const i=order[q],c=DAY.caps[i],age=(now-times[q])/WIN;dc.globalAlpha=(1-age)*mA*(c.l==='nr'||c.l==='nc'?.45:.9);dc.fillStyle=LC[c.l];dc.beginPath();dc.arc(capPx[i][0],capPx[i][1],4+5*(1-age),0,7);dc.fill()}dc.globalAlpha=1}
+ const total=DAY.caps.length;
+ dayHdr.innerHTML=(t<DA+.8)?`<div class="k">Un día completo · jueves 29/10/2026</div><h1>${fmt(k)} capturas, cada una con su capa</h1><div style="position:absolute;left:1480px;top:20px;font:700 84px Consolas,monospace;color:#10271d">${clock}</div>`
+  :`<div class="k">29/10/2026 · ${fmt(total)} capturas</div><h1>Todos los camiones del día, agrupados por capa</h1>`;
+ if(mA>0){const X0=400,MAXW=1150,mx=Math.max(...LAY.map(l=>DAY.caps.filter(c=>c.l===l[0]).length));LAY.forEach(([key,lab,col],i)=>{const y=752+i*31,n=cnt[key]||0;dc.globalAlpha=mA;dc.fillStyle=key==='al4'?col:'#14261c';dc.font='700 21px Arial';dc.textAlign='right';dc.fillText(lab,X0-16,y+19);dc.fillStyle=col;dc.fillRect(X0,y+3,MAXW*n/mx,22);dc.fillStyle='#14261c';dc.textAlign='left';dc.fillText(fmt(n),X0+MAXW*n/mx+10,y+20);dc.globalAlpha=1});
+  dc.globalAlpha=mA;dc.fillStyle='#10271d';dc.font='700 26px Arial';dc.textAlign='center';dc.fillText('Ricardone',495,245);dc.fillText('San Lorenzo',1425,245);dc.globalAlpha=1}
+ if(!A){const u=t-DA;const lab=clamp((u-.3)/.5);
+  for(const sl of slots){const meta=LAY.find(l=>l[0]===sl.g);dc.globalAlpha=lab;dc.textAlign='right';dc.fillStyle=sl.g==='al4'?meta[2]:'#14261c';dc.font='700 24px Arial';dc.fillText(meta[1],440,sl.y+8);dc.font='700 20px Arial';dc.fillStyle='#6b7a70';dc.fillText(sl.n===1?'1 patente':fmt(sl.n)+' patentes',440,sl.y+32);dc.globalAlpha=1}
+  for(const tk of TRK){const st=.4+tk.d*2.6;const f=ease((u-st)/1.2);const x=tk.sx+(tk.tx-tk.sx)*f,y=tk.sy+(tk.ty-tk.sy)*f-Math.sin(f*Math.PI)*60;truckGlyph(x,y,LC[tk.layer],u>st-.05?1:0)}
+  const nt=clamp((u-4.5)/.6);dc.globalAlpha=nt;dc.fillStyle='#6b7a70';dc.font='22px Arial';dc.textAlign='left';
+  dc.fillText(`Cada patente va a la primera capa que la identificó. Fuera de las capas: ${fmt(DAY.caps.filter(c=>c.l==='nc').length)} capturas que no eran camiones (motos, autos, una máquina) y ${fmt(DAY.caps.filter(c=>c.l==='nr').length)} de camiones con la patente ilegible.`,140,1005);dc.globalAlpha=1}
+}
+const REC=ORDER.reduce((a,s)=>a+SCEN[s].dur,0);
+window.seek=(T)=>{if(T>=REC){seekDay(T-REC)}else{partC.style.display='none';dayCv.style.display='none';dayHdr.style.display='none';feed.style.display='';livePill.style.display='';hdr.style.display='';c3.style.opacity=1;seek(T)}};
+window.TOTAL=REC+DDUR;
+window.seek(0);
+
+</script></body></html>

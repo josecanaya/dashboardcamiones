@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>Capas del reconocedor</title>
+<style>
+:root{--dark:#10271d;--mint:#8fd3a8;--paper:#f2f5ee;--ink:#14261c;--muted:#6b7a70;--line:#d5dcd3;
+--green:#1e6b3c;--greenBg:#dcefe2;--blue:#2a5ea8;--blueBg:#dde8f6;--red:#b42323;--redBg:#f8dede;--slate:#4a5560;--slateBg:#e3e7ea}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--paper);font-family:Arial,Helvetica,sans-serif;color:var(--ink)}
+.scene{position:absolute;inset:0;opacity:0}
+.dark{background:var(--dark);color:#eef3ec}
+.cond{font-family:"Arial Narrow",Arial,sans-serif;font-stretch:condensed;font-weight:700;letter-spacing:-.5px}
+.kicker{font-weight:700;letter-spacing:4px;font-size:26px;text-transform:uppercase}
+.a{will-change:opacity,transform}
+/* intro */
+.intro .kicker{position:absolute;left:140px;top:150px;color:var(--mint)}
+.intro h1{position:absolute;left:140px;top:300px;font-size:150px;line-height:1.02}
+.intro p{position:absolute;left:140px;top:640px;width:1250px;font-size:42px;line-height:1.35;color:#c9d6cc}
+.intro small{position:absolute;left:140px;top:900px;font-size:28px;color:#8fa596}
+/* recorrido */
+.rec h2{position:absolute;left:130px;top:80px;font-size:84px;color:var(--dark)}
+.row{position:absolute;left:130px;width:1000px;height:78px;border:2px solid var(--line);background:#fff;border-radius:12px;display:flex;align-items:center;padding:0 28px;font-size:30px}
+.row b.n{width:80px;font-size:34px;color:var(--green)}
+.row b.t{margin-right:18px;font-size:32px;white-space:nowrap}
+.row span{color:var(--muted);font-size:27px}
+.row.g{background:var(--greenBg);border-color:var(--green)}
+.row.r{background:var(--redBg);border-color:var(--red)} .row.r b{color:var(--red)} .row.r span{color:var(--red)}
+.row.c b.n{color:var(--blue)}
+.c3box{position:absolute;left:110px;width:1040px;border:2px dashed #a9b8ab;border-radius:16px}
+.c3lab{position:absolute;left:140px;font-weight:700;letter-spacing:4px;font-size:22px;color:#5d6b61}
+.loopTxt{position:absolute;left:1260px;top:390px;width:560px;font-size:46px;font-weight:700;color:var(--blue);line-height:1.25}
+.note{position:absolute;left:1260px;top:640px;width:540px;font-size:32px;color:#555;line-height:1.4}
+.dot{position:absolute;width:30px;height:30px;border-radius:50%;background:#e8a317;box-shadow:0 0 0 8px rgba(232,163,23,.25)}
+/* section */
+.sec .kicker{position:absolute;left:140px;top:250px}
+.sec h2{position:absolute;left:140px;top:330px;width:1500px;font-size:110px;line-height:1.05}
+.sec p{position:absolute;left:140px;top:640px;width:1400px;font-size:40px;line-height:1.4;color:#c9d6cc}
+.sec small{position:absolute;left:140px;top:860px;font-size:30px;color:var(--mint)}
+.secbar{position:absolute;left:140px;top:215px;width:120px;height:8px;border-radius:4px}
+/* case */
+.case .kicker{position:absolute;left:90px;top:56px;font-size:24px}
+.case h2{position:absolute;left:90px;top:96px;font-size:72px;color:var(--dark);white-space:nowrap}
+.photo{position:absolute;left:90px;top:215px;width:1050px;height:619px;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.photo img{width:100%;height:100%;object-fit:cover;transform-origin:50% 60%}
+.meta{position:absolute;left:90px;top:858px;font-size:26px;color:var(--muted)}
+.desc{position:absolute;left:90px;top:902px;width:1050px;font-size:31px;line-height:1.38}
+.read{position:absolute;left:1220px;top:56px;width:610px;height:118px;background:#fff;border:2px solid var(--line);border-radius:14px;display:flex;align-items:center;padding:0 28px;font-size:28px;color:var(--muted);gap:16px;white-space:nowrap}
+.read .p{font-family:Consolas,"Courier New",monospace;font-weight:700;font-size:40px;color:var(--ink)}
+.read .res{font-family:Consolas,"Courier New",monospace;font-weight:700;font-size:40px}
+.read .res.txt{font-family:Arial;font-size:34px}
+.st{position:absolute;left:1220px;width:610px;height:74px;border:2px solid #e2e7e0;background:#eef1ec;border-radius:12px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;font-size:25px;font-weight:700;color:#a6b0a8}
+.st i{font-style:normal;font-weight:400;font-size:24px}
+.st.done{background:#fff;border-color:var(--line);color:var(--ink)} .st.done i{color:var(--muted)}
+.st.no{background:#e9ece8;border-color:#d3d9d2;color:#59655c} .st.no i{color:#7d877f}
+.st.hit-green{background:var(--greenBg);border-color:var(--green);color:var(--green)}
+.st.hit-blue{background:var(--blueBg);border-color:var(--blue);color:var(--blue)}
+.st.hit-red{background:var(--redBg);border-color:var(--red);color:var(--red)}
+.st.hit-slate{background:var(--slateBg);border-color:var(--slate);color:var(--slate)}
+.st.loop{background:var(--greenBg);border-color:var(--green);color:var(--green)}
+.st .pulse{position:absolute;inset:-2px;border-radius:12px;border:4px solid #e8a317;opacity:0}
+/* final */
+.fin .kicker{position:absolute;left:130px;top:80px;color:var(--green)}
+.fin h2{position:absolute;left:130px;top:125px;font-size:96px;color:var(--dark)}
+.bl{position:absolute;left:130px;font-size:32px;font-weight:700}
+.bar{position:absolute;left:640px;height:52px;border-radius:8px}
+.bv{position:absolute;font-size:40px;font-weight:700}
+.fin p{position:absolute;left:130px;top:870px;width:1660px;font-size:32px;line-height:1.45;color:#444}
+
+.live{background:var(--dark)}
+.live .lk{position:absolute;left:192px;top:34px;font-size:22px;color:var(--mint)}
+.live .lt{position:absolute;left:192px;top:66px;font-size:60px;color:#eef3ec;white-space:nowrap}
+.lchip{position:absolute;right:192px;top:70px;display:flex;gap:4px;background:#1d3a2b;border-radius:12px;padding:5px}
+.lchip span{font-size:26px;font-weight:700;color:#a9c3b1;padding:10px 22px;border-radius:9px}
+.lchip span.on{background:#fff;color:var(--dark)}
+.lrec{position:absolute;left:192px;top:150px;width:1536px;height:864px;border-radius:12px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.45)}
+.lrec img{width:100%;height:100%;display:block}
+.co{position:absolute;border:4px solid #e8a317;border-radius:12px;box-shadow:0 0 0 9999px rgba(8,20,14,.28);pointer-events:none}
+.cot{position:absolute;width:480px;background:#e8a317;color:#14261c;font-size:26px;font-weight:700;line-height:1.3;padding:14px 18px;border-radius:10px}
+.cot.top{width:760px;text-align:center}
+/* chapters */
+#chap{position:absolute;left:0;right:0;bottom:0;height:46px;display:flex;gap:4px;padding:0 90px 14px;opacity:0}
+#chap div{flex:1;position:relative;font-size:17px;font-weight:700;letter-spacing:1px;color:#8b978e;padding-top:12px;text-transform:uppercase}
+#chap div::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;border-radius:3px;background:#d3dbd2}
+#chap div em{position:absolute;left:0;top:0;height:5px;border-radius:3px;background:var(--green);width:0}
+#chap div.on{color:var(--green)}
+#chap.ondark div{color:#5d7a68} #chap.ondark div::before{background:#2a4537} #chap.ondark div.on{color:var(--mint)} #chap.ondark em{background:var(--mint)}
+</style></head><body>
+<script src="mframes/frames.js"></script>
+<div id="stage"></div>
+<div id="chap"></div>
+<script>
+const SECS=[
+ {key:'c2',chap:'2 · ¿Quién es?',color:'#1e6b3c',kicker:'Capa 2 · ¿Quién es?',title:'Toda captura pregunta primero quién es',body:'Se busca la patente en las cartas de porte vigentes, en Vehículos Permitidos y en los remitos. Si está, queda identificada sin corregir nada.',sub:'3 casos: carta de porte, Vehículos Permitidos y un acoplado leído por la trasera'},
+ {key:'c31',chap:'3.1 · Parecidas',color:'#2a5ea8',kicker:'3.1 · Patentes parecidas',title:'Si no está, se corrige la lectura',body:'El algoritmo busca la patente parecida en el lote de camiones. La patente corregida vuelve a la capa 2: solo vale si tiene carta o está en Permitidos.',sub:'3 casos de lecturas mal hechas por la cámara'},
+ {key:'c32',chap:'3.2 · Metadatos',color:'#2a5ea8',kicker:'3.2 · Metadatos',title:'Si la patente no alcanza, miran los metadatos',body:'La cámara informa marca, color y tamaño. Junto con el recorrido, eligen el camión; ese camión vuelve a la capa 2 a confirmarse.',sub:'3 casos donde la patente sola no alcanzaba'},
+ {key:'c33',chap:'3.3 · Banco',color:'#2a5ea8',kicker:'3.3 · Banco de corregidas',title:'Lo que ya se corrigió, no se corrige dos veces',body:'El banco guarda las lecturas que operaciones ya corrigió, las patentes confirmadas y los vehículos que no son camiones.',sub:'3 casos que el banco ya conocía'},
+ {key:'c34',chap:'3.4 · IA',color:'#2a5ea8',kicker:'3.4 · IA por imagen',title:'Si nada alcanzó, mira la IA',body:'La IA mira la foto: si es un camión del lote, qué patente tiene, o si es un tractor, una moto o un error de lectura. Lo que encuentra vuelve a la capa 2.',sub:'3 casos mirados por la IA'},
+ {key:'c4',chap:'4 · Alerta',color:'#b42323',kicker:'Alerta',title:'Lo que nada identifica es alerta',body:'Leída bien o no, si no tiene carta, no está en Permitidos y ninguna corrección la lleva a un camión registrado, la ve una persona.',sub:'3 camiones leídos bien, sin carta ni Vehículos Permitidos'},
+];
+const PICK=['TAC436','AU327DS','YTW71','ROL445','MYU882','UER485'];
+const ROWS=['1 · Cámara','2 · Carta / Permitidos / Remitos','3.1 · Patentes parecidas','3.2 · Metadatos','3.3 · Banco de corregidas','3.4 · IA por imagen','4 · Alerta'];
+// steps: [row, status, kind]  kind: done | no | hit-green | hit-blue | hit-slate | hit-red
+const ND=(n)=>Array.from({length:n},(_,i)=>[2+i,'no decide','no']);
+const C=[
+ {s:'c2',n:1,title:'TAC436 tiene carta de porte',img:4,meta:'29/10 15:26 · Calada · cámara frontal RicCal03',desc:'Chasis en la carta 10235839952 (girasol, sale). Queda identificado en la capa 2, sin corrección.',read:'TAC436',res:'TAC436',steps:[[0,'leyó','done'],[1,'sí · carta','hit-green']]},
+ {s:'c2',n:2,title:'AE260HD está en Vehículos Permitidos',img:5,meta:'29/10 15:27 · Balanza · cámara frontal RicB2Egreso',desc:'No tiene carta de porte, pero figura en Vehículos Permitidos (varios): es un vehículo conocido de la planta.',read:'AE260HD',res:'AE260HD',steps:[[0,'leyó','done'],[1,'sí · Permitidos','hit-green']]},
+ {s:'c2',n:3,title:'La trasera lee el acoplado',img:6,meta:'29/10 13:36 · Salida 2 · cámara trasera RicEgrCamTraser',desc:'HUH233 figura como acoplado de HQB528 en la carta 30035821517 (girasol). La captura se suma al chasis.',read:'HUH233',res:'HQB528',steps:[[0,'leyó el acoplado','done'],[1,'sí · acoplado','hit-green']]},
+ {s:'c31',n:1,title:'AU327DS se corrige a AD327DS',img:8,meta:'29/10 10:24 · Ingreso · cámara frontal RicIngCamFrente',desc:'La cámara confundió D con U. AD327DS es la única patente parecida y tiene carta 10135830558 (soja, entra).',read:'AU327DS',res:'AD327DS',steps:[[0,'leyó','done'],[1,'no está','no'],[2,'→ AD327DS · 86 %','hit-blue']],loop:'sí · carta'},
+ {s:'c31',n:2,title:'RXO997 se corrige a RXQ997',img:9,meta:'29/10 13:00 · Ingreso · cámara frontal RicIngCamFrente',desc:'La cámara leyó O en lugar de Q. RXQ997 tiene carta 10235842465 (soja, entra).',read:'RXO997',res:'RXQ997',steps:[[0,'leyó','done'],[1,'no está','no'],[2,'→ RXQ997 · 95 %','hit-blue']],loop:'sí · carta'},
+ {s:'c31',n:3,title:'DK307 es DKW107',img:10,meta:'29/10 15:36 · Calada · cámara frontal RicCal03',desc:'La misma cámara leyó DKW107 seis segundos antes. DKW107 tiene carta 10235841270 (soja, entra).',read:'DK307',res:'DKW107',steps:[[0,'lectura cortada','done'],[1,'no está','no'],[2,'→ DKW107','hit-blue']],loop:'sí · carta'},
+ {s:'c32',n:1,title:'VRA2889 es VRA989',img:12,meta:'23/10 07:47 · Calada · cámara frontal RicCalLiq',desc:'Recorrido, color, marca y tipo coinciden con VRA989, que tiene carta 10235759094 (girasol).',read:'VRA2889',res:'VRA989',steps:[[0,'leyó','done'],[1,'no está','no'],[2,'no alcanza','no'],[3,'→ VRA989 · 83 %','hit-blue']],loop:'sí · carta'},
+ {s:'c32',n:2,title:'De noche: YTW71 es VTN717',img:13,meta:'22/10 20:33 · Salida 2 · cámara frontal RicEgrCamFrente',desc:'La cámara informa un Scania mediano. Con el recorrido coincide con VTN717, que tiene carta 10135708611 (soja).',read:'YTW71',res:'VTN717',steps:[[0,'casi ilegible','done'],[1,'no está','no'],[2,'no alcanza','no'],[3,'→ VTN717 · 89 %','hit-blue']],loop:'sí · carta'},
+ {s:'c32',n:3,title:'AD8293 es AD829RY',img:14,meta:'23/10 08:23 · Salida 2 · cámara frontal RicEgrCamFrente',desc:'Mercedes-Benz plateado mediano: coincide con AD829RY, que está en Vehículos Permitidos (residuos).',read:'AD8293',res:'AD829RY',steps:[[0,'leyó','done'],[1,'no está','no'],[2,'no alcanza','no'],[3,'→ AD829RY · 95 %','hit-blue']],loop:'sí · Permitidos'},
+ {s:'c33',n:1,title:'El banco ya conocía ROL445',img:16,meta:'29/10 11:28 · Balanza ingreso San Lorenzo · cámara frontal SLZBalIngFte',desc:'Operaciones ya había corregido ROL445 → RDL445. RDL445 tiene carta 30035846712 (girasol).',read:'ROL445',res:'RDL445',steps:[[0,'leyó','done'],[1,'no está','no'],...ND(2),[4,'→ RDL445','hit-blue']],loop:'sí · carta'},
+ {s:'c33',n:2,title:'AD001TD es una camioneta',img:17,meta:'29/10 07:32 · Balanza · cámara frontal RicB3Ingreso',desc:'El banco la tiene como camioneta, aprendido de descartes anteriores. Se resuelve sin alerta.',read:'AD001TD',res:'no es camión',steps:[[0,'leyó','done'],[1,'no está','no'],...ND(2),[4,'camioneta','hit-slate']]},
+ {s:'c33',n:3,title:'AC656IE es un vehículo de servicio',img:18,meta:'28/10 17:57 · Balanza · cámara frontal RicB2Egreso',desc:'Pickup Ford Ranger que el banco tiene como vehículo de servicio: no es un camión de la operación.',read:'AC656IE',res:'no es camión',steps:[[0,'leyó','done'],[1,'no está','no'],...ND(2),[4,'servicio','hit-slate']]},
+ {s:'c34',n:1,title:'La IA ve MYM880',img:20,meta:'28/10 15:33 · Calada · cámara frontal RicCal01',desc:'Iveco Tector blanco con calco «Aurelia» y acoplado rojo, patente MYM 880. MYM880 tiene carta 10135811771 (soja).',read:'MYU882',res:'MYM880',steps:[[0,'leyó','done'],[1,'no está','no'],...ND(3),[5,'→ MYM880 · 95 %','hit-blue']],loop:'sí · carta'},
+ {s:'c34',n:2,title:'La IA ve TSO035',img:21,meta:'28/10 11:20 · Ingreso · cámara frontal RicIngCamFrente',desc:'Mercedes-Benz 1114 beige con acoplado jaula rojo, patente TSO 035. TSO035 tiene carta 10235823416 (soja).',read:'ISD035',res:'TSO035',steps:[[0,'leyó','done'],[1,'no está','no'],...ND(3),[5,'→ TSO035 · 93 %','hit-blue']],loop:'sí · carta'},
+ {s:'c34',n:3,title:'La IA ve una moto',img:22,meta:'27/10 19:07 · Egreso San Lorenzo · cámara trasera SLZSalidaC1Tras',desc:'La captura es una moto con conductor, no un camión. La lectura no corresponde a ningún vehículo de la operación.',read:'AE772ID',res:'no es camión',steps:[[0,'leyó','done'],[1,'no está','no'],...ND(3),[5,'moto','hit-slate']]},
+ {s:'c4',n:1,title:'UER485: leído bien, sin registro',img:24,meta:'29/10 15:46 · Ingreso · cámara frontal RicIngCamFrente',desc:'Mercedes-Benz rojo. La lectura es correcta, pero no tiene carta ni está en Permitidos: hay que revisar por qué está en planta.',read:'UER485',res:'Alerta',steps:[[0,'leyó','done'],[1,'no está','no'],...ND(4),[6,'alerta','hit-red']]},
+ {s:'c4',n:2,title:'LMH616: leído bien, sin registro',img:25,meta:'29/10 10:34 · Ingreso · cámara frontal RicIngCamFrente',desc:'Camión Mercedes-Benz blanco sin carta de porte ni registro en Vehículos Permitidos.',read:'LMH616',res:'Alerta',steps:[[0,'leyó','done'],[1,'no está','no'],...ND(4),[6,'alerta','hit-red']]},
+ {s:'c4',n:3,title:'HLT270: leído bien, sin registro',img:26,meta:'29/10 08:35 · Balanza · cámara frontal RicB3Ingreso',desc:'Camión chico Hyundai sin carta de porte ni registro en Vehículos Permitidos.',read:'HLT270',res:'Alerta',steps:[[0,'leyó','done'],[1,'no está','no'],...ND(4),[6,'alerta','hit-red']]},
+];
+// ---------- helpers ----------
+const stage=document.getElementById('stage');
+const clamp=(x)=>Math.max(0,Math.min(1,x));
+const ease=(x)=>{x=clamp(x);return 1-Math.pow(1-x,3)};
+const h=(html)=>{const d=document.createElement('div');d.innerHTML=html.trim();return d.firstChild};
+function fade(el,lt,t0,d=.55,dy=24,dx=0){const p=ease((lt-t0)/d);el.style.opacity=p;el.style.transform=`translate(${(1-p)*dx}px,${(1-p)*dy}px)`;return p}
+function pop(el,lt,t0,d=.45){const x=clamp((lt-t0)/d);const s=x<=0?.6:(x<1?.6+.5*ease(x)-.1*Math.sin(x*Math.PI):1);el.style.opacity=ease(x*1.6);el.style.transform=`scale(${s})`}
+const scenes=[];let T=0;
+function add(dur,el,render,chap,dark){stage.appendChild(el);scenes.push({t0:T,dur,el,render,chap,dark});T+=dur}
+
+// ---------- intro ----------
+{const el=h(`<div class="scene dark intro"><div class="kicker a">Nodo Sur · Ricardone y San Lorenzo</div><h1 class="cond a">Cada captura,<br>un camión</h1><p class="a">Cómo el reconocedor de patentes identifica cada lectura de cámara, capa por capa, con 18 casos reales.</p><small class="a">Casos del 22 al 29 de octubre de 2026</small></div>`);
+ const [k,t,p,s]=el.children;add(3,el,lt=>{fade(k,lt,.1);fade(t,lt,.25,.6,40);fade(p,lt,.8);fade(s,lt,1.1)},-1,true)}
+
+// ---------- recorrido ----------
+{const R=[['1','Cámara','lee la patente: la frontal el chasis, la trasera el acoplado',''],['2','¿Quién es?','carta de porte, Vehículos Permitidos o remito','g'],['3.1','Patentes parecidas','algoritmo de corrección contra el lote','c'],['3.2','Metadatos','marca, color y tamaño que informa la cámara','c'],['3.3','Banco de corregidas','errores ya corregidos, patentes buenas, no camiones','c'],['3.4','IA por imagen','¿camión del lote, tractor o error de lectura?','c'],['4','Alerta','ninguna capa la identificó','r']];
+ const Y=[220,318,470,566,662,758,890];
+ let html=`<div class="scene rec"><h2 class="cond a">El recorrido de una captura</h2><div class="c3box a" style="top:420px;height:440px"></div><div class="c3lab a" style="top:432px">CAPA 3 · CORRECCIÓN</div>`;
+ R.forEach((r,i)=>html+=`<div class="row ${r[3]} a" style="top:${Y[i]}px"><b class="n">${r[0]}</b><b class="t">${r[1]}</b><span>${r[2]}</span></div>`);
+ html+=`<svg class="a" style="position:absolute;left:0;top:0" width="1920" height="1080"><path id="lp" d="M1150 797 H1215 V357 H1150" fill="none" stroke="#2a5ea8" stroke-width="6" stroke-linejoin="round"/><path id="la" d="M1172 340 L1146 357 L1172 374" fill="none" stroke="#2a5ea8" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+ html+=`<div class="loopTxt a">↺ Cuando una corrección encuentra la patente, vuelve a la capa 2 a confirmarla.</div><div class="note a">La primera capa que identifica decide. Las de abajo trabajan solo si las de arriba no pudieron.</div><div class="dot"></div></div>`;
+ const el=h(html);const q=s=>el.querySelectorAll(s);
+ const title=q('h2')[0],box=q('.c3box')[0],lab=q('.c3lab')[0],rows=[...q('.row')],svg=q('svg')[0],lp=el.querySelector('#lp'),la=el.querySelector('#la'),lt_=q('.loopTxt')[0],note=q('.note')[0],dot=q('.dot')[0];
+ const L=440+65+440;lp.style.strokeDasharray=L;
+ // dot path: visits row centers then loops back
+ const path=[[0,1],[1,1],[2,2],[3,2],[4,2],[5,2],[1,3]];
+ add(8,el,lt=>{lt*=2.1;fade(title,lt,.2);rows.forEach((r,i)=>{fade(r,lt,.8+i*.45,.5,0,-40)});fade(box,lt,1.6);fade(lab,lt,1.7);
+  // dot travels 5.0 → 10.5
+  const ts=5.2,step=.8;const k=(lt-ts)/step;
+  if(lt<ts-.2||lt>12.2){dot.style.opacity=0}else{
+   const i=Math.max(0,Math.min(path.length-1,Math.floor(k)));const f=ease(k-Math.floor(k));
+   const a=path[i][0],b=path[Math.min(path.length-1,i+1)][0];
+   let y=Y[a]+(Y[b]-Y[a])*(k<0?0:(i>=path.length-1?0:f));let x=1090;
+   if(i===path.length-2&&k>=0){ // loop leg along arrow
+     const yy=Y[5]+39,ty=Y[1]+39;const g=f;
+     if(g<.2){x=1090+(1215-1090)*(g/.2);y=yy}else if(g<.8){x=1215;y=yy+(ty-yy)*((g-.2)/.6)}else{x=1215-(1215-1090)*((g-.8)/.2);y=ty}
+     dot.style.left=(x-15)+'px';dot.style.top=(y-15)+'px';
+   }else{dot.style.left=(x-15)+'px';dot.style.top=(y+39-15)+'px'}
+   dot.style.opacity=clamp((lt-ts+.2)/.3)*clamp((12.2-lt)/.3);
+   rows.forEach((r,j)=>r.style.boxShadow='');const cur=path[Math.min(path.length-1,Math.round(k))][0];if(k>=-.2)rows[cur].style.boxShadow='0 0 0 5px rgba(232,163,23,.45)';}
+  if(lt>12.2)rows.forEach(r=>r.style.boxShadow='');
+  svg.style.opacity=1;const pl=ease((lt-9.6)/1.2);lp.style.strokeDashoffset=L*(1-pl);la.style.opacity=pl>.95?1:0;
+  fade(lt_,lt,10.4);fade(note,lt,12.6)},0,false)}
+
+// ---------- sections + cases ----------
+SECS.forEach((S,si)=>{
+ {const el=h(`<div class="scene dark sec"><div class="secbar a" style="background:${S.color==='#1e6b3c'?'#8fd3a8':S.color==='#2a5ea8'?'#7fa8e6':'#f08b8b'}"></div><div class="kicker a" style="color:${S.color==='#1e6b3c'?'#8fd3a8':S.color==='#2a5ea8'?'#9dbcf0':'#f3a3a3'}">${S.kicker}</div><h2 class="cond a">${S.title}</h2><p class="a">${S.body}</p><small class="a">${S.sub}</small></div>`);
+  if(0){const [b,k,t,p,s]=el.children;add(4.6,el,lt=>{fade(b,lt,.1,.5,0,-60);fade(k,lt,.25);fade(t,lt,.5,.7,36);fade(p,lt,1.3);fade(s,lt,2)},si+1,true)}}
+ C.filter(c=>c.s===S.key&&PICK.includes(c.read)).forEach(c=>{
+  const isTxt=!/^[A-Z0-9]+$/.test(c.res);const resColor=c.res==='Alerta'?'var(--red)':isTxt?'var(--slate)':'var(--green)';
+  let html=`<div class="scene case"><div class="kicker a" style="color:${S.color}">${S.kicker}</div><h2 class="cond a">${c.title}</h2>
+   <div class="photo a"><img src="media/image-${c.img}-1.jpeg"></div><div class="meta a">${c.meta}</div><div class="desc a">${c.desc}</div>
+   <div class="read a">Leyó <span class="p">${c.read}</span><span class="arr" style="opacity:0">→</span><span class="res ${isTxt?'txt':''}" style="color:${resColor};opacity:0;display:inline-block">${c.res}</span></div>`;
+  ROWS.forEach((r,i)=>html+=`<div class="st a" style="top:${200+i*86}px"><span>${r}</span><i></i><div class="pulse"></div></div>`);
+  if(c.loop)html+=`<div class="st loop a" style="top:${200+7*86+14}px"><span>↺ 2 · De nuevo en capa 2</span><i>${c.loop}</i></div>`;
+  html+=`</div>`;
+  const el=h(html);const q=s=>[...el.querySelectorAll(s)];
+  const [k,t,ph,meta,desc,read]=el.children;const img=ph.firstChild;const sts=q('.st:not(.loop)');const loop=el.querySelector('.st.loop');
+  const arr=read.querySelector('.arr'),res=read.querySelector('.res');
+  const s0=.7,gap=.22;const tEnd=s0+c.steps.length*gap;const tRes=tEnd+.1;const tLoop=tRes+.35;
+  const dur=Math.max(4,(c.loop?tLoop:tRes)+1.9);
+  add(dur,el,lt=>{fade(k,lt,0,.3);fade(t,lt,.05,.4,30);fade(ph,lt,.1,.5,0,-50);img.style.transform=`scale(${1+.07*clamp(lt/dur)})`;
+   fade(read,lt,.2,.4,0,40);sts.forEach((s,i)=>fade(s,lt,.25+i*.03,.3,0,30));
+   fade(meta,lt,.4);fade(desc,lt,tRes+.05,.4);
+   sts.forEach(s=>{s.className='st a';s.querySelector('i').textContent='';s.querySelector('.pulse').style.opacity=0});
+   c.steps.forEach(([ri,txt,kind],j)=>{const ts=s0+j*gap;const s=sts[ri];
+     if(lt>=ts-gap*.55&&lt<ts+.25){s.querySelector('.pulse').style.opacity=Math.min(clamp((lt-(ts-gap*.55))/.15),clamp((ts+.25-lt)/.2))}
+     if(lt>=ts){s.className='st a '+kind;s.querySelector('i').textContent=txt}});
+   arr.style.opacity=ease((lt-tRes)/.3);pop(res,lt,tRes);
+   if(loop){fade(loop,lt,tLoop,.35,-30)}
+  },si+1,false)});
+});
+
+// ---------- final ----------
+{const D=[['Capa 2 directa',43,'#1e6b3c'],['3.1 Parecidas → capa 2',4,'#2a5ea8'],['3.2 Metadatos → capa 2',0,'#2a5ea8'],['3.3 Banco de corregidas',0,'#2a5ea8'],['3.4 IA por imagen',0,'#2a5ea8'],['Alerta',11,'#b42323']];
+ let html=`<div class="scene fin"><div class="kicker a">Ricardone · 29/10 · 15:20 a 15:50</div><h2 class="cond a">58 capturas en media hora</h2>`;
+ D.forEach((d,i)=>{const y=290+i*92;html+=`<div class="bl a" style="top:${y+8}px;color:${d[0]==='Alerta'?'#b42323':d[1]?'#14261c':'#6b7a70'}">${d[0]}</div><div class="bar" style="top:${y}px;background:${d[2]}"></div><div class="bv a" style="top:${y+3}px;color:${d[0]==='Alerta'?'#b42323':d[1]?'#14261c':'#6b7a70'}"></div>`});
+ html+=`<p class="a">47 de 58 quedan identificadas por carta de porte, Vehículos Permitidos o remito. Las 11 alertas son 4 vehículos: SLT958 con su acoplado (6 capturas), UER485 con su acoplado (3), UKL882 (1) y una pala cargadora (1).</p></div>`;
+ const el=h(html);const [k,t]=el.children;const bl=[...el.querySelectorAll('.bl')],bars=[...el.querySelectorAll('.bar')],bv=[...el.querySelectorAll('.bv')],p=el.querySelector('p');
+ if(0)add(5.5,el,lt=>{lt*=2;fade(k,lt,.2);fade(t,lt,.4,.6,30);D.forEach((d,i)=>{const t0=1.2+i*.35;fade(bl[i],lt,t0,.4,0,-30);const g=ease((lt-t0-.2)/1.1);const w=d[1]*(1000/43)*g;bars[i].style.width=w+'px';bars[i].style.opacity=lt>t0?1:0;
+  bv[i].style.left=(640+w+(d[1]?24:0))+'px';bv[i].textContent=Math.round(d[1]*g);bv[i].style.opacity=clamp((lt-t0-.2)/.3)});fade(p,lt,4.2)},7,false)}
+
+
+// ---------- en vivo ----------
+if(0){const SP=6,RIC=8.5,SLZ=7;
+ let html=`<div class="scene live"><div class="lband"></div><div class="kicker a lk">En vivo · 30/10 · 12:10 · acelerado ×${SP}</div><h2 class="cond a lt">Así trabaja ahora, en las dos plantas</h2>
+  <div class="lchip a"><span class="on">Ricardone</span><span>San Lorenzo</span></div>
+  <div class="lrec a"><img id="limg">`;
+ const CO=[ // [planta, t, x,y,w,h (coords de la grabación 1536x864), texto, lado]
+  ['ric',1.0,284,152,932,700,'Cada punto es un camión, en el último lugar donde lo leyó una cámara','top'],
+  ['ric',4.2,90,172,192,126,'Las capas trabajando: cuántas capturas identificó cada una','right'],
+  ['ric',6.4,1222,152,306,700,'Camiones en planta y colas, cruzados con la balanza','left'],
+  ['slz',.8,92,298,190,286,'Cada captura con su foto y la capa que la identificó','right'],
+  ['slz',3.8,1346,96,104,40,'Alertas: lo que ninguna capa identificó','left']];
+ CO.forEach(c=>html+=`<div class="co a" style="left:${c[2]}px;top:${c[3]}px;width:${c[4]}px;height:${c[5]}px"></div><div class="cot a ${c[7]}" style="${c[7]==='top'?`left:${c[2]+c[4]/2-380}px;top:${c[3]+c[5]-100}px`:c[7]==='right'?`left:${c[2]+c[4]+20}px;top:${c[3]+10}px`:`left:${c[2]-500}px;top:${c[3]+10}px`}">${c[6]}</div>`);
+ html+=`</div></div>`;
+ const el=h(html);const img=el.querySelector('#limg'),lk=el.querySelector('.lk'),lt_=el.querySelector('.lt'),chip=el.querySelector('.lchip'),rec=el.querySelector('.lrec');
+ const cos=[...el.querySelectorAll('.co')],cts=[...el.querySelectorAll('.cot')];const chips=chip.children;
+ let cur='';
+ add(RIC+SLZ,el,lt=>{fade(lk,lt,.1);fade(lt_,lt,.2,.5,24);fade(chip,lt,.4);rec.style.opacity=1;
+  const pl=lt<RIC?'ric':'slz';const local=pl==='ric'?lt:lt-RIC;const fr=LIVE[pl];const src=Math.min(local*SP,fr[fr.length-1][1]);
+  let k=0;while(k+1<fr.length&&fr[k+1][1]<=src)k++;
+  if(fr[k][0]!==cur){cur=fr[k][0];img.src=cur;window.__wait=img.decode().catch(()=>{})}
+  chips[0].className=pl==='ric'?'on':'';chips[1].className=pl==='slz'?'on':'';
+  CO.forEach((c,i)=>{const nx=CO[i+1];const segEnd=nx&&nx[0]===c[0]?nx[1]:(c[0]==='ric'?RIC:SLZ);const show=c[0]===pl;const o=show?Math.min(ease((local-c[1])/.4),clamp((segEnd-local)/.3)):0;
+   cos[i].style.opacity=o;cts[i].style.opacity=o;cts[i].style.transform=`translateY(${(1-o)*12}px)`});
+ },7,true)}
+
+
+// ---------- modelo en vivo ----------
+{const el=h(`<div class="scene" style="background:#fff"><img id="mimg" style="position:absolute;inset:0;width:1920px;height:1080px"></div>`);
+ const img=el.querySelector('#mimg');let cur='';const F=MODEL_FRAMES;const dur=F.length/30;
+ add(dur,el,lt=>{const k=Math.max(0,Math.min(F.length-1,Math.round(lt*30)));if(F[k][0]!==cur){cur=F[k][0];img.src=cur;window.__wait=img.decode().catch(()=>{})}},7,false)}
+
+// ---------- chapters ----------
+const chap=document.getElementById('chap');
+['Recorrido',...SECS.map(s=>s.chap),'En vivo'].forEach(n=>{const d=document.createElement('div');d.innerHTML=n+'<em></em>';chap.appendChild(d)});
+const chapRange=[];scenes.forEach(s=>{if(s.chap<0)return;const r=chapRange[s.chap]||(chapRange[s.chap]=[s.t0,0]);r[1]=s.t0+s.dur});
+window.TOTAL=T;
+window.seek=function(t){
+ let cur=null;
+ scenes.forEach((s,i)=>{const lt=t-s.t0;const vis=lt>=-.0001&&lt<s.dur;
+  // crossfade: fade in first .35s (except first scene), out last .35s (except last)
+  let o=0;if(lt>=0&&lt<=s.dur){o=1;if(i>0)o=Math.min(o,clamp(lt/.35));if(i<scenes.length-1)o=Math.min(o,clamp((s.dur-lt)/.35))}
+  s.el.style.opacity=o;s.el.style.display=o>0?'block':'none';if(o>0)s.render(lt);if(vis)cur=s});
+ if(cur&&cur.chap>=0){chap.style.opacity=1;chap.classList.toggle('ondark',cur.dark);[...chap.children].forEach((d,i)=>{const r=chapRange[i];const f=clamp((t-r[0])/(r[1]-r[0]));d.classList.toggle('on',i===cur.chap);d.querySelector('em').style.width=(f*100)+'%'})}else chap.style.opacity=0;
+};
+seek(0);
+</script></body></html>
