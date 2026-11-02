@@ -26,7 +26,9 @@ y las 20 alertas del día con su decisión).
    La trasera con frontal del mismo punto a ±3 min no cuenta como otra captura. Resultado del 29/10: 3.069 capturas,
    442 patentes, 20 en alerta (45 capturas).
    Las patentes ilegibles se descartan y no se muestran; lo que no es un camión (motos, autos, máquinas)
-   va a la capa 4.1. La escena final explica la alerta con la moto (4.1) y PPP855 (camión sin patente a la vista).
+   va a la capa 4.1. La capa 3.4 es el motor de IA (modelo propio): ejemplo de noche IMX998 → UWX998.
+   La escena final, «La alerta la ve una persona», muestra NBJ986 (patente bien leída, sin carta ni
+   Vehículos Permitidos) junto a la moto de la capa 4.1.
 
 Pendiente en el algoritmo de vínculo: que `cobertura.mjs` no cuente la trasera con par y lea las cartas del padrón.
 
