@@ -14,6 +14,10 @@ describe('autorizaciones', () => {
   it('valida perfil, tipo y acceso', () => {
     expect(validar({ perfil: 'porteria', patente: 'ab 123 cd', acceso: 'ingreso' }).ok).toMatchObject({ patente: 'AB123CD', tipo: 'particular' })
     expect(validar({ perfil: 'porteria', patente: 'AB123CD' }).error).toBe('acceso inválido')
+    for (const p of ['ABC123', 'AB123CD', '123ABC', 'A123BCD']) expect(validar({ perfil: 'porteria', patente: p, acceso: 'ingreso' }).ok).toBeTruthy()
+    for (const p of ['ASDASDAS4', 'AB12CD', 'ABC1D23']) expect(validar({ perfil: 'porteria', patente: p, acceso: 'ingreso' }).error).toBe('patente inválida')
+    expect(validar({ perfil: 'porteria', patente: 'ABC1D23', acceso: 'ingreso', extranjera: true }).ok.extranjera).toBe(true)
+    expect(validar({ perfil: 'comercial', patente: 'AB123CD', acoplado: 'XX', codProducto: '0887' }).error).toBe('patente de acoplado inválida')
     expect(validar({ perfil: 'comercial', patente: 'AB123CD', tipo: 'contratista' }).error).toMatch(/tipo/)
     expect(validar({ perfil: 'sin_carta', patente: 'AB123CD' }).error).toBe('perfil inválido')
     expect(validar({ perfil: 'comercial', patente: 'AB123CD', tipo: 'descarga', codProducto: '0780' }).ok.producto).toBe('AGUA INDUSTRIAL')

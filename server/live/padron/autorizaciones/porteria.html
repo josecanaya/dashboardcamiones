@@ -12,6 +12,7 @@ window.PAGINA = {
     { k: 'tipo', label: 'Vehículo', tipo: 'seg', opciones: [['particular', 'Particular'], ['contratista', 'Contratista']] },
     { k: 'acceso', label: '¿Ingreso a zona operativa?', tipo: 'seg', opciones: [['zona_operativa', 'Sí'], ['ingreso', 'No']], def: 'ingreso' },
     { k: 'patente', label: 'Patente', tipo: 'patente', req: true, ph: 'AB123CD' },
+    { k: 'extranjera', label: 'Patente de otro país', tipo: 'check' },
     { k: 'titular', label: 'Nombre y apellido', req: true, ph: 'Quién maneja' },
     { k: 'empresa', label: 'Empresa contratista', req: true, si: (v) => v.tipo === 'contratista' },
     { k: 'planta', label: 'Planta', opciones: [['ricardone', 'Ricardone'], ['san_lorenzo', 'San Lorenzo'], ['ambas', 'Ambas']] },

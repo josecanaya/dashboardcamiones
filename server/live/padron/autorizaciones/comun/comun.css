@@ -41,7 +41,11 @@ form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap:
 .elegido span { font-size: 12px; color: var(--muted); }
 .hint { font-size: 13px; padding: 8px 10px; border-radius: 7px; background: var(--brand-soft); color: var(--brand); }
 .hint.warn { background: #fef3c7; color: var(--warn); }
+.hint.err { background: #fee2e2; color: var(--bad); }
 .hint:empty { display: none; }
+.f input.plate.bad { border-color: var(--bad); outline-color: #fee2e2; }
+.f label.check { display: flex; align-items: center; gap: 8px; text-transform: none; letter-spacing: 0; font-size: 14px; font-weight: 400; color: var(--ink); cursor: pointer; }
+.f label.check input { width: 16px; height: 16px; accent-color: var(--brand); }
 .actions { grid-column: span 2; display: flex; gap: 8px; margin-top: 4px; }
 .btn { font: inherit; border-radius: 8px; padding: 10px 16px; cursor: pointer; border: 1px solid var(--line); background: #fff; color: var(--ink); }
 .btn.primary { background: var(--brand); border-color: var(--brand); color: #fff; font-weight: 600; flex: 1; }

@@ -44,6 +44,11 @@
 
   const visible = (c) => !c.si || c.si(valores)
 
+  /** Mismos formatos que el server (autorizaciones.mjs): argentinas, o cualquiera alfanumérica si es de otro país. */
+  const PATENTE_AR = /^(?:[A-Z]{3}\d{3}|[A-Z]{2}\d{3}[A-Z]{2}|\d{3}[A-Z]{3}|[A-Z]\d{3}[A-Z]{3})$/
+  const patenteOk = (v) => !v || (valores.extranjera ? /^[A-Z0-9]{4,10}$/ : PATENTE_AR).test(v)
+  const ERROR_PATENTE = 'Formato no válido. Se acepta AB123CD, ABC123, 123ABC o A123BCD. Si es de otro país, marcá la casilla.'
+
   function defaults() {
     for (const c of P.campos) valores[c.k] = c.def ?? (c.tipo === 'fecha' ? hoy() : c.opciones ? c.opciones[0][0] : '')
     valores.codProducto = ''
@@ -128,11 +133,12 @@
       const lab = `<label for="f_${c.k}">${esc(c.label)}${c.req ? ' <span class="req">*</span>' : ''}</label>`
       const v = esc(valores[c.k] ?? '')
       let input
+      if (c.tipo === 'check') return `<div class="f"><label class="check"><input type="checkbox" data-k="${c.k}" ${valores[c.k] ? 'checked' : ''}> ${esc(c.label)}</label></div>`
       if (c.tipo === 'producto') input = inputProducto(c)
       else if (c.tipo === 'seg') input = `<div class="seg" data-k="${c.k}">${c.opciones.map(([val, txt]) => `<button type="button" data-v="${val}" class="${valores[c.k] === val ? 'on' : ''}">${esc(txt)}</button>`).join('')}</div>`
       else if (c.opciones) input = `<select id="f_${c.k}" data-k="${c.k}">${c.opciones.map(([val, txt]) => `<option value="${val}" ${valores[c.k] === val ? 'selected' : ''}>${esc(txt)}</option>`).join('')}</select>`
       else if (c.tipo === 'texto_largo') input = `<textarea id="f_${c.k}" data-k="${c.k}" placeholder="${esc(c.ph ?? '')}">${v}</textarea>`
-      else input = `<input id="f_${c.k}" data-k="${c.k}" value="${v}" placeholder="${esc(c.ph ?? '')}" type="${c.tipo === 'fecha' ? 'date' : c.tipo === 'hora' ? 'time' : 'text'}" class="${c.tipo === 'patente' ? 'plate' : ''}" ${c.tipo === 'patente' ? 'maxlength="9" inputmode="text"' : ''}>`
+      else input = `<input id="f_${c.k}" data-k="${c.k}" value="${v}" placeholder="${esc(c.ph ?? '')}" type="${c.tipo === 'fecha' ? 'date' : c.tipo === 'hora' ? 'time' : 'text'}" class="${c.tipo === 'patente' ? 'plate' : ''}" ${c.tipo === 'patente' ? 'maxlength="10" inputmode="text"' : ''}>`
       const hint = c.tipo === 'patente' ? `<div class="hint" id="hint_${c.k}"></div>` : ''
       return `<div class="f ${c.medio ? 'half' : ''}">${lab}${input}${hint}</div>`
     }).join('') + `
@@ -164,20 +170,49 @@
       })
     }
     form.querySelectorAll('[data-k]:is(input, select, textarea)').forEach((el) => {
-      el.addEventListener('input', () => { valores[el.dataset.k] = el.value })
+      if (el.type === 'checkbox') {
+        el.addEventListener('change', () => {
+          valores[el.dataset.k] = el.checked
+          for (const c of P.campos) if (c.tipo === 'patente' && valores[c.k]) consultar(c.k)
+        })
+        return
+      }
+      el.addEventListener('input', () => {
+        if (el.classList.contains('plate')) {
+          const limpio = el.value.toUpperCase().replace(/[^A-Z0-9]/g, '')
+          if (limpio !== el.value) el.value = limpio
+          if (patenteOk(limpio)) el.classList.remove('bad')
+        }
+        valores[el.dataset.k] = el.value
+      })
       if (el.classList.contains('plate')) el.addEventListener('blur', () => consultar(el.dataset.k))
     })
     $('#cancelar')?.addEventListener('click', () => { editando = null; defaults(); renderForm() })
     for (const c of P.campos) if (c.tipo === 'patente' && valores[c.k] && visible(c)) consultar(c.k)
   }
 
+  const consultas = {}
   async function consultar(k) {
     const pat = String(valores[k] ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '')
     const hint = $('#hint_' + k)
     if (!hint) return
-    if (pat.length < 5) { hint.textContent = ''; return }
+    const input = $('#f_' + k)
+    consultas[k] = (consultas[k] ?? 0) + 1
+    if (!pat) { hint.textContent = ''; input?.classList.remove('bad'); return }
+    if (!patenteOk(pat)) {
+      hint.textContent = ERROR_PATENTE
+      hint.className = 'hint err'
+      input?.classList.add('bad')
+      return
+    }
+    input?.classList.remove('bad')
+    hint.textContent = ''
+    hint.className = 'hint'
+    // Si la respuesta llega tarde y mientras tanto cambió la patente o la casilla, se descarta.
+    const turno = (consultas[k] = (consultas[k] ?? 0) + 1)
     try {
       const r = await fetch('/api/autorizaciones/consulta?patente=' + pat).then((x) => x.json())
+      if (consultas[k] !== turno) return
       const partes = []
       let warn = false
       const v = r.vigente?.autorizacion
@@ -188,7 +223,7 @@
       if (previas) partes.push(`${previas} autorización${previas > 1 ? 'es' : ''} anterior${previas > 1 ? 'es' : ''}`)
       hint.textContent = partes.length ? partes.join(' · ') : 'Patente nueva: no está en la balanza ni en autorizaciones.'
       hint.className = 'hint' + (warn ? ' warn' : '')
-    } catch { hint.textContent = '' }
+    } catch { if (consultas[k] === turno) hint.textContent = '' }
   }
 
   $('#form').addEventListener('submit', async (e) => {
@@ -196,6 +231,8 @@
     const msg = $('#msg')
     const falta = P.campos.filter((c) => visible(c) && c.req && (!String(valores[c.k] ?? '').trim() || (c.tipo === 'producto' && !valores.codProducto)))
     if (falta.length) { msg.className = 'msg err'; msg.textContent = 'Falta: ' + falta.map((c) => c.label).join(', '); return }
+    const malas = P.campos.filter((c) => c.tipo === 'patente' && !patenteOk(valores[c.k]))
+    if (malas.length) { malas.forEach((c) => consultar(c.k)); msg.className = 'msg err'; msg.textContent = `${malas.map((c) => c.label).join(' y ')}: ${ERROR_PATENTE}`; return }
     if (!user.value.trim()) { msg.className = 'msg err'; msg.textContent = 'Poné tu nombre arriba a la derecha.'; user.focus(); return }
     const body = { perfil: P.perfil }
     for (const c of P.campos) body[c.k] = visible(c) ? valores[c.k] : null

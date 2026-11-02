@@ -33,6 +33,12 @@ const CATEGORIA = {
 /** Productos sin carta de porte que se pueden elegir (comun/productos.json); lo demás va como «otros» con texto. */
 const PRODUCTOS = new Map(JSON.parse(readFileSync(path.join(PAGES, 'comun', 'productos.json'), 'utf8')).productos.map((p) => [p.cod, p]))
 const PRODUCTO_SEGUN = { carga: 'despacho', descarga: 'descarga' }
+/**
+ * Patentes argentinas: ABC123 (1995–2016), AB123CD (Mercosur), 123ABC (motos y acoplados viejos), A123BCD
+ * (motos Mercosur). Una de otro país se marca aparte y solo se pide que sea alfanumérica.
+ */
+export const PATENTE_AR = /^(?:[A-Z]{3}\d{3}|[A-Z]{2}\d{3}[A-Z]{2}|\d{3}[A-Z]{3}|[A-Z]\d{3}[A-Z]{3})$/
+const PATENTE_OTRO_PAIS = /^[A-Z0-9]{4,10}$/
 const TEXTOS = ['titular', 'empresa', 'cliente', 'transportista', 'producto', 'referencia', 'motivo', 'observaciones', 'hdesde', 'hhasta']
 
 /** Fecha de hoy en Argentina, YYYY-MM-DD. */
@@ -46,8 +52,12 @@ export function validar(body, previo = null) {
   const perfil = String(b.perfil ?? '')
   const p = PERFILES[perfil]
   if (!p) return { error: 'perfil inválido' }
+  const extranjera = b.extranjera === true || b.extranjera === 'true'
+  const formato = extranjera ? PATENTE_OTRO_PAIS : PATENTE_AR
   const patente = normPlate(b.patente)
-  if (!patente || patente.length < 5) return { error: 'patente inválida' }
+  if (!patente || !formato.test(patente)) return { error: 'patente inválida' }
+  const acoplado = normPlate(b.acoplado) || null
+  if (acoplado && !formato.test(acoplado)) return { error: 'patente de acoplado inválida' }
   const tipo = String(b.tipo ?? p.tipos[0])
   if (!p.tipos.includes(tipo)) return { error: `tipo inválido para ${perfil}` }
   const acceso = p.accesos.length ? String(b.acceso ?? '') : null
@@ -57,7 +67,7 @@ export function validar(body, previo = null) {
   const desde = String(b.desde ?? hoyAr())
   const hasta = String(b.hasta ?? desde)
   if (!/^\d{4}-\d{2}-\d{2}$/.test(desde) || !/^\d{4}-\d{2}-\d{2}$/.test(hasta) || hasta < desde) return { error: 'fechas inválidas' }
-  const ok = { perfil, tipo, acceso, patente, acoplado: normPlate(b.acoplado) || null, planta, desde, hasta }
+  const ok = { perfil, tipo, acceso, patente, acoplado, extranjera, planta, desde, hasta }
   for (const k of TEXTOS) ok[k] = String(b[k] ?? '').trim().slice(0, 300) || null
   if (perfil === 'comercial') {
     const cod = String(b.codProducto ?? '')
