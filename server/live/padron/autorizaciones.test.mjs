@@ -20,7 +20,7 @@ describe('autorizaciones', () => {
     expect(validar({ perfil: 'comercial', patente: 'AB123CD', acoplado: 'XX', codProducto: '0887' }).error).toBe('patente de acoplado inválida')
     expect(validar({ perfil: 'comercial', patente: 'AB123CD', tipo: 'contratista' }).error).toMatch(/tipo/)
     expect(validar({ perfil: 'sin_carta', patente: 'AB123CD' }).error).toBe('perfil inválido')
-    expect(validar({ perfil: 'comercial', patente: 'AB123CD', tipo: 'descarga', codProducto: '0780' }).ok.producto).toBe('AGUA INDUSTRIAL')
+    expect(validar({ perfil: 'comercial', patente: 'AB123CD', tipo: 'descarga', codProducto: '0711' }).ok.producto).toBe('METANOL')
     expect(validar({ perfil: 'comercial', patente: 'AB123CD', tipo: 'carga', codProducto: '0711' }).error).toBe('producto fuera de la lista')
     expect(validar({ perfil: 'comercial', patente: 'AB123CD', producto: 'cualquier cosa' }).error).toBe('producto fuera de la lista')
     expect(validar({ perfil: 'comercial', patente: 'AB123CD', codProducto: 'otros' }).error).toMatch(/aclarar/)
@@ -30,7 +30,7 @@ describe('autorizaciones', () => {
 
   it('solo la vigente cuenta como Vehículo Permitido, chasis y acoplado', () => {
     const a = createAutorizaciones({ store: memoria() })
-    a.crear({ perfil: 'comercial', tipo: 'descarga', codProducto: '0780', patente: 'AB123CD', acoplado: 'AC999ZZ', desde: '2026-11-02', hasta: '2026-11-04' }, 'ana')
+    a.crear({ perfil: 'comercial', tipo: 'descarga', codProducto: '0711', patente: 'AB123CD', acoplado: 'AC999ZZ', desde: '2026-11-02', hasta: '2026-11-04' }, 'ana')
     expect(a.lookup('AB123CD', '2026-11-03')).toMatchObject({ role: 'chasis', category: 'descarga_sin_carta' })
     expect(a.lookup('AC999ZZ', '2026-11-03')).toMatchObject({ role: 'acoplado', chasis: 'AB123CD' })
     expect(a.lookup('AB123CD', '2026-11-05')).toBeNull()

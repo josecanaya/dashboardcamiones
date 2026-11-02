@@ -72,7 +72,7 @@
       return `<div class="elegido"><div><b>${esc(p ? bonito(p.nombre) : valores[c.k])}</b><span>${p ? esc(p.grupo) : 'Otro producto'}</span></div>
         <button type="button" class="btn small" id="cambiarprod">Cambiar</button></div>`
     }
-    return `<div class="combo"><input class="buscaprod" id="f_${c.k}" placeholder="Escribí para buscar (ej. soda, agua, chatarra)" value="${esc(buscaProducto)}" autocomplete="off">
+    return `<div class="combo"><input class="buscaprod" id="f_${c.k}" placeholder="Escribí para buscar (ej. glicerina, aceite, metanol)" value="${esc(buscaProducto)}" autocomplete="off">
       <div class="drop" hidden></div></div>`
   }
 
