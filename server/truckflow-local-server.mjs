@@ -39,6 +39,7 @@ import { createCartaPorteSource } from './agro/cartaPorte.mjs'
 import { createPadron } from './live/padron/padron.mjs'
 import { createCartasSource } from './live/padron/cartasSource.mjs'
 import { createVehiculosPermitidos } from './live/padron/vehiculosPermitidos.mjs'
+import { createAutorizaciones, createAutorizacionesRouter } from './live/padron/autorizaciones.mjs'
 import { createAprendizaje } from './live/padron/aprendizaje.mjs'
 import { createVisionJudge } from './live/vision/visionJudge.mjs'
 import { createAlertStore } from './live/alerts/alertStore.mjs'
@@ -280,8 +281,11 @@ app.use(sgc.router)
 const padron = createPadron({ projectRoot: PROJECT_ROOT, source: createCartasSource({ projectRoot: PROJECT_ROOT }) })
 padron.start()
 /** Vehículos Permitidos (sin carta: agua, residuos, proveedores, registro): se consultan antes que la carta. */
-const vehiculosPermitidos = createVehiculosPermitidos({ projectRoot: PROJECT_ROOT })
+/** Autorizaciones cargadas por portería, comercial y sin carta (/autorizaciones): pesan antes que la balanza. */
+const autorizaciones = createAutorizaciones({ projectRoot: PROJECT_ROOT })
+const vehiculosPermitidos = createVehiculosPermitidos({ projectRoot: PROJECT_ROOT, autorizaciones })
 vehiculosPermitidos.start()
+app.use(createAutorizacionesRouter({ autorizaciones, historico: vehiculosPermitidos.historico }))
 plantState.setPadron(padron, vehiculosPermitidos)
 /** Lo aprendido de operaciones: lecturas malas ya corregidas y vehículos que no son camiones (data/padron). */
 const aprendizaje = createAprendizaje({ projectRoot: PROJECT_ROOT })

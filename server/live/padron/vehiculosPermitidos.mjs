@@ -158,7 +158,7 @@ export async function buildVehiculosPermitidos(root = ROOT) {
  * Lista en memoria para el reconocedor. Arranca del archivo y se rearma cada hora (los movimientos
  * y el SGC se guardan por hora): un camión de agua nuevo entra a la lista sin tocar nada.
  */
-export function createVehiculosPermitidos({ projectRoot = ROOT, rebuildMs = 3600_000, log = console } = {}) {
+export function createVehiculosPermitidos({ projectRoot = ROOT, rebuildMs = 3600_000, log = console, autorizaciones = null } = {}) {
   let byPlate = new Map()
   let meta = null
   const load = () => {
@@ -184,8 +184,14 @@ export function createVehiculosPermitidos({ projectRoot = ROOT, rebuildMs = 3600
       setInterval(() => void rebuild(), rebuildMs).unref?.()
     },
     rebuild,
-    /** @returns {{ plate: string, role: string, chasis?: string, category: string, alsoGrain: boolean } | null} */
-    lookup: (plate) => byPlate.get(normPlate(plate)) ?? null,
+    /**
+     * Primero una autorización vigente cargada a mano (portería, comercial, sin carta: autorizaciones.mjs),
+     * después el historial de la balanza.
+     * @returns {{ plate: string, role: string, chasis?: string, category: string, alsoGrain: boolean } | null}
+     */
+    lookup: (plate) => autorizaciones?.lookup(plate) ?? byPlate.get(normPlate(plate)) ?? null,
+    /** Solo el historial de la balanza (para mostrarle a quien carga una autorización). */
+    historico: (plate) => byPlate.get(normPlate(plate)) ?? null,
     status: () => meta,
   }
 }

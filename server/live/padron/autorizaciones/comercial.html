@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/autorizaciones/comun/comun.css">
+<title>Camiones · Despachos y descargas</title></head><body>
+<script>
+window.PAGINA = {
+  perfil: 'comercial',
+  titulo: 'Camiones · Despachos y descargas',
+  sub: 'Camiones que vienen a cargar o a descargar sin carta de porte',
+  mantener: ['tipo', 'cliente', 'producto', 'planta', 'desde', 'hasta', 'referencia', 'transportista'],
+  campos: [
+    { k: 'tipo', label: 'Viene a', tipo: 'seg', opciones: [['carga', 'Despachar'], ['descarga', 'Descargar']] },
+    { k: 'patente', label: 'Patente chasis', tipo: 'patente', req: true, medio: true, ph: 'AB123CD' },
+    { k: 'acoplado', label: 'Patente acoplado', tipo: 'patente', medio: true },
+    { k: 'cliente', label: 'Cliente / proveedor', req: true },
+    { k: 'producto', label: 'Producto / mercadería', req: true, ph: 'Ej. Aceite crudo de soja, agua, soda cáustica' },
+    { k: 'transportista', label: 'Transportista' },
+    { k: 'titular', label: 'Chofer' },
+    { k: 'planta', label: 'Planta', opciones: [['ricardone', 'Ricardone'], ['san_lorenzo', 'San Lorenzo'], ['ambas', 'Ambas']] },
+    { k: 'desde', label: 'Desde', tipo: 'fecha', medio: true, req: true },
+    { k: 'hasta', label: 'Hasta', tipo: 'fecha', medio: true, req: true },
+    { k: 'referencia', label: 'Mail / pedido / remito', ph: 'Ej. Pedido 4512, mail de Juan 02/11' },
+  ],
+  resumen: (a) => ({ titulo: [a.cliente, a.producto].filter(Boolean).join(' · '), chips: [a.tipo === 'descarga' ? 'descarga' : 'despacho'], extra: [a.transportista, a.referencia].filter(Boolean).join(' · ') }),
+}
+</script>
+<script src="/autorizaciones/comun/comun.js"></script>
+</body></html>

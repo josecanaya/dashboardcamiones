@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/autorizaciones/comun/comun.css">
+<title>Portería · Vehículos permitidos</title></head><body>
+<script>
+window.PAGINA = {
+  perfil: 'porteria',
+  titulo: 'Portería · Vehículos permitidos',
+  sub: 'Particulares y contratistas que pueden ingresar a planta',
+  mantener: ['tipo', 'acceso', 'planta', 'empresa'],
+  campos: [
+    { k: 'tipo', label: 'Vehículo', tipo: 'seg', opciones: [['particular', 'Particular'], ['contratista', 'Contratista']] },
+    { k: 'acceso', label: '¿Ingreso a zona operativa?', tipo: 'seg', opciones: [['zona_operativa', 'Sí'], ['ingreso', 'No']], def: 'ingreso' },
+    { k: 'patente', label: 'Patente', tipo: 'patente', req: true, ph: 'AB123CD' },
+    { k: 'titular', label: 'Nombre y apellido', req: true, ph: 'Quién maneja' },
+    { k: 'empresa', label: 'Empresa contratista', req: true, si: (v) => v.tipo === 'contratista' },
+    { k: 'planta', label: 'Planta', opciones: [['ricardone', 'Ricardone'], ['san_lorenzo', 'San Lorenzo'], ['ambas', 'Ambas']] },
+    { k: 'desde', label: 'Desde', tipo: 'fecha', medio: true, req: true },
+    { k: 'hasta', label: 'Hasta', tipo: 'fecha', medio: true, req: true },
+    { k: 'hdesde', label: 'Horario desde', tipo: 'hora', medio: true },
+    { k: 'hhasta', label: 'Horario hasta', tipo: 'hora', medio: true },
+  ],
+  resumen: (a) => ({
+    titulo: [a.titular, a.empresa].filter(Boolean).join(' · '),
+    chips: [a.tipo, a.acceso === 'zona_operativa' ? 'zona operativa' : 'sin zona operativa'],
+  }),
+}
+</script>
+<script src="/autorizaciones/comun/comun.js"></script>
+</body></html>
