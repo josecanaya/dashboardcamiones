@@ -10,7 +10,7 @@ canvas{position:absolute;inset:0}
 .hdr{position:absolute;left:70px;top:38px}
 .hdr .k{font-weight:700;letter-spacing:4px;font-size:22px;color:var(--green);text-transform:uppercase}
 .hdr h1{font-family:"Arial Narrow",Arial,sans-serif;font-stretch:condensed;font-size:64px;color:var(--dark);margin-top:6px;letter-spacing:-.5px}
-.live{display:inline-flex;align-items:center;gap:10px;background:var(--dark);color:#fff;border-radius:999px;padding:8px 18px;font-size:22px;font-weight:700;position:absolute;left:70px;top:168px}
+.live{display:none !important;display:inline-flex;align-items:center;gap:10px;background:var(--dark);color:#fff;border-radius:999px;padding:8px 18px;font-size:22px;font-weight:700;position:absolute;left:70px;top:168px}
 .live i{width:12px;height:12px;border-radius:50%;background:#4fd17f;display:inline-block}
 .feed{position:absolute;right:40px;top:40px;width:440px;bottom:70px;background:#fff;border:2px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:22px 22px;overflow:hidden}
 .feed h3{font-size:20px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
@@ -187,9 +187,10 @@ function seek(T){
 
 // ================= un día completo: 29/10 =================
 const DAY=await (await fetch('./dia29c.json')).json();
+DAY.caps=DAY.caps.filter(c=>c.l!=='nr'); // las patentes ilegibles se descartan: no se muestran
 const D0=Date.parse('2026-10-29T00:00:00-03:00');
 const DA=14,DB=9,DC=7,DDUR=DA+DB+DC;
-const LAY=[['c2','2 · Carta / Permitidos / Remitos','#1e6b3c'],['p31','3.1 · Parecidas','#2a5ea8'],['m32','3.2 · Metadatos','#4f86d9'],['b33','3.3 · Banco','#7a5bc4'],['ia34','3.4 · IA','#2b9aa8'],['al4','4 · Alerta','#b42323'],['nc','No es un camión','#8a7f72'],['nr','Patente ilegible','#9aa3a0']];
+const LAY=[['c2','2 · Carta / Permitidos / Remitos','#1e6b3c'],['p31','3.1 · Parecidas','#2a5ea8'],['m32','3.2 · Metadatos','#4f86d9'],['b33','3.3 · Banco','#7a5bc4'],['ia34','3.4 · IA','#2b9aa8'],['al4','4 · Alerta','#b42323'],['nc','4.1 · No es un camión','#8a7f72']];
 const LC=Object.fromEntries(LAY.map(l=>[l[0],l[2]]));
 const c3=document.getElementById('c');
 const dayCv=document.createElement('canvas');dayCv.width=W;dayCv.height=H;dayCv.style.cssText='position:absolute;inset:0;display:none';document.body.insertBefore(dayCv,ov);const dc=dayCv.getContext('2d');
@@ -215,7 +216,7 @@ const siteCenter=[DV[0].px(sites.ricardone.model.pointNodes.S2.at),DV[1].px(site
 TRK.forEach((t,i)=>{const sc=siteCenter[t.site==='ricardone'?0:1];t.sx=sc[0];t.sy=sc[1];const h=Math.sin(i*78.233)*12345.678;t.d=(h-Math.floor(h))});
 const fmt=n=>n.toLocaleString('es-AR');
 function truckGlyph(x,y,c,a){dc.globalAlpha=a;dc.fillStyle=c;dc.fillRect(x-9,y-5,13,10);dc.fillRect(x+5,y-2,6,7);dc.globalAlpha=1}
-const partC=el('pc',`<div class="k" style="position:absolute;left:70px;top:38px;font-weight:700;letter-spacing:4px;font-size:22px;color:#1e6b3c;text-transform:uppercase">29/10/2026 · ${fmt(DAY.caps.filter(c=>c.l==='nc').length)} capturas</div><h1 style="position:absolute;left:70px;top:84px;font-family:'Arial Narrow',Arial,sans-serif;font-stretch:condensed;font-size:64px;color:#10271d">No es una patente de camión: no es una alerta</h1>`+[['ej_moto.jpg','Moto','Portería San Lorenzo · 07:05 · el DSS dice «Motorcycle»'],['ej_maquina.jpg','Minicargadora','Balanza Egreso Ricardone · 07:57 · sin tipo en el DSS']].map(([f,t,s],i)=>`<figure class="ej" style="position:absolute;left:${70+i*900}px;top:230px;width:870px;margin:0"><img src="${f}" style="width:870px;height:420px;object-fit:cover;border-radius:14px;display:block"><figcaption style="margin-top:14px"><b style="font-size:30px;color:#10271d">${t}</b><div style="font-size:21px;color:#6b7a70;margin-top:6px">${s}</div></figcaption></figure>`).join('')+`<p style="position:absolute;left:70px;top:800px;width:1700px;font-size:28px;line-height:1.45;color:#14261c">La cámara también lee motos, autos y máquinas. Si el tipo de vehículo del DSS o la foto dicen que no es un camión, la captura se descarta sin alerta. Las ${fmt(DAY.caps.filter(c=>c.l==='nr').length)} de patente ilegible sí son camiones vistos de atrás o de noche: el algoritmo los busca por el paso y la marca.</p>`);partC.style.cssText='position:absolute;inset:0;display:none';
+const partC=el('pc',`<div class="k" style="position:absolute;left:70px;top:38px;font-weight:700;letter-spacing:4px;font-size:22px;color:#b42323;text-transform:uppercase">4 · Alerta · 29/10/2026</div><h1 style="position:absolute;left:70px;top:84px;font-family:'Arial Narrow',Arial,sans-serif;font-stretch:condensed;font-size:64px;color:#10271d">Qué termina en alerta y qué no</h1>`+[['ej_moto.jpg','4.1 · No es un camión','Se descarta: no es alerta','Moto en la portería de San Lorenzo, 07:05. El DSS dice «Motorcycle»: la cámara leyó una moto, no un camión.','#8a7f72'],['ej_ilegible.jpg','4 · Alerta','La ve una persona','Camión volcador en la Balanza Egreso de San Lorenzo, 13:53. La cámara leyó «PPP855» en las luces traseras: no hay patente a la vista y ninguna capa lo puede identificar.','#b42323']].map(([f,t,d,s,c],i)=>`<figure class="ej" style="position:absolute;left:${70+i*900}px;top:200px;width:870px;margin:0"><img src="${f}" style="width:870px;height:420px;object-fit:cover;border-radius:14px;display:block;border:5px solid ${c}"><figcaption style="margin-top:16px"><span style="display:inline-block;background:${c};color:#fff;font-size:26px;font-weight:700;border-radius:10px;padding:6px 14px">${t}</span> <b style="font-size:26px;color:${c};margin-left:10px">${d}</b><div style="font-size:23px;color:#14261c;margin-top:12px;line-height:1.4">${s}</div></figcaption></figure>`).join('')+`<p style="position:absolute;left:70px;top:860px;width:1760px;font-size:27px;line-height:1.45;color:#14261c">Alerta es un camión que ninguna capa pudo llevar a una carta, Vehículos Permitidos o un remito. Lo que no es un camión (motos, autos, máquinas) va a la capa 4.1 y se descarta. El 29/10 quedaron 20 patentes en alerta.</p>`);partC.style.cssText='position:absolute;inset:0;display:none';
 function seekDay(t){
  for(const d of dynamic)d.remove();dynamic=[];feed.style.display='none';livePill.style.display='none';hdr.style.display='none';dayHdr.style.display='block';dayCv.style.display='block';
  dc.clearRect(0,0,W,H);
@@ -238,10 +239,10 @@ function seekDay(t){
   for(const sl of slots){const meta=LAY.find(l=>l[0]===sl.g);dc.globalAlpha=lab;dc.textAlign='right';dc.fillStyle=sl.g==='al4'?meta[2]:'#14261c';dc.font='700 24px Arial';dc.fillText(meta[1],440,sl.y+8);dc.font='700 20px Arial';dc.fillStyle='#6b7a70';dc.fillText(sl.n===1?'1 patente':fmt(sl.n)+' patentes',440,sl.y+32);dc.globalAlpha=1}
   for(const tk of TRK){const st=.4+tk.d*2.6;const f=ease((u-st)/1.2);const x=tk.sx+(tk.tx-tk.sx)*f,y=tk.sy+(tk.ty-tk.sy)*f-Math.sin(f*Math.PI)*60;truckGlyph(x,y,LC[tk.layer],u>st-.05?1:0)}
   const nt=clamp((u-4.5)/.6);dc.globalAlpha=nt;dc.fillStyle='#6b7a70';dc.font='22px Arial';dc.textAlign='left';
-  dc.fillText(`Cada patente va a la primera capa que la identificó. Fuera de las capas: ${fmt(DAY.caps.filter(c=>c.l==='nc').length)} capturas que no eran camiones (motos, autos, una máquina) y ${fmt(DAY.caps.filter(c=>c.l==='nr').length)} de camiones con la patente ilegible.`,140,1005);dc.globalAlpha=1}
+  dc.fillText(`Cada patente va a la primera capa que la identificó. Además, ${fmt(DAY.caps.filter(c=>c.l==='nc').length)} capturas en 4.1 · No es un camión (motos, autos, una máquina).`,140,1005);dc.globalAlpha=1}
 }
-const REC=ORDER.reduce((a,s)=>a+SCEN[s].dur,0);
-window.seek=(T)=>{if(T>=REC){seekDay(T-REC)}else{partC.style.display='none';dayCv.style.display='none';dayHdr.style.display='none';feed.style.display='';livePill.style.display='';hdr.style.display='';c3.style.opacity=1;seek(T)}};
+const SPEED=1.4,REC=ORDER.reduce((a,s)=>a+SCEN[s].dur,0)/SPEED;
+window.seek=(T)=>{if(T>=REC){seekDay(T-REC)}else{partC.style.display='none';dayCv.style.display='none';dayHdr.style.display='none';feed.style.display='';livePill.style.display='';hdr.style.display='';c3.style.opacity=1;seek(T*SPEED)}};
 window.TOTAL=REC+DDUR;
 window.seek(0);
 

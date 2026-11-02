@@ -178,8 +178,8 @@ SECS.forEach((S,si)=>{
   const el=h(html);const q=s=>[...el.querySelectorAll(s)];
   const [k,t,ph,meta,desc,read]=el.children;const img=ph.firstChild;const sts=q('.st:not(.loop)');const loop=el.querySelector('.st.loop');
   const arr=read.querySelector('.arr'),res=read.querySelector('.res');
-  const s0=.7,gap=.22;const tEnd=s0+c.steps.length*gap;const tRes=tEnd+.1;const tLoop=tRes+.35;
-  const dur=Math.max(4,(c.loop?tLoop:tRes)+1.9);
+  const s0=1.1,gap=.45;const tEnd=s0+c.steps.length*gap;const tRes=tEnd+.15;const tLoop=tRes+.55;
+  const dur=Math.max(6.5,(c.loop?tLoop:tRes)+3.4);
   add(dur,el,lt=>{fade(k,lt,0,.3);fade(t,lt,.05,.4,30);fade(ph,lt,.1,.5,0,-50);img.style.transform=`scale(${1+.07*clamp(lt/dur)})`;
    fade(read,lt,.2,.4,0,40);sts.forEach((s,i)=>fade(s,lt,.25+i*.03,.3,0,30));
    fade(meta,lt,.4);fade(desc,lt,tRes+.05,.4);
