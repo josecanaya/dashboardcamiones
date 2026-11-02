@@ -189,7 +189,7 @@ function seek(T){
 const DAY=await (await fetch('./dia29c.json')).json();
 DAY.caps=DAY.caps.filter(c=>c.l!=='nr'); // las patentes ilegibles se descartan: no se muestran
 const D0=Date.parse('2026-10-29T00:00:00-03:00');
-const DA=14,DB=9,DC=7,DDUR=DA+DB+DC;
+const DA=14,DB=9,DC=0,DDUR=DA+DB+DC; // el video termina con los camiones agrupados (1:33)
 const LAY=[['c2','2 · Carta / Permitidos / Remitos','#1e6b3c'],['p31','3.1 · Parecidas','#2a5ea8'],['m32','3.2 · Metadatos','#4f86d9'],['b33','3.3 · Banco','#7a5bc4'],['ia34','3.4 · Motor de IA','#2b9aa8'],['al4','4 · Alerta','#b42323'],['nc','4.1 · No es un camión','#8a7f72']];
 const LC=Object.fromEntries(LAY.map(l=>[l[0],l[2]]));
 const c3=document.getElementById('c');
@@ -239,7 +239,7 @@ function seekDay(t){
   for(const sl of slots){const meta=LAY.find(l=>l[0]===sl.g);dc.globalAlpha=lab;dc.textAlign='right';dc.fillStyle=sl.g==='al4'?meta[2]:'#14261c';dc.font='700 24px Arial';dc.fillText(meta[1],440,sl.y+8);dc.font='700 20px Arial';dc.fillStyle='#6b7a70';dc.fillText(sl.n===1?'1 patente':fmt(sl.n)+' patentes',440,sl.y+32);dc.globalAlpha=1}
   for(const tk of TRK){const st=.4+tk.d*2.6;const f=ease((u-st)/1.2);const x=tk.sx+(tk.tx-tk.sx)*f,y=tk.sy+(tk.ty-tk.sy)*f-Math.sin(f*Math.PI)*60;truckGlyph(x,y,LC[tk.layer],u>st-.05?1:0)}
   const nt=clamp((u-4.5)/.6);dc.globalAlpha=nt;dc.fillStyle='#6b7a70';dc.font='22px Arial';dc.textAlign='left';
-  dc.fillText(`Cada patente va a la primera capa que la identificó. Además, ${fmt(DAY.caps.filter(c=>c.l==='nc').length)} capturas en 4.1 · No es un camión (motos, autos, una máquina).`,140,1005);dc.globalAlpha=1}
+  dc.fillText(`Cada patente va a la primera capa que la identificó. Además, ${fmt(DAY.caps.filter(c=>c.l==='nc').length)} capturas fueron descartadas en la capa 3.4 por no ser camiones ni autos (motos, maquinaria, personas).`,140,1005);dc.globalAlpha=1}
 }
 const SPEED=1.4,REC=ORDER.reduce((a,s)=>a+SCEN[s].dur,0)/SPEED;
 window.seek=(T)=>{if(T>=REC){seekDay(T-REC)}else{partC.style.display='none';dayCv.style.display='none';dayHdr.style.display='none';feed.style.display='';livePill.style.display='';hdr.style.display='';c3.style.opacity=1;seek(T*SPEED)}};

@@ -62,7 +62,7 @@ video{display:block;width:100%;max-width:100%;aspect-ratio:16/9;background:var(-
     <div class="kicker">Nodo Sur · Ricardone y San Lorenzo</div>
     <h1>Cada captura, un camión</h1>
   </header>
-  <p class="lead">Cómo el reconocedor de patentes identifica cada lectura de cámara, capa por capa: un caso real por capa, el modelo de las dos plantas con cada captura resolviéndose en vivo, y el 29/10 completo con todas las capturas y los camiones agrupados por capa, y qué termina en alerta para que la vea una persona. 100 segundos.</p>
+  <p class="lead">Cómo el reconocedor de patentes identifica cada lectura de cámara, capa por capa: un caso real por capa, el modelo de las dos plantas con cada captura resolviéndose en vivo, y el 29/10 completo con todas las capturas y los camiones agrupados por capa. 93 segundos.</p>
   <div class="player">
     <video id="v" src="capas-reconocedor.mp4" poster="poster.jpg" controls playsinline preload="metadata"></video>
   </div>
@@ -84,7 +84,7 @@ video{display:block;width:100%;max-width:100%;aspect-ratio:16/9;background:var(-
   <p class="foot">Casos del 22 al 29 de octubre de 2026. Fotos y recortes: DSS de las cámaras de patentes.</p>
 </main>
 <script>
-const CH=[["Recorrido",3,""],["2 · ¿Quién es?",11,"c2"],["3.1 · Parecidas",17.5,"c3"],["3.2 · Metadatos",24.1,"c3"],["3.3 · Banco",31.1,"c3"],["3.4 · Motor de IA",38.5,"c3"],["4 · Alerta",46.4,"c4"],["En vivo",54.2,""],["Día 29/10",70.3,""],["La alerta la ve una persona",93.3,"c4"]];
+const CH=[["Recorrido",3,""],["2 · ¿Quién es?",11,"c2"],["3.1 · Parecidas",17.5,"c3"],["3.2 · Metadatos",24.1,"c3"],["3.3 · Banco",31.1,"c3"],["3.4 · Motor de IA",38.5,"c3"],["4 · Alerta",46.4,"c4"],["En vivo",54.2,""],["Día 29/10",70.3,""]];
 const v=document.getElementById('v'),ul=document.getElementById('ch');
 const fmt=t=>`${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,'0')}`;
 const btns=CH.map(([n,t,c])=>{const li=document.createElement('li');const b=document.createElement('button');b.type='button';b.className=c;

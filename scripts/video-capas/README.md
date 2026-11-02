@@ -27,8 +27,7 @@ y las 20 alertas del día con su decisión).
    442 patentes, 20 en alerta (45 capturas).
    Las patentes ilegibles se descartan y no se muestran; lo que no es un camión (motos, autos, máquinas)
    va a la capa 4.1. La capa 3.4 es el motor de IA (modelo propio): ejemplo de noche IMX998 → UWX998.
-   La escena final, «La alerta la ve una persona», muestra NBJ986 (patente bien leída, sin carta ni
-   Vehículos Permitidos) junto a la moto de la capa 4.1.
+   El video termina en 1:33 con los camiones agrupados por capa (la escena de alerta quedó desactivada: DC=0).
 
 Pendiente en el algoritmo de vínculo: que `cobertura.mjs` no cuente la trasera con par y lea las cartas del padrón.
 
