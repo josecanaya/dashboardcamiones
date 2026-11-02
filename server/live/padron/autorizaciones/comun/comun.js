@@ -10,6 +10,8 @@
   const store = { get: (k) => { try { return localStorage.getItem(k) } catch { return null } }, set: (k, v) => { try { localStorage.setItem(k, v) } catch {} } }
 
   let lista = []
+  let productos = []
+  let buscaProducto = ''
   let filtro = 'vigentes'
   let editando = null
   const valores = {}
@@ -44,6 +46,26 @@
 
   function defaults() {
     for (const c of P.campos) valores[c.k] = c.def ?? (c.tipo === 'fecha' ? hoy() : c.opciones ? c.opciones[0][0] : '')
+    valores.codProducto = ''
+    buscaProducto = ''
+  }
+
+  /** Productos del catálogo que corresponden a lo que viene a hacer (despachar o descargar). */
+  const productosDelTipo = (c) => productos.filter((p) => !c.segun || p[c.segun[valores.tipo]])
+
+  /** Elegir de la lista (una sola opción) o «Otros» con texto. */
+  function inputProducto(c) {
+    const q = buscaProducto.trim().toUpperCase()
+    const lista = productosDelTipo(c)
+    const grupos = [...new Set(lista.map((p) => p.grupo))]
+    const chip = (cod, txt) => `<button type="button" class="opt ${valores.codProducto === cod ? 'on' : ''}" data-cod="${cod}">${esc(txt)}</button>`
+    return `<input class="buscaprod" placeholder="Buscar producto…" value="${esc(buscaProducto)}">
+      <div class="prods">${grupos.map((g) => {
+        const ps = lista.filter((p) => p.grupo === g && (!q || p.nombre.includes(q) || g.toUpperCase().includes(q) || valores.codProducto === p.cod))
+        return ps.length ? `<div class="grupo"><div class="gt">${esc(g)}</div>${ps.map((p) => chip(p.cod, p.nombre)).join('')}</div>` : ''
+      }).join('')}
+      <div class="grupo"><div class="gt">Otros</div>${chip('otros', 'Otro producto…')}</div></div>
+      ${valores.codProducto === 'otros' ? `<input id="f_${c.k}" data-k="${c.k}" value="${esc(valores[c.k])}" placeholder="¿Qué producto es?" class="otro">` : ''}`
   }
 
   function renderForm() {
@@ -52,7 +74,8 @@
       const lab = `<label for="f_${c.k}">${esc(c.label)}${c.req ? ' <span class="req">*</span>' : ''}</label>`
       const v = esc(valores[c.k] ?? '')
       let input
-      if (c.tipo === 'seg') input = `<div class="seg" data-k="${c.k}">${c.opciones.map(([val, txt]) => `<button type="button" data-v="${val}" class="${valores[c.k] === val ? 'on' : ''}">${esc(txt)}</button>`).join('')}</div>`
+      if (c.tipo === 'producto') input = inputProducto(c)
+      else if (c.tipo === 'seg') input = `<div class="seg" data-k="${c.k}">${c.opciones.map(([val, txt]) => `<button type="button" data-v="${val}" class="${valores[c.k] === val ? 'on' : ''}">${esc(txt)}</button>`).join('')}</div>`
       else if (c.opciones) input = `<select id="f_${c.k}" data-k="${c.k}">${c.opciones.map(([val, txt]) => `<option value="${val}" ${valores[c.k] === val ? 'selected' : ''}>${esc(txt)}</option>`).join('')}</select>`
       else if (c.tipo === 'texto_largo') input = `<textarea id="f_${c.k}" data-k="${c.k}" placeholder="${esc(c.ph ?? '')}">${v}</textarea>`
       else input = `<input id="f_${c.k}" data-k="${c.k}" value="${v}" placeholder="${esc(c.ph ?? '')}" type="${c.tipo === 'fecha' ? 'date' : c.tipo === 'hora' ? 'time' : 'text'}" class="${c.tipo === 'patente' ? 'plate' : ''}" ${c.tipo === 'patente' ? 'maxlength="9" inputmode="text"' : ''}>`
@@ -67,9 +90,31 @@
     $('#ftitle').textContent = editando ? `Editando ${editando.patente}` : 'Nueva autorización'
     form.querySelectorAll('.seg button').forEach((b) => b.addEventListener('click', () => {
       valores[b.parentElement.dataset.k] = b.dataset.v
+      // Cambió despachar/descargar: si el producto elegido no corresponde, se vuelve a elegir.
+      const cp = P.campos.find((c) => c.tipo === 'producto')
+      if (cp && valores.codProducto && valores.codProducto !== 'otros' && !productosDelTipo(cp).some((p) => p.cod === valores.codProducto)) {
+        valores.codProducto = ''
+        valores[cp.k] = ''
+      }
       renderForm()
     }))
-    form.querySelectorAll('input, select, textarea').forEach((el) => {
+    form.querySelectorAll('.opt').forEach((b) => b.addEventListener('click', () => {
+      const cp = P.campos.find((c) => c.tipo === 'producto')
+      valores.codProducto = b.dataset.cod
+      valores[cp.k] = b.dataset.cod === 'otros' ? '' : productos.find((p) => p.cod === b.dataset.cod).nombre
+      renderForm()
+      if (b.dataset.cod === 'otros') $('#form input.otro')?.focus()
+    }))
+    const busca = form.querySelector('.buscaprod')
+    busca?.addEventListener('input', () => {
+      buscaProducto = busca.value
+      const pos = busca.selectionStart
+      renderForm()
+      const nuevo = $('#form .buscaprod')
+      nuevo.focus()
+      nuevo.setSelectionRange(pos, pos)
+    })
+    form.querySelectorAll('[data-k]:is(input, select, textarea)').forEach((el) => {
       el.addEventListener('input', () => { valores[el.dataset.k] = el.value })
       if (el.classList.contains('plate')) el.addEventListener('blur', () => consultar(el.dataset.k))
     })
@@ -100,11 +145,12 @@
   $('#form').addEventListener('submit', async (e) => {
     e.preventDefault()
     const msg = $('#msg')
-    const falta = P.campos.filter((c) => visible(c) && c.req && !String(valores[c.k] ?? '').trim())
+    const falta = P.campos.filter((c) => visible(c) && c.req && (!String(valores[c.k] ?? '').trim() || (c.tipo === 'producto' && !valores.codProducto)))
     if (falta.length) { msg.className = 'msg err'; msg.textContent = 'Falta: ' + falta.map((c) => c.label).join(', '); return }
     if (!user.value.trim()) { msg.className = 'msg err'; msg.textContent = 'Poné tu nombre arriba a la derecha.'; user.focus(); return }
     const body = { perfil: P.perfil }
     for (const c of P.campos) body[c.k] = visible(c) ? valores[c.k] : null
+    if (P.campos.some((c) => c.tipo === 'producto')) body.codProducto = valores.codProducto
     $('#guardar').disabled = true
     const res = await fetch(editando ? '/api/autorizaciones/' + editando.id : '/api/autorizaciones', {
       method: editando ? 'PATCH' : 'POST', headers: { 'content-type': 'application/json', 'x-usuario': user.value.trim() }, body: JSON.stringify(body),
@@ -171,6 +217,7 @@
     if (ed) {
       editando = lista.find((a) => a.id === ed)
       for (const c of P.campos) valores[c.k] = editando[c.k] ?? ''
+      valores.codProducto = editando.codProducto ?? ''
       renderForm()
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
@@ -190,8 +237,12 @@
     renderLista()
   }
 
-  defaults()
-  renderForm()
-  cargar()
-  setInterval(cargar, 60_000)
+  async function iniciar() {
+    if (P.campos.some((c) => c.tipo === 'producto')) productos = (await fetch('/autorizaciones/comun/productos.json').then((x) => x.json())).productos
+    defaults()
+    renderForm()
+    cargar()
+    setInterval(cargar, 60_000)
+  }
+  iniciar()
 })()

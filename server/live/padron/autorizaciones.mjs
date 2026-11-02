@@ -30,6 +30,9 @@ const PLANTAS = ['ricardone', 'san_lorenzo', 'ambas']
 const CATEGORIA = {
   particular: 'particular', contratista: 'contratista', carga: 'despacho', descarga: 'descarga_sin_carta',
 }
+/** Productos sin carta de porte que se pueden elegir (comun/productos.json); lo demás va como «otros» con texto. */
+const PRODUCTOS = new Map(JSON.parse(readFileSync(path.join(PAGES, 'comun', 'productos.json'), 'utf8')).productos.map((p) => [p.cod, p]))
+const PRODUCTO_SEGUN = { carga: 'despacho', descarga: 'descarga' }
 const TEXTOS = ['titular', 'empresa', 'cliente', 'transportista', 'producto', 'referencia', 'motivo', 'observaciones', 'hdesde', 'hhasta']
 
 /** Fecha de hoy en Argentina, YYYY-MM-DD. */
@@ -56,6 +59,17 @@ export function validar(body, previo = null) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(desde) || !/^\d{4}-\d{2}-\d{2}$/.test(hasta) || hasta < desde) return { error: 'fechas inválidas' }
   const ok = { perfil, tipo, acceso, patente, acoplado: normPlate(b.acoplado) || null, planta, desde, hasta }
   for (const k of TEXTOS) ok[k] = String(b[k] ?? '').trim().slice(0, 300) || null
+  if (perfil === 'comercial') {
+    const cod = String(b.codProducto ?? '')
+    if (cod === 'otros') {
+      if (!ok.producto) return { error: 'falta aclarar qué producto es' }
+    } else {
+      const p = PRODUCTOS.get(cod)
+      if (!p || !p[PRODUCTO_SEGUN[tipo]]) return { error: 'producto fuera de la lista' }
+      ok.producto = p.nombre
+    }
+    ok.codProducto = cod
+  }
   return { ok }
 }
 

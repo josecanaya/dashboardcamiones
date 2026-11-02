@@ -29,6 +29,11 @@ form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap:
 .seg button { flex: 1; border: 0; background: #fff; padding: 9px 6px; font: inherit; cursor: pointer; color: var(--muted); }
 .seg button + button { border-left: 1px solid var(--line); }
 .seg button.on { background: var(--brand); color: #fff; font-weight: 600; }
+.prods { max-height: 260px; overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; gap: 8px; }
+.grupo .gt { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+.opt { font: inherit; font-size: 12px; border: 1px solid var(--line); background: #fff; color: var(--ink); border-radius: 99px; padding: 4px 10px; margin: 0 4px 4px 0; cursor: pointer; }
+.opt:hover { border-color: var(--brand); }
+.opt.on { background: var(--brand); border-color: var(--brand); color: #fff; font-weight: 600; }
 .hint { font-size: 13px; padding: 8px 10px; border-radius: 7px; background: var(--brand-soft); color: var(--brand); }
 .hint.warn { background: #fef3c7; color: var(--warn); }
 .hint:empty { display: none; }
