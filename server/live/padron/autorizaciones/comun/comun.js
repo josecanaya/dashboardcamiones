@@ -53,19 +53,73 @@
   /** Productos del catálogo que corresponden a lo que viene a hacer (despachar o descargar). */
   const productosDelTipo = (c) => productos.filter((p) => !c.segun || p[c.segun[valores.tipo]])
 
-  /** Elegir de la lista (una sola opción) o «Otros» con texto. */
+  const sinTildes = (s) => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase()
+  /** «AGUA POTABLE» → «Agua potable». */
+  const bonito = (s) => (s ? s.charAt(0) + s.slice(1).toLowerCase() : '')
+
+  /**
+   * Producto: un buscador que despliega la lista (solo lo que corresponde a despachar o descargar).
+   * Elegido, queda como una ficha con «Cambiar». Si no está, la última opción es «Otro: lo que escribiste».
+   */
   function inputProducto(c) {
-    const q = buscaProducto.trim().toUpperCase()
-    const lista = productosDelTipo(c)
-    const grupos = [...new Set(lista.map((p) => p.grupo))]
-    const chip = (cod, txt) => `<button type="button" class="opt ${valores.codProducto === cod ? 'on' : ''}" data-cod="${cod}">${esc(txt)}</button>`
-    return `<input class="buscaprod" placeholder="Buscar producto…" value="${esc(buscaProducto)}">
-      <div class="prods">${grupos.map((g) => {
-        const ps = lista.filter((p) => p.grupo === g && (!q || p.nombre.includes(q) || g.toUpperCase().includes(q) || valores.codProducto === p.cod))
-        return ps.length ? `<div class="grupo"><div class="gt">${esc(g)}</div>${ps.map((p) => chip(p.cod, p.nombre)).join('')}</div>` : ''
-      }).join('')}
-      <div class="grupo"><div class="gt">Otros</div>${chip('otros', 'Otro producto…')}</div></div>
-      ${valores.codProducto === 'otros' ? `<input id="f_${c.k}" data-k="${c.k}" value="${esc(valores[c.k])}" placeholder="¿Qué producto es?" class="otro">` : ''}`
+    if (valores.codProducto) {
+      const p = productos.find((x) => x.cod === valores.codProducto)
+      return `<div class="elegido"><div><b>${esc(p ? bonito(p.nombre) : valores[c.k])}</b><span>${p ? esc(p.grupo) : 'Otro producto'}</span></div>
+        <button type="button" class="btn small" id="cambiarprod">Cambiar</button></div>`
+    }
+    return `<div class="combo"><input class="buscaprod" id="f_${c.k}" placeholder="Escribí para buscar (ej. soda, agua, chatarra)" value="${esc(buscaProducto)}" autocomplete="off">
+      <div class="drop" hidden></div></div>`
+  }
+
+  /** Arma el desplegable del buscador de producto según lo escrito. */
+  function armarCombo(c) {
+    const input = $('#form .buscaprod')
+    if (!input) return
+    const drop = input.nextElementSibling
+    let activo = 0
+    let opciones = []
+    const elegir = (o) => {
+      if (o.cod === 'otros' && !o.texto) { input.focus(); input.placeholder = 'Escribí qué producto es'; return }
+      valores.codProducto = o.cod
+      valores[c.k] = o.cod === 'otros' ? o.texto : o.nombre
+      buscaProducto = ''
+      renderForm()
+    }
+    const pintar = () => {
+      const q = sinTildes(input.value.trim())
+      const palabras = q.split(/\s+/).filter(Boolean)
+      const lista = productosDelTipo(c).filter((p) => palabras.every((w) => sinTildes(`${p.nombre} ${p.grupo}`).includes(w)))
+      opciones = [...lista, { cod: 'otros', texto: input.value.trim() }]
+      activo = Math.min(activo, opciones.length - 1)
+      let grupo = null
+      drop.innerHTML = opciones.map((o, i) => {
+        let h = ''
+        if (o.cod !== 'otros' && o.grupo !== grupo) { grupo = o.grupo; h = `<div class="dg">${esc(grupo)}</div>` }
+        const txt = o.cod === 'otros' ? (o.texto ? `Otro producto: <b>«${esc(o.texto)}»</b>` : 'Otro producto (escribilo arriba)') : esc(bonito(o.nombre))
+        return `${h}<div class="do ${i === activo ? 'act' : ''} ${o.cod === 'otros' ? 'otro' : ''}" data-i="${i}">${txt}</div>`
+      }).join('')
+      drop.hidden = false
+      drop.querySelector('.act')?.scrollIntoView({ block: 'nearest' })
+    }
+    input.addEventListener('focus', pintar)
+    input.addEventListener('input', () => { buscaProducto = input.value; activo = 0; pintar() })
+    input.addEventListener('blur', () => setTimeout(() => { drop.hidden = true }, 150))
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault()
+        activo = (activo + (e.key === 'ArrowDown' ? 1 : -1) + opciones.length) % opciones.length
+        pintar()
+      } else if (e.key === 'Enter') {
+        e.preventDefault()
+        if (opciones[activo]) elegir(opciones[activo])
+      } else if (e.key === 'Escape') drop.hidden = true
+    })
+    drop.addEventListener('mousedown', (e) => {
+      const el = e.target.closest('.do')
+      if (!el) return
+      e.preventDefault()
+      elegir(opciones[Number(el.dataset.i)])
+    })
   }
 
   function renderForm() {
@@ -98,22 +152,17 @@
       }
       renderForm()
     }))
-    form.querySelectorAll('.opt').forEach((b) => b.addEventListener('click', () => {
-      const cp = P.campos.find((c) => c.tipo === 'producto')
-      valores.codProducto = b.dataset.cod
-      valores[cp.k] = b.dataset.cod === 'otros' ? '' : productos.find((p) => p.cod === b.dataset.cod).nombre
-      renderForm()
-      if (b.dataset.cod === 'otros') $('#form input.otro')?.focus()
-    }))
-    const busca = form.querySelector('.buscaprod')
-    busca?.addEventListener('input', () => {
-      buscaProducto = busca.value
-      const pos = busca.selectionStart
-      renderForm()
-      const nuevo = $('#form .buscaprod')
-      nuevo.focus()
-      nuevo.setSelectionRange(pos, pos)
-    })
+    const cp = P.campos.find((c) => c.tipo === 'producto')
+    if (cp) {
+      armarCombo(cp)
+      $('#cambiarprod')?.addEventListener('click', () => {
+        buscaProducto = valores.codProducto === 'otros' ? valores[cp.k] : ''
+        valores.codProducto = ''
+        valores[cp.k] = ''
+        renderForm()
+        $('#form .buscaprod')?.focus()
+      })
+    }
     form.querySelectorAll('[data-k]:is(input, select, textarea)').forEach((el) => {
       el.addEventListener('input', () => { valores[el.dataset.k] = el.value })
       if (el.classList.contains('plate')) el.addEventListener('blur', () => consultar(el.dataset.k))
