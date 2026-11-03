@@ -1,0 +1,18 @@
+{
+  "v": 4,
+  "createdOnFiles": { "v": 1, "at": "2026-11-03T18:10:00Z" },
+  "lists": "css",
+  "title": "Vínculo: cada camión, cada punto",
+  "order": ["cover", "como-funciona", "resultado", "casos", "confianza", "como-leer", "r7-1", "r7-2", "r7-3", "r7-4", "otros", "en-vivo"],
+  "sections": {
+    "s1": { "description": "Qué es el vínculo y cómo asigna cada captura a un camión con carta de porte", "start": "cover" },
+    "s2": { "description": "Resultado del 02/11: cuántos pasos leyó la cámara y cuántos reconstruyó el vínculo", "start": "resultado" },
+    "s3": { "description": "Todos los camiones del 02/11: un cuadradito por punto de su circuito", "start": "como-leer" },
+    "s4": { "description": "El vínculo corriendo en En vivo", "start": "en-vivo" }
+  },
+  "faces": {
+    "dm-sans": { "family": "DM Sans", "href": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" },
+    "jetbrains-mono": { "family": "JetBrains Mono", "href": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" }
+  },
+  "designSystems": []
+}

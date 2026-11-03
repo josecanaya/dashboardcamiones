@@ -1,0 +1,30 @@
+<section id="como-funciona" data-transition="fade" style="background:#F6F8F5;color:#12261C;font-family:'DM Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:56px">
+<div style="display:flex;flex-direction:column;gap:12px">
+<p style="font-size:24px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6B3FA0">Cómo funciona</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">Las cartas de porte dicen quién vino; cada captura busca su camión</h2>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:24px">
+<div style="display:flex;flex-direction:column;gap:16px;background:#FFFFFF;padding:36px;border:1px solid #DCE5DF;border-radius:16px">
+<p style="font-size:44px;font-weight:700;color:#0F4A33">1</p>
+<h3 style="font-size:32px;font-weight:700;line-height:1.2">El universo</h3>
+<p style="font-size:26px;line-height:1.4;color:#45564D">Los camiones con carta de porte vigente del Nodo Sur son los que pueden estar en planta.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px;background:#FFFFFF;padding:36px;border:1px solid #DCE5DF;border-radius:16px">
+<p style="font-size:44px;font-weight:700;color:#0F4A33">2</p>
+<h3 style="font-size:32px;font-weight:700;line-height:1.2">Lectura directa</h3>
+<p style="font-size:26px;line-height:1.4;color:#45564D">Si la cámara lee la patente del chasis o del acoplado de una carta, la captura es de ese camión.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px;background:#FFFFFF;padding:36px;border:1px solid #DCE5DF;border-radius:16px">
+<p style="font-size:44px;font-weight:700;color:#6B3FA0">3</p>
+<h3 style="font-size:32px;font-weight:700;line-height:1.2">Lectura mala</h3>
+<p style="font-size:26px;line-height:1.4;color:#45564D">A un carácter de una carta presente en planta, o el mismo paso que otra cámara leyó bien.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px;background:#FFFFFF;padding:36px;border:1px solid #DCE5DF;border-radius:16px">
+<p style="font-size:44px;font-weight:700;color:#9A4A06">4</p>
+<h3 style="font-size:32px;font-weight:700;line-height:1.2">Captura sin dueño</h3>
+<p style="font-size:26px;line-height:1.4;color:#45564D">Va al camión al que le falta ese paso con mejor puntaje: patente × horario × marca.</p>
+</div>
+</div>
+<p style="font-size:28px;line-height:1.4;color:#45564D">Si un paso quedó sin captura pero el camión se leyó antes y después, se da por <b>deducido</b>: tuvo que pasar por ahí.</p>
+<aside>Fuente: scripts/vinculo/cobertura.mjs. El horario sale del tiempo típico de cada tramo medido en los camiones bien leídos ese mismo día.</aside>
+</section>
