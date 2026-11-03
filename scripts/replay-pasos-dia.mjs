@@ -76,6 +76,7 @@ for (const [site, q] of Object.entries(SITES)) {
 
 const trucks = new Map()
 const resumen = {}
+const sueltos = []
 for (const site of Object.keys(SITES)) {
   const { ev, al } = raw[site]
   const events = withAlertAttributes([...ev, ...alertReadEvents(al, ev)], al).filter((e) => getEventLiveInstantMs(e) < end)
@@ -100,7 +101,12 @@ for (const site of Object.keys(SITES)) {
     const e = identified.get(p.anchorKey)
     const plate = String(e?.truckPlate ?? p.plate ?? '').toUpperCase()
     const how = e?.identificationLevel ? (items.find((i) => i.assignedPlate === plate && i.fragmentKey && i.readPlate === (e.identifiedFromPlate ?? ''))?.rule ?? 'corregida') : 'leida'
-    if (!isValidPlate(plate)) { r.sinIdentificar++; continue }
+    if (!isValidPlate(plate)) {
+      r.sinIdentificar++
+      // Para ver si un paso que le falta a un camión estaba en una captura que nadie asignó.
+      sueltos.push({ site, at: p.at, node: p.node, device: p.anchorKey.split('|')[1], read: p.plate, captures: p.captures, brand: p.brand })
+      continue
+    }
     r.identificados++
     r.porRegla[how] = (r.porRegla[how] ?? 0) + 1
     const k = plate
@@ -110,7 +116,7 @@ for (const site of Object.keys(SITES)) {
     tr.capturas += p.captures
     tr.sitios.add(site === 'ricardone' ? 'Ric' : 'SL')
     // Cámara y hora del feed de la captura ancla: para pedir la foto al DSS (/camera-captures/find).
-    tr.recorrido.push({ t, label: logicalLabel(p.node), device: p.anchorKey.split('|')[1], at: p.at, read: p.plate })
+    tr.recorrido.push({ t, node: p.node, label: logicalLabel(p.node), device: p.anchorKey.split('|')[1], at: p.at, read: p.plate, captures: p.captures, how })
     if (how !== 'leida') tr.corregidos++
     if (p.acoplado) tr.acoplado.add(p.acoplado)
   }
@@ -134,6 +140,8 @@ const rows = [...trucks.values()].map((tr) => {
     ultimo: hhmm(rec.at(-1).t),
     acoplado: [...tr.acoplado].join(' '),
     recorrido: rec.map((x) => `${hhmm(x.t)} ${x.label}`).join(' › '),
+    // Cada paso con su nodo lógico (para armar el recorrido por visita: scripts/recorridos-faltantes.mjs).
+    pasosDetalle: rec.map((x) => ({ at: x.at, node: x.node, device: x.device, read: x.read, captures: x.captures, how: x.how })),
     // Primero las frontales que leyeron la patente tal cual.
     fotos: [...rec].sort((x, y) => Number(/Tr|Tras|Traser/.test(x.device)) - Number(/Tr|Tras|Traser/.test(y.device)) || Number(y.read === tr.plate) - Number(x.read === tr.plate)).slice(0, 4).map(({ device, at, read }) => ({ device, at, read })),
   }
@@ -143,7 +151,7 @@ fs.mkdirSync(outDir, { recursive: true })
 const cols = ['patente', 'tipo', 'plantas', 'pasos', 'capturas', 'corregidos', 'primero', 'ultimo', 'acoplado', 'recorrido'] // fotos: solo en el .json
 const csv = [cols.join(';'), ...rows.map((r) => cols.map((c) => String(r[c]).replace(/;/g, ',')).join(';'))].join('\n')
 fs.writeFileSync(path.join(outDir, 'pasos-por-camion.csv'), `﻿${csv}\n`)
-fs.writeFileSync(path.join(outDir, 'pasos-por-camion.json'), JSON.stringify({ dia: day, resumen, camiones: rows }, null, 1))
+fs.writeFileSync(path.join(outDir, 'pasos-por-camion.json'), JSON.stringify({ dia: day, resumen, camiones: rows, sueltos }, null, 1))
 const tipos = rows.reduce((m, r) => ((m[r.tipo.replace(/ \(.*/, '')] = (m[r.tipo.replace(/ \(.*/, '')] ?? 0) + 1), m), {})
 console.log(JSON.stringify({ dia: day, resumen, vehiculos: rows.length, porTipo: tipos }, null, 1))
 console.log(`→ ${path.join(outDir, 'pasos-por-camion.csv')}`)

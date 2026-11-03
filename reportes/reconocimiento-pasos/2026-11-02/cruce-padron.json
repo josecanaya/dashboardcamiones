@@ -1,0 +1,1559 @@
+{
+ "dia": "2026-11-02",
+ "cartas": 2226,
+ "permitidos": 36,
+ "remito": 1664,
+ "autorizaciones": 0,
+ "resumen": {
+  "balanza (SGC) → fuera del padrón": 13,
+  "balanza (SGC) → parecido dudoso": 6,
+  "balanza (SGC) → lectura parecida": 4,
+  "sin registro → parecido dudoso": 7,
+  "sin registro → fuera del padrón": 4,
+  "camión (clasificado) → lectura parecida": 3,
+  "camión (clasificado) → fuera del padrón": 18,
+  "camión (clasificado) → parecido dudoso": 5,
+  "sin registro → lectura parecida": 3
+ },
+ "filas": [
+  {
+   "patente": "OKV855",
+   "antes": "balanza (SGC)",
+   "plantas": "Ric+SL",
+   "pasos": 16,
+   "primero": "06:06",
+   "ultimo": "14:46",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "06:06 Ingreso › 06:12 Preingreso › 08:03 Salida 2 › 08:17 Ingreso SL › 08:24 Calada SL › 11:40 Balanza ingreso SL › 11:49 Balanza ingreso SL › 12:31 Balanza egreso SL › 12:44 Balanza egreso SL › 12:47 Egreso SL › 12:53 Renova › 13:08 Calada SL › 13:44 Balanza ingreso SL › 13:50 Balanza egreso SL › 14:44 Egreso SL › 14:46 Egreso SL",
+   "fotos": [
+    {
+     "device": "RicIngCamFrente",
+     "at": "2026-11-02T09:06:52.588Z",
+     "read": "OKV855"
+    },
+    {
+     "device": "RicPreIngInFr",
+     "at": "2026-11-02T09:12:54.799Z",
+     "read": "OKV855"
+    },
+    {
+     "device": "RicEgrCamFrente",
+     "at": "2026-11-02T11:03:10.128Z",
+     "read": "OKV855"
+    },
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T11:17:40.248Z",
+     "read": "OKV855"
+    }
+   ]
+  },
+  {
+   "patente": "AA875OG",
+   "antes": "balanza (SGC)",
+   "plantas": "SL",
+   "pasos": 12,
+   "primero": "08:19",
+   "ultimo": "22:34",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "08:19 Ingreso SL › 08:27 Calada SL › 08:34 Balanza ingreso SL › 14:27 Carga OSL › 15:08 Balanza egreso SL › 15:10 Egreso SL › 20:55 Ingreso SL › 20:58 Calada SL › 21:11 Balanza ingreso SL › 21:55 Carga OSL › 22:31 Balanza egreso SL › 22:34 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T11:19:08.575Z",
+     "read": "AA875OG"
+    },
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T11:27:20.691Z",
+     "read": "AA875OG"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T11:34:54.627Z",
+     "read": "AA875OG"
+    },
+    {
+     "device": "RenCargFte",
+     "at": "2026-11-02T17:27:44.988Z",
+     "read": "AA875OG"
+    }
+   ]
+  },
+  {
+   "patente": "LER204",
+   "antes": "balanza (SGC)",
+   "plantas": "Ric+SL",
+   "pasos": 11,
+   "primero": "13:10",
+   "ultimo": "16:40",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "13:10 Ingreso › 13:11 Preingreso › 13:14 Salida 2 › 13:22 Ingreso SL › 13:25 Calada SL › 13:48 Balanza ingreso SL › 15:34 Carga OSL › 15:59 Calada SL › 16:03 Balanza ingreso SL › 16:10 Balanza egreso SL › 16:40 Egreso SL",
+   "fotos": [
+    {
+     "device": "RicIngCamFrente",
+     "at": "2026-11-02T16:10:01.556Z",
+     "read": "LER204"
+    },
+    {
+     "device": "RicPreIngInFr",
+     "at": "2026-11-02T16:11:59.675Z",
+     "read": "LER204"
+    },
+    {
+     "device": "RicEgrCamFrente",
+     "at": "2026-11-02T16:14:05.000Z",
+     "read": "LER204"
+    },
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T16:22:57.286Z",
+     "read": "LER204"
+    }
+   ]
+  },
+  {
+   "patente": "OGA047",
+   "antes": "balanza (SGC)",
+   "plantas": "SL",
+   "pasos": 11,
+   "primero": "06:37",
+   "ultimo": "21:04",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "06:37 Calada SL › 07:54 Calada SL › 08:01 Balanza ingreso SL › 09:25 Carga OSL › 10:11 Balanza egreso SL › 10:13 Egreso SL › 18:35 Ingreso SL › 18:49 Calada SL › 20:35 Carga OSL › 21:01 Balanza egreso SL › 21:04 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T09:37:08.669Z",
+     "read": "OGA047"
+    },
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T10:54:06.000Z",
+     "read": "OGA047"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T11:01:13.833Z",
+     "read": "OGA047"
+    },
+    {
+     "device": "RenCargFte",
+     "at": "2026-11-02T12:25:36.755Z",
+     "read": "OGA047"
+    }
+   ]
+  },
+  {
+   "patente": "AGR963",
+   "antes": "balanza (SGC)",
+   "plantas": "SL",
+   "pasos": 10,
+   "primero": "07:39",
+   "ultimo": "20:28",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "07:39 Calada SL › 07:45 Balanza ingreso SL › 10:50 Balanza egreso SL › 10:54 Egreso SL › 15:54 Ingreso SL › 15:56 Calada SL › 16:01 Balanza ingreso SL › 16:04 Renova › 19:49 Carga OSL › 20:28 Balanza egreso SL",
+   "fotos": [
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T10:39:49.000Z",
+     "read": "AGR963"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T10:45:38.028Z",
+     "read": "AGR963"
+    },
+    {
+     "device": "SLZBalSC2Fte",
+     "at": "2026-11-02T13:50:54.112Z",
+     "read": "AGR963"
+    },
+    {
+     "device": "SLZSalidaC1Fte",
+     "at": "2026-11-02T13:54:10.712Z",
+     "read": "AGR963"
+    }
+   ]
+  },
+  {
+   "patente": "OYN370",
+   "antes": "balanza (SGC)",
+   "plantas": "SL",
+   "pasos": 8,
+   "primero": "12:39",
+   "ultimo": "16:30",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "12:39 Ingreso SL › 13:06 Calada SL › 13:41 Balanza ingreso SL › 15:11 Carga OSL › 15:38 Calada SL › 15:43 Balanza ingreso SL › 15:51 Balanza egreso SL › 16:30 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T15:39:34.093Z",
+     "read": "OYN370"
+    },
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T16:06:19.671Z",
+     "read": "OYN370"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T16:41:26.580Z",
+     "read": "OYN370"
+    },
+    {
+     "device": "RenDescFte",
+     "at": "2026-11-02T18:11:41.864Z",
+     "read": "OYN370"
+    }
+   ]
+  },
+  {
+   "patente": "SNP211",
+   "antes": "balanza (SGC)",
+   "plantas": "SL",
+   "pasos": 8,
+   "primero": "11:53",
+   "ultimo": "17:44",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "11:53 Ingreso SL › 11:55 Calada SL › 14:27 Balanza ingreso SL › 14:30 Renova › 17:12 Carga OSL › 17:34 Carga OSL › 17:41 Balanza egreso SL › 17:44 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T14:53:08.785Z",
+     "read": "SNP211"
+    },
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T14:55:55.603Z",
+     "read": "SNP211"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T17:27:07.706Z",
+     "read": "SNP211"
+    },
+    {
+     "device": "RenCargFte",
+     "at": "2026-11-02T20:12:17.893Z",
+     "read": "SNP211"
+    }
+   ]
+  },
+  {
+   "patente": "WGG348",
+   "antes": "balanza (SGC)",
+   "plantas": "SL",
+   "pasos": 7,
+   "primero": "09:29",
+   "ultimo": "22:06",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "09:29 Ingreso SL › 10:39 Calada SL › 14:11 Balanza ingreso SL › 15:44 Carga OSL › 16:17 Balanza egreso SL › 16:20 Egreso SL › 22:06 Ingreso SL",
+   "fotos": [
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T12:29:33.883Z",
+     "read": "WGG348"
+    },
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T13:39:24.350Z",
+     "read": "WGG348"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T17:11:18.781Z",
+     "read": "WGG348"
+    },
+    {
+     "device": "RenCargFte",
+     "at": "2026-11-02T18:44:42.898Z",
+     "read": "WGG348"
+    }
+   ]
+  },
+  {
+   "patente": "CXA592",
+   "antes": "balanza (SGC)",
+   "plantas": "SL",
+   "pasos": 6,
+   "primero": "06:30",
+   "ultimo": "13:05",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "06:30 Ingreso SL › 07:43 Calada SL › 07:49 Balanza ingreso SL › 12:36 Carga OSL › 13:03 Balanza egreso SL › 13:05 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T09:30:52.505Z",
+     "read": "CXA592"
+    },
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T10:43:53.929Z",
+     "read": "CXA592"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T10:49:49.809Z",
+     "read": "CXA592"
+    },
+    {
+     "device": "RenCargFte",
+     "at": "2026-11-02T15:36:50.624Z",
+     "read": "CXA592"
+    }
+   ]
+  },
+  {
+   "patente": "EGV380",
+   "antes": "balanza (SGC)",
+   "plantas": "SL",
+   "pasos": 6,
+   "primero": "14:01",
+   "ultimo": "18:04",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "14:01 Ingreso SL › 14:09 Calada SL › 14:19 Balanza ingreso SL › 17:42 Carga OSL › 18:02 Balanza egreso SL › 18:04 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T17:01:04.219Z",
+     "read": "EGV380"
+    },
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T17:09:48.247Z",
+     "read": "EGV380"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T17:19:15.876Z",
+     "read": "EGV380"
+    },
+    {
+     "device": "RenCargFte",
+     "at": "2026-11-02T20:42:39.769Z",
+     "read": "EGV380"
+    }
+   ]
+  },
+  {
+   "patente": "GZI868",
+   "antes": "balanza (SGC)",
+   "plantas": "SL",
+   "pasos": 6,
+   "primero": "11:11",
+   "ultimo": "17:14",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "11:11 Ingreso SL › 11:13 Calada SL › 14:23 Balanza ingreso SL › 16:49 Carga OSL › 17:11 Balanza egreso SL › 17:14 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T14:11:15.759Z",
+     "read": "GZI868"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T17:23:54.451Z",
+     "read": "GZI868"
+    },
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T14:13:23.000Z",
+     "read": "GZT868"
+    },
+    {
+     "device": "RenCargFte",
+     "at": "2026-11-02T19:49:26.355Z",
+     "read": "GZT868"
+    }
+   ]
+  },
+  {
+   "patente": "HAQ820",
+   "antes": "sin registro",
+   "plantas": "SL",
+   "pasos": 6,
+   "primero": "06:26",
+   "ultimo": "12:26",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "06:26 Ingreso SL › 10:27 Calada SL › 10:41 Balanza ingreso SL › 11:39 Carga OSL › 12:23 Balanza egreso SL › 12:26 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T09:26:54.881Z",
+     "read": "HAQ820"
+    },
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T13:27:06.816Z",
+     "read": "HAQ820"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T13:41:08.151Z",
+     "read": "HAQ820"
+    },
+    {
+     "device": "RenCargFte",
+     "at": "2026-11-02T14:39:56.557Z",
+     "read": "HAQ820"
+    }
+   ]
+  },
+  {
+   "patente": "IFI1A17",
+   "antes": "camión (clasificado)",
+   "plantas": "Ric",
+   "pasos": 3,
+   "primero": "03:12",
+   "ultimo": "17:13",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "03:12 Ingreso › 04:12 Salida 2 › 17:13 Balanza",
+   "fotos": [
+    {
+     "device": "RicIngCamFrente",
+     "at": "2026-11-02T06:12:43.578Z",
+     "read": "IFI1A17"
+    },
+    {
+     "device": "RicB2Egreso",
+     "at": "2026-11-02T20:13:08.000Z",
+     "read": "IFI1A17"
+    },
+    {
+     "device": "RicEgrCamFrente",
+     "at": "2026-11-02T07:12:55.000Z",
+     "read": "FI1A7"
+    }
+   ]
+  },
+  {
+   "patente": "IIX941",
+   "antes": "camión (clasificado)",
+   "plantas": "SL",
+   "pasos": 2,
+   "primero": "18:08",
+   "ultimo": "22:49",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "18:08 Renova › 22:49 Balanza egreso SL",
+   "fotos": [
+    {
+     "device": "SLZTK400",
+     "at": "2026-11-02T21:08:32.000Z",
+     "read": "IIX941"
+    },
+    {
+     "device": "SLZBalSC2Fte",
+     "at": "2026-11-03T01:49:09.000Z",
+     "read": "1111"
+    }
+   ]
+  },
+  {
+   "patente": "TNE931",
+   "antes": "sin registro",
+   "plantas": "SL",
+   "pasos": 2,
+   "primero": "09:17",
+   "ultimo": "13:53",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "09:17 Egreso SL › 13:53 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZSalidaC1Fte",
+     "at": "2026-11-02T12:17:33.000Z",
+     "read": "TNE931"
+    },
+    {
+     "device": "SLZSalidaC1Fte",
+     "at": "2026-11-02T16:53:15.000Z",
+     "read": "TNE931"
+    }
+   ]
+  },
+  {
+   "patente": "AC442HP",
+   "antes": "balanza (SGC)",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "06:38",
+   "ultimo": "06:38",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "06:38 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZSalidaC1Fte",
+     "at": "2026-11-02T09:38:00.000Z",
+     "read": "AG142JP"
+    }
+   ]
+  },
+  {
+   "patente": "ADE342",
+   "antes": "camión (clasificado)",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "22:13",
+   "ultimo": "22:13",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "22:13 Ingreso",
+   "fotos": [
+    {
+     "device": "RicIngCamFrente",
+     "at": "2026-11-03T01:13:18.803Z",
+     "read": "ADE342"
+    }
+   ]
+  },
+  {
+   "patente": "BJI730",
+   "antes": "camión (clasificado)",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "04:02",
+   "ultimo": "04:02",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "04:02 Calada",
+   "fotos": [
+    {
+     "device": "RicCal04",
+     "at": "2026-11-02T07:02:04.457Z",
+     "read": "BJI730"
+    }
+   ]
+  },
+  {
+   "patente": "DBZ307",
+   "antes": "camión (clasificado)",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "22:42",
+   "ultimo": "22:42",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "22:42 Volcables SL",
+   "fotos": [
+    {
+     "device": "SLZVolcableC5",
+     "at": "2026-11-03T01:42:11.000Z",
+     "read": "DBZ307"
+    }
+   ]
+  },
+  {
+   "patente": "EFD527",
+   "antes": "camión (clasificado)",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "05:23",
+   "ultimo": "05:23",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "05:23 Balanza egreso SL",
+   "fotos": [
+    {
+     "device": "SLZBalSC2Fte",
+     "at": "2026-11-02T08:23:25.612Z",
+     "read": "EFD527"
+    }
+   ]
+  },
+  {
+   "patente": "ELU998",
+   "antes": "sin registro",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "05:22",
+   "ultimo": "05:22",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "05:22 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZSalidaC1Fte",
+     "at": "2026-11-02T08:22:17.000Z",
+     "read": "ELU998"
+    }
+   ]
+  },
+  {
+   "patente": "GIH043",
+   "antes": "camión (clasificado)",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "10:44",
+   "ultimo": "10:44",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "10:44 Calada SL",
+   "fotos": [
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T13:44:54.402Z",
+     "read": "GIH043"
+    }
+   ]
+  },
+  {
+   "patente": "IHL989",
+   "antes": "camión (clasificado)",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "01:24",
+   "ultimo": "01:24",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "01:24 Volcables SL",
+   "fotos": [
+    {
+     "device": "SLZVolcableC4",
+     "at": "2026-11-02T04:24:12.078Z",
+     "read": "IHL989"
+    }
+   ]
+  },
+  {
+   "patente": "INK312",
+   "antes": "camión (clasificado)",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "21:59",
+   "ultimo": "21:59",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "21:59 Volcables SL",
+   "fotos": [
+    {
+     "device": "SLZVolcableC3",
+     "at": "2026-11-03T00:59:17.018Z",
+     "read": "INK312"
+    }
+   ]
+  },
+  {
+   "patente": "JTH801",
+   "antes": "camión (clasificado)",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "05:39",
+   "ultimo": "05:39",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "05:39 Ingreso SL",
+   "fotos": [
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T08:39:05.992Z",
+     "read": "JTH801"
+    }
+   ]
+  },
+  {
+   "patente": "KDE342",
+   "antes": "camión (clasificado)",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "22:15",
+   "ultimo": "22:15",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "22:15 Preingreso",
+   "fotos": [
+    {
+     "device": "RicPreIngInFr",
+     "at": "2026-11-03T01:15:40.643Z",
+     "read": "KDE342"
+    }
+   ]
+  },
+  {
+   "patente": "KZS251",
+   "antes": "camión (clasificado)",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "16:29",
+   "ultimo": "16:29",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "16:29 Balanza",
+   "fotos": [
+    {
+     "device": "RicB2Egreso",
+     "at": "2026-11-02T19:29:43.661Z",
+     "read": "KZS251"
+    }
+   ]
+  },
+  {
+   "patente": "LCX739",
+   "antes": "camión (clasificado)",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "13:03",
+   "ultimo": "13:03",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "13:03 Renova",
+   "fotos": [
+    {
+     "device": "SLZTK400",
+     "at": "2026-11-02T16:03:57.000Z",
+     "read": "LCX739"
+    }
+   ]
+  },
+  {
+   "patente": "LYW022",
+   "antes": "camión (clasificado)",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "03:39",
+   "ultimo": "03:39",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "03:39 Preingreso",
+   "fotos": [
+    {
+     "device": "RicPreIngInFr",
+     "at": "2026-11-02T06:39:36.000Z",
+     "read": "LYW022"
+    }
+   ]
+  },
+  {
+   "patente": "MKF419",
+   "antes": "camión (clasificado)",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "05:08",
+   "ultimo": "05:08",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "05:08 Balanza egreso SL",
+   "fotos": [
+    {
+     "device": "SLZBalSC2Fte",
+     "at": "2026-11-02T08:08:56.710Z",
+     "read": "MKF419"
+    }
+   ]
+  },
+  {
+   "patente": "OJU822",
+   "antes": "balanza (SGC)",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "00:36",
+   "ultimo": "00:36",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "00:36 Balanza",
+   "fotos": [
+    {
+     "device": "RicB1Ingreso",
+     "at": "2026-11-02T03:36:15.000Z",
+     "read": "QU822"
+    }
+   ]
+  },
+  {
+   "patente": "PBI796",
+   "antes": "camión (clasificado)",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "21:31",
+   "ultimo": "21:31",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "21:31 Volcables SL",
+   "fotos": [
+    {
+     "device": "SLZVolcableC5",
+     "at": "2026-11-03T00:31:37.000Z",
+     "read": "PBI796"
+    }
+   ]
+  },
+  {
+   "patente": "PHM505",
+   "antes": "sin registro",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "19:14",
+   "ultimo": "19:14",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "19:14 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZSalidaC1Fte",
+     "at": "2026-11-02T22:14:12.000Z",
+     "read": "PHM505"
+    }
+   ]
+  },
+  {
+   "patente": "QLJ322",
+   "antes": "camión (clasificado)",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "00:59",
+   "ultimo": "00:59",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "00:59 Silo Keppler",
+   "fotos": [
+    {
+     "device": "RicS7DescLinea2",
+     "at": "2026-11-02T03:59:27.000Z",
+     "read": "QLJ322"
+    }
+   ]
+  },
+  {
+   "patente": "WWW007",
+   "antes": "camión (clasificado)",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "02:05",
+   "ultimo": "02:05",
+   "quien": "fuera del padrón",
+   "detalle": "",
+   "recorrido": "02:05 Balanza ingreso SL",
+   "fotos": [
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T05:05:51.000Z",
+     "read": "WWW007"
+    }
+   ]
+  },
+  {
+   "patente": "FFU234",
+   "antes": "balanza (SGC)",
+   "plantas": "Ric+SL",
+   "pasos": 12,
+   "primero": "10:41",
+   "ultimo": "13:22",
+   "quien": "lectura parecida a FFU248 (carta de porte)",
+   "detalle": "80 % · CTG 10235888106 · otras: FFU248, FJU634",
+   "recorrido": "10:41 Ingreso › 10:43 Preingreso › 10:45 Salida 2 › 10:55 Ingreso SL › 10:58 Calada SL › 11:06 Balanza ingreso SL › 11:46 Carga OSL › 12:11 Carga OSL › 12:16 Calada SL › 13:05 Balanza ingreso SL › 13:11 Balanza egreso SL › 13:22 Egreso SL",
+   "fotos": [
+    {
+     "device": "RicIngCamFrente",
+     "at": "2026-11-02T13:41:16.934Z",
+     "read": "FFU234"
+    },
+    {
+     "device": "RicPreIngInFr",
+     "at": "2026-11-02T13:43:52.809Z",
+     "read": "FFU234"
+    },
+    {
+     "device": "RicEgrCamFrente",
+     "at": "2026-11-02T13:45:51.000Z",
+     "read": "FFU234"
+    },
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T13:55:02.982Z",
+     "read": "FFU234"
+    }
+   ]
+  },
+  {
+   "patente": "AB323XZ",
+   "antes": "balanza (SGC)",
+   "plantas": "Ric+SL",
+   "pasos": 11,
+   "primero": "08:02",
+   "ultimo": "14:44",
+   "quien": "lectura parecida a AB323XS (con remito)",
+   "detalle": "86 % · alcohol_burlanda · otras: AB323XT",
+   "recorrido": "08:02 Salida 2 › 08:14 Ingreso SL › 08:19 Calada SL › 11:37 Balanza ingreso SL › 12:18 Balanza egreso SL › 13:02 Calada SL › 13:38 Balanza ingreso SL › 13:43 Balanza egreso SL › 13:48 Balanza egreso SL › 14:40 Egreso SL › 14:44 Egreso SL",
+   "fotos": [
+    {
+     "device": "RicEgrCamFrente",
+     "at": "2026-11-02T11:02:30.000Z",
+     "read": "AB323XZ"
+    },
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T11:14:04.957Z",
+     "read": "AB323XZ"
+    },
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T11:19:27.102Z",
+     "read": "AB323XZ"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T14:37:55.601Z",
+     "read": "AB323XZ"
+    }
+   ]
+  },
+  {
+   "patente": "AH091UQ",
+   "antes": "balanza (SGC)",
+   "plantas": "Ric",
+   "pasos": 9,
+   "primero": "04:43",
+   "ultimo": "17:16",
+   "quien": "lectura parecida a AH491LQ (con remito)",
+   "detalle": "81 % · insumos · otras: AH909PU",
+   "recorrido": "04:43 Ingreso › 04:48 Preingreso › 04:48 Preingreso › 06:00 Calada › 13:28 Salida 2 › 13:37 Balanza › 13:47 Playa 3 › 14:06 Silo Keppler › 17:16 Balanza",
+   "fotos": [
+    {
+     "device": "RicIngCamFrente",
+     "at": "2026-11-02T07:43:31.818Z",
+     "read": "AH091UQ"
+    },
+    {
+     "device": "RicPreIngInFr",
+     "at": "2026-11-02T07:48:03.201Z",
+     "read": "AH091UQ"
+    },
+    {
+     "device": "RicCal03",
+     "at": "2026-11-02T09:00:52.494Z",
+     "read": "AH091UQ"
+    },
+    {
+     "device": "RicEgrCamFrente",
+     "at": "2026-11-02T16:28:58.296Z",
+     "read": "AH091UQ"
+    }
+   ]
+  },
+  {
+   "patente": "LAU466",
+   "antes": "balanza (SGC)",
+   "plantas": "SL",
+   "pasos": 8,
+   "primero": "09:57",
+   "ultimo": "11:55",
+   "quien": "lectura parecida a LAU467 (con remito)",
+   "detalle": "83 % · insumos",
+   "recorrido": "09:57 Ingreso SL › 09:59 Calada SL › 10:25 Balanza ingreso SL › 10:43 Carga OSL › 11:18 Calada SL › 11:22 Balanza ingreso SL › 11:30 Balanza egreso SL › 11:55 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T12:57:41.023Z",
+     "read": "LAU466"
+    },
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T12:59:30.793Z",
+     "read": "LAU466"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T13:25:43.150Z",
+     "read": "LAU466"
+    },
+    {
+     "device": "RenDescFte",
+     "at": "2026-11-02T13:43:28.302Z",
+     "read": "LAU466"
+    }
+   ]
+  },
+  {
+   "patente": "RAM481",
+   "antes": "camión (clasificado)",
+   "plantas": "SL",
+   "pasos": 4,
+   "primero": "09:33",
+   "ultimo": "09:35",
+   "quien": "lectura parecida a RAW481 (carta de porte)",
+   "detalle": "83 % · CTG 30035907449 · otras: RAW481, RAW481",
+   "recorrido": "09:33 Egreso SL › 09:33 Egreso SL › 09:34 Egreso SL › 09:35 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZSalidaC1Tras",
+     "at": "2026-11-02T12:33:36.000Z",
+     "read": "LG6903"
+    },
+    {
+     "device": "SLZSalidaC1Tras",
+     "at": "2026-11-02T12:33:40.000Z",
+     "read": "LG6508"
+    },
+    {
+     "device": "SLZSalidaC1Tras",
+     "at": "2026-11-02T12:34:55.000Z",
+     "read": "L550"
+    },
+    {
+     "device": "SLZSalidaC1Tras",
+     "at": "2026-11-02T12:35:22.000Z",
+     "read": "L550"
+    }
+   ]
+  },
+  {
+   "patente": "LXB464",
+   "antes": "camión (clasificado)",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "12:51",
+   "ultimo": "12:51",
+   "quien": "lectura parecida a EXB464 (con remito, acoplado de AH829SU)",
+   "detalle": "83 % · varios · otras: LVX814",
+   "recorrido": "12:51 Renova",
+   "fotos": [
+    {
+     "device": "SLZTK400",
+     "at": "2026-11-02T15:51:35.000Z",
+     "read": "XB464"
+    }
+   ]
+  },
+  {
+   "patente": "MKV260",
+   "antes": "sin registro",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "19:38",
+   "ultimo": "19:38",
+   "quien": "lectura parecida a GKV260 (carta de porte)",
+   "detalle": "83 % · CTG 10235884138",
+   "recorrido": "19:38 Salida 2",
+   "fotos": [
+    {
+     "device": "RicEgrCamTraser",
+     "at": "2026-11-02T22:38:41.000Z",
+     "read": "945"
+    }
+   ]
+  },
+  {
+   "patente": "MNS277",
+   "antes": "camión (clasificado)",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "02:20",
+   "ultimo": "02:20",
+   "quien": "lectura parecida a WNS277 (carta de porte, acoplado de WPB419)",
+   "detalle": "83 % · CTG 30035910859 · otras: WNS277, WNS277",
+   "recorrido": "02:20 Balanza ingreso SL",
+   "fotos": [
+    {
+     "device": "SLZBalIngTras",
+     "at": "2026-11-02T05:20:46.000Z",
+     "read": "MNS277"
+    }
+   ]
+  },
+  {
+   "patente": "NWZ036",
+   "antes": "sin registro",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "02:31",
+   "ultimo": "02:31",
+   "quien": "lectura parecida a NWZ336 (con remito)",
+   "detalle": "83 % · insumos",
+   "recorrido": "02:31 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZSalidaC1Fte",
+     "at": "2026-11-02T05:31:25.540Z",
+     "read": "NWZ036"
+    }
+   ]
+  },
+  {
+   "patente": "OVS998",
+   "antes": "sin registro",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "23:02",
+   "ultimo": "23:02",
+   "quien": "lectura parecida a UVS998 (carta de porte, acoplado de SPH903)",
+   "detalle": "83 % · CTG 10135901742",
+   "recorrido": "23:02 Ingreso",
+   "fotos": [
+    {
+     "device": "RicIngCamTrasera",
+     "at": "2026-11-03T02:02:33.000Z",
+     "read": "OVS998"
+    }
+   ]
+  },
+  {
+   "patente": "LCP506",
+   "antes": "balanza (SGC)",
+   "plantas": "SL",
+   "pasos": 14,
+   "primero": "14:54",
+   "ultimo": "17:43",
+   "quien": "parecido dudoso a LDT506 (carta de porte)",
+   "detalle": "67 % · CTG 10235885727",
+   "recorrido": "14:54 Ingreso SL › 14:57 Calada SL › 15:05 Balanza ingreso SL › 15:05 Balanza ingreso SL › 16:11 Carga OSL › 16:23 Carga OSL › 16:34 Carga OSL › 16:40 Calada SL › 16:43 Balanza ingreso SL › 16:43 Balanza ingreso SL › 16:50 Balanza egreso SL › 17:41 Egreso SL › 17:43 Egreso SL › 17:43 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T17:54:28.591Z",
+     "read": "LCP506"
+    },
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T17:57:08.142Z",
+     "read": "LCP506"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T18:05:12.022Z",
+     "read": "LCP506"
+    },
+    {
+     "device": "RenDescFte",
+     "at": "2026-11-02T19:11:55.748Z",
+     "read": "LCP506"
+    }
+   ]
+  },
+  {
+   "patente": "AG761PQ",
+   "antes": "sin registro",
+   "plantas": "Ric+SL",
+   "pasos": 11,
+   "primero": "06:03",
+   "ultimo": "11:32",
+   "quien": "parecido dudoso a AG861VQ (carta de porte)",
+   "detalle": "71 % · CTG 10235887638",
+   "recorrido": "06:03 Ingreso › 06:07 Preingreso › 07:24 Salida 2 › 07:40 Ingreso SL › 07:49 Calada SL › 07:58 Balanza ingreso SL › 10:05 Carga OSL › 10:35 Calada SL › 10:48 Balanza ingreso SL › 10:57 Balanza egreso SL › 11:32 Egreso SL",
+   "fotos": [
+    {
+     "device": "RicIngCamFrente",
+     "at": "2026-11-02T09:03:43.457Z",
+     "read": "AG761PQ"
+    },
+    {
+     "device": "RicPreIngInFr",
+     "at": "2026-11-02T09:07:08.698Z",
+     "read": "AG761PQ"
+    },
+    {
+     "device": "RicEgrCamFrente",
+     "at": "2026-11-02T10:24:32.000Z",
+     "read": "AG761PQ"
+    },
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T10:40:47.719Z",
+     "read": "AG761PQ"
+    }
+   ]
+  },
+  {
+   "patente": "AB471SE",
+   "antes": "balanza (SGC)",
+   "plantas": "SL",
+   "pasos": 9,
+   "primero": "10:20",
+   "ultimo": "12:50",
+   "quien": "parecido dudoso a AB721IE (carta de porte)",
+   "detalle": "69 % · CTG 10235899333",
+   "recorrido": "10:20 Ingreso SL › 10:22 Calada SL › 10:34 Balanza ingreso SL › 11:16 Carga OSL › 11:38 Carga OSL › 11:42 Calada SL › 11:46 Balanza ingreso SL › 11:56 Balanza egreso SL › 12:50 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T13:20:45.104Z",
+     "read": "AB471SE"
+    },
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T13:22:32.946Z",
+     "read": "AB471SE"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T13:34:54.687Z",
+     "read": "AB471SE"
+    },
+    {
+     "device": "RenDescFte",
+     "at": "2026-11-02T14:16:44.338Z",
+     "read": "AB471SE"
+    }
+   ]
+  },
+  {
+   "patente": "JDH880",
+   "antes": "balanza (SGC)",
+   "plantas": "SL",
+   "pasos": 8,
+   "primero": "07:40",
+   "ultimo": "20:41",
+   "quien": "parecido dudoso a DBH030 (carta de porte)",
+   "detalle": "70 % · CTG 10235912798",
+   "recorrido": "07:40 Calada SL › 07:47 Balanza ingreso SL › 11:06 Carga OSL › 11:41 Balanza egreso SL › 11:44 Egreso SL › 17:23 Ingreso SL › 17:29 Calada SL › 20:41 Balanza egreso SL",
+   "fotos": [
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T10:40:29.725Z",
+     "read": "JDH880"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T10:47:12.586Z",
+     "read": "JDH880"
+    },
+    {
+     "device": "RenCargFte",
+     "at": "2026-11-02T14:06:15.703Z",
+     "read": "JDH880"
+    },
+    {
+     "device": "SLZBalSC2Fte",
+     "at": "2026-11-02T14:41:16.691Z",
+     "read": "JDH880"
+    }
+   ]
+  },
+  {
+   "patente": "FLF111",
+   "antes": "sin registro",
+   "plantas": "SL",
+   "pasos": 7,
+   "primero": "07:37",
+   "ultimo": "15:57",
+   "quien": "parecido dudoso a LFT141 (carta de porte)",
+   "detalle": "75 % · CTG 30035910762 · otras: LFT141, LFT141",
+   "recorrido": "07:37 Ingreso SL › 10:38 Calada SL › 13:46 Balanza ingreso SL › 15:03 Carga OSL › 15:54 Balanza egreso SL › 15:57 Balanza egreso SL › 15:57 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T10:37:24.587Z",
+     "read": "FLF111"
+    },
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T13:38:50.497Z",
+     "read": "FLF111"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T16:46:44.226Z",
+     "read": "FLF111"
+    },
+    {
+     "device": "RenCargFte",
+     "at": "2026-11-02T18:03:05.538Z",
+     "read": "FLF111"
+    }
+   ]
+  },
+  {
+   "patente": "EVD342",
+   "antes": "sin registro",
+   "plantas": "SL",
+   "pasos": 6,
+   "primero": "06:45",
+   "ultimo": "13:34",
+   "quien": "parecido dudoso a EUD434 (carta de porte)",
+   "detalle": "75 % · CTG 10235890272 · otras: EUD420",
+   "recorrido": "06:45 Ingreso SL › 10:30 Calada SL › 10:45 Balanza ingreso SL › 13:07 Carga OSL › 13:31 Balanza egreso SL › 13:34 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T09:45:43.206Z",
+     "read": "EVD342"
+    },
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T13:30:38.820Z",
+     "read": "EVD342"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T13:45:28.775Z",
+     "read": "EVD342"
+    },
+    {
+     "device": "RenCargFte",
+     "at": "2026-11-02T16:07:30.827Z",
+     "read": "EVD342"
+    }
+   ]
+  },
+  {
+   "patente": "GGX385",
+   "antes": "balanza (SGC)",
+   "plantas": "SL",
+   "pasos": 6,
+   "primero": "07:31",
+   "ultimo": "14:36",
+   "quien": "parecido dudoso a GBX387 (carta de porte, acoplado de FVK909)",
+   "detalle": "67 % · CTG 10135904855",
+   "recorrido": "07:31 Ingreso SL › 07:59 Calada SL › 08:06 Balanza ingreso SL › 13:58 Carga OSL › 14:34 Balanza egreso SL › 14:36 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T10:31:01.926Z",
+     "read": "GGX385"
+    },
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T10:59:38.467Z",
+     "read": "GGX385"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T11:06:06.030Z",
+     "read": "GGX385"
+    },
+    {
+     "device": "RenCargFte",
+     "at": "2026-11-02T16:58:43.593Z",
+     "read": "GGX385"
+    }
+   ]
+  },
+  {
+   "patente": "AF708IV",
+   "antes": "sin registro",
+   "plantas": "Ric",
+   "pasos": 3,
+   "primero": "13:38",
+   "ultimo": "16:42",
+   "quien": "parecido dudoso a AF308AY (carta de porte)",
+   "detalle": "67 % · CTG 10235901490",
+   "recorrido": "13:38 Ingreso › 13:41 Preingreso › 16:42 Salida 2",
+   "fotos": [
+    {
+     "device": "RicIngCamFrente",
+     "at": "2026-11-02T16:38:55.899Z",
+     "read": "AF708IV"
+    },
+    {
+     "device": "RicPreIngInFr",
+     "at": "2026-11-02T16:41:43.401Z",
+     "read": "AF708IV"
+    },
+    {
+     "device": "RicEgrCamFrente",
+     "at": "2026-11-02T19:42:31.111Z",
+     "read": "AF708IV"
+    }
+   ]
+  },
+  {
+   "patente": "AC026RV",
+   "antes": "camión (clasificado)",
+   "plantas": "SL",
+   "pasos": 2,
+   "primero": "12:54",
+   "ultimo": "14:19",
+   "quien": "parecido dudoso a AG626RF (carta de porte)",
+   "detalle": "67 % · CTG 10135868483",
+   "recorrido": "12:54 Egreso SL › 14:19 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZSalidaC2Fte",
+     "at": "2026-11-02T15:54:35.000Z",
+     "read": "AC026RV"
+    },
+    {
+     "device": "SLZSalidaC1Fte",
+     "at": "2026-11-02T17:19:49.000Z",
+     "read": "AC026RV"
+    }
+   ]
+  },
+  {
+   "patente": "AE556ZN",
+   "antes": "balanza (SGC)",
+   "plantas": "Ric",
+   "pasos": 2,
+   "primero": "21:10",
+   "ultimo": "21:15",
+   "quien": "parecido dudoso a AE550ZJ (carta de porte)",
+   "detalle": "71 % · CTG 10235902316",
+   "recorrido": "21:10 Ingreso › 21:15 Preingreso",
+   "fotos": [
+    {
+     "device": "RicIngCamFrente",
+     "at": "2026-11-03T00:10:14.562Z",
+     "read": "AE556ZN"
+    },
+    {
+     "device": "RicPreIngInFr",
+     "at": "2026-11-03T00:15:30.016Z",
+     "read": "AE556ZN"
+    }
+   ]
+  },
+  {
+   "patente": "AE624GL",
+   "antes": "balanza (SGC)",
+   "plantas": "Ric",
+   "pasos": 2,
+   "primero": "21:10",
+   "ultimo": "21:16",
+   "quien": "parecido dudoso a AE464SL (carta de porte, acoplado de AH391GM)",
+   "detalle": "69 % · CTG 10235893413 · otras: AE764GW",
+   "recorrido": "21:10 Ingreso › 21:16 Preingreso",
+   "fotos": [
+    {
+     "device": "RicIngCamFrente",
+     "at": "2026-11-03T00:10:27.685Z",
+     "read": "AE624GL"
+    },
+    {
+     "device": "RicPreIngInFr",
+     "at": "2026-11-03T00:16:33.138Z",
+     "read": "AE624GL"
+    }
+   ]
+  },
+  {
+   "patente": "AF316PR",
+   "antes": "sin registro",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "15:33",
+   "ultimo": "15:33",
+   "quien": "parecido dudoso a AF356YR (carta de porte, acoplado de AE785CL)",
+   "detalle": "71 % · CTG 10235906368 · otras: AE416PV",
+   "recorrido": "15:33 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZSalidaC1Fte",
+     "at": "2026-11-02T18:33:22.000Z",
+     "read": "AF316PR"
+    }
+   ]
+  },
+  {
+   "patente": "AF798IV",
+   "antes": "sin registro",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "13:52",
+   "ultimo": "13:52",
+   "quien": "parecido dudoso a AA798TZ (carta de porte)",
+   "detalle": "67 % · CTG 10135885889",
+   "recorrido": "13:52 Calada",
+   "fotos": [
+    {
+     "device": "RicCal04",
+     "at": "2026-11-02T16:52:26.157Z",
+     "read": "AF798IV"
+    }
+   ]
+  },
+  {
+   "patente": "EWL984",
+   "antes": "camión (clasificado)",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "00:17",
+   "ultimo": "00:17",
+   "quien": "parecido dudoso a ELR934 (carta de porte, acoplado de UDS820)",
+   "detalle": "75 % · CTG 10135910038 · otras: EIQ984",
+   "recorrido": "00:17 Preingreso",
+   "fotos": [
+    {
+     "device": "RicPreIngInFr",
+     "at": "2026-11-02T03:17:35.000Z",
+     "read": "EWL984"
+    }
+   ]
+  },
+  {
+   "patente": "HHH881",
+   "antes": "camión (clasificado)",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "08:28",
+   "ultimo": "08:28",
+   "quien": "parecido dudoso a HVH981 (carta de porte)",
+   "detalle": "67 % · CTG 10135895787",
+   "recorrido": "08:28 Balanza",
+   "fotos": [
+    {
+     "device": "RicB2Egreso",
+     "at": "2026-11-02T11:28:47.395Z",
+     "read": "HHH881"
+    }
+   ]
+  },
+  {
+   "patente": "MZJ130",
+   "antes": "sin registro",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "08:40",
+   "ultimo": "08:40",
+   "quien": "parecido dudoso a UZS130 (carta de porte, acoplado de UWX998)",
+   "detalle": "67 % · CTG 30035905785 · otras: UZS130, UZS130",
+   "recorrido": "08:40 Ingreso",
+   "fotos": [
+    {
+     "device": "RicIngCamTrasera",
+     "at": "2026-11-02T11:40:08.000Z",
+     "read": "MZJ130"
+    }
+   ]
+  },
+  {
+   "patente": "TBP883",
+   "antes": "camión (clasificado)",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "12:42",
+   "ultimo": "12:42",
+   "quien": "parecido dudoso a TDP809 (carta de porte, acoplado de SAT582)",
+   "detalle": "73 % · CTG 30035907074 · otras: TDP809, TDP809",
+   "recorrido": "12:42 Preingreso",
+   "fotos": [
+    {
+     "device": "RicPreIngInTr",
+     "at": "2026-11-02T15:42:18.000Z",
+     "read": "TBP883"
+    }
+   ]
+  },
+  {
+   "patente": "WCO603",
+   "antes": "camión (clasificado)",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "03:16",
+   "ultimo": "03:16",
+   "quien": "parecido dudoso a WQU603 (carta de porte, acoplado de UJV026)",
+   "detalle": "75 % · CTG 10235890460",
+   "recorrido": "03:16 Preingreso",
+   "fotos": [
+    {
+     "device": "RicPreIngInTr",
+     "at": "2026-11-02T06:16:48.000Z",
+     "read": "WCO603"
+    }
+   ]
+  }
+ ]
+}

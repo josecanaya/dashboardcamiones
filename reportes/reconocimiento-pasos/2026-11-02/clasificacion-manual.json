@@ -1,0 +1,795 @@
+{
+ "updatedAt": "2026-11-03T15:52:34.606Z",
+ "fuente": [
+  "https://claude.ai/artifact/D9aYMWumMqwXBe727Ayzqo",
+  "https://claude.ai/artifact/Y47tsjJJKgJMcqmdAS4qV6"
+ ],
+ "dia": "2026-11-02",
+ "entries": [
+  {
+   "plate": "AA124JA",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:29:04.761Z"
+  },
+  {
+   "plate": "AA208QN",
+   "tipo": "auto",
+   "nota": "",
+   "real": null,
+   "at": "2026-11-03T15:52:01.910Z"
+  },
+  {
+   "plate": "AA492OU",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:14.382Z"
+  },
+  {
+   "plate": "AA619UI",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:29:10.539Z"
+  },
+  {
+   "plate": "AA678OF",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:35.841Z"
+  },
+  {
+   "plate": "AA682QZ",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:15.802Z"
+  },
+  {
+   "plate": "AA689GI",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:07.834Z"
+  },
+  {
+   "plate": "AA698OB",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:01.959Z"
+  },
+  {
+   "plate": "AA834RS",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:00.799Z"
+  },
+  {
+   "plate": "AB148YJ",
+   "tipo": "auto",
+   "nota": "AB148YJ",
+   "real": null,
+   "at": "2026-11-03T15:48:48.513Z"
+  },
+  {
+   "plate": "AB349QJ",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:36.716Z"
+  },
+  {
+   "plate": "AB471ZF",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:29:08.871Z"
+  },
+  {
+   "plate": "AC026RV",
+   "tipo": "camion",
+   "nota": "",
+   "at": "2026-11-03T15:28:19.223Z"
+  },
+  {
+   "plate": "AC169LG",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:29.032Z"
+  },
+  {
+   "plate": "AD117ZL",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:29:12.097Z"
+  },
+  {
+   "plate": "AD160PS",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:20.416Z"
+  },
+  {
+   "plate": "AD373WR",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:21.352Z"
+  },
+  {
+   "plate": "AD468VC",
+   "tipo": "auto",
+   "nota": "",
+   "real": null,
+   "at": "2026-11-03T15:48:57.396Z"
+  },
+  {
+   "plate": "AD511OO",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:29:19.559Z"
+  },
+  {
+   "plate": "AD829RW",
+   "tipo": "camion",
+   "nota": "",
+   "real": "AD851RW",
+   "at": "2026-11-03T15:49:09.685Z"
+  },
+  {
+   "plate": "AD925ET",
+   "tipo": "auto",
+   "nota": "",
+   "real": null,
+   "at": "2026-11-03T15:50:19.038Z"
+  },
+  {
+   "plate": "ADE342",
+   "tipo": "camion",
+   "nota": "",
+   "at": "2026-11-03T15:29:22.087Z"
+  },
+  {
+   "plate": "AE101HZ",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:25.566Z"
+  },
+  {
+   "plate": "AE354YH",
+   "tipo": "auto",
+   "nota": "",
+   "real": null,
+   "at": "2026-11-03T15:48:58.416Z"
+  },
+  {
+   "plate": "AE747HZ",
+   "tipo": "auto",
+   "nota": "",
+   "real": null,
+   "at": "2026-11-03T15:49:02.999Z"
+  },
+  {
+   "plate": "AF378MD",
+   "tipo": "auto",
+   "nota": "",
+   "real": null,
+   "at": "2026-11-03T15:50:22.084Z"
+  },
+  {
+   "plate": "AF443VV",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:38.959Z"
+  },
+  {
+   "plate": "AF631NT",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:40.239Z"
+  },
+  {
+   "plate": "AF778ZI",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:41.326Z"
+  },
+  {
+   "plate": "AF790CA",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:30.679Z"
+  },
+  {
+   "plate": "AF806GF",
+   "tipo": "auto",
+   "nota": "",
+   "real": null,
+   "at": "2026-11-03T15:49:33.224Z"
+  },
+  {
+   "plate": "AF860RX",
+   "tipo": "auto",
+   "nota": "",
+   "real": null,
+   "at": "2026-11-03T15:49:47.190Z"
+  },
+  {
+   "plate": "AF909MM",
+   "tipo": "moto",
+   "nota": "",
+   "at": "2026-11-03T15:28:27.954Z"
+  },
+  {
+   "plate": "AG275GZ",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:32.379Z"
+  },
+  {
+   "plate": "AG700CR",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:46.680Z"
+  },
+  {
+   "plate": "AG710NZ",
+   "tipo": "auto",
+   "nota": "",
+   "real": null,
+   "at": "2026-11-03T15:50:21.135Z"
+  },
+  {
+   "plate": "AG731CO",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:34.951Z"
+  },
+  {
+   "plate": "AGC661",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:31.488Z"
+  },
+  {
+   "plate": "AGJ360",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:29:23.849Z"
+  },
+  {
+   "plate": "AH215CA",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:02.963Z"
+  },
+  {
+   "plate": "AH262HP",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:29:25.266Z"
+  },
+  {
+   "plate": "AH335AJ",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:29:47.476Z"
+  },
+  {
+   "plate": "AH461XD",
+   "tipo": "auto",
+   "nota": "",
+   "real": null,
+   "at": "2026-11-03T15:48:55.809Z"
+  },
+  {
+   "plate": "AH671BL",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:05.442Z"
+  },
+  {
+   "plate": "AH763WD",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:47.616Z"
+  },
+  {
+   "plate": "AH785SQ",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:35.877Z"
+  },
+  {
+   "plate": "AH813KC",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:36.873Z"
+  },
+  {
+   "plate": "AH926WU",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:03.291Z"
+  },
+  {
+   "plate": "AI276FZ",
+   "tipo": "auto",
+   "nota": "",
+   "real": null,
+   "at": "2026-11-03T15:50:22.920Z"
+  },
+  {
+   "plate": "AI638OO",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:29:51.576Z"
+  },
+  {
+   "plate": "AI651QS",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:29:53.864Z"
+  },
+  {
+   "plate": "AJ117ZL",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:29:54.706Z"
+  },
+  {
+   "plate": "BCT029",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:29:56.284Z"
+  },
+  {
+   "plate": "BJI730",
+   "tipo": "camion",
+   "nota": "",
+   "at": "2026-11-03T15:30:02.244Z"
+  },
+  {
+   "plate": "DBZ307",
+   "tipo": "camion",
+   "nota": "",
+   "at": "2026-11-03T15:29:58.871Z"
+  },
+  {
+   "plate": "DCB815",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:38.940Z"
+  },
+  {
+   "plate": "DIB580",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:29:57.377Z"
+  },
+  {
+   "plate": "DTB580",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:39.702Z"
+  },
+  {
+   "plate": "EFD527",
+   "tipo": "camion",
+   "nota": "",
+   "at": "2026-11-03T15:30:04.648Z"
+  },
+  {
+   "plate": "EWL984",
+   "tipo": "camion",
+   "nota": "",
+   "real": "EIQ984",
+   "at": "2026-11-03T15:51:01.161Z"
+  },
+  {
+   "plate": "EZE425",
+   "tipo": "camion",
+   "nota": "EKC425",
+   "real": "EKC425",
+   "at": "2026-11-03T15:50:16.832Z"
+  },
+  {
+   "plate": "FIU583",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:06.840Z"
+  },
+  {
+   "plate": "GCW191",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:41.796Z"
+  },
+  {
+   "plate": "GIH043",
+   "tipo": "camion",
+   "nota": "",
+   "real": "GJH043",
+   "at": "2026-11-03T15:46:21.565Z"
+  },
+  {
+   "plate": "GKQ602",
+   "tipo": "camion",
+   "nota": "",
+   "real": "EQE865",
+   "at": "2026-11-03T15:51:06.409Z"
+  },
+  {
+   "plate": "GZT868",
+   "tipo": "camion",
+   "nota": "",
+   "real": "GZI868",
+   "at": "2026-11-03T15:45:42.135Z"
+  },
+  {
+   "plate": "HCD321",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:30:07.937Z"
+  },
+  {
+   "plate": "HHH881",
+   "tipo": "camion",
+   "nota": "",
+   "at": "2026-11-03T15:30:14.798Z"
+  },
+  {
+   "plate": "HHT270",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:30:16.993Z"
+  },
+  {
+   "plate": "HLJ270",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:30:18.148Z"
+  },
+  {
+   "plate": "HLT270",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:27.931Z"
+  },
+  {
+   "plate": "HTR922",
+   "tipo": "camion",
+   "nota": "",
+   "real": "KWN857",
+   "at": "2026-11-03T15:47:03.813Z"
+  },
+  {
+   "plate": "IEU171",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:30:21.102Z"
+  },
+  {
+   "plate": "IFI1A17",
+   "tipo": "camion",
+   "nota": "",
+   "at": "2026-11-03T15:28:08.990Z"
+  },
+  {
+   "plate": "IHL989",
+   "tipo": "camion",
+   "nota": "",
+   "at": "2026-11-03T15:30:19.460Z"
+  },
+  {
+   "plate": "IIX941",
+   "tipo": "camion",
+   "nota": "",
+   "at": "2026-11-03T15:28:45.568Z"
+  },
+  {
+   "plate": "ILW642",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:12.394Z"
+  },
+  {
+   "plate": "INK312",
+   "tipo": "camion",
+   "nota": "",
+   "at": "2026-11-03T15:30:22.604Z"
+  },
+  {
+   "plate": "JEU171",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:48.666Z"
+  },
+  {
+   "plate": "JEW583",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:48.713Z"
+  },
+  {
+   "plate": "JPO723",
+   "tipo": "camion",
+   "nota": "",
+   "real": "BVS300",
+   "at": "2026-11-03T15:47:01.346Z"
+  },
+  {
+   "plate": "JTG255",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:54.562Z"
+  },
+  {
+   "plate": "JTH801",
+   "tipo": "camion",
+   "nota": "",
+   "at": "2026-11-03T15:30:31.006Z"
+  },
+  {
+   "plate": "JUE083",
+   "tipo": "auto",
+   "nota": "",
+   "real": null,
+   "at": "2026-11-03T15:49:02.273Z"
+  },
+  {
+   "plate": "JZW724",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:06.340Z"
+  },
+  {
+   "plate": "KDE342",
+   "tipo": "camion",
+   "nota": "",
+   "at": "2026-11-03T15:30:29.732Z"
+  },
+  {
+   "plate": "KDR021",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:28:56.971Z"
+  },
+  {
+   "plate": "KZS251",
+   "tipo": "camion",
+   "nota": "",
+   "at": "2026-11-03T15:30:25.864Z"
+  },
+  {
+   "plate": "LCX739",
+   "tipo": "camion",
+   "nota": "",
+   "at": "2026-11-03T15:30:34.177Z"
+  },
+  {
+   "plate": "LF388RP",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:30:35.741Z"
+  },
+  {
+   "plate": "LGE877",
+   "tipo": "camion",
+   "nota": "",
+   "real": "AAE877",
+   "at": "2026-11-03T15:51:16.933Z"
+  },
+  {
+   "plate": "LGG502",
+   "tipo": "otro",
+   "nota": "",
+   "at": "2026-11-03T15:30:38.386Z"
+  },
+  {
+   "plate": "LJR968",
+   "tipo": "maquina",
+   "nota": "",
+   "at": "2026-11-03T15:30:43.241Z"
+  },
+  {
+   "plate": "LUE425",
+   "tipo": "camion",
+   "nota": "",
+   "real": "UUL425",
+   "at": "2026-11-03T15:51:20.323Z"
+  },
+  {
+   "plate": "LXB464",
+   "tipo": "camion",
+   "nota": "LXB464",
+   "real": "AH829SU",
+   "at": "2026-11-03T15:47:09.328Z"
+  },
+  {
+   "plate": "LYW022",
+   "tipo": "camion",
+   "nota": "",
+   "at": "2026-11-03T15:30:49.402Z"
+  },
+  {
+   "plate": "MKF419",
+   "tipo": "camion",
+   "nota": "",
+   "at": "2026-11-03T15:30:50.908Z"
+  },
+  {
+   "plate": "MNS277",
+   "tipo": "camion",
+   "nota": "",
+   "real": "WPB419",
+   "at": "2026-11-03T15:47:28.569Z"
+  },
+  {
+   "plate": "MYW261",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:01.978Z"
+  },
+  {
+   "plate": "NAH953",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:32.497Z"
+  },
+  {
+   "plate": "NKM663",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:29:00.868Z"
+  },
+  {
+   "plate": "NVX549",
+   "tipo": "auto",
+   "nota": "",
+   "real": null,
+   "at": "2026-11-03T15:50:25.411Z"
+  },
+  {
+   "plate": "OCB815",
+   "tipo": "auto",
+   "nota": "este tiene que estan en la base de datos siempre esta por todos lados",
+   "at": "2026-11-03T15:27:26.743Z"
+  },
+  {
+   "plate": "OIB580",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:34.644Z"
+  },
+  {
+   "plate": "ONS723",
+   "tipo": "auto",
+   "nota": "",
+   "real": null,
+   "at": "2026-11-03T15:49:00.940Z"
+  },
+  {
+   "plate": "OSY724",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:29:01.540Z"
+  },
+  {
+   "plate": "OTB580",
+   "tipo": "auto",
+   "nota": "",
+   "real": null,
+   "at": "2026-11-03T15:48:49.329Z"
+  },
+  {
+   "plate": "OTY765",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:27:58.560Z"
+  },
+  {
+   "plate": "PBI796",
+   "tipo": "camion",
+   "nota": "",
+   "at": "2026-11-03T15:30:52.439Z"
+  },
+  {
+   "plate": "PTL445",
+   "tipo": "camion",
+   "nota": "",
+   "real": "RDL445",
+   "at": "2026-11-03T15:51:26.445Z"
+  },
+  {
+   "plate": "PZR532",
+   "tipo": "camion",
+   "nota": "",
+   "real": "UYM942",
+   "at": "2026-11-03T15:47:45.658Z"
+  },
+  {
+   "plate": "QIY765",
+   "tipo": "auto",
+   "nota": "",
+   "at": "2026-11-03T15:29:03.152Z"
+  },
+  {
+   "plate": "QLJ322",
+   "tipo": "camion",
+   "nota": "",
+   "real": "OJU822",
+   "at": "2026-11-03T15:51:31.975Z"
+  },
+  {
+   "plate": "RAM481",
+   "tipo": "camion",
+   "nota": "",
+   "real": "RAW481",
+   "at": "2026-11-03T15:45:36.776Z"
+  },
+  {
+   "plate": "TBP883",
+   "tipo": "camion",
+   "nota": "",
+   "real": "SAT582",
+   "at": "2026-11-03T15:51:39.016Z"
+  },
+  {
+   "plate": "TBP889",
+   "tipo": "camion",
+   "nota": "",
+   "real": "SAT582",
+   "at": "2026-11-03T15:47:51.916Z"
+  },
+  {
+   "plate": "TZT593",
+   "tipo": "camion",
+   "nota": "",
+   "real": "TZQ583",
+   "at": "2026-11-03T15:50:29.425Z"
+  },
+  {
+   "plate": "VIE510",
+   "tipo": "otro",
+   "nota": "",
+   "real": null,
+   "at": "2026-11-03T15:50:33.429Z"
+  },
+  {
+   "plate": "WCO603",
+   "tipo": "camion",
+   "nota": "",
+   "real": "UJV026",
+   "at": "2026-11-03T15:51:55.205Z"
+  },
+  {
+   "plate": "WFB415",
+   "tipo": "camion",
+   "nota": "",
+   "real": "WPB419",
+   "at": "2026-11-03T15:51:59.596Z"
+  },
+  {
+   "plate": "WJB112",
+   "tipo": "camion",
+   "nota": "",
+   "real": "VJG112",
+   "at": "2026-11-03T15:52:07.900Z"
+  },
+  {
+   "plate": "WTG418",
+   "tipo": "camion",
+   "nota": "",
+   "real": "TVH101",
+   "at": "2026-11-03T15:48:06.042Z"
+  },
+  {
+   "plate": "WWT539",
+   "tipo": "camion",
+   "nota": "",
+   "real": "XBL711",
+   "at": "2026-11-03T15:48:18.523Z"
+  },
+  {
+   "plate": "WWW007",
+   "tipo": "camion",
+   "nota": "",
+   "at": "2026-11-03T15:30:54.452Z"
+  }
+ ]
+}
