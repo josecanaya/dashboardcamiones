@@ -33,6 +33,11 @@ describe('modelo por nodos: «nunca visto» depende del nodo', () => {
     const r = scoreWithNodeModel({ readPlate: 'EIY16', validFormat: false, node: 'S3', at: day, expectedAtNode: 8 }, [{ plate: 'EIY162', nextProbability: 0.8, nodeProbability: 0.8, onTime: true }])
     expect(r.candidates[0].probability).toBeGreaterThan(0.95)
   })
+  it('I91 ilegible en Silo Keppler con 2,4 camiones esperados: el que ya estaba no se lleva el 96 %', () => {
+    const r = scoreWithNodeModel({ readPlate: 'I91', validFormat: false, node: 'S7', at: '2026-11-03T13:31:12.000Z', expectedAtNode: 2.4 }, [{ plate: 'NKU970', sameNode: true, nextProbability: 1, nodeProbability: 1, onTime: true }], { ignorePlate: true })
+    expect(r.candidates[0].probability).toBeLessThan(0.5)
+    expect(r.otherExpected.probability).toBeGreaterThan(0.5)
+  })
   it('una referencia posterior no cuenta en vivo', () => {
     const r = scoreWithNodeModel({ readPlate: 'EIY16', validFormat: false, node: 'S3', at: day }, [{ plate: 'EIY162', seenAfter: true }])
     expect(r.candidates[0].probability).toBe(0)

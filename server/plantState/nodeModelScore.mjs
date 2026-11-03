@@ -158,7 +158,15 @@ export function scoreWithNodeModel(item, candidates, opts = {}) {
   })
   const neverSeenLikelihood = opts.ignorePlate ? 1 : neverSeenReadLikelihood(item.readPlate, item.validFormat, read, new Set(candidates.map((c) => c.plate)))
   const neverSeen = pInicio * neverSeenLikelihood
-  const total = rows.reduce((s, r) => s + r.score, 0) + neverSeen
+  /*
+   * Camiones esperados en el nodo que no quedaron como candidatos (no se parecen a la lectura): siguen
+   * pudiendo ser el dueño. Sin este término su parte se perdía al normalizar: «I91» en Silo Keppler
+   * (03/11) dio 96 % a NKU970 con 2,4 camiones esperados, y era FXL391, que venía detrás.
+   * Lectura ilegible: valen lo mismo que los candidatos; legible: una lectura dañada.
+   */
+  const otherWeight = Math.max(0, expected - weights.reduce((s, w) => s + w, 0))
+  const other = (((1 - pInicio) * otherWeight) / expected) * (opts.ignorePlate ? 1 : DAMAGED_READ)
+  const total = rows.reduce((s, r) => s + r.score, 0) + neverSeen + other
   return {
     version: NODE_MODEL_VERSION,
     mode: 'evaluacion',
@@ -169,5 +177,6 @@ export function scoreWithNodeModel(item, candidates, opts = {}) {
     expectedAtNode: Math.round(expected * 10) / 10,
     candidates: rows.map((r) => ({ ...r, probability: total ? r.score / total : 0 })),
     neverSeen: { prior: pInicio, readLikelihood: neverSeenLikelihood, score: neverSeen, probability: total ? neverSeen / total : 1 },
+    otherExpected: { weight: Math.round(otherWeight * 10) / 10, score: other, probability: total ? other / total : 0 },
   }
 }

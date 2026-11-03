@@ -21,6 +21,7 @@ import { padronCartas } from './padronCartas.mjs'
 import { assessVehicleRelevance, excludeIrrelevantEvents, splitNonTrucks } from './vehicleRelevance.mjs'
 import { alertInstantMs, alertReadEvents, withAlertAttributes } from './alertReads.mjs'
 import { summarizeLayers } from './algorithmLayers.mjs'
+import { applyPasoRewrites, ensamblarPasos } from './pasos.mjs'
 import { applyVisionVerdict, checkSeenPlate } from '../live/vision/seenPlate.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -395,6 +396,13 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     const alertRaw = bySite.get(site)?.alertRaw
     // Y los atributos del vehículo (tipo, tamaño, color, marca) que solo traen las alertas se suman a cada lectura.
     if (alertRaw?.size) rawEvents = withAlertAttributes([...rawEvents, ...alertReadEvents([...alertRaw.values()], rawEvents)], [...alertRaw.values()])
+    // La unidad es el paso (repeticiones de la cámara + frontal/trasera del nodo): una decisión por paso.
+    const acopladoChasis = (plate, t) => {
+      const h = process.env.IDENTIFICATION_PADRON === '0' ? null : padronIndex?.at(plate, t)
+      return h?.role === 'acoplado' && h.source === 'carta' ? h.chasis : null
+    }
+    const ensamble = process.env.IDENTIFICATION_PASOS === '0' ? null : ensamblarPasos(rawEvents, { acopladoChasis })
+    if (ensamble) rawEvents = ensamble.events
     if (!recentCircuitsBySite.has(site)) recentCircuitsBySite.set(site, new Map())
     const recentCounts = updateRecentCircuits(recentCircuitsBySite.get(site), rawEvents, nowMs, catalog)
     const result = {
@@ -412,6 +420,8 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
         otherSiteEvents: [...(bySite.get(site === 'ricardone' ? 'san_lorenzo' : 'ricardone')?.history.values() ?? [])],
       }),
       recentCounts,
+      pasos: ensamble?.pasos ?? null,
+      pasoRewrites: ensamble?.rewrites ?? null,
     }
     // Lectura de alerta que el reconocedor no resolvió: va a la bandeja solo si tiene formato de patente
     // (mal leída pero patente); las ilegibles quedan afuera (serían ~700 por día).
@@ -496,7 +506,8 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
       const assignedAlert = new Set(items.filter((it) => it.assignedPlate && String(it.fragmentKey).startsWith('alert-')).map((it) => it.fragmentKey))
       const bufferCut = nowMs - BUFFER_MS
       const alertEvents = (identified.alertReads ?? []).filter((e) => assignedAlert.has(e.journeyUid) && getEventLiveInstantMs(e) >= bufferCut)
-      const operational = excludeIrrelevantEvents([...rawEvents, ...alertEvents], items, e => journeyKeyOf(e, getEventLiveInstantMs(e)))
+      // Las capturas de un paso van al viaje de su ancla, igual que las vio el reconocedor.
+      const operational = excludeIrrelevantEvents(applyPasoRewrites([...rawEvents, ...alertEvents], identified.pasoRewrites), items, e => journeyKeyOf(e, getEventLiveInstantMs(e)))
       // Vínculos automáticos de la búsqueda hacia atrás que no pasaron por la bandeja (patente válida suelta en la entrada).
       const autoLinks = (identified.autoLinks ?? []).filter((l) => l.auto && !l.item).map((l) => ({ journeyKey: l.journeyKey, plate: l.plate, journeyUid: l.targetJourneyUid, level: 'casi_seguro' }))
       const identifiedEvents = applyIdentifications(applyLinks(operational, [...linksOf(site), ...autoLinks]), items.filter(item => !item.archived))

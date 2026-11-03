@@ -23,6 +23,7 @@ import { arrivalWeight, scoreWithNodeModel } from './nodeModelScore.mjs'
 import { outsideTruckSystem } from './balanzaRegistry.mjs'
 import { padronLabel } from './padronCartas.mjs'
 import { layerOf } from './algorithmLayers.mjs'
+import { compareAttribute } from './identificationEvidence.mjs'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -524,6 +525,7 @@ export function identifyFragments(events, nowMs, ctx) {
     let transit=ctx.transit??causalTransit.get(head.t)
     if (!transit) { transit=transitTimes(causalJourneys); causalTransit.set(head.t,transit) }
     const candidates = []
+    const illegibleRead = !isValidPlate(f.plate)
     /** Camiones conocidos que esperan este paso, se parezcan o no (denominador del modelo por nodos). */
     let expectedAtNode = 0
     for (const p of parents) {
@@ -588,7 +590,9 @@ export function identifyFragments(events, nowMs, ctx) {
         const onTime = sameNode || transitFit(transit, lastBefore.logical, head.logical, head.t - lastBefore.t).onTime
         expectedAtNode += arrivalWeight({ sameNode, nextProbability: pNext, nodeProbability: Math.max(pNext, pReach), onTime })
       }
-      if (sim < (twin ? TWIN_MIN_SIMILARITY : MIN_SIMILARITY) && pNext < 0.5) continue
+      // Lectura ilegible: la patente no descarta a nadie; todo camión que podía llegar acá es candidato de la
+      // cuenta (I91 en Silo Keppler era FXL391, que venía de Playa 3 y no se parecía a la lectura).
+      if (sim < (twin ? TWIN_MIN_SIMILARITY : MIN_SIMILARITY) && pNext < 0.5 && !(illegibleRead && (pNext > 0 || pReach > 0))) continue
       candidates.push({
         plate: p.plate,
         journeyKey: p.key,
@@ -687,9 +691,16 @@ export function identifyFragments(events, nowMs, ctx) {
     const eligible = candidates.filter((c) => !c.seenAfter && arrivalWeight(c) > 0 && c.inventory?.status === 'expected')
     let cuenta = null
     if (eligible.length) {
+      // Lo que vio la cámara (marca y color del DSS) contra lo que se vio del candidato antes: razones medidas
+      // entre cámaras (identificationEvidence.mjs). El tipo no: confunde camión grande con mediano.
+      const attrLrOf = (c) => {
+        const cand = rowsAttributes((readsByPlate.get(c.plate) ?? []).filter((r) => r.t <= head.t).sort((a, b) => a.t - b.t))
+        if (!seenAttrs || !cand) return 1
+        return compareAttribute('marca', seenAttrs.brand?.replace(/\d+$/, ''), cand.brand?.replace(/\d+$/, '')).lr * compareAttribute('color', seenAttrs.color, cand.color).lr
+      }
       const nm = scoreWithNodeModel(
         { readPlate: f.plate, validFormat: valid, node: head.logical, at: new Date(head.t).toISOString(), expectedAtNode },
-        eligible,
+        eligible.map((c) => ({ ...c, attrLr: attrLrOf(c) })),
         { ignorePlate: !valid && !plateMatches.length }
       )
       const top = [...nm.candidates].sort((a, b) => b.probability - a.probability)[0]

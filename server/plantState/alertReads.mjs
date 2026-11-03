@@ -13,7 +13,12 @@ const SKEW_MS = 206 * 60_000
 const FEED_LAG_MS = 240_000
 /** Una alerta que repite un evento del feed (misma cámara y patente, ±2 min) no suma nada. */
 const DUP_MS = 2 * 60_000
-const READ_CODES = new Set(['LPR_MALFUNCTION', 'UNMATCHED_TAIL_OBSERVATION', 'INVALID_ROUTE', 'INVALID_JOURNEY_START'])
+/**
+ * TRAILER_MISMATCH también es una lectura de la trasera (el acoplado observado); el viaje al que Enesimal la
+ * pegó no se usa: en los pares que confirma la carta, la trasera llega a 10–60 s de su frontal y estos
+ * emparejamientos daban ~17 min (ensamblador de pasos, pasos.mjs).
+ */
+const READ_CODES = new Set(['LPR_MALFUNCTION', 'UNMATCHED_TAIL_OBSERVATION', 'INVALID_ROUTE', 'INVALID_JOURNEY_START', 'TRAILER_MISMATCH'])
 const plateKey = (p) => String(p ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '')
 
 const known = (v) => (v && !/^unknown$/i.test(String(v)) ? String(v) : null)
@@ -72,7 +77,7 @@ export function alertToReadEvent(a) {
   } catch {
     p = {}
   }
-  const plate = plateKey(p.normalizedPlate ?? p.plate) || plateKey(/plate <([^>]+)>/.exec(String(a.description ?? ''))?.[1])
+  const plate = plateKey(p.normalizedPlate ?? p.plate ?? p.observedTrailerPlate) || plateKey(/(?:plate|trailer) <([^>]+)>/.exec(String(a.description ?? ''))?.[1])
   const t = alertInstantMs(a)
   if (!Number.isFinite(t)) return null
   const occurredAt = new Date(t - SKEW_MS).toISOString()
