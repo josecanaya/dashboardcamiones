@@ -45,6 +45,16 @@ function readLog(root) {
   }
 }
 
+/**
+ * Clasificación manual por foto (data/padron/clasificacion-manual.json): `{ entries: [{ plate, tipo, nota, at }] }`,
+ * tipo camion | auto | moto | maquina | otro, y `real` cuando se confirmó que la lectura es otro camión.
+ * La arman las páginas de clasificación de patentes fuera del SGC y por confirmar.
+ */
+function clasificacionManual(root) {
+  return (readJson(path.join(root, 'data', 'padron', 'clasificacion-manual.json'))?.entries ?? []).map((e) => ({ ...e, plate: normPlate(e.plate) })).filter((e) => e.plate && e.tipo)
+}
+const CLASIFICACION_KIND = { auto: 'liviano', moto: 'liviano', maquina: 'tractor_maquinaria', otro: 'otro' }
+
 /** Tipo de vehículo no camión a partir del motivo o de la categoría del DSS. */
 export function kindOf(text) {
   const s = String(text ?? '')
@@ -117,6 +127,24 @@ export function buildCorregidos(root = ROOT) {
     p.lastAt = [p.lastAt, d.decidedAt].filter(Boolean).sort().at(-1)
     pairs.set(k, p)
   }
+  // Camiones que operaciones reconoció en la foto (clasificación manual): la patente es real tal cual.
+  // Con `real` (confirmó la patente parecida del SGC), la lectura es una lectura mala de ese camión.
+  for (const c of clasificacionManual(root)) {
+    if (c.tipo !== 'camion') continue
+    const realPlate = normPlate(c.real)
+    if (realPlate && realPlate !== c.plate) {
+      const k = `${c.plate}>${realPlate}`
+      const p = pairs.get(k) ?? { read: c.plate, real: realPlate, count: 0, devices: {}, lastAt: null, confirmaIa: 0, corrigeIa: 0 }
+      p.count++
+      p.lastAt = [p.lastAt, c.at].filter(Boolean).sort().at(-1)
+      pairs.set(k, p)
+      continue
+    }
+    const r = real.get(c.plate) ?? { plate: c.plate, count: 0, lastAt: null }
+    r.count++
+    r.lastAt = [r.lastAt, c.at].filter(Boolean).sort().at(-1)
+    real.set(c.plate, r)
+  }
   // Una patente confirmada como real no es la lectura mala de otra (OJD501 / OJO501: los dos existen).
   const entries = [...pairs.values()].map((p) => ({ ...p, readIsReal: real.has(p.read) }))
   const doc = { builtAt: new Date().toISOString(), pairs: entries, real: [...real.values()], ia: iaStats }
@@ -160,6 +188,8 @@ export function buildNoCamiones(root = ROOT) {
     add(v.readPlate, 'tractor_maquinaria', 'ia', v.at)
     if (v.seenPlate) add(v.seenPlate, 'tractor_maquinaria', 'ia', v.at)
   }
+  // Lo que operaciones clasificó mirando la foto (página de clasificación → data/padron/clasificacion-manual.json).
+  for (const c of clasificacionManual(root)) add(c.plate, CLASIFICACION_KIND[c.tipo] ?? null, 'clasificacion', c.at)
   // Un vehículo con movimientos de balanza (Vehículos Permitidos) es un camión aunque una vez se haya descartado.
   const permitidos = new Set((readJson(path.join(root, 'data', 'padron', 'vehiculos-permitidos.json'))?.entries ?? []).filter((e) => e.category !== 'vehiculo_particular').map((e) => e.plate))
   const entries = [...byPlate.values()]

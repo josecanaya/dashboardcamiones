@@ -1,0 +1,540 @@
+{
+ "dia": "2026-11-02",
+ "visitasSgc": 1122,
+ "resumen": {
+  "sin registro → camión del SGC": 4,
+  "sin registro → parecido dudoso": 4,
+  "sin registro → fuera del SGC": 4,
+  "carta, 1 paso → acoplado de otro camión": 1,
+  "carta, 1 paso → camión del SGC": 7,
+  "carta, 1 paso → camión del SGC (otra hora)": 3,
+  "sin registro → lectura parecida": 2
+ },
+ "filas": [
+  {
+   "patente": "AI354IY",
+   "lista": "carta, 1 paso",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "23:59",
+   "ultimo": "23:59",
+   "quien": "camión del SGC",
+   "sgc": "Puerto SL · SOJA · ingreso 03/11 00:04 → salida 03/11 07:39",
+   "recorrido": "23:59 Ingreso",
+   "fotos": [
+    {
+     "device": "RicIngCamFrente",
+     "at": "2026-11-03T02:59:48.855Z",
+     "read": "AI354IY"
+    }
+   ]
+  },
+  {
+   "patente": "CBF677",
+   "lista": "carta, 1 paso",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "20:56",
+   "ultimo": "20:56",
+   "quien": "camión del SGC",
+   "sgc": "Ricardone · AC.GIRASOL OLEICO · ingreso 02/11 20:58 → salida 03/11 09:36",
+   "recorrido": "20:56 Preingreso",
+   "fotos": [
+    {
+     "device": "RicPreIngInFr",
+     "at": "2026-11-02T23:56:53.000Z",
+     "read": "CBF677"
+    }
+   ]
+  },
+  {
+   "patente": "CBO018",
+   "lista": "carta, 1 paso",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "23:58",
+   "ultimo": "23:58",
+   "quien": "camión del SGC",
+   "sgc": "Puerto SL · SOJA · ingreso 03/11 00:00 → salida 03/11 03:12",
+   "recorrido": "23:58 Preingreso",
+   "fotos": [
+    {
+     "device": "RicPreIngInFr",
+     "at": "2026-11-03T02:58:28.000Z",
+     "read": "CBO018"
+    }
+   ]
+  },
+  {
+   "patente": "FLP167",
+   "lista": "carta, 1 paso",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "01:15",
+   "ultimo": "01:15",
+   "quien": "camión del SGC",
+   "sgc": "Puerto SL · SOJA · ingreso 01/11 22:17 → salida 02/11 01:15",
+   "recorrido": "01:15 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZSalidaC1Fte",
+     "at": "2026-11-02T04:15:12.000Z",
+     "read": "FLH167"
+    }
+   ]
+  },
+  {
+   "patente": "HCS514",
+   "lista": "carta, 1 paso",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "00:04",
+   "ultimo": "00:04",
+   "quien": "camión del SGC",
+   "sgc": "Puerto SL · SOJA · ingreso 01/11 22:15 → salida 02/11 01:58",
+   "recorrido": "00:04 Balanza ingreso SL",
+   "fotos": [
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T03:04:59.106Z",
+     "read": "HCS514"
+    }
+   ]
+  },
+  {
+   "patente": "SCQ769",
+   "lista": "carta, 1 paso",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "00:08",
+   "ultimo": "00:08",
+   "quien": "camión del SGC",
+   "sgc": "Puerto SL · SOJA · ingreso 01/11 19:58 → salida 02/11 00:08",
+   "recorrido": "00:08 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZSalidaC1Fte",
+     "at": "2026-11-02T03:08:46.906Z",
+     "read": "SCQ769"
+    }
+   ]
+  },
+  {
+   "patente": "TGW703",
+   "lista": "carta, 1 paso",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "23:58",
+   "ultimo": "23:58",
+   "quien": "camión del SGC",
+   "sgc": "Puerto SL · SOJA · ingreso 03/11 00:03 → salida 03/11 03:29",
+   "recorrido": "23:58 Ingreso",
+   "fotos": [
+    {
+     "device": "RicIngCamFrente",
+     "at": "2026-11-03T02:58:59.653Z",
+     "read": "TGW703"
+    }
+   ]
+  },
+  {
+   "patente": "GSX018",
+   "lista": "carta, 1 paso",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "07:01",
+   "ultimo": "07:01",
+   "quien": "camión del SGC (otra hora)",
+   "sgc": "Puerto SL · SOJA · ingreso 03/11 10:49 → salida —",
+   "recorrido": "07:01 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZSalidaC1Tras",
+     "at": "2026-11-02T10:01:43.000Z",
+     "read": "L845"
+    }
+   ]
+  },
+  {
+   "patente": "MDH547",
+   "lista": "carta, 1 paso",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "07:20",
+   "ultimo": "07:20",
+   "quien": "camión del SGC (otra hora)",
+   "sgc": "Ricardone · AC.GIRASOL OLEICO · ingreso 03/11 11:56 → salida —",
+   "recorrido": "07:20 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZSalidaC1Tras",
+     "at": "2026-11-02T10:20:47.000Z",
+     "read": "IG52"
+    }
+   ]
+  },
+  {
+   "patente": "MQC562",
+   "lista": "carta, 1 paso",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "04:05",
+   "ultimo": "04:05",
+   "quien": "camión del SGC (otra hora)",
+   "sgc": "Puerto SL · SOJA · ingreso 03/11 08:11 → salida —",
+   "recorrido": "04:05 Calada",
+   "fotos": [
+    {
+     "device": "RicCal03",
+     "at": "2026-11-02T07:05:42.000Z",
+     "read": "MO56"
+    }
+   ]
+  },
+  {
+   "patente": "AB931GO",
+   "lista": "carta, 1 paso",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "20:36",
+   "ultimo": "20:36",
+   "quien": "acoplado de VHT928",
+   "sgc": "Puerto SL · SOJA · ingreso 02/11 19:49 → salida 02/11 23:41",
+   "recorrido": "20:36 Balanza ingreso SL",
+   "fotos": [
+    {
+     "device": "SLZBalIngTras",
+     "at": "2026-11-02T23:36:38.000Z",
+     "read": "AB931G0"
+    }
+   ]
+  },
+  {
+   "patente": "AG761PQ",
+   "lista": "sin registro",
+   "plantas": "Ric+SL",
+   "pasos": 11,
+   "primero": "06:03",
+   "ultimo": "11:32",
+   "quien": "camión del SGC",
+   "sgc": "Puerto SL · ACEITE SOJA CRUDO DESGOMADO · ingreso 02/11 07:42 → salida 02/11 10:59",
+   "recorrido": "06:03 Ingreso › 06:07 Preingreso › 07:24 Salida 2 › 07:40 Ingreso SL › 07:49 Calada SL › 07:58 Balanza ingreso SL › 10:05 Carga OSL › 10:35 Calada SL › 10:48 Balanza ingreso SL › 10:57 Balanza egreso SL › 11:32 Egreso SL",
+   "fotos": [
+    {
+     "device": "RicIngCamFrente",
+     "at": "2026-11-02T09:03:43.457Z",
+     "read": "AG761PQ"
+    },
+    {
+     "device": "RicPreIngInFr",
+     "at": "2026-11-02T09:07:08.698Z",
+     "read": "AG761PQ"
+    },
+    {
+     "device": "RicEgrCamFrente",
+     "at": "2026-11-02T10:24:32.000Z",
+     "read": "AG761PQ"
+    },
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T10:40:47.719Z",
+     "read": "AG761PQ"
+    }
+   ]
+  },
+  {
+   "patente": "FLF111",
+   "lista": "sin registro",
+   "plantas": "SL",
+   "pasos": 7,
+   "primero": "07:37",
+   "ultimo": "15:57",
+   "quien": "camión del SGC",
+   "sgc": "Puerto SL · ACEITE GIRASOL REFINADO · ingreso 02/11 10:28 → salida 02/11 15:56",
+   "recorrido": "07:37 Ingreso SL › 10:38 Calada SL › 13:46 Balanza ingreso SL › 15:03 Carga OSL › 15:54 Balanza egreso SL › 15:57 Balanza egreso SL › 15:57 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T10:37:24.587Z",
+     "read": "FLF111"
+    },
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T13:38:50.497Z",
+     "read": "FLF111"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T16:46:44.226Z",
+     "read": "FLF111"
+    },
+    {
+     "device": "RenCargFte",
+     "at": "2026-11-02T18:03:05.538Z",
+     "read": "FLF111"
+    }
+   ]
+  },
+  {
+   "patente": "EVD342",
+   "lista": "sin registro",
+   "plantas": "SL",
+   "pasos": 6,
+   "primero": "06:45",
+   "ultimo": "13:34",
+   "quien": "camión del SGC",
+   "sgc": "Puerto SL · ACEITE GIRASOL REFINADO · ingreso 02/11 10:23 → salida 02/11 13:33",
+   "recorrido": "06:45 Ingreso SL › 10:30 Calada SL › 10:45 Balanza ingreso SL › 13:07 Carga OSL › 13:31 Balanza egreso SL › 13:34 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T09:45:43.206Z",
+     "read": "EVD342"
+    },
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T13:30:38.820Z",
+     "read": "EVD342"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T13:45:28.775Z",
+     "read": "EVD342"
+    },
+    {
+     "device": "RenCargFte",
+     "at": "2026-11-02T16:07:30.827Z",
+     "read": "EVD342"
+    }
+   ]
+  },
+  {
+   "patente": "HAQ820",
+   "lista": "sin registro",
+   "plantas": "SL",
+   "pasos": 6,
+   "primero": "06:26",
+   "ultimo": "12:26",
+   "quien": "camión del SGC",
+   "sgc": "Puerto SL · ACEITE GIRASOL REFINADO · ingreso 02/11 10:24 → salida 02/11 12:25",
+   "recorrido": "06:26 Ingreso SL › 10:27 Calada SL › 10:41 Balanza ingreso SL › 11:39 Carga OSL › 12:23 Balanza egreso SL › 12:26 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZIngCamFrente",
+     "at": "2026-11-02T09:26:54.881Z",
+     "read": "HAQ820"
+    },
+    {
+     "device": "SLZCalado",
+     "at": "2026-11-02T13:27:06.816Z",
+     "read": "HAQ820"
+    },
+    {
+     "device": "SLZBalIngFte",
+     "at": "2026-11-02T13:41:08.151Z",
+     "read": "HAQ820"
+    },
+    {
+     "device": "RenCargFte",
+     "at": "2026-11-02T14:39:56.557Z",
+     "read": "HAQ820"
+    }
+   ]
+  },
+  {
+   "patente": "MKV260",
+   "lista": "sin registro",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "19:38",
+   "ultimo": "19:38",
+   "quien": "lectura parecida a GKV260 (camión)",
+   "sgc": "83 % · Ricardone · SOJA · ingreso 02/11 02:53 → salida —",
+   "recorrido": "19:38 Salida 2",
+   "fotos": [
+    {
+     "device": "RicEgrCamTraser",
+     "at": "2026-11-02T22:38:41.000Z",
+     "read": "945"
+    }
+   ]
+  },
+  {
+   "patente": "OVS998",
+   "lista": "sin registro",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "23:02",
+   "ultimo": "23:02",
+   "quien": "lectura parecida a UVS998 (acoplado de SPH903)",
+   "sgc": "83 % · Puerto SL · SOJA · ingreso 02/11 23:06 → salida 03/11 02:32",
+   "recorrido": "23:02 Ingreso",
+   "fotos": [
+    {
+     "device": "RicIngCamTrasera",
+     "at": "2026-11-03T02:02:33.000Z",
+     "read": "OVS998"
+    }
+   ]
+  },
+  {
+   "patente": "AF708IV",
+   "lista": "sin registro",
+   "plantas": "Ric",
+   "pasos": 3,
+   "primero": "13:38",
+   "ultimo": "16:42",
+   "quien": "parecido dudoso a AE808QV (acoplado de FTM418)",
+   "sgc": "67 % · Renopack · ACEITE GIRASOL ENVASADO · ingreso 02/11 11:01 → salida 02/11 17:24 · otras: AF308AY",
+   "recorrido": "13:38 Ingreso › 13:41 Preingreso › 16:42 Salida 2",
+   "fotos": [
+    {
+     "device": "RicIngCamFrente",
+     "at": "2026-11-02T16:38:55.899Z",
+     "read": "AF708IV"
+    },
+    {
+     "device": "RicPreIngInFr",
+     "at": "2026-11-02T16:41:43.401Z",
+     "read": "AF708IV"
+    },
+    {
+     "device": "RicEgrCamFrente",
+     "at": "2026-11-02T19:42:31.111Z",
+     "read": "AF708IV"
+    }
+   ]
+  },
+  {
+   "patente": "AF316PR",
+   "lista": "sin registro",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "15:33",
+   "ultimo": "15:33",
+   "quien": "parecido dudoso a AE416PV (acoplado de AC978CI)",
+   "sgc": "67 % · Puerto SL · SOJA · ingreso 02/11 15:06 → salida 02/11 19:49",
+   "recorrido": "15:33 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZSalidaC1Fte",
+     "at": "2026-11-02T18:33:22.000Z",
+     "read": "AF316PR"
+    }
+   ]
+  },
+  {
+   "patente": "AF798IV",
+   "lista": "sin registro",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "13:52",
+   "ultimo": "13:52",
+   "quien": "parecido dudoso a AA798TZ (camión)",
+   "sgc": "67 % · Puerto SL · SOJA · ingreso 02/11 10:55 → salida 02/11 14:12",
+   "recorrido": "13:52 Calada",
+   "fotos": [
+    {
+     "device": "RicCal04",
+     "at": "2026-11-02T16:52:26.157Z",
+     "read": "AF798IV"
+    }
+   ]
+  },
+  {
+   "patente": "MZJ130",
+   "lista": "sin registro",
+   "plantas": "Ric",
+   "pasos": 1,
+   "primero": "08:40",
+   "ultimo": "08:40",
+   "quien": "parecido dudoso a UZS130 (acoplado de UWX998)",
+   "sgc": "67 % · Puerto SL · PELLETS GIRASOL · ingreso 02/11 05:03 → salida 02/11 08:29 · otras: UZS130",
+   "recorrido": "08:40 Ingreso",
+   "fotos": [
+    {
+     "device": "RicIngCamTrasera",
+     "at": "2026-11-02T11:40:08.000Z",
+     "read": "MZJ130"
+    }
+   ]
+  },
+  {
+   "patente": "TNE931",
+   "lista": "sin registro",
+   "plantas": "SL",
+   "pasos": 2,
+   "primero": "09:17",
+   "ultimo": "13:53",
+   "quien": "fuera del SGC",
+   "sgc": "",
+   "recorrido": "09:17 Egreso SL › 13:53 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZSalidaC1Fte",
+     "at": "2026-11-02T12:17:33.000Z",
+     "read": "TNE931"
+    },
+    {
+     "device": "SLZSalidaC1Fte",
+     "at": "2026-11-02T16:53:15.000Z",
+     "read": "TNE931"
+    }
+   ]
+  },
+  {
+   "patente": "ELU998",
+   "lista": "sin registro",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "05:22",
+   "ultimo": "05:22",
+   "quien": "fuera del SGC",
+   "sgc": "",
+   "recorrido": "05:22 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZSalidaC1Fte",
+     "at": "2026-11-02T08:22:17.000Z",
+     "read": "ELU998"
+    }
+   ]
+  },
+  {
+   "patente": "NWZ036",
+   "lista": "sin registro",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "02:31",
+   "ultimo": "02:31",
+   "quien": "fuera del SGC",
+   "sgc": "",
+   "recorrido": "02:31 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZSalidaC1Fte",
+     "at": "2026-11-02T05:31:25.540Z",
+     "read": "NWZ036"
+    }
+   ]
+  },
+  {
+   "patente": "PHM505",
+   "lista": "sin registro",
+   "plantas": "SL",
+   "pasos": 1,
+   "primero": "19:14",
+   "ultimo": "19:14",
+   "quien": "fuera del SGC",
+   "sgc": "",
+   "recorrido": "19:14 Egreso SL",
+   "fotos": [
+    {
+     "device": "SLZSalidaC1Fte",
+     "at": "2026-11-02T22:14:12.000Z",
+     "read": "PHM505"
+    }
+   ]
+  }
+ ]
+}

@@ -201,6 +201,7 @@ export function ensamblarPasos(events, { acopladoChasis = null } = {}) {
     const rearCaps = p.caps.filter((c) => c.rear)
     return {
       id: pasoId,
+      anchorKey: captureKey(a.e),
       node: p.logical,
       at: new Date(p.firstT).toISOString(),
       until: new Date(p.lastT).toISOString(),

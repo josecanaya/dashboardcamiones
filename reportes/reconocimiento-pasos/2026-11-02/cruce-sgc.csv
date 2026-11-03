@@ -1,0 +1,26 @@
+﻿patente;lista;quien;sgc;plantas;pasos;primero;ultimo;recorrido
+AI354IY;carta, 1 paso;camión del SGC;Puerto SL · SOJA · ingreso 03/11 00:04 → salida 03/11 07:39;Ric;1;23:59;23:59;23:59 Ingreso
+CBF677;carta, 1 paso;camión del SGC;Ricardone · AC.GIRASOL OLEICO · ingreso 02/11 20:58 → salida 03/11 09:36;Ric;1;20:56;20:56;20:56 Preingreso
+CBO018;carta, 1 paso;camión del SGC;Puerto SL · SOJA · ingreso 03/11 00:00 → salida 03/11 03:12;Ric;1;23:58;23:58;23:58 Preingreso
+FLP167;carta, 1 paso;camión del SGC;Puerto SL · SOJA · ingreso 01/11 22:17 → salida 02/11 01:15;SL;1;01:15;01:15;01:15 Egreso SL
+HCS514;carta, 1 paso;camión del SGC;Puerto SL · SOJA · ingreso 01/11 22:15 → salida 02/11 01:58;SL;1;00:04;00:04;00:04 Balanza ingreso SL
+SCQ769;carta, 1 paso;camión del SGC;Puerto SL · SOJA · ingreso 01/11 19:58 → salida 02/11 00:08;SL;1;00:08;00:08;00:08 Egreso SL
+TGW703;carta, 1 paso;camión del SGC;Puerto SL · SOJA · ingreso 03/11 00:03 → salida 03/11 03:29;Ric;1;23:58;23:58;23:58 Ingreso
+GSX018;carta, 1 paso;camión del SGC (otra hora);Puerto SL · SOJA · ingreso 03/11 10:49 → salida —;SL;1;07:01;07:01;07:01 Egreso SL
+MDH547;carta, 1 paso;camión del SGC (otra hora);Ricardone · AC.GIRASOL OLEICO · ingreso 03/11 11:56 → salida —;SL;1;07:20;07:20;07:20 Egreso SL
+MQC562;carta, 1 paso;camión del SGC (otra hora);Puerto SL · SOJA · ingreso 03/11 08:11 → salida —;Ric;1;04:05;04:05;04:05 Calada
+AB931GO;carta, 1 paso;acoplado de VHT928;Puerto SL · SOJA · ingreso 02/11 19:49 → salida 02/11 23:41;SL;1;20:36;20:36;20:36 Balanza ingreso SL
+AG761PQ;sin registro;camión del SGC;Puerto SL · ACEITE SOJA CRUDO DESGOMADO · ingreso 02/11 07:42 → salida 02/11 10:59;Ric+SL;11;06:03;11:32;06:03 Ingreso › 06:07 Preingreso › 07:24 Salida 2 › 07:40 Ingreso SL › 07:49 Calada SL › 07:58 Balanza ingreso SL › 10:05 Carga OSL › 10:35 Calada SL › 10:48 Balanza ingreso SL › 10:57 Balanza egreso SL › 11:32 Egreso SL
+FLF111;sin registro;camión del SGC;Puerto SL · ACEITE GIRASOL REFINADO · ingreso 02/11 10:28 → salida 02/11 15:56;SL;7;07:37;15:57;07:37 Ingreso SL › 10:38 Calada SL › 13:46 Balanza ingreso SL › 15:03 Carga OSL › 15:54 Balanza egreso SL › 15:57 Balanza egreso SL › 15:57 Egreso SL
+EVD342;sin registro;camión del SGC;Puerto SL · ACEITE GIRASOL REFINADO · ingreso 02/11 10:23 → salida 02/11 13:33;SL;6;06:45;13:34;06:45 Ingreso SL › 10:30 Calada SL › 10:45 Balanza ingreso SL › 13:07 Carga OSL › 13:31 Balanza egreso SL › 13:34 Egreso SL
+HAQ820;sin registro;camión del SGC;Puerto SL · ACEITE GIRASOL REFINADO · ingreso 02/11 10:24 → salida 02/11 12:25;SL;6;06:26;12:26;06:26 Ingreso SL › 10:27 Calada SL › 10:41 Balanza ingreso SL › 11:39 Carga OSL › 12:23 Balanza egreso SL › 12:26 Egreso SL
+MKV260;sin registro;lectura parecida a GKV260 (camión);83 % · Ricardone · SOJA · ingreso 02/11 02:53 → salida —;Ric;1;19:38;19:38;19:38 Salida 2
+OVS998;sin registro;lectura parecida a UVS998 (acoplado de SPH903);83 % · Puerto SL · SOJA · ingreso 02/11 23:06 → salida 03/11 02:32;Ric;1;23:02;23:02;23:02 Ingreso
+AF708IV;sin registro;parecido dudoso a AE808QV (acoplado de FTM418);67 % · Renopack · ACEITE GIRASOL ENVASADO · ingreso 02/11 11:01 → salida 02/11 17:24 · otras: AF308AY;Ric;3;13:38;16:42;13:38 Ingreso › 13:41 Preingreso › 16:42 Salida 2
+AF316PR;sin registro;parecido dudoso a AE416PV (acoplado de AC978CI);67 % · Puerto SL · SOJA · ingreso 02/11 15:06 → salida 02/11 19:49;SL;1;15:33;15:33;15:33 Egreso SL
+AF798IV;sin registro;parecido dudoso a AA798TZ (camión);67 % · Puerto SL · SOJA · ingreso 02/11 10:55 → salida 02/11 14:12;Ric;1;13:52;13:52;13:52 Calada
+MZJ130;sin registro;parecido dudoso a UZS130 (acoplado de UWX998);67 % · Puerto SL · PELLETS GIRASOL · ingreso 02/11 05:03 → salida 02/11 08:29 · otras: UZS130;Ric;1;08:40;08:40;08:40 Ingreso
+TNE931;sin registro;fuera del SGC;;SL;2;09:17;13:53;09:17 Egreso SL › 13:53 Egreso SL
+ELU998;sin registro;fuera del SGC;;SL;1;05:22;05:22;05:22 Egreso SL
+NWZ036;sin registro;fuera del SGC;;SL;1;02:31;02:31;02:31 Egreso SL
+PHM505;sin registro;fuera del SGC;;SL;1;19:14;19:14;19:14 Egreso SL

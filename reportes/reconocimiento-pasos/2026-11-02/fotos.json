@@ -1,0 +1,1638 @@
+{
+ "dia": "2026-11-02",
+ "quien": "fuera del SGC",
+ "filas": [
+  {
+   "patente": "AA834RS",
+   "pasos": 10,
+   "plantas": "SL",
+   "recorrido": "07:56 Egreso SL › 07:58 Balanza egreso SL › 09:47 Balanza egreso SL › 09:48 Egreso SL › 10:28 Egreso SL › 10:29 Balanza egreso SL › 11:02 Carga y descarga SL › 17:25 Balanza egreso SL › 17:27 Egreso SL › 17:28 Egreso SL",
+   "primero": "07:56",
+   "ultimo": "17:28",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T10:56:22.000Z",
+    "leyo": "AA834RS",
+    "confianza": 78,
+    "tipo": null,
+    "marca": null,
+    "color": "Red",
+    "escena": "AA834RS-escena.jpg",
+    "recorte": "AA834RS-patente.jpg"
+   }
+  },
+  {
+   "patente": "MYW261",
+   "pasos": 10,
+   "plantas": "Ric+SL",
+   "recorrido": "08:12 Egreso SL › 09:25 Egreso SL › 09:40 Balanza › 09:49 Balanza › 11:12 Balanza › 12:04 Balanza › 12:13 Egreso SL › 13:56 Egreso SL › 14:05 Balanza › 16:21 Balanza",
+   "primero": "08:12",
+   "ultimo": "16:21",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T11:12:50.000Z",
+    "leyo": "MYW261",
+    "confianza": 78,
+    "tipo": null,
+    "marca": null,
+    "color": "White",
+    "escena": "MYW261-escena.jpg",
+    "recorte": "MYW261-patente.jpg"
+   }
+  },
+  {
+   "patente": "AH926WU",
+   "pasos": 9,
+   "plantas": "SL",
+   "recorrido": "11:36 Egreso SL › 11:37 Balanza egreso SL › 12:37 Balanza egreso SL › 12:51 Carga y descarga SL › 12:52 Balanza egreso SL › 12:54 Egreso SL › 22:30 Egreso SL › 22:31 Balanza egreso SL › 23:01 Egreso SL",
+   "primero": "11:36",
+   "ultimo": "23:01",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T14:36:12.000Z",
+    "leyo": "AH926WU",
+    "confianza": 54,
+    "tipo": null,
+    "marca": "Ford",
+    "color": "White",
+    "escena": "AH926WU-escena.jpg",
+    "recorte": "AH926WU-patente.jpg"
+   }
+  },
+  {
+   "patente": "JZW724",
+   "pasos": 9,
+   "plantas": "Ric+SL",
+   "recorrido": "08:43 Balanza › 11:30 Balanza › 11:43 Egreso SL › 11:53 Balanza egreso SL › 11:59 Egreso SL › 13:16 Balanza › 14:26 Balanza › 14:30 Balanza › 15:34 Balanza",
+   "primero": "08:43",
+   "ultimo": "15:34",
+   "foto": {
+    "device": "RicB3Ingreso",
+    "at": "2026-11-02T11:43:19.000Z",
+    "leyo": "JZW724",
+    "confianza": 74,
+    "tipo": null,
+    "marca": "Volkswagen",
+    "color": "Silver",
+    "escena": "JZW724-escena.jpg",
+    "recorte": "JZW724-patente.jpg"
+   }
+  },
+  {
+   "patente": "AA689GI",
+   "pasos": 7,
+   "plantas": "Ric+SL",
+   "recorrido": "09:15 Balanza egreso SL › 09:17 Renova › 09:49 Renova › 09:52 Egreso SL › 11:25 Balanza › 12:38 Balanza › 14:07 Balanza",
+   "primero": "09:15",
+   "ultimo": "14:07",
+   "foto": {
+    "device": "SLZBalSC1Fte",
+    "at": "2026-11-02T12:15:50.727Z",
+    "leyo": "AA689GI",
+    "confianza": 78,
+    "tipo": null,
+    "marca": "Toyota",
+    "color": "White",
+    "escena": "AA689GI-escena.jpg",
+    "recorte": "AA689GI-patente.jpg"
+   }
+  },
+  {
+   "patente": "OCB815",
+   "pasos": 7,
+   "plantas": "Ric+SL",
+   "recorrido": "03:06 Egreso SL › 03:11 Egreso SL › 19:13 Egreso SL › 19:17 Egreso SL › 19:33 Balanza › 23:10 Egreso SL › 23:16 Egreso SL",
+   "primero": "03:06",
+   "ultimo": "23:16",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T06:06:33.000Z",
+    "leyo": "OCB815",
+    "confianza": 90,
+    "tipo": null,
+    "marca": "Chevrolet",
+    "color": "White",
+    "escena": "OCB815-escena.jpg",
+    "recorte": "OCB815-patente.jpg"
+   }
+  },
+  {
+   "patente": "AA208QN",
+   "pasos": 6,
+   "plantas": "SL",
+   "recorrido": "09:32 Balanza egreso SL › 11:18 Renova › 11:19 Egreso SL › 11:48 Egreso SL › 14:50 Renova › 15:59 Egreso SL",
+   "primero": "09:32",
+   "ultimo": "15:59",
+   "foto": {
+    "device": "SLZBalSC1Fte",
+    "at": "2026-11-02T12:32:42.000Z",
+    "leyo": "AA208QN",
+    "confianza": 62,
+    "tipo": null,
+    "marca": "Toyota",
+    "color": "White",
+    "escena": "AA208QN-escena.jpg",
+    "recorte": "AA208QN-patente.jpg"
+   }
+  },
+  {
+   "patente": "HLT270",
+   "pasos": 6,
+   "plantas": "Ric+SL",
+   "recorrido": "07:29 Egreso SL › 08:01 Egreso SL › 09:22 Balanza › 11:49 Balanza › 12:42 Egreso SL › 13:51 Egreso SL",
+   "primero": "07:29",
+   "ultimo": "13:51",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T10:29:39.000Z",
+    "leyo": "HLT270",
+    "confianza": 42,
+    "tipo": null,
+    "marca": null,
+    "color": "Gray",
+    "escena": "HLT270-escena.jpg",
+    "recorte": "HLT270-patente.jpg"
+   }
+  },
+  {
+   "patente": "AC169LG",
+   "pasos": 5,
+   "plantas": "Ric+SL",
+   "recorrido": "08:32 Egreso SL › 09:09 Renova › 09:16 Egreso SL › 14:37 Balanza › 15:25 Balanza",
+   "primero": "08:32",
+   "ultimo": "15:25",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T11:32:48.000Z",
+    "leyo": "AC169LG",
+    "confianza": 34,
+    "tipo": null,
+    "marca": null,
+    "color": "Blue",
+    "escena": "AC169LG-escena.jpg",
+    "recorte": "AC169LG-patente.jpg"
+   }
+  },
+  {
+   "patente": "AF790CA",
+   "pasos": 5,
+   "plantas": "SL",
+   "recorrido": "10:08 Egreso SL › 10:11 Balanza egreso SL › 12:26 Balanza egreso SL › 14:41 Egreso SL › 14:42 Balanza egreso SL",
+   "primero": "10:08",
+   "ultimo": "14:42",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T13:08:45.756Z",
+    "leyo": "AF790CA",
+    "confianza": 54,
+    "tipo": null,
+    "marca": null,
+    "color": "Red",
+    "escena": "AF790CA-escena.jpg",
+    "recorte": "AF790CA-patente.jpg"
+   }
+  },
+  {
+   "patente": "AGC661",
+   "pasos": 5,
+   "plantas": "SL",
+   "recorrido": "16:06 Egreso SL › 16:06 Egreso SL › 16:06 Egreso SL › 16:07 Egreso SL › 16:07 Egreso SL",
+   "primero": "16:06",
+   "ultimo": "16:07",
+   "foto": {
+    "device": "SLZSalidaC1Tras",
+    "at": "2026-11-02T19:06:17.000Z",
+    "leyo": "AGC661",
+    "confianza": 58,
+    "tipo": null,
+    "marca": null,
+    "color": null,
+    "escena": "AGC661-escena.jpg",
+    "recorte": null
+   }
+  },
+  {
+   "patente": "NAH953",
+   "pasos": 5,
+   "plantas": "SL",
+   "recorrido": "09:28 Egreso SL › 10:29 Egreso SL › 15:24 Egreso SL › 16:08 Egreso SL › 16:25 Renova",
+   "primero": "09:28",
+   "ultimo": "16:25",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T13:29:51.000Z",
+    "leyo": "NAH953",
+    "confianza": 54,
+    "tipo": null,
+    "marca": null,
+    "color": "White",
+    "escena": "NAH953-escena.jpg",
+    "recorte": "NAH953-patente.jpg"
+   }
+  },
+  {
+   "patente": "OIB580",
+   "pasos": 5,
+   "plantas": "Ric+SL",
+   "recorrido": "12:31 Ingreso › 15:38 Ingreso › 17:49 Egreso SL › 17:50 Renova › 20:01 Egreso SL",
+   "primero": "12:31",
+   "ultimo": "20:01",
+   "foto": {
+    "device": "RicIngCamFrente",
+    "at": "2026-11-02T15:31:30.221Z",
+    "leyo": "OIB580",
+    "confianza": 82,
+    "tipo": null,
+    "marca": "Citroën",
+    "color": "Black",
+    "escena": "OIB580-escena.jpg",
+    "recorte": "OIB580-patente.jpg"
+   }
+  },
+  {
+   "patente": "AA678OF",
+   "pasos": 4,
+   "plantas": "SL",
+   "recorrido": "19:01 Egreso SL › 19:01 Egreso SL › 19:03 Egreso SL › 19:04 Egreso SL",
+   "primero": "19:01",
+   "ultimo": "19:04",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T22:01:13.000Z",
+    "leyo": "AA678OF",
+    "confianza": 62,
+    "tipo": null,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "escena": "AA678OF-escena.jpg",
+    "recorte": "AA678OF-patente.jpg"
+   }
+  },
+  {
+   "patente": "AB349QJ",
+   "pasos": 4,
+   "plantas": "SL",
+   "recorrido": "09:30 Egreso SL › 09:30 Balanza egreso SL › 10:30 Balanza egreso SL › 10:31 Egreso SL",
+   "primero": "09:30",
+   "ultimo": "10:31",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T12:30:08.000Z",
+    "leyo": "AB349QJ",
+    "confianza": 78,
+    "tipo": null,
+    "marca": "Fiat",
+    "color": "Red",
+    "escena": "AB349QJ-escena.jpg",
+    "recorte": "AB349QJ-patente.jpg"
+   }
+  },
+  {
+   "patente": "AF443VV",
+   "pasos": 4,
+   "plantas": "SL",
+   "recorrido": "18:29 Egreso SL › 18:31 Egreso SL › 18:31 Balanza egreso SL › 19:00 Egreso SL",
+   "primero": "18:29",
+   "ultimo": "19:00",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T21:31:02.279Z",
+    "leyo": "AF443VV",
+    "confianza": 82,
+    "tipo": null,
+    "marca": "Chevrolet",
+    "color": "Gray",
+    "escena": "AF443VV-escena.jpg",
+    "recorte": "AF443VV-patente.jpg"
+   }
+  },
+  {
+   "patente": "AF631NT",
+   "pasos": 4,
+   "plantas": "SL",
+   "recorrido": "17:50 Egreso SL › 17:51 Balanza egreso SL › 18:43 Egreso SL › 19:07 Egreso SL",
+   "primero": "17:50",
+   "ultimo": "19:07",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T20:50:43.000Z",
+    "leyo": "AF631NT",
+    "confianza": 86,
+    "tipo": null,
+    "marca": "Mercedes-Benz",
+    "color": "Red",
+    "escena": "AF631NT-escena.jpg",
+    "recorte": "AF631NT-patente.jpg"
+   }
+  },
+  {
+   "patente": "AF778ZI",
+   "pasos": 4,
+   "plantas": "SL",
+   "recorrido": "08:31 Egreso SL › 08:34 Renova › 09:56 Renova › 09:59 Egreso SL",
+   "primero": "08:31",
+   "ultimo": "09:59",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T11:31:22.855Z",
+    "leyo": "AF778ZI",
+    "confianza": 66,
+    "tipo": null,
+    "marca": null,
+    "color": "White",
+    "escena": "AF778ZI-escena.jpg",
+    "recorte": "AF778ZI-patente.jpg"
+   }
+  },
+  {
+   "patente": "AG700CR",
+   "pasos": 4,
+   "plantas": "Ric+SL",
+   "recorrido": "09:18 Balanza › 09:31 Balanza › 09:41 Egreso SL › 10:06 Egreso SL",
+   "primero": "09:18",
+   "ultimo": "10:06",
+   "foto": {
+    "device": "RicB3Ingreso",
+    "at": "2026-11-02T12:18:04.000Z",
+    "leyo": "AG700CR",
+    "confianza": 62,
+    "tipo": null,
+    "marca": "Renault",
+    "color": "White",
+    "escena": "AG700CR-escena.jpg",
+    "recorte": "AG700CR-patente.jpg"
+   }
+  },
+  {
+   "patente": "AH763WD",
+   "pasos": 4,
+   "plantas": "SL",
+   "recorrido": "07:27 Egreso SL › 07:27 Balanza egreso SL › 07:55 Renova › 08:03 Egreso SL",
+   "primero": "07:27",
+   "ultimo": "08:03",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T10:27:00.000Z",
+    "leyo": "AH763WD",
+    "confianza": 18,
+    "tipo": null,
+    "marca": null,
+    "color": "White",
+    "escena": "AH763WD-escena.jpg",
+    "recorte": "AH763WD-patente.jpg"
+   }
+  },
+  {
+   "patente": "JEU171",
+   "pasos": 4,
+   "plantas": "SL",
+   "recorrido": "10:16 Egreso SL › 10:22 Renova › 11:01 Renova › 11:04 Egreso SL",
+   "primero": "10:16",
+   "ultimo": "11:04",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T13:16:29.620Z",
+    "leyo": "JEU171",
+    "confianza": 86,
+    "tipo": null,
+    "marca": null,
+    "color": "White",
+    "escena": "JEU171-escena.jpg",
+    "recorte": "JEU171-patente.jpg"
+   }
+  },
+  {
+   "patente": "OTY765",
+   "pasos": 4,
+   "plantas": "Ric+SL",
+   "recorrido": "05:44 Ingreso › 12:15 Carga y descarga SL › 12:50 Renova › 15:21 Salida 2",
+   "primero": "05:44",
+   "ultimo": "15:21",
+   "foto": {
+    "device": "RicIngCamFrente",
+    "at": "2026-11-02T08:44:18.108Z",
+    "leyo": "OTY765",
+    "confianza": 74,
+    "tipo": null,
+    "marca": "Renault",
+    "color": "Blue",
+    "escena": "OTY765-escena.jpg",
+    "recorte": "OTY765-patente.jpg"
+   }
+  },
+  {
+   "patente": "AA698OB",
+   "pasos": 3,
+   "plantas": "Ric+SL",
+   "recorrido": "09:22 Ingreso › 10:00 Renova › 10:03 Egreso SL",
+   "primero": "09:22",
+   "ultimo": "10:03",
+   "foto": {
+    "device": "RicIngCamFrente",
+    "at": "2026-11-02T12:22:25.379Z",
+    "leyo": "AA698OB",
+    "confianza": 82,
+    "tipo": null,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "escena": "AA698OB-escena.jpg",
+    "recorte": "AA698OB-patente.jpg"
+   }
+  },
+  {
+   "patente": "AH215CA",
+   "pasos": 3,
+   "plantas": "SL",
+   "recorrido": "08:35 Egreso SL › 08:55 Renova › 09:58 Egreso SL",
+   "primero": "08:35",
+   "ultimo": "09:58",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T11:35:42.000Z",
+    "leyo": "AH215CA",
+    "confianza": 74,
+    "tipo": null,
+    "marca": "Ford",
+    "color": "White",
+    "escena": "AH215CA-escena.jpg",
+    "recorte": "AH215CA-patente.jpg"
+   }
+  },
+  {
+   "patente": "AH671BL",
+   "pasos": 3,
+   "plantas": "Ric",
+   "recorrido": "01:17 Ingreso › 01:19 Ingreso › 01:26 Salida 2",
+   "primero": "01:17",
+   "ultimo": "01:26",
+   "foto": {
+    "device": "RicIngCamFrente",
+    "at": "2026-11-02T04:17:28.596Z",
+    "leyo": "AH671BL",
+    "confianza": 50,
+    "tipo": null,
+    "marca": "Iveco",
+    "color": "White",
+    "escena": "AH671BL-escena.jpg",
+    "recorte": "AH671BL-patente.jpg"
+   }
+  },
+  {
+   "patente": "FIU583",
+   "pasos": 3,
+   "plantas": "SL",
+   "recorrido": "10:30 Egreso SL › 10:53 Renova › 10:56 Egreso SL",
+   "primero": "10:30",
+   "ultimo": "10:56",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T13:30:44.000Z",
+    "leyo": "FIU583",
+    "confianza": 90,
+    "tipo": null,
+    "marca": null,
+    "color": "White",
+    "escena": "FIU583-escena.jpg",
+    "recorte": "FIU583-patente.jpg"
+   }
+  },
+  {
+   "patente": "IFI1A17",
+   "pasos": 3,
+   "plantas": "Ric",
+   "recorrido": "03:12 Ingreso › 04:12 Salida 2 › 17:13 Balanza",
+   "primero": "03:12",
+   "ultimo": "17:13",
+   "foto": {
+    "device": "RicIngCamFrente",
+    "at": "2026-11-02T06:12:43.578Z",
+    "leyo": "IFI1A17",
+    "confianza": 38,
+    "tipo": null,
+    "marca": "ISUZU",
+    "color": "White",
+    "escena": "IFI1A17-escena.jpg",
+    "recorte": "IFI1A17-patente.jpg"
+   }
+  },
+  {
+   "patente": "ILW642",
+   "pasos": 3,
+   "plantas": "SL",
+   "recorrido": "12:02 Egreso SL › 12:02 Balanza egreso SL › 13:43 Balanza egreso SL",
+   "primero": "12:02",
+   "ultimo": "13:43",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T15:02:05.016Z",
+    "leyo": "ILW642",
+    "confianza": 86,
+    "tipo": null,
+    "marca": null,
+    "color": "White",
+    "escena": "ILW642-escena.jpg",
+    "recorte": "ILW642-patente.jpg"
+   }
+  },
+  {
+   "patente": "AA492OU",
+   "pasos": 2,
+   "plantas": "SL",
+   "recorrido": "15:21 Renova › 15:24 Egreso SL",
+   "primero": "15:21",
+   "ultimo": "15:24",
+   "foto": {
+    "device": "SLZTK400",
+    "at": "2026-11-02T18:21:05.000Z",
+    "leyo": "AA492OU",
+    "confianza": 66,
+    "tipo": null,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "escena": "AA492OU-escena.jpg",
+    "recorte": "AA492OU-patente.jpg"
+   }
+  },
+  {
+   "patente": "AA682QZ",
+   "pasos": 2,
+   "plantas": "SL",
+   "recorrido": "11:12 Egreso SL › 11:28 Egreso SL",
+   "primero": "11:12",
+   "ultimo": "11:28",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T14:12:43.000Z",
+    "leyo": "AA682QZ",
+    "confianza": 90,
+    "tipo": null,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "escena": "AA682QZ-escena.jpg",
+    "recorte": "AA682QZ-patente.jpg"
+   }
+  },
+  {
+   "patente": "AC026RV",
+   "pasos": 2,
+   "plantas": "SL",
+   "recorrido": "12:54 Egreso SL › 14:19 Egreso SL",
+   "primero": "12:54",
+   "ultimo": "14:19",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T15:54:35.000Z",
+    "leyo": "AC026RV",
+    "confianza": 58,
+    "tipo": null,
+    "marca": null,
+    "color": "White",
+    "escena": "AC026RV-escena.jpg",
+    "recorte": "AC026RV-patente.jpg"
+   }
+  },
+  {
+   "patente": "AD160PS",
+   "pasos": 2,
+   "plantas": "Ric",
+   "recorrido": "06:15 Ingreso › 06:17 Ingreso",
+   "primero": "06:15",
+   "ultimo": "06:17",
+   "foto": {
+    "device": "RicIngCamFrente",
+    "at": "2026-11-02T09:15:58.000Z",
+    "leyo": "AD160PS",
+    "confianza": 86,
+    "tipo": null,
+    "marca": "Fiat",
+    "color": "Gray",
+    "escena": "AD160PS-escena.jpg",
+    "recorte": "AD160PS-patente.jpg"
+   }
+  },
+  {
+   "patente": "AD373WR",
+   "pasos": 2,
+   "plantas": "SL",
+   "recorrido": "18:39 Egreso SL › 18:39 Egreso SL",
+   "primero": "18:39",
+   "ultimo": "18:39",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T21:39:04.000Z",
+    "leyo": "AD373WR",
+    "confianza": 90,
+    "tipo": null,
+    "marca": null,
+    "color": "White",
+    "escena": "AD373WR-escena.jpg",
+    "recorte": "AD373WR-patente.jpg"
+   }
+  },
+  {
+   "patente": "AE101HZ",
+   "pasos": 2,
+   "plantas": "SL",
+   "recorrido": "10:04 Egreso SL › 10:32 Egreso SL",
+   "primero": "10:04",
+   "ultimo": "10:32",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T13:04:23.000Z",
+    "leyo": "AE101HZ",
+    "confianza": 54,
+    "tipo": null,
+    "marca": null,
+    "color": "Red",
+    "escena": "AE101HZ-escena.jpg",
+    "recorte": "AE101HZ-patente.jpg"
+   }
+  },
+  {
+   "patente": "AF909MM",
+   "pasos": 2,
+   "plantas": "SL",
+   "recorrido": "18:55 Egreso SL › 19:03 Egreso SL",
+   "primero": "18:55",
+   "ultimo": "19:03",
+   "foto": {
+    "device": "SLZSalidaC1Tras",
+    "at": "2026-11-02T22:03:57.000Z",
+    "leyo": "AFOM",
+    "confianza": 74,
+    "tipo": null,
+    "marca": null,
+    "color": null,
+    "escena": "AF909MM-escena.jpg",
+    "recorte": null
+   }
+  },
+  {
+   "patente": "AG275GZ",
+   "pasos": 2,
+   "plantas": "Ric",
+   "recorrido": "08:30 Balanza › 08:43 Balanza",
+   "primero": "08:30",
+   "ultimo": "08:43",
+   "foto": {
+    "device": "RicB3Ingreso",
+    "at": "2026-11-02T11:30:23.660Z",
+    "leyo": "AG275GZ",
+    "confianza": 70,
+    "tipo": null,
+    "marca": "Ford",
+    "color": "Blue",
+    "escena": "AG275GZ-escena.jpg",
+    "recorte": "AG275GZ-patente.jpg"
+   }
+  },
+  {
+   "patente": "AG731CO",
+   "pasos": 2,
+   "plantas": "Ric",
+   "recorrido": "14:46 Balanza › 14:51 Balanza",
+   "primero": "14:46",
+   "ultimo": "14:51",
+   "foto": {
+    "device": "RicB3Ingreso",
+    "at": "2026-11-02T17:46:25.000Z",
+    "leyo": "AG731CO",
+    "confianza": 74,
+    "tipo": null,
+    "marca": "Fiat",
+    "color": "White",
+    "escena": "AG731CO-escena.jpg",
+    "recorte": "AG731CO-patente.jpg"
+   }
+  },
+  {
+   "patente": "AH785SQ",
+   "pasos": 2,
+   "plantas": "SL",
+   "recorrido": "08:53 Egreso SL › 09:11 Egreso SL",
+   "primero": "08:53",
+   "ultimo": "09:11",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T11:53:46.000Z",
+    "leyo": "AH785SQ",
+    "confianza": 62,
+    "tipo": null,
+    "marca": "Ford",
+    "color": "White",
+    "escena": "AH785SQ-escena.jpg",
+    "recorte": "AH785SQ-patente.jpg"
+   }
+  },
+  {
+   "patente": "AH813KC",
+   "pasos": 2,
+   "plantas": "SL",
+   "recorrido": "12:51 Egreso SL › 13:21 Egreso SL",
+   "primero": "12:51",
+   "ultimo": "13:21",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T15:51:20.000Z",
+    "leyo": "AH813KC",
+    "confianza": 94,
+    "tipo": null,
+    "marca": "Ford",
+    "color": "White",
+    "escena": "AH813KC-escena.jpg",
+    "recorte": "AH813KC-patente.jpg"
+   }
+  },
+  {
+   "patente": "DCB815",
+   "pasos": 2,
+   "plantas": "Ric",
+   "recorrido": "03:27 Balanza › 23:36 Balanza",
+   "primero": "03:27",
+   "ultimo": "23:36",
+   "foto": {
+    "device": "RicB2Egreso",
+    "at": "2026-11-02T06:27:50.662Z",
+    "leyo": "DCB815",
+    "confianza": 62,
+    "tipo": null,
+    "marca": null,
+    "color": "Black",
+    "escena": "DCB815-escena.jpg",
+    "recorte": "DCB815-patente.jpg"
+   }
+  },
+  {
+   "patente": "DTB580",
+   "pasos": 2,
+   "plantas": "Ric+SL",
+   "recorrido": "19:25 Carga y descarga SL › 20:47 Salida 2",
+   "primero": "19:25",
+   "ultimo": "20:47",
+   "foto": {
+    "device": "SLZBalLiq2a",
+    "at": "2026-11-02T22:25:09.000Z",
+    "leyo": "DTB580",
+    "confianza": 74,
+    "tipo": null,
+    "marca": "Citroën",
+    "color": "Gray",
+    "escena": "DTB580-escena.jpg",
+    "recorte": "DTB580-patente.jpg"
+   }
+  },
+  {
+   "patente": "GCW191",
+   "pasos": 2,
+   "plantas": "SL",
+   "recorrido": "10:54 Egreso SL › 11:07 Egreso SL",
+   "primero": "10:54",
+   "ultimo": "11:07",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T13:54:50.000Z",
+    "leyo": "GCW191",
+    "confianza": 70,
+    "tipo": null,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "escena": "GCW191-escena.jpg",
+    "recorte": "GCW191-patente.jpg"
+   }
+  },
+  {
+   "patente": "IIX941",
+   "pasos": 2,
+   "plantas": "SL",
+   "recorrido": "18:08 Renova › 22:49 Balanza egreso SL",
+   "primero": "18:08",
+   "ultimo": "22:49",
+   "foto": {
+    "device": "SLZTK400",
+    "at": "2026-11-02T21:08:32.000Z",
+    "leyo": "IIX941",
+    "confianza": 18,
+    "tipo": null,
+    "marca": null,
+    "color": "White",
+    "escena": "IIX941-escena.jpg",
+    "recorte": "IIX941-patente.jpg"
+   }
+  },
+  {
+   "patente": "JEW583",
+   "pasos": 2,
+   "plantas": "Ric",
+   "recorrido": "10:00 Balanza › 10:11 Balanza",
+   "primero": "10:00",
+   "ultimo": "10:11",
+   "foto": {
+    "device": "RicB3Ingreso",
+    "at": "2026-11-02T13:00:25.837Z",
+    "leyo": "JEW583",
+    "confianza": 54,
+    "tipo": null,
+    "marca": "Fiat",
+    "color": "Black",
+    "escena": "JEW583-escena.jpg",
+    "recorte": "JEW583-patente.jpg"
+   }
+  },
+  {
+   "patente": "JTG255",
+   "pasos": 2,
+   "plantas": "SL",
+   "recorrido": "08:41 Renova › 08:43 Renova",
+   "primero": "08:41",
+   "ultimo": "08:43",
+   "foto": {
+    "device": "SLZTK400",
+    "at": "2026-11-02T11:41:07.000Z",
+    "leyo": "JTG255",
+    "confianza": 62,
+    "tipo": null,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "escena": "JTG255-escena.jpg",
+    "recorte": "JTG255-patente.jpg"
+   }
+  },
+  {
+   "patente": "KDR021",
+   "pasos": 2,
+   "plantas": "Ric",
+   "recorrido": "15:16 Balanza › 15:27 Balanza",
+   "primero": "15:16",
+   "ultimo": "15:27",
+   "foto": {
+    "device": "RicB3Ingreso",
+    "at": "2026-11-02T18:16:47.000Z",
+    "leyo": "KDR021",
+    "confianza": 46,
+    "tipo": null,
+    "marca": "Kia",
+    "color": "White",
+    "escena": "KDR021-escena.jpg",
+    "recorte": "KDR021-patente.jpg"
+   }
+  },
+  {
+   "patente": "NKM663",
+   "pasos": 2,
+   "plantas": "SL",
+   "recorrido": "10:23 Egreso SL › 13:25 Egreso SL",
+   "primero": "10:23",
+   "ultimo": "13:25",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T13:23:58.000Z",
+    "leyo": "NKM663",
+    "confianza": 66,
+    "tipo": null,
+    "marca": null,
+    "color": "White",
+    "escena": "NKM663-escena.jpg",
+    "recorte": "NKM663-patente.jpg"
+   }
+  },
+  {
+   "patente": "OSY724",
+   "pasos": 2,
+   "plantas": "Ric",
+   "recorrido": "11:43 Balanza › 12:46 Balanza",
+   "primero": "11:43",
+   "ultimo": "12:46",
+   "foto": {
+    "device": "RicB3Ingreso",
+    "at": "2026-11-02T14:43:26.276Z",
+    "leyo": "OSY724",
+    "confianza": 86,
+    "tipo": null,
+    "marca": "Toyota",
+    "color": "White",
+    "escena": "OSY724-escena.jpg",
+    "recorte": "OSY724-patente.jpg"
+   }
+  },
+  {
+   "patente": "QIY765",
+   "pasos": 2,
+   "plantas": "Ric+SL",
+   "recorrido": "08:40 Ingreso › 10:58 Renova",
+   "primero": "08:40",
+   "ultimo": "10:58",
+   "foto": {
+    "device": "RicIngCamFrente",
+    "at": "2026-11-02T11:40:34.912Z",
+    "leyo": "QIY765",
+    "confianza": 78,
+    "tipo": null,
+    "marca": "Renault",
+    "color": "White",
+    "escena": "QIY765-escena.jpg",
+    "recorte": "QIY765-patente.jpg"
+   }
+  },
+  {
+   "patente": "TNE931",
+   "pasos": 2,
+   "plantas": "SL",
+   "recorrido": "09:17 Egreso SL › 13:53 Egreso SL",
+   "primero": "09:17",
+   "ultimo": "13:53",
+   "foto": null
+  },
+  {
+   "patente": "AA124JA",
+   "pasos": 1,
+   "plantas": "SL",
+   "recorrido": "23:31 Balanza egreso SL",
+   "primero": "23:31",
+   "ultimo": "23:31",
+   "foto": {
+    "device": "SLZBalSC1Tras",
+    "at": "2026-11-03T02:31:30.000Z",
+    "leyo": "AA124JA",
+    "confianza": 86,
+    "tipo": null,
+    "marca": null,
+    "color": "Gray",
+    "escena": "AA124JA-escena.jpg",
+    "recorte": "AA124JA-patente.jpg"
+   }
+  },
+  {
+   "patente": "AA619UI",
+   "pasos": 1,
+   "plantas": "Ric",
+   "recorrido": "09:35 Balanza",
+   "primero": "09:35",
+   "ultimo": "09:35",
+   "foto": {
+    "device": "RicB2Egreso",
+    "at": "2026-11-02T12:35:23.386Z",
+    "leyo": "AA619UI",
+    "confianza": 78,
+    "tipo": null,
+    "marca": "Ford",
+    "color": "White",
+    "escena": "AA619UI-escena.jpg",
+    "recorte": "AA619UI-patente.jpg"
+   }
+  },
+  {
+   "patente": "AB471ZF",
+   "pasos": 1,
+   "plantas": "Ric",
+   "recorrido": "17:54 Balanza",
+   "primero": "17:54",
+   "ultimo": "17:54",
+   "foto": {
+    "device": "RicB2Egreso",
+    "at": "2026-11-02T20:54:06.000Z",
+    "leyo": "AB471ZF",
+    "confianza": 86,
+    "tipo": null,
+    "marca": "Volkswagen",
+    "color": "Blue",
+    "escena": "AB471ZF-escena.jpg",
+    "recorte": "AB471ZF-patente.jpg"
+   }
+  },
+  {
+   "patente": "AD117ZL",
+   "pasos": 1,
+   "plantas": "SL",
+   "recorrido": "15:45 Egreso SL",
+   "primero": "15:45",
+   "ultimo": "15:45",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T18:45:40.000Z",
+    "leyo": "AD117ZL",
+    "confianza": 74,
+    "tipo": null,
+    "marca": "Fiat",
+    "color": "White",
+    "escena": "AD117ZL-escena.jpg",
+    "recorte": "AD117ZL-patente.jpg"
+   }
+  },
+  {
+   "patente": "AD511OO",
+   "pasos": 1,
+   "plantas": "Ric",
+   "recorrido": "06:46 Balanza",
+   "primero": "06:46",
+   "ultimo": "06:46",
+   "foto": {
+    "device": "RicB2Ingreso",
+    "at": "2026-11-02T09:46:37.000Z",
+    "leyo": "AD511OO",
+    "confianza": 66,
+    "tipo": null,
+    "marca": null,
+    "color": "Gray",
+    "escena": "AD511OO-escena.jpg",
+    "recorte": "AD511OO-patente.jpg"
+   }
+  },
+  {
+   "patente": "ADE342",
+   "pasos": 1,
+   "plantas": "Ric",
+   "recorrido": "22:13 Ingreso",
+   "primero": "22:13",
+   "ultimo": "22:13",
+   "foto": {
+    "device": "RicIngCamFrente",
+    "at": "2026-11-03T01:13:18.803Z",
+    "leyo": "ADE342",
+    "confianza": 38,
+    "tipo": null,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "escena": "ADE342-escena.jpg",
+    "recorte": "ADE342-patente.jpg"
+   }
+  },
+  {
+   "patente": "AGJ360",
+   "pasos": 1,
+   "plantas": "Ric",
+   "recorrido": "14:04 Balanza",
+   "primero": "14:04",
+   "ultimo": "14:04",
+   "foto": {
+    "device": "RicB2Egreso",
+    "at": "2026-11-02T17:04:26.000Z",
+    "leyo": "AGJ360",
+    "confianza": 82,
+    "tipo": null,
+    "marca": "Mitsubishi",
+    "color": "White",
+    "escena": "AGJ360-escena.jpg",
+    "recorte": "AGJ360-patente.jpg"
+   }
+  },
+  {
+   "patente": "AH262HP",
+   "pasos": 1,
+   "plantas": "Ric",
+   "recorrido": "16:41 Balanza",
+   "primero": "16:41",
+   "ultimo": "16:41",
+   "foto": {
+    "device": "RicB2Egreso",
+    "at": "2026-11-02T19:41:05.000Z",
+    "leyo": "AH262HP",
+    "confianza": 74,
+    "tipo": null,
+    "marca": "Toyota",
+    "color": "White",
+    "escena": "AH262HP-escena.jpg",
+    "recorte": "AH262HP-patente.jpg"
+   }
+  },
+  {
+   "patente": "AH335AJ",
+   "pasos": 1,
+   "plantas": "SL",
+   "recorrido": "12:15 Egreso SL",
+   "primero": "12:15",
+   "ultimo": "12:15",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T15:15:50.000Z",
+    "leyo": "AH335AJ",
+    "confianza": 46,
+    "tipo": null,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "escena": "AH335AJ-escena.jpg",
+    "recorte": "AH335AJ-patente.jpg"
+   }
+  },
+  {
+   "patente": "AI638OO",
+   "pasos": 1,
+   "plantas": "Ric",
+   "recorrido": "07:08 Balanza",
+   "primero": "07:08",
+   "ultimo": "07:08",
+   "foto": {
+    "device": "RicB2Ingreso",
+    "at": "2026-11-02T10:08:24.000Z",
+    "leyo": "AI638OO",
+    "confianza": 58,
+    "tipo": null,
+    "marca": null,
+    "color": "Black",
+    "escena": "AI638OO-escena.jpg",
+    "recorte": "AI638OO-patente.jpg"
+   }
+  },
+  {
+   "patente": "AI651QS",
+   "pasos": 1,
+   "plantas": "Ric",
+   "recorrido": "07:07 Balanza",
+   "primero": "07:07",
+   "ultimo": "07:07",
+   "foto": {
+    "device": "RicB2Ingreso",
+    "at": "2026-11-02T10:07:53.000Z",
+    "leyo": "AI651QS",
+    "confianza": 70,
+    "tipo": null,
+    "marca": null,
+    "color": "White",
+    "escena": "AI651QS-escena.jpg",
+    "recorte": "AI651QS-patente.jpg"
+   }
+  },
+  {
+   "patente": "AJ117ZL",
+   "pasos": 1,
+   "plantas": "SL",
+   "recorrido": "06:39 Egreso SL",
+   "primero": "06:39",
+   "ultimo": "06:39",
+   "foto": {
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-11-02T09:39:09.000Z",
+    "leyo": "AJ117ZL",
+    "confianza": 50,
+    "tipo": null,
+    "marca": "Fiat",
+    "color": "White",
+    "escena": "AJ117ZL-escena.jpg",
+    "recorte": "AJ117ZL-patente.jpg"
+   }
+  },
+  {
+   "patente": "BCT029",
+   "pasos": 1,
+   "plantas": "Ric",
+   "recorrido": "10:56 Balanza",
+   "primero": "10:56",
+   "ultimo": "10:56",
+   "foto": {
+    "device": "RicB3Egreso",
+    "at": "2026-11-02T13:56:15.321Z",
+    "leyo": "BCT029",
+    "confianza": 66,
+    "tipo": null,
+    "marca": null,
+    "color": "Blue",
+    "escena": "BCT029-escena.jpg",
+    "recorte": "BCT029-patente.jpg"
+   }
+  },
+  {
+   "patente": "BJI730",
+   "pasos": 1,
+   "plantas": "Ric",
+   "recorrido": "04:02 Calada",
+   "primero": "04:02",
+   "ultimo": "04:02",
+   "foto": {
+    "device": "RicCal04",
+    "at": "2026-11-02T07:02:04.457Z",
+    "leyo": "FBI730",
+    "confianza": 54,
+    "tipo": null,
+    "marca": null,
+    "color": "Black",
+    "escena": "BJI730-escena.jpg",
+    "recorte": "BJI730-patente.jpg"
+   }
+  },
+  {
+   "patente": "DBZ307",
+   "pasos": 1,
+   "plantas": "SL",
+   "recorrido": "22:42 Volcables SL",
+   "primero": "22:42",
+   "ultimo": "22:42",
+   "foto": {
+    "device": "SLZVolcableC5",
+    "at": "2026-11-03T01:42:11.000Z",
+    "leyo": "DBZ307",
+    "confianza": 34,
+    "tipo": null,
+    "marca": null,
+    "color": "White",
+    "escena": "DBZ307-escena.jpg",
+    "recorte": "DBZ307-patente.jpg"
+   }
+  },
+  {
+   "patente": "DIB580",
+   "pasos": 1,
+   "plantas": "Ric",
+   "recorrido": "17:39 Salida 2",
+   "primero": "17:39",
+   "ultimo": "17:39",
+   "foto": {
+    "device": "RicEgrCamFrente",
+    "at": "2026-11-02T20:39:34.578Z",
+    "leyo": "DIB580",
+    "confianza": 70,
+    "tipo": null,
+    "marca": null,
+    "color": "Black",
+    "escena": "DIB580-escena.jpg",
+    "recorte": "DIB580-patente.jpg"
+   }
+  },
+  {
+   "patente": "EFD527",
+   "pasos": 1,
+   "plantas": "SL",
+   "recorrido": "05:23 Balanza egreso SL",
+   "primero": "05:23",
+   "ultimo": "05:23",
+   "foto": {
+    "device": "SLZBalSC2Fte",
+    "at": "2026-11-02T08:23:25.612Z",
+    "leyo": "EOD427",
+    "confianza": 22,
+    "tipo": null,
+    "marca": "Daewoo",
+    "color": "Black",
+    "escena": "EFD527-escena.jpg",
+    "recorte": "EFD527-patente.jpg"
+   }
+  },
+  {
+   "patente": "ELU998",
+   "pasos": 1,
+   "plantas": "SL",
+   "recorrido": "05:22 Egreso SL",
+   "primero": "05:22",
+   "ultimo": "05:22",
+   "foto": null
+  },
+  {
+   "patente": "HCD321",
+   "pasos": 1,
+   "plantas": "Ric",
+   "recorrido": "07:01 Balanza",
+   "primero": "07:01",
+   "ultimo": "07:01",
+   "foto": {
+    "device": "RicB2Ingreso",
+    "at": "2026-11-02T10:01:35.000Z",
+    "leyo": "HCD321",
+    "confianza": 34,
+    "tipo": null,
+    "marca": null,
+    "color": "Silver",
+    "escena": "HCD321-escena.jpg",
+    "recorte": "HCD321-patente.jpg"
+   }
+  },
+  {
+   "patente": "HHH881",
+   "pasos": 1,
+   "plantas": "Ric",
+   "recorrido": "08:28 Balanza",
+   "primero": "08:28",
+   "ultimo": "08:28",
+   "foto": {
+    "device": "RicB2Egreso",
+    "at": "2026-11-02T11:28:47.395Z",
+    "leyo": "HH6887",
+    "confianza": 66,
+    "tipo": null,
+    "marca": "Ford",
+    "color": "Blue",
+    "escena": "HHH881-escena.jpg",
+    "recorte": "HHH881-patente.jpg"
+   }
+  },
+  {
+   "patente": "HHT270",
+   "pasos": 1,
+   "plantas": "Ric",
+   "recorrido": "08:41 Balanza",
+   "primero": "08:41",
+   "ultimo": "08:41",
+   "foto": {
+    "device": "RicB3Ingreso",
+    "at": "2026-11-02T11:41:34.259Z",
+    "leyo": "HHT270",
+    "confianza": 66,
+    "tipo": null,
+    "marca": "Hyundai",
+    "color": "White",
+    "escena": "HHT270-escena.jpg",
+    "recorte": "HHT270-patente.jpg"
+   }
+  },
+  {
+   "patente": "HLJ270",
+   "pasos": 1,
+   "plantas": "Ric",
+   "recorrido": "10:41 Balanza",
+   "primero": "10:41",
+   "ultimo": "10:41",
+   "foto": {
+    "device": "RicB3Ingreso",
+    "at": "2026-11-02T13:41:01.179Z",
+    "leyo": "HLJ270",
+    "confianza": 70,
+    "tipo": null,
+    "marca": "Hyundai",
+    "color": "Black",
+    "escena": "HLJ270-escena.jpg",
+    "recorte": "HLJ270-patente.jpg"
+   }
+  },
+  {
+   "patente": "IEU171",
+   "pasos": 1,
+   "plantas": "SL",
+   "recorrido": "10:22 Renova",
+   "primero": "10:22",
+   "ultimo": "10:22",
+   "foto": {
+    "device": "SLZTK400",
+    "at": "2026-11-02T13:22:35.000Z",
+    "leyo": "IEU171",
+    "confianza": 66,
+    "tipo": null,
+    "marca": "DAF",
+    "color": "White",
+    "escena": "IEU171-escena.jpg",
+    "recorte": "IEU171-patente.jpg"
+   }
+  },
+  {
+   "patente": "IHL989",
+   "pasos": 1,
+   "plantas": "SL",
+   "recorrido": "01:24 Volcables SL",
+   "primero": "01:24",
+   "ultimo": "01:24",
+   "foto": {
+    "device": "SLZVolcableC4",
+    "at": "2026-11-02T04:24:12.078Z",
+    "leyo": "IHA909",
+    "confianza": 82,
+    "tipo": null,
+    "marca": null,
+    "color": "White",
+    "escena": "IHL989-escena.jpg",
+    "recorte": "IHL989-patente.jpg"
+   }
+  },
+  {
+   "patente": "INK312",
+   "pasos": 1,
+   "plantas": "SL",
+   "recorrido": "21:59 Volcables SL",
+   "primero": "21:59",
+   "ultimo": "21:59",
+   "foto": {
+    "device": "SLZVolcableC3",
+    "at": "2026-11-03T00:59:17.018Z",
+    "leyo": "INE31",
+    "confianza": 58,
+    "tipo": null,
+    "marca": "Iveco",
+    "color": "Red",
+    "escena": "INK312-escena.jpg",
+    "recorte": "INK312-patente.jpg"
+   }
+  },
+  {
+   "patente": "JTH801",
+   "pasos": 1,
+   "plantas": "SL",
+   "recorrido": "05:39 Ingreso SL",
+   "primero": "05:39",
+   "ultimo": "05:39",
+   "foto": {
+    "device": "SLZIngCamFrente",
+    "at": "2026-11-02T08:39:05.992Z",
+    "leyo": "JTH801",
+    "confianza": 86,
+    "tipo": null,
+    "marca": "Iveco",
+    "color": "Green",
+    "escena": "JTH801-escena.jpg",
+    "recorte": "JTH801-patente.jpg"
+   }
+  },
+  {
+   "patente": "KDE342",
+   "pasos": 1,
+   "plantas": "Ric",
+   "recorrido": "22:15 Preingreso",
+   "primero": "22:15",
+   "ultimo": "22:15",
+   "foto": {
+    "device": "RicPreIngInFr",
+    "at": "2026-11-03T01:15:40.643Z",
+    "leyo": "KDE342",
+    "confianza": 46,
+    "tipo": null,
+    "marca": "Renault",
+    "color": "White",
+    "escena": "KDE342-escena.jpg",
+    "recorte": "KDE342-patente.jpg"
+   }
+  },
+  {
+   "patente": "KZS251",
+   "pasos": 1,
+   "plantas": "Ric",
+   "recorrido": "16:29 Balanza",
+   "primero": "16:29",
+   "ultimo": "16:29",
+   "foto": {
+    "device": "RicB2Egreso",
+    "at": "2026-11-02T19:29:43.661Z",
+    "leyo": "KZS251",
+    "confianza": 82,
+    "tipo": null,
+    "marca": "Volkswagen",
+    "color": "Red",
+    "escena": "KZS251-escena.jpg",
+    "recorte": "KZS251-patente.jpg"
+   }
+  },
+  {
+   "patente": "LCX739",
+   "pasos": 1,
+   "plantas": "SL",
+   "recorrido": "13:03 Renova",
+   "primero": "13:03",
+   "ultimo": "13:03",
+   "foto": {
+    "device": "SLZTK400",
+    "at": "2026-11-02T16:03:57.000Z",
+    "leyo": "LCX739",
+    "confianza": 14,
+    "tipo": null,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "escena": "LCX739-escena.jpg",
+    "recorte": "LCX739-patente.jpg"
+   }
+  },
+  {
+   "patente": "LF388RP",
+   "pasos": 1,
+   "plantas": "Ric",
+   "recorrido": "06:14 Balanza",
+   "primero": "06:14",
+   "ultimo": "06:14",
+   "foto": {
+    "device": "RicB2Egreso",
+    "at": "2026-11-02T09:14:28.845Z",
+    "leyo": "LF388RP",
+    "confianza": 74,
+    "tipo": null,
+    "marca": "Fiat",
+    "color": null,
+    "escena": "LF388RP-escena.jpg",
+    "recorte": "LF388RP-patente.jpg"
+   }
+  },
+  {
+   "patente": "LGG502",
+   "pasos": 1,
+   "plantas": "SL",
+   "recorrido": "09:35 Egreso SL",
+   "primero": "09:35",
+   "ultimo": "09:35",
+   "foto": {
+    "device": "SLZSalidaC1Tras",
+    "at": "2026-11-02T12:35:22.000Z",
+    "leyo": "L550",
+    "confianza": 58,
+    "tipo": null,
+    "marca": null,
+    "color": null,
+    "escena": "LGG502-escena.jpg",
+    "recorte": null
+   }
+  },
+  {
+   "patente": "LJR968",
+   "pasos": 1,
+   "plantas": "SL",
+   "recorrido": "10:03 Renova",
+   "primero": "10:03",
+   "ultimo": "10:03",
+   "foto": {
+    "device": "SLZTK400",
+    "at": "2026-11-02T13:03:37.000Z",
+    "leyo": "LJR968",
+    "confianza": 50,
+    "tipo": null,
+    "marca": "Maxus",
+    "color": "Black",
+    "escena": "LJR968-escena.jpg",
+    "recorte": "LJR968-patente.jpg"
+   }
+  },
+  {
+   "patente": "LYW022",
+   "pasos": 1,
+   "plantas": "Ric",
+   "recorrido": "03:39 Preingreso",
+   "primero": "03:39",
+   "ultimo": "03:39",
+   "foto": {
+    "device": "RicPreIngInFr",
+    "at": "2026-11-02T06:39:36.000Z",
+    "leyo": "LYW022",
+    "confianza": 38,
+    "tipo": null,
+    "marca": null,
+    "color": "Red",
+    "escena": "LYW022-escena.jpg",
+    "recorte": "LYW022-patente.jpg"
+   }
+  },
+  {
+   "patente": "MKF419",
+   "pasos": 1,
+   "plantas": "SL",
+   "recorrido": "05:08 Balanza egreso SL",
+   "primero": "05:08",
+   "ultimo": "05:08",
+   "foto": {
+    "device": "SLZBalSC2Fte",
+    "at": "2026-11-02T08:08:56.710Z",
+    "leyo": "WGF419",
+    "confianza": 70,
+    "tipo": null,
+    "marca": null,
+    "color": "Black",
+    "escena": "MKF419-escena.jpg",
+    "recorte": "MKF419-patente.jpg"
+   }
+  },
+  {
+   "patente": "NWZ036",
+   "pasos": 1,
+   "plantas": "SL",
+   "recorrido": "02:31 Egreso SL",
+   "primero": "02:31",
+   "ultimo": "02:31",
+   "foto": null
+  },
+  {
+   "patente": "PBI796",
+   "pasos": 1,
+   "plantas": "SL",
+   "recorrido": "21:31 Volcables SL",
+   "primero": "21:31",
+   "ultimo": "21:31",
+   "foto": {
+    "device": "SLZVolcableC5",
+    "at": "2026-11-03T00:31:37.000Z",
+    "leyo": "PBI796",
+    "confianza": 34,
+    "tipo": null,
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "escena": "PBI796-escena.jpg",
+    "recorte": "PBI796-patente.jpg"
+   }
+  },
+  {
+   "patente": "PHM505",
+   "pasos": 1,
+   "plantas": "SL",
+   "recorrido": "19:14 Egreso SL",
+   "primero": "19:14",
+   "ultimo": "19:14",
+   "foto": null
+  },
+  {
+   "patente": "WWW007",
+   "pasos": 1,
+   "plantas": "SL",
+   "recorrido": "02:05 Balanza ingreso SL",
+   "primero": "02:05",
+   "ultimo": "02:05",
+   "foto": {
+    "device": "SLZBalIngFte",
+    "at": "2026-11-02T05:05:51.000Z",
+    "leyo": "WWW007",
+    "confianza": 18,
+    "tipo": null,
+    "marca": "ISUZU",
+    "color": "White",
+    "escena": "WWW007-escena.jpg",
+    "recorte": "WWW007-patente.jpg"
+   }
+  }
+ ]
+}
