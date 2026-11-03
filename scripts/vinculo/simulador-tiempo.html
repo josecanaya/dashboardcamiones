@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Simulación del lote</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--fg:#1d2433;--mut:#667085;--line:#e4e7ec;--acc:#5b3fd1;--cam:#12b76a;--rec:#2e90fa;--ded:#f79009;--fal:#f04438;--free:#98a2b3;--yo:#7a5af8}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0f1218;--card:#171b23;--fg:#e6e9ef;--mut:#98a2b3;--line:#2a313c}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:13px/1.4 system-ui,sans-serif}
+.bar{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--line);flex-wrap:wrap;position:sticky;top:0;z-index:5}
+.bar h1{font-size:15px;margin:0}.clock{font:700 26px ui-monospace,monospace;min-width:150px}
+.bar button,.bar select{font:inherit;padding:6px 12px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:inherit;cursor:pointer}
+.bar input[type=range]{flex:1;min-width:200px}
+.legend{display:flex;gap:10px;color:var(--mut);flex-wrap:wrap}.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:12px;padding:12px}
+@media (max-width:1000px){.grid{grid-template-columns:1fr}}
+.maps{display:grid;grid-template-columns:1fr;gap:12px}
+.map{position:relative;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.map h2{position:absolute;left:10px;top:8px;margin:0;font-size:14px;background:var(--card);padding:2px 8px;border-radius:6px;z-index:3}
+.map img.plan{width:100%;display:block;opacity:.55}
+.node{position:absolute;transform:translate(-50%,-50%);font-size:10px;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:4px;padding:0 4px;white-space:nowrap;z-index:1;opacity:.9}
+.flash{position:absolute;width:14px;height:14px;border-radius:50%;transform:translate(-50%,-50%);z-index:2;pointer-events:none}
+.tok{position:absolute;transform:translate(-50%,-120%);font:600 11px ui-monospace,monospace;padding:1px 5px;border-radius:4px;color:#fff;z-index:4;white-space:nowrap;cursor:pointer;box-shadow:0 1px 3px #0005}
+.tok.guess{background:transparent!important;border:2px dashed var(--ded);color:var(--fg)}
+.transit{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px}.transit h3{margin:0 0 6px;font-size:13px}
+.trip{display:grid;grid-template-columns:80px 1fr;gap:6px;align-items:center;margin:3px 0}.trip span.t{height:6px;background:var(--line);border-radius:3px;position:relative}.trip span.t i{position:absolute;left:0;top:0;bottom:0;background:var(--acc);border-radius:3px}
+.side{display:flex;flex-direction:column;gap:12px;min-width:0}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}.panel h3{margin:0 0 8px;font-size:14px}
+#log{max-height:46vh;overflow-y:auto}.ev{border-left:3px solid var(--line);padding:4px 8px;margin:0 0 6px;cursor:pointer}.ev:hover{background:var(--bg)}
+.ev .h{color:var(--mut);font-family:ui-monospace,monospace}.ev.k-camara{border-color:var(--cam)}.ev.k-rec{border-color:var(--rec)}.ev.k-ded{border-color:var(--ded)}.ev.k-fal{border-color:var(--fal)}.ev.k-llega{border-color:var(--acc)}
+.ev .yo{color:var(--yo);font-weight:600}
+#detail .cands{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.cand{border:2px solid var(--line);border-radius:6px;padding:4px;font-size:11px}.cand.al{border-color:var(--cam)}.cand.me{border-color:var(--yo);box-shadow:0 0 0 2px var(--yo)}
+.cand img{width:100%;border-radius:3px;display:block}.cand b{font:600 13px ui-monospace,monospace}
+.cand button,.acts button{font:inherit;font-size:11px;padding:3px 6px;margin-top:3px;border-radius:5px;border:1px solid var(--line);background:var(--card);color:inherit;cursor:pointer;width:100%}
+.acts{display:flex;gap:6px;margin-top:6px}.acts button.on{background:var(--yo);color:#fff}
+.mut{color:var(--mut)}
+.capimg{width:100%;border-radius:6px;display:block}.capplate{height:36px;margin-top:4px}
+.rivals{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:8px}
+.rival{border:2px solid var(--line);border-radius:8px;padding:5px;font-size:11px;display:flex;flex-direction:column;gap:3px}
+.rival.al{border-color:var(--cam)}.rival.me{border-color:var(--yo);box-shadow:0 0 0 2px var(--yo)}
+.rival img{width:100%;border-radius:4px}.rival b.p{font:600 13px ui-monospace,monospace}
+.pb{height:6px;background:var(--line);border-radius:3px}.pb i{display:block;height:6px;border-radius:3px;background:var(--acc)}
+.rival button,.navq button{font:inherit;font-size:12px;padding:5px;border-radius:5px;border:1px solid var(--line);background:var(--card);color:inherit;cursor:pointer}
+.navq{display:flex;gap:6px;align-items:center;margin-bottom:6px}.ev.k-cap{border-color:var(--acc)}
+</style>
+</head>
+<body>
+<div class="bar">
+  <h1 id="ttl">Simulación del lote</h1>
+  <span class="clock" id="clock"></span>
+  <button id="play">▶ Reproducir</button>
+  <select id="speed" aria-label="Velocidad"><option value="2">2 min por segundo</option><option value="5">5 min por segundo</option><option value="10" selected>10 min por segundo</option><option value="30">30 min por segundo</option></select>
+  <button id="dudosas">Revisar dudosas</button>
+  <input type="range" id="slider" min="0" max="1000" value="0" aria-label="Hora">
+  <span class="legend"><span><i style="background:var(--cam)"></i>lectura del camión</span><span><i style="background:var(--free)"></i>lectura sin dueño</span><span><i style="background:var(--rec)"></i>asignada por el algoritmo</span><span><i style="border:2px dashed var(--ded)"></i>posición deducida</span></span>
+</div>
+<div class="grid">
+  <div class="maps">
+    <div class="map" id="map-ricardone"><h2>Ricardone</h2><img class="plan" src="/plano/ricardone.png" alt="Plano de Ricardone"></div>
+    <div class="transit"><h3>En ruta Ricardone → San Lorenzo</h3><div id="transit" class="mut">Nadie en ruta.</div></div>
+    <div class="map" id="map-san_lorenzo"><h2>San Lorenzo</h2><img class="plan" src="/plano/san_lorenzo.png" alt="Plano de San Lorenzo"></div>
+  </div>
+  <div class="side">
+    <div class="panel"><h3>Qué hace el algoritmo</h3><div id="log"></div></div>
+    <div class="panel" id="detail"><h3>Detalle</h3><p class="mut">Tocá un evento del registro o un camión del plano.</p></div>
+  </div>
+</div>
+<script>
+var DATA = __DATA__
+var CORR = __CORR__
+var N = DATA.nodos, casos = DATA.casos
+var MIN = 60000, H = 3600000
+var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c] }) }
+var hhmm = function (t) { return new Date(t - 3 * H).toISOString().slice(11, 16) }
+var short = function (n) { return n.replace('ricardone:', 'Ric · ').replace('san_lorenzo:', 'SL · ') }
+var place = function (n) { return n.split(':')[1] }
+var LBL = { camara: 'cámara', reconstruido: 'recuperado', deducido: 'deducido', falta: 'falta' }
+var COL = { camara: 'var(--cam)', reconstruido: 'var(--rec)', deducido: 'var(--ded)', falta: 'var(--fal)' }
+
+// ── Itinerario de cada camión: hora de cada paso (cámara, recuperado) o interpolada (deducido/falta) ──
+casos.forEach(function (c) {
+  var steps = Object.keys(c.status).filter(function (s) { return N[s] })
+  var it = steps.map(function (s) {
+    var st = c.status[s], t = null
+    if (st === 'camara') { var ls = c.lecturas.filter(function (l) { return l.nodo === s }).map(function (l) { return Date.parse(l.at) }).sort(); t = ls[0] }
+    var h = c.huecos.filter(function (x) { return x.nodo === s })[0]
+    if (st === 'reconstruido' && h && h.asignada) { var a = h.todas.filter(function (x) { return x.elegida })[0]; if (a) t = Date.parse(a.at) }
+    return { nodo: s, st: st, t: t, guess: t == null }
+  })
+  // Pasos sin hora: entre el anterior y el siguiente conocidos, repartidos parejo.
+  for (var i = 0; i < it.length; i++) if (it[i].t == null) {
+    var p = i - 1; while (p >= 0 && it[p].t == null) p--
+    var q = i + 1; while (q < it.length && it[q].t == null) q++
+    var tp = p >= 0 ? it[p].t : null, tq = q < it.length ? it[q].t : null
+    if (tp != null && tq != null) it[i].t = tp + (tq - tp) * (i - p) / (q - p)
+    else if (tp != null) it[i].t = tp + (i - p) * 15 * MIN
+    else if (tq != null) it[i].t = tq - (q - i) * 10 * MIN
+  }
+  // Los pasos tienen que ir en orden: una lectura vieja de otro día no lo hace volver atrás.
+  for (var j = 1; j < it.length; j++) if (it[j].t < it[j - 1].t) { it[j].t = it[j - 1].t + 2 * MIN; it[j].guess = true }
+  c.it = it.filter(function (x) { return x.t != null })
+  c.t0 = c.it.length ? c.it[0].t : Date.parse(c.llegada)
+  c.t1 = c.it.length ? c.it[c.it.length - 1].t : c.t0
+})
+var T0 = Math.min.apply(null, casos.map(function (c) { return c.t0 })) - 10 * MIN
+var T1 = Math.max.apply(null, casos.map(function (c) { return Math.min(c.t1, c.t0 + 14 * H) })) + 20 * MIN
+
+// ── Eventos: llegadas, lecturas del camión, decisiones del algoritmo en cada paso sin lectura ──
+var events = [], flashes = []
+casos.forEach(function (c, ci) {
+  events.push({ t: c.t0, k: 'llega', ci: ci, txt: '<b>' + esc(c.patentes.join(' / ')) + '</b> llega · circuito ' + esc(c.circuito) })
+  c.it.forEach(function (s) {
+    if (s.st !== 'camara') return
+    var l = c.lecturas.filter(function (x) { return x.nodo === s.nodo }).sort(function (a, b) { return a.at < b.at ? -1 : 1 })[0]
+    events.push({ t: s.t, k: 'camara', ci: ci, nodo: s.nodo, txt: esc(short(s.nodo)) + ': la cámara ' + esc(l.camara) + ' lee <b>' + esc(l.patente) + '</b> → paso directo' + (l.clase !== 'carta' ? ' (' + esc(l.clase.replace('_', ' ')) + ')' : '') })
+  })
+  c.lecturas.forEach(function (l) { if (N[l.nodo]) flashes.push({ t: Date.parse(l.at), nodo: l.nodo, color: 'var(--cam)' }) })
+  c.huecos.forEach(function (h) {
+    var best = h.todas[0], second = h.todas[1], al = h.todas.filter(function (x) { return x.elegida })[0]
+    var me = CORR[c.ctg + '|' + h.nodo], mine = me && h.todas.filter(function (x) { return x.at === me.eleccion })[0]
+    var t = al ? Date.parse(al.at) : (h.todas.length ? Math.max.apply(null, h.todas.map(function (x) { return Date.parse(x.at) })) : (c.it.filter(function (s) { return s.nodo === h.nodo })[0] || {}).t)
+    var sc = function (x) { return '«' + esc(x.patente || 'sin patente') + '» ' + hhmm(Date.parse(x.at)) + ' (' + x.puntaje + ')' }
+    var txt = '<b>' + esc(c.patentes[0]) + '</b> en ' + esc(short(h.nodo)) + ' sin lectura propia. ' + h.todas.length + ' lecturas libres entre ' + esc(h.desde.slice(6)) + ' y ' + esc(h.hasta.slice(6)) + '. '
+    if (al) txt += 'La captura ' + sc(al) + ' es más probable de este camión que de cualquier otro que estaba ahí → <b>se la asigna</b> (seguridad ' + h.asignada.prob + ' %).'
+    else if (best) txt += 'Cada una fue más probable de otro camión (la mejor, ' + sc(best) + (best.vaA ? ', fue a ' + esc(best.vaA.patente) + ' con ' + best.vaA.prob + ' %' : '') + ') → <b>' + LBL[c.status[h.nodo]] + '</b>.'
+    else txt += 'No hay capturas → <b>' + LBL[c.status[h.nodo]] + '</b>.'
+    if (me) txt += ' <span class="yo">Vos: ' + (mine ? '«' + esc(mine.patente || 'sin patente') + '» ' + hhmm(Date.parse(mine.at)) : me.eleccion === 'ninguna' ? 'ninguna' : 'no se puede saber') + ((mine && al === mine) || (!mine && !al) ? ' ✓' : ' ✗') + '</span>'
+    events.push({ t: t || c.t0, k: al ? 'rec' : c.status[h.nodo] === 'falta' ? 'fal' : 'ded', ci: ci, nodo: h.nodo, hueco: h, txt: txt })
+    h.todas.forEach(function (x) { flashes.push({ t: Date.parse(x.at), nodo: h.nodo, color: x.elegida ? 'var(--rec)' : 'var(--free)' }) })
+  })
+})
+var capturas = DATA.capturas || []
+var lote = {}
+casos.forEach(function (c) { lote[c.ctg] = true })
+var capKey = function (k) { return 'cap|' + k.camara + '|' + k.at }
+capturas.forEach(function (k, i) {
+  var top = k.rivales[0], me = CORR[capKey(k)]
+  var mineTxt = me ? ' <span class="yo">Vos: ' + (me.eleccion === 'ninguno' ? 'ninguno' : me.eleccion === 'no_se_sabe' ? 'no se sabe' : esc(me.patente)) + (me.eleccion === top.ctg ? ' ✓' : ' ✗') + '</span>' : ''
+  events.push({ t: Date.parse(k.at), k: 'cap', cap: i, txt: 'Captura «' + esc(k.patente || 'sin patente') + '» en ' + esc(short(k.nodo)) + ' → <b>' + esc(top.patente) + '</b> ' + top.prob + ' %' + (k.rivales.length > 1 ? ' · compite con ' + k.rivales.slice(1, 3).map(function (x) { return esc(x.patente) + ' ' + x.prob + ' %' }).join(' · ') : ' (único candidato)') + mineTxt })
+})
+var dudosas = capturas.map(function (k, i) { return i }).filter(function (i) { return capturas[i].rivales[0].prob < 80 })
+function showCaptura(i) {
+  var k = capturas[i], key = capKey(k), me = CORR[key]
+  var qi = dudosas.indexOf(i)
+  var nav = '<div class="navq"><button id="qprev">← Anterior</button><button id="qnext">Siguiente →</button><span class="mut">' + (qi >= 0 ? 'dudosa ' + (qi + 1) + ' de ' + dudosas.length : 'seguridad ' + k.rivales[0].prob + ' %') + '</span></div>'
+  var porTxt = function (x) { return x.por === 'leido' ? 'leído en este punto (' + esc(x.desde.slice(6)) + '–' + esc(x.hasta.slice(6)) + ')' : 'tiene este paso pendiente (ventana ' + esc(x.desde.slice(6)) + '–' + esc(x.hasta.slice(6)) + ')' }
+  document.getElementById('detail').innerHTML = nav + '<h3>Captura de ' + esc(short(k.nodo)) + ' · ' + hhmm(Date.parse(k.at)) + '</h3>' +
+    '<p class="mut" style="margin:0 0 4px">' + esc(k.camara) + ' · leyó «' + esc(k.patente || 'sin patente') + '» · ' + esc(k.fuente) + (k.marca && !/unrecognized/i.test(k.marca) ? ' · ' + esc(k.marca) : '') + '</p>' +
+    (k.foto && k.foto.escena ? '<img class="capimg" src="/fotos/' + esc(k.foto.escena) + '" alt="Captura">' + (k.foto.patente ? '<img class="capplate" src="/fotos/' + esc(k.foto.patente) + '" alt="Patente de la captura">' : '') : '<p class="mut">El DSS no tiene la foto de esta captura.</p>') +
+    '<p style="margin:10px 0 0"><b>¿De qué camión es?</b> Compiten ' + k.rivales.length + ':</p><div class="rivals">' + k.rivales.map(function (x, j) {
+      var mine = me && me.eleccion === x.ctg
+      return '<div class="rival' + (j === 0 ? ' al' : '') + (mine ? ' me' : '') + '">' + (x.ref && x.ref.foto && x.ref.foto.escena ? '<img src="/fotos/' + esc(x.ref.foto.escena) + '" alt="Foto de ' + esc(x.patente) + '">' : '<span class="mut">sin foto buena</span>') +
+        '<b class="p">' + esc(x.plates.join(' / ')) + '</b>' + (lote[x.ctg] ? '' : '<span class="mut">fuera del lote</span>') +
+        (x.ref ? '<span class="mut">foto: ' + esc(short(x.ref.nodo)) + ' ' + esc(x.ref.hora.slice(6)) + (x.ref.camara === k.camara ? ' (misma cámara)' : '') + '</span>' : '') +
+        '<span>' + porTxt(x) + '</span><div class="pb"><i style="width:' + x.prob + '%"></i></div><span><b>' + x.prob + ' %</b>' + (j === 0 ? ' · eligió el algoritmo' : '') + '</span>' +
+        '<span class="mut">patente ×' + x.partes.patente + ' · marca ×' + x.partes.marca + ' · horario ×' + x.partes.horario + '</span>' +
+        '<button data-c="' + esc(x.ctg) + '" data-p="' + esc(x.patente) + '">' + (mine ? 'Elegido ✓' : 'Es este camión') + '</button></div>'
+    }).join('') + '</div><div class="acts"><button data-c="ninguno" class="' + (me && me.eleccion === 'ninguno' ? 'on' : '') + '">Ninguno de estos</button><button data-c="no_se_sabe" class="' + (me && me.eleccion === 'no_se_sabe' ? 'on' : '') + '">No se ve / no se sabe</button></div>'
+  document.querySelectorAll('#detail button[data-c]').forEach(function (b) {
+    b.onclick = function () {
+      CORR[key] = { eleccion: b.dataset.c, patente: b.dataset.p || null, camara: k.camara, at: k.at, nodo: k.nodo, algoritmo: k.rivales[0].ctg }
+      fetch('/api/correcciones', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: key, value: CORR[key] }) })
+      if (qi >= 0 && qi + 1 < dudosas.length) { var j = dudosas[qi + 1]; now = Date.parse(capturas[j].at); draw(); showCaptura(j) } else showCaptura(i)
+    }
+  })
+  var go = function (d) { var j = qi >= 0 ? dudosas[Math.max(0, Math.min(dudosas.length - 1, qi + d))] : Math.max(0, Math.min(capturas.length - 1, i + d)); now = Date.parse(capturas[j].at); draw(); showCaptura(j) }
+  document.getElementById('qprev').onclick = function () { go(-1) }
+  document.getElementById('qnext').onclick = function () { go(1) }
+}
+events.sort(function (a, b) { return a.t - b.t })
+
+// ── Plano: nodos ──
+Object.keys(N).forEach(function (id) {
+  var n = N[id], m = document.getElementById('map-' + n.planta)
+  if (!m || !casos.some(function (c) { return c.status[id] })) return
+  var d = document.createElement('div'); d.className = 'node'; d.style.left = n.x + '%'; d.style.top = n.y + '%'; d.textContent = place(id); m.appendChild(d)
+})
+var toks = casos.map(function (c, ci) {
+  var d = document.createElement('div'); d.className = 'tok'; d.textContent = c.patentes[0]; d.onclick = function () { showTruck(ci) }
+  return d
+})
+var flashEls = []
+
+var now = T0, playing = false, last = 0
+function posOf(c, t) {
+  var it = c.it
+  if (!it.length || t < it[0].t || t > it[it.length - 1].t + 10 * MIN) return null
+  for (var i = 0; i < it.length; i++) {
+    var a = it[i], b = it[i + 1]
+    if (!b || t < b.t) {
+      var A = N[a.nodo]
+      if (!b || t - a.t < 3 * MIN) return { planta: A.planta, x: A.x, y: A.y, guess: a.guess, st: a.st }
+      var B = N[b.nodo], f = (t - a.t) / (b.t - a.t)
+      if (A.planta !== B.planta) return { transit: true, f: f, from: a.nodo, to: b.nodo }
+      // Espera en el punto y después camina al siguiente en los últimos minutos del tramo.
+      var walk = Math.min(1, Math.max(0, 1 - (b.t - t) / (8 * MIN)))
+      return { planta: A.planta, x: A.x + (B.x - A.x) * walk, y: A.y + (B.y - A.y) * walk, guess: b.guess && walk > 0, st: walk > 0 ? b.st : a.st }
+    }
+  }
+}
+function draw() {
+  document.getElementById('clock').textContent = new Date(now - 3 * H).toISOString().slice(5, 16).replace('T', ' ')
+  document.getElementById('slider').value = Math.round((now - T0) / (T1 - T0) * 1000)
+  var tr = []
+  casos.forEach(function (c, ci) {
+    var p = posOf(c, now), el = toks[ci]
+    if (!p || p.transit) { if (el.parentNode) el.parentNode.removeChild(el); if (p) tr.push({ c: c, f: p.f }); return }
+    var m = document.getElementById('map-' + p.planta)
+    if (el.parentNode !== m) m.appendChild(el)
+    el.style.left = p.x + '%'; el.style.top = p.y + '%'
+    el.classList.toggle('guess', !!p.guess); el.style.background = p.guess ? '' : COL[p.st] || 'var(--acc)'
+  })
+  document.getElementById('transit').innerHTML = tr.length ? tr.map(function (x) { return '<div class="trip"><b>' + esc(x.c.patentes[0]) + '</b><span class="t"><i style="width:' + Math.round(x.f * 100) + '%"></i></span></div>' }).join('') : 'Nadie en ruta.'
+  flashEls.forEach(function (e) { e.remove() }); flashEls = []
+  flashes.forEach(function (f) {
+    if (now < f.t || now > f.t + 4 * MIN) return
+    var n = N[f.nodo]; if (!n) return
+    var e = document.createElement('div'); e.className = 'flash'; e.style.background = f.color; e.style.opacity = 1 - (now - f.t) / (4 * MIN)
+    e.style.left = (n.x + (Math.random() - .5) * 2) + '%'; e.style.top = (n.y + 3) + '%'
+    document.getElementById('map-' + n.planta).appendChild(e); flashEls.push(e)
+  })
+  var shown = events.filter(function (e) { return e.t <= now }).slice(-60).reverse()
+  var log = document.getElementById('log')
+  var sig = shown.length + '|' + (shown[0] && shown[0].t)
+  if (log.dataset.sig !== sig) {
+    log.dataset.sig = sig
+    log.innerHTML = shown.map(function (e) { return '<div class="ev k-' + e.k + '" data-i="' + events.indexOf(e) + '"><span class="h">' + hhmm(e.t) + '</span> ' + e.txt + '</div>' }).join('') || '<p class="mut">Todavía no pasó nada. Dale a reproducir.</p>'
+    log.querySelectorAll('.ev').forEach(function (d) { d.onclick = function () { var e = events[Number(d.dataset.i)]; e.cap != null ? showCaptura(e.cap) : e.hueco ? showHueco(e.ci, e.hueco) : showTruck(e.ci) } })
+  }
+}
+function showTruck(ci) {
+  var c = casos[ci]
+  document.getElementById('detail').innerHTML = '<h3>' + esc(c.patentes.join(' / ')) + ' · ' + esc(c.circuito) + '</h3>' +
+    c.it.map(function (s) { return '<div><span style="color:' + COL[s.st] + '">●</span> ' + esc(short(s.nodo)) + ' · ' + LBL[s.st] + ' · ' + (s.guess ? '~' : '') + hhmm(s.t) + '</div>' }).join('') +
+    (c.referencias[0] && c.referencias[0].foto.escena ? '<p class="mut" style="margin:8px 0 4px">Foto buena del camión</p><img style="width:100%;border-radius:6px" src="/fotos/' + esc(c.referencias[0].foto.escena) + '" alt="Foto del camión">' : '') +
+    c.huecos.map(function (h) { return '<button style="margin-top:6px" data-n="' + esc(h.nodo) + '">Ver ' + esc(short(h.nodo)) + ' (' + LBL[c.status[h.nodo]] + ')</button>' }).join(' ')
+  document.querySelectorAll('#detail button[data-n]').forEach(function (b) { b.onclick = function () { showHueco(ci, c.huecos.filter(function (h) { return h.nodo === b.dataset.n })[0]) } })
+}
+function showHueco(ci, h) {
+  var c = casos[ci], k = c.ctg + '|' + h.nodo, me = CORR[k]
+  var ref = c.referencias[0]
+  document.getElementById('detail').innerHTML = '<h3>' + esc(c.patentes[0]) + ' en ' + esc(short(h.nodo)) + '</h3><p class="mut">Ventana ' + esc(h.desde.slice(6)) + '–' + esc(h.hasta.slice(6)) + (h.esperada ? ' · esperada ' + esc(h.esperada.slice(6)) : '') + '</p>' +
+    (ref && ref.foto.escena ? '<p class="mut" style="margin:0">Así se ve el camión (' + esc(short(ref.nodo)) + '):</p><img style="width:100%;border-radius:6px;margin-bottom:6px" src="/fotos/' + esc(ref.foto.escena) + '" alt="Foto del camión">' : '') +
+    '<div class="cands">' + h.todas.map(function (x) {
+      var mine = me && me.eleccion === x.at
+      return '<div class="cand' + (x.elegida ? ' al' : '') + (mine ? ' me' : '') + '">' + (x.foto && x.foto.escena ? '<img src="/fotos/' + esc(x.foto.escena) + '" alt="Captura">' : '<span class="mut">sin foto</span>') +
+        '<b>' + esc(x.patente || '(sin patente)') + '</b> ' + hhmm(Date.parse(x.at)) + (x.vaA ? '<br><span>fue a <b>' + esc(x.vaA.patente) + '</b> (' + x.vaA.prob + ' %)</span> <a href="#" data-cap="' + esc(x.camara + '|' + x.at) + '">ver con quién compite</a>' : '<br><span class="mut">otro vehículo</span>') + '<br><span class="mut">patente ×' + x.partes.patente + ' · marca ×' + x.partes.marca + ' · horario ×' + x.partes.horario + ' = ' + x.puntaje + '</span>' +
+        '<button data-at="' + esc(x.at) + '" data-pl="' + esc(x.patente) + '" data-cam="' + esc(x.camara) + '">' + (mine ? 'Elegida ✓' : 'Es este') + '</button></div>'
+    }).join('') + '</div><div class="acts"><button data-at="ninguna" class="' + (me && me.eleccion === 'ninguna' ? 'on' : '') + '">Ninguna</button><button data-at="no_se_sabe" class="' + (me && me.eleccion === 'no_se_sabe' ? 'on' : '') + '">No se sabe</button></div>'
+  document.querySelectorAll('#detail a[data-cap]').forEach(function (a) { a.onclick = function (ev) { ev.preventDefault(); var i = capturas.findIndex(function (k) { return k.camara + '|' + k.at === a.dataset.cap }); if (i >= 0) showCaptura(i) } })
+  document.querySelectorAll('#detail button[data-at]').forEach(function (b) {
+    b.onclick = function () {
+      CORR[k] = { eleccion: b.dataset.at, patenteLeida: b.dataset.pl || null, camara: b.dataset.cam || null, nota: me && me.nota || '' }
+      fetch('/api/correcciones', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: k, value: CORR[k] }) })
+      showHueco(ci, h)
+    }
+  })
+}
+function tick(ts) {
+  if (playing) {
+    if (last) now = Math.min(T1, now + (ts - last) / 1000 * Number(document.getElementById('speed').value) * MIN)
+    if (now >= T1) { playing = false; document.getElementById('play').textContent = '▶ Reproducir' }
+    draw()
+  }
+  last = ts
+  requestAnimationFrame(tick)
+}
+document.getElementById('dudosas').onclick = function () { var first = dudosas.filter(function (i) { return !CORR[capKey(capturas[i])] })[0]; if (first == null) first = dudosas[0]; if (first == null) return; now = Date.parse(capturas[first].at); draw(); showCaptura(first) }
+document.getElementById('play').onclick = function () { playing = !playing; if (now >= T1) now = T0; this.textContent = playing ? '❚❚ Pausa' : '▶ Reproducir' }
+document.getElementById('slider').oninput = function () { now = T0 + (T1 - T0) * this.value / 1000; draw() }
+document.getElementById('ttl').textContent = 'Simulación del lote · ' + casos.length + ' camiones'
+draw(); requestAnimationFrame(tick)
+</script>
+</body>
+</html>

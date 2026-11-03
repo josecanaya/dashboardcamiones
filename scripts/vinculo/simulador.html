@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Simulador del vínculo</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--fg:#1d2433;--mut:#667085;--line:#e4e7ec;--acc:#5b3fd1;--cam:#12b76a;--rec:#2e90fa;--ded:#f79009;--fal:#f04438;--algo:#12b76a;--yo:#7a5af8}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0f1218;--card:#171b23;--fg:#e6e9ef;--mut:#98a2b3;--line:#2a313c}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,sans-serif}
+header.top{padding:14px 20px;border-bottom:1px solid var(--line);background:var(--card);display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+header.top h1{font-size:18px;margin:0}header.top .prog{color:var(--mut)}header.top .prog b{color:var(--fg)}
+details.how{padding:0 20px;background:var(--card);border-bottom:1px solid var(--line)}details.how summary{cursor:pointer;padding:10px 0;font-weight:600}
+details.how ol{margin:0 0 12px;padding-left:20px;max-width:900px}
+.layout{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - 100px)}
+@media (max-width:800px){.layout{grid-template-columns:1fr}aside{max-height:240px}}
+aside{border-right:1px solid var(--line);overflow-y:auto;background:var(--card)}
+aside button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;color:inherit;padding:8px 12px;cursor:pointer;font:inherit}
+aside button.sel{background:color-mix(in srgb,var(--acc) 12%,transparent)}aside button small{color:var(--mut)}
+.dots{display:flex;gap:3px;margin-top:4px}.dot{width:12px;height:12px;border-radius:3px}
+.s-camara{background:var(--cam)}.s-reconstruido{background:var(--rec)}.s-deducido{background:var(--ded)}.s-falta{background:var(--fal)}
+main{padding:16px 20px 60px;min-width:0}
+.legend{display:flex;gap:12px;color:var(--mut);font-size:12px;margin:6px 0 12px;flex-wrap:wrap}.legend span{display:flex;align-items:center;gap:4px}
+.route{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 16px}.step{border-radius:6px;padding:6px 8px;color:#fff;font-size:12px;min-width:110px}.step b{display:block;font-size:13px}
+.refs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}.ref{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px;width:230px}
+.ref img.sc{width:100%;border-radius:4px;display:block}.ref img.pl{height:34px;margin-top:4px}.ref p{margin:4px 0 0;font-size:12px;color:var(--mut)}
+section.hueco{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:0 0 18px}
+section.hueco h3{margin:0 0 4px;font-size:16px}.algo{margin:6px 0 10px}.algo b{color:var(--algo)}
+.cands{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.cand{border:2px solid var(--line);border-radius:8px;padding:6px;background:var(--bg);display:flex;flex-direction:column;gap:4px}
+.cand.algo-pick{border-color:var(--algo)}.cand.yo{border-color:var(--yo);box-shadow:0 0 0 2px var(--yo)}
+.cand img.sc{width:100%;border-radius:4px;cursor:zoom-in;background:#0002;min-height:60px}.cand img.pl{height:30px;align-self:flex-start}
+.cand .pl-txt{font:600 15px ui-monospace,monospace}.cand .meta{font-size:12px;color:var(--mut)}
+.bars{font-size:11px;color:var(--mut);display:grid;grid-template-columns:auto 1fr auto;gap:2px 6px;align-items:center}
+.bars i{display:block;height:6px;border-radius:3px;background:var(--acc)}
+.tag{display:inline-block;font-size:11px;border-radius:4px;padding:1px 6px;margin-right:4px;color:#fff}.tag.a{background:var(--algo)}.tag.t{background:var(--mut)}
+.cand button,.acts button{font:inherit;border:1px solid var(--line);border-radius:6px;padding:6px 10px;background:var(--card);color:inherit;cursor:pointer}
+.cand button:hover,.acts button:hover{border-color:var(--yo)}.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.acts button.on{background:var(--yo);color:#fff;border-color:var(--yo)}.acts textarea{flex:1;min-width:220px;font:inherit;border:1px solid var(--line);border-radius:6px;padding:6px;background:var(--bg);color:inherit}
+.verdict{font-weight:600;margin-top:8px}.ok{color:var(--cam)}.bad{color:var(--fal)}
+.nav{display:flex;gap:8px;margin-bottom:8px}.nav button{font:inherit;padding:6px 12px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:inherit;cursor:pointer}
+dialog{border:0;padding:0;background:transparent;max-width:95vw}dialog img{max-width:95vw;max-height:90vh;display:block}
+.empty{color:var(--mut)}
+</style>
+</head>
+<body>
+<header class="top"><h1 id="title">Simulador del vínculo</h1><span class="prog" id="prog"></span></header>
+<details class="how"><summary>Cómo decide el algoritmo (tocá para ver)</summary>
+<ol>
+<li><b>Lote:</b> los camiones con carta de porte. Cada lectura cuya patente es la de una carta vigente es de ese camión (cámara directa).</li>
+<li><b>Circuito:</b> a cada camión se le asigna el circuito del modelo de nodos que mejor explica los puntos donde fue leído. Así sabe qué pasos le faltan.</li>
+<li><b>Hueco:</b> un paso del circuito sin lectura propia. Su ventana va desde la lectura del paso anterior hasta la del siguiente; la hora esperada sale del tiempo típico de ese tramo en los camiones bien leídos.</li>
+<li><b>Capturas sin dueño:</b> lecturas sin patente, mal leídas o que solo tiene el DSS. Cada una se asigna sí o sí a algún camión.</li>
+<li><b>Candidatos de una captura:</b> los camiones del lote que podían estar en ese punto en ese momento: los que tienen ese paso pendiente (ventana abierta) y los que fueron leídos ahí a ±5 min (otra cámara del mismo paso).</li>
+<li><b>Puntaje</b> = patente × marca × horario. Patente: 1 si está a un carácter, 0,7 a dos, 0,3 a tres, 0,05 si no se parece, 0,5 si no leyó nada. Marca (DSS): ×4,75 si coincide, ×0,2 si no. Horario: 1 en la hora esperada y baja al alejarse.</li>
+<li><b>Decisión:</b> la captura va al camión de mayor puntaje; su seguridad es ese puntaje sobre la suma de todos. Si un paso recibe capturas de momentos distintos se queda con la mejor y las otras pasan a su siguiente candidato. Solo una patente válida que no se parece a nadie queda como otro vehículo.</li>
+<li><b>Resultado:</b> un paso pendiente que recibió una captura queda <b>recuperado</b>; si no recibió ninguna, <b>deducido</b> (hay paso antes y después) o <b>falta</b>.</li>
+</ol></details>
+<div class="layout"><aside id="list"></aside><main id="main"></main></div>
+<dialog id="zoom"><img id="zimg" alt="Foto ampliada"></dialog>
+<script>
+var DATA = __DATA__
+var CORR = __CORR__
+var LBL = { camara: 'cámara', reconstruido: 'recuperado', deducido: 'deducido', falta: 'falta' }
+var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c] }) }
+var short = function (n) { return n.replace('ricardone:', 'Ric · ').replace('san_lorenzo:', 'SL · ') }
+var hm = function (h) { return h ? h.slice(6) : '' }
+var sel = 0
+try { sel = Number(localStorage.getItem('sim-vinculo-sel') || 0) } catch (e) {}
+var casos = DATA.casos
+function key(c, h) { return c.ctg + '|' + h.nodo }
+function totals() {
+  var n = 0, d = 0
+  casos.forEach(function (c) { c.huecos.forEach(function (h) { n++; if (CORR[key(c, h)]) d++ }) })
+  return [d, n]
+}
+function save(k, v) {
+  if (v) CORR[k] = v; else delete CORR[k]
+  fetch('/api/correcciones', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: k, value: v || null }) })
+  render()
+}
+function list() {
+  document.getElementById('list').innerHTML = casos.map(function (c, i) {
+    var steps = Object.keys(c.status)
+    var pend = c.huecos.filter(function (h) { return !CORR[key(c, h)] }).length
+    return '<button class="' + (i === sel ? 'sel' : '') + '" data-i="' + i + '"><b>' + (i + 1) + '. ' + esc(c.patentes.join(' / ')) + '</b> <small>' + esc(c.circuito) + ' · llega ' + esc(new Date(Date.parse(c.llegada) - 3 * 36e5).toISOString().slice(11, 16)) + (c.huecos.length ? ' · ' + (pend ? pend + ' por revisar' : 'revisado') : '') + '</small><div class="dots">' +
+      steps.map(function (s) { return '<span class="dot s-' + c.status[s] + '" title="' + esc(short(s) + ': ' + LBL[c.status[s]]) + '"></span>' }).join('') + '</div></button>'
+  }).join('')
+  document.querySelectorAll('aside button').forEach(function (b) { b.onclick = function () { sel = Number(b.dataset.i); try { localStorage.setItem('sim-vinculo-sel', sel) } catch (e) {} render(); window.scrollTo(0, 0) } })
+}
+function img(f, cls, alt) { return f ? '<img class="' + cls + '" src="/fotos/' + esc(f) + '" alt="' + esc(alt) + '" loading="lazy">' : '<div class="empty">sin foto en el DSS</div>' }
+function cand(c, h, x, i) {
+  var k = key(c, h), mine = CORR[k], yo = mine && mine.eleccion === x.at
+  var p = x.partes
+  var dss = x.foto && x.foto.dss
+  var maxP = Math.max.apply(null, h.todas.map(function (y) { return y.puntaje })) || 1
+  return '<div class="cand' + (x.elegida ? ' algo-pick' : '') + (yo ? ' yo' : '') + '">' +
+    (x.foto ? img(x.foto.escena, 'sc', 'Escena de la captura') : '') + (x.foto && x.foto.patente ? img(x.foto.patente, 'pl', 'Recorte de patente') : '') +
+    '<div><span class="pl-txt">' + esc(x.patente || '(sin patente)') + '</span> ' + (x.elegida ? '<span class="tag a">eligió el algoritmo</span>' : '') + (x.tomada ? '<span class="tag t">la usó otro camión</span>' : '') + '</div>' +
+    (x.vaA ? '<div class="meta">fue a <b>' + esc(x.vaA.patente) + '</b> (' + x.vaA.prob + ' %)</div>' : '<div class="meta">otro vehículo</div>') + '<div class="meta">' + esc(hm(x.hora)) + ' · ' + esc(x.camara) + ' · ' + esc(x.fuente) + (dss ? ' · DSS leyó <b>' + esc(dss.patente || '—') + '</b>' : '') + '</div>' +
+    '<div class="meta">' + esc([dss && dss.marca, dss && dss.color, dss && dss.tipo].filter(function (v) { return v && !/unrecognized|unknown/i.test(v) }).join(' · ')) + '</div>' +
+    '<div class="bars"><span>puntaje</span><span><i style="width:' + Math.max(2, x.puntaje / maxP * 100) + '%"></i></span><span>' + x.puntaje + '</span>' +
+    '<span>patente</span><span></span><span>×' + p.patente + '</span><span>marca</span><span></span><span>×' + p.marca + '</span><span>horario</span><span></span><span>×' + p.horario + '</span></div>' +
+    '<button data-k="' + esc(k) + '" data-at="' + esc(x.at) + '" data-pl="' + esc(x.patente) + '" data-cam="' + esc(x.camara) + '">' + (yo ? 'Elegida ✓' : 'Es este camión') + '</button></div>'
+}
+function hueco(c, h) {
+  var k = key(c, h), mine = CORR[k]
+  var algo = h.asignada ? 'Asignó <b>' + esc(h.asignada.patente) + '</b> de las ' + esc(hm(h.asignada.hora)) + ' (seguridad ' + h.asignada.prob + ' %)' : 'No asignó: ' + esc(h.motivo) + ' → queda <b>' + esc(LBL[c.status[h.nodo]]) + '</b>'
+  var algoAt = (h.todas.filter(function (x) { return x.elegida })[0] || {}).at || null
+  var verdict = ''
+  if (mine) {
+    var same = (mine.eleccion === algoAt) || (!algoAt && (mine.eleccion === 'ninguna' || mine.eleccion === 'no_se_sabe'))
+    verdict = '<p class="verdict ' + (same ? 'ok' : 'bad') + '">' + (same ? 'Coincidís con el algoritmo' : 'No coincidís con el algoritmo') + '</p>'
+  }
+  return '<section class="hueco"><h3>' + esc(short(h.nodo)) + '</h3><div class="meta">Ventana ' + esc(hm(h.desde)) + ' – ' + esc(hm(h.hasta)) + (h.esperada ? ' · hora esperada ' + esc(hm(h.esperada)) : '') + ' · ' + h.todas.length + ' lecturas libres en la ventana</div>' +
+    '<p class="algo">' + algo + '</p>' +
+    (h.todas.length ? '<div class="cands">' + h.todas.map(function (x, i) { return cand(c, h, x, i) }).join('') + '</div>' : '<p class="empty">Ninguna lectura libre en ese punto dentro de la ventana.</p>') +
+    '<div class="acts"><button data-k="' + esc(k) + '" data-at="ninguna" class="' + (mine && mine.eleccion === 'ninguna' ? 'on' : '') + '">Ninguna es este camión</button>' +
+    '<button data-k="' + esc(k) + '" data-at="no_se_sabe" class="' + (mine && mine.eleccion === 'no_se_sabe' ? 'on' : '') + '">No se puede saber</button>' +
+    (mine ? '<button data-k="' + esc(k) + '" data-at="borrar">Borrar mi respuesta</button>' : '') +
+    '<textarea data-k="' + esc(k) + '" rows="1" placeholder="Nota (opcional): por qué, qué ves en la foto…">' + esc(mine && mine.nota || '') + '</textarea></div>' + verdict + '</section>'
+}
+function detail() {
+  var c = casos[sel]
+  var steps = Object.keys(c.status)
+  var first = function (n) { var l = c.lecturas.filter(function (x) { return x.nodo === n }).sort(function (a, b) { return a.at < b.at ? -1 : 1 })[0]; return l ? hm(l.hora) : '' }
+  var html = '<div class="nav"><button id="prev">← Anterior</button><button id="next">Siguiente →</button></div>' +
+    '<h2 style="margin:0">' + (sel + 1) + '. ' + esc(c.patentes.join(' / ')) + ' <small style="color:var(--mut);font-weight:400">CTG ' + esc(c.ctg) + ' · circuito ' + esc(c.circuito) + '</small></h2>' +
+    '<div class="legend"><span><i class="dot s-camara"></i>cámara</span><span><i class="dot s-reconstruido"></i>recuperado por el algoritmo</span><span><i class="dot s-deducido"></i>deducido</span><span><i class="dot s-falta"></i>falta</span></div>' +
+    '<div class="route">' + steps.map(function (s) {
+      var h = c.huecos.filter(function (x) { return x.nodo === s })[0]
+      var t = c.status[s] === 'camara' ? first(s) : h && h.asignada ? hm(h.asignada.hora) : ''
+      return '<div class="step s-' + c.status[s] + '"><b>' + esc(short(s)) + '</b>' + esc(LBL[c.status[s]]) + (t ? ' · ' + esc(t) : '') + '</div>'
+    }).join('') + '</div>' +
+    '<h3 style="margin:0 0 6px">Fotos buenas de este camión</h3><div class="refs">' + (c.referencias.length ? c.referencias.map(function (r) {
+      return '<div class="ref">' + img(r.foto.escena, 'sc', 'Foto de referencia') + (r.foto.patente ? img(r.foto.patente, 'pl', 'Patente') : '') + '<p><b>' + esc(r.patente) + '</b> · ' + esc(short(r.nodo)) + ' · ' + esc(hm(r.hora)) + (r.foto.dss && r.foto.dss.marca && !/unrecognized/i.test(r.foto.dss.marca) ? ' · ' + esc(r.foto.dss.marca) : '') + '</p></div>'
+    }).join('') : '<p class="empty">Sin lecturas exactas con foto.</p>') + '</div>' +
+    (c.huecos.length ? c.huecos.map(function (h) { return hueco(c, h) }).join('') : '<p class="empty">Todos los pasos de este camión los tomó la cámara directo.</p>')
+  document.getElementById('main').innerHTML = html
+  document.getElementById('prev').onclick = function () { sel = Math.max(0, sel - 1); render(); window.scrollTo(0, 0) }
+  document.getElementById('next').onclick = function () { sel = Math.min(casos.length - 1, sel + 1); render(); window.scrollTo(0, 0) }
+  document.querySelectorAll('main button[data-k]').forEach(function (b) {
+    b.onclick = function () {
+      var k = b.dataset.k, at = b.dataset.at
+      if (at === 'borrar') return save(k, null)
+      var ta = document.querySelector('textarea[data-k="' + CSS.escape(k) + '"]')
+      save(k, { eleccion: at, patenteLeida: b.dataset.pl || null, camara: b.dataset.cam || null, nota: ta ? ta.value : '' })
+    }
+  })
+  document.querySelectorAll('main textarea[data-k]').forEach(function (t) {
+    t.onchange = function () { var k = t.dataset.k, cur = CORR[k] || { eleccion: null }; save(k, Object.assign({}, cur, { nota: t.value })) }
+  })
+  document.querySelectorAll('main img.sc').forEach(function (im) { im.onclick = function () { document.getElementById('zimg').src = im.src; document.getElementById('zoom').showModal() } })
+}
+document.getElementById('zoom').onclick = function () { this.close() }
+function render() {
+  var t = totals()
+  var a = casos[0], b = casos[casos.length - 1]
+  var loc = function (x) { return new Date(Date.parse(x) - 3 * 36e5).toISOString().slice(5, 16).replace('T', ' ') }
+  document.getElementById('title').textContent = 'Simulador del vínculo · ' + casos.length + ' camiones que llegaron ' + loc(a.llegada) + ' → ' + loc(b.llegada).slice(6)
+  document.getElementById('prog').innerHTML = 'Revisaste <b>' + t[0] + '</b> de <b>' + t[1] + '</b> pasos que la cámara no tomó directo'
+  list(); detail()
+}
+render()
+</script>
+</body>
+</html>

@@ -161,6 +161,17 @@
         "C:/Users/Usuario/AppData/Local/Temp/claude/C--Users-Usuario-Desktop-Dashboard-camiones/b76c310e-4d98-467f-853a-7e807d0c2d3f/scratchpad"
       ],
       "port": 8801
+    },
+    {
+      "name": "simulador-vinculo",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "scripts/vinculo/simulador-server.mjs",
+        "2026-10-19",
+        "2026-10-25",
+        "8820"
+      ],
+      "port": 8820
     }
   ]
 }
