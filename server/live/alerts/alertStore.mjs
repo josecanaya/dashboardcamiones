@@ -32,9 +32,9 @@ export function layerTrail(item) {
     capa2: item.padron?.read
       ? `figura en ${item.padron.read.source === 'permitido' ? 'Vehículos Permitidos' : `la carta de porte ${item.padron.read.ctg}`}`
       : `${item.validFormat ? item.readPlate : 'la lectura'} no figura en Vehículos Permitidos ni en una carta de porte vigente`,
-    algoritmo: best
+    algoritmo: `${best
       ? `${c.length} ${c.length === 1 ? 'candidato' : 'candidatos'}; el más parecido, ${best.plate} (${pct(best.similarity)}), no alcanza para decidir`
-      : 'ningún camión en planta se parece ni esperaba este paso',
+      : 'ningún camión en planta se parece ni esperaba este paso'}${item.vinculo ? `; el vínculo sugiere ${item.vinculo.plate} (${pct(item.vinculo.prob)}), no alcanza` : ''}`,
     historica: 'sin una corrección previa de operaciones para esta lectura',
     ia: !ia
       ? 'pendiente: la IA todavía no la miró'

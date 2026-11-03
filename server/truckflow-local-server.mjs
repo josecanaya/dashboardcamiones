@@ -43,6 +43,7 @@ import { createAutorizaciones, createAutorizacionesRouter } from './live/padron/
 import { createAprendizaje } from './live/padron/aprendizaje.mjs'
 import { createVisionJudge } from './live/vision/visionJudge.mjs'
 import { createAlertStore } from './live/alerts/alertStore.mjs'
+import { createVinculoLive } from './live/vinculo/vinculoLive.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PROJECT_ROOT = path.resolve(__dirname, '..')
@@ -491,6 +492,15 @@ if (process.env.VISION_IA === '1') visionJudge.start()
  * por día en data/alertas con su paso por cada capa. Se actualizan cada minuto.
  */
 const alertStore = createAlertStore({ projectRoot: PROJECT_ROOT })
+/** El vínculo (scripts/vinculo/cobertura.mjs) cada 5 min sobre lo que hay en memoria: completa lo que el reconocedor dejó. */
+const vinculoLive = createVinculoLive({
+  projectRoot: PROJECT_ROOT,
+  getInputs: () => plantState.getVinculoInputs(),
+  getCartas: () => padron.notes(),
+  onResult: (r) => plantState.setVinculo(r),
+})
+if (process.env.VINCULO_LIVE !== '0') vinculoLive.start()
+app.get('/api/truckflow/live/vinculo', (_req, res) => res.json(vinculoLive.status()))
 const refreshAlerts = async () => {
   for (const site of ['ricardone', 'san_lorenzo']) {
     try {

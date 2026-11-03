@@ -11,6 +11,7 @@
 // que no llegaron a TruckFlow y usa marca y color para rellenar pasos. Sin export, funciona igual que antes.
 // Uso: node scripts/vinculo/cobertura.mjs DESDE HASTA   → reportes/vinculo/<desde>_<hasta>/cobertura.json
 // VINCULO_DATA: otra carpeta de datos (por defecto ./data). VINCULO_SIN_DSS=1: ignora el export del DSS.
+// VINCULO_OUT: carpeta de salida (por defecto reportes/vinculo/<desde>_<hasta>); la usa el servidor en vivo.
 import fs from 'node:fs'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
@@ -517,7 +518,7 @@ console.log('  por circuito:', Object.entries(trucks.reduce((o, t) => ({ ...o, [
 console.log('  pasos que faltan por nodo:')
 for (const [k, v] of Object.entries(missByNode).sort((a, b) => b[1] - a[1])) console.log(`    ${k.padEnd(42)} ${v}`)
 
-const out = path.join(root, 'reportes/vinculo', `${FROM}_${TO}`)
+const out = process.env.VINCULO_OUT ? path.resolve(root, process.env.VINCULO_OUT) : path.join(root, 'reportes/vinculo', `${FROM}_${TO}`)
 fs.mkdirSync(out, { recursive: true })
 fs.writeFileSync(path.join(out, 'cobertura.json'), JSON.stringify({
   desde: FROM, hasta: TO, total, counts, perNode, samples, transit: Object.fromEntries([...transit].map(([k, v]) => [k, { n: v.n, medMin: Math.round(v.med / 60_000) }])),

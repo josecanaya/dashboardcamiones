@@ -18,6 +18,15 @@ pendiente. Para seguir, leer primero «Dónde quedamos» y «Siguiente paso».
 
 ## Siguiente paso: el vínculo en el envío
 
+> **Hecho el 03/11 (camino 1):** `server/live/vinculo/vinculoLive.mjs` corre `cobertura.mjs` cada 5 min sobre lo que
+> el servidor tiene en memoria (lecturas + alertas de las dos plantas y las cartas del padrón; `VINCULO_OUT` para no
+> escribir en reportes/) y el servicio aplica sus asignaciones como capa `vinculo` a lo que el reconocedor dejó sin
+> resolver (≥ 50 %, `VINCULO_MIN_PROB`; por debajo queda como sugerencia y se ve en Alertas). Estado:
+> `GET /api/truckflow/live/vinculo`. Apagar: `VINCULO_LIVE=0` (no corre) o `VINCULO_APPLY=0` (corre, no aplica).
+> Primera corrida: 260 camiones con carta, 1.310 capturas, 1,3 s; asignó 25 casos que el reconocedor dejaba abiertos.
+> Lo que sigue abierto son sobre todo patentes válidas «fuera del sistema» (98 livianos → Vehículos Permitidos;
+> 41 tamaño camión sin carta ni registro). Queda el camino 2 (núcleo en funciones puras) como mejora.
+
 `cobertura.mjs` es un script de 530 líneas que corre de punta a punta (sin funciones exportadas). Por cada captura
 repartida guarda en `cobertura.json` → `capturas[]` la cámara, la hora, la patente leída y `rivales` (camiones con su
 probabilidad); por camión, `camiones[].status` (cámara / reconstruido / deducido / en curso / falta) y `huecos`.

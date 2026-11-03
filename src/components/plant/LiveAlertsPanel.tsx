@@ -13,6 +13,7 @@ const today = () => new Date(Date.now() - 3 * 3600_000).toISOString().slice(0, 1
 const BY: Record<string, string> = {
   operaciones: 'operaciones',
   ia_imagen: 'la IA por imagen',
+  vinculo: 'el vínculo',
   carta_porte: 'la carta de porte',
   vehiculo_permitido: 'Vehículos Permitidos',
   corregida_antes: 'la base histórica',

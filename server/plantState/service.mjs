@@ -23,6 +23,7 @@ import { alertInstantMs, alertReadEvents, withAlertAttributes } from './alertRea
 import { summarizeLayers } from './algorithmLayers.mjs'
 import { applyPasoRewrites, ensamblarPasos } from './pasos.mjs'
 import { applyVisionVerdict, checkSeenPlate } from '../live/vision/seenPlate.mjs'
+import { applyVinculo, indexAssignments } from '../live/vinculo/vinculoLive.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '../..')
@@ -339,6 +340,8 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
   let padronIndex = null
   /** Lo aprendido de operaciones: corregidos y no camiones (server/live/padron/aprendizaje.mjs). */
   let aprendizajeIndex = null
+  /** Asignaciones del vínculo por captura (server/live/vinculo/vinculoLive.mjs), las dos plantas. */
+  let vinculoIndex = null
   /** Lecturas de vehículos que no son camiones de granos, por planta (lista «Vehículos en planta»). */
   const otherVehiclesBySite = new Map()
   /**
@@ -426,6 +429,8 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     // Lectura de alerta que el reconocedor no resolvió: va a la bandeja solo si tiene formato de patente
     // (mal leída pero patente); las ilegibles quedan afuera (serían ~700 por día).
     result.items = result.items.filter((it) => !String(it.fragmentKey).startsWith('alert-') || it.assignedPlate || it.decision || it.validFormat)
+    // Capa vínculo (capa 3, algoritmo): lo que el reconocedor dejó sin resolver va al camión que eligió el vínculo.
+    if (process.env.VINCULO_APPLY !== '0') result.items = applyVinculo(result.items, vinculoIndex, rawEvents, { minProb: Number(process.env.VINCULO_MIN_PROB ?? 0.5), timeOf: getEventLiveInstantMs })
     const ia = visionVerdicts.get(site)
     if (ia) {
       // La patente que la IA lee en la foto vuelve a buscarse en la capa 2, los no camiones, la balanza y las cámaras.
@@ -1209,6 +1214,23 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
       const { key } = ensureSite(site)
       await getEvents(key)
       return otherVehiclesBySite.get(key) ?? { events: [], whyOf: () => null }
+    },
+    /** Resultado del vínculo (todas las capturas de las dos plantas). */
+    setVinculo({ assignments }) {
+      vinculoIndex = indexAssignments(assignments)
+      identificationCache.clear()
+    },
+    /** Lecturas crudas y alertas de las dos plantas (24 h), para correr el vínculo. */
+    async getVinculoInputs() {
+      const events = []
+      const alerts = []
+      for (const s of ['ricardone', 'san_lorenzo']) {
+        const { st } = ensureSite(s)
+        startBackground(s)
+        events.push(...st.history.values())
+        alerts.push(...st.alertRaw.values())
+      }
+      return { events, alerts }
     },
     /** Veredicto de la IA por imagen para un caso (modo sombra). */
     setVisionVerdict(site, fragmentKey, verdict) {
