@@ -427,7 +427,8 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
       pasoRewrites: ensamble?.rewrites ?? null,
     }
     // Lectura de alerta que el reconocedor no resolvió: va a la bandeja solo si tiene formato de patente
-    // (mal leída pero patente); las ilegibles quedan afuera (serían ~700 por día).
+    // (mal leída pero patente). La captura errónea (sin formato de patente, solo llegó como alerta del DSS)
+    // queda afuera (serían ~700 por día).
     result.items = result.items.filter((it) => !String(it.fragmentKey).startsWith('alert-') || it.assignedPlate || it.decision || it.validFormat)
     // Capa vínculo (capa 3, algoritmo): lo que el reconocedor dejó sin resolver va al camión que eligió el vínculo.
     if (process.env.VINCULO_APPLY !== '0') result.items = applyVinculo(result.items, vinculoIndex, rawEvents, { minProb: Number(process.env.VINCULO_MIN_PROB ?? 0.5), timeOf: getEventLiveInstantMs })

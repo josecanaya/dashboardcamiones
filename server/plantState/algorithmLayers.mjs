@@ -6,7 +6,8 @@
 export const LAYERS = [
   { key: 'lote', label: 'Lote (cámaras)', rules: ['doble_lectura', 'universo', 'cuenta', 'atributos_dss', 'busqueda_atras', 'par_trasera'] },
   { key: 'capa2', label: 'Carta / Permitidos', rules: ['carta_porte', 'vehiculo_permitido', 'acoplado_carta', 'acoplado_permitido', 'doble_lectura_carta', 'doble_lectura_permitido', 'carta_parecida'] },
-  { key: 'balanza', label: 'Balanza (SGC)', rules: ['leida_bien_balanza', 'doble_lectura_balanza', 'balanza_parecida', 'balanza_unica', 'acoplado_balanza'] },
+  // Parte de la capa 2: lo que no está en una carta ni en Vehículos Permitidos lo resuelve la balanza.
+  { key: 'balanza', label: 'Capa 2 · Respaldo SGC', rules: ['leida_bien_balanza', 'doble_lectura_balanza', 'balanza_parecida', 'balanza_unica', 'acoplado_balanza'] },
   { key: 'aprendizaje', label: 'Aprendizaje', rules: ['corregida_antes', 'confirmada_antes', 'no_camion'] },
   { key: 'ia', label: 'IA por imagen', rules: ['ia_imagen'] },
   { key: 'operador', label: 'Operaciones', rules: [] },

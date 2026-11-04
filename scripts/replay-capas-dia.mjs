@@ -1,6 +1,7 @@
 // Replay de un día por las capas del reconocedor (lámina «El recorrido de una captura»): cada paso de cada
 // vehículo termina en una capa — 2 ¿Quién es? (carta de porte, Vehículos Permitidos: bases del back office o
-// balanza), 3.1 patentes parecidas, 3.2 metadatos, 3.3 banco de corregidas, 3.4 IA, balanza (SGC) o 4 alerta.
+// balanza, y como respaldo el SGC), 3.1 patentes parecidas, 3.2 metadatos, 3.3 banco de corregidas, 3.4 IA o 4
+// alerta. Aparte, la captura errónea: texto sin formato de patente que solo llegó como alerta del DSS.
 // Mismo armado que scripts/replay-pasos-dia.mjs (ensamblador + reconocedor con la hora de fin del día), pero
 // con las bases del back office (MongoDB) como en el servidor y con las lecturas guardadas en data/truckflow.
 // 3.2 Metadatos: como en vivo (server/dssPhotoLookup.mjs, evidencia automática), los casos elegibles se
@@ -8,7 +9,8 @@
 // pasa el umbral vuelve a correr como veredicto. METADATOS=0 lo saltea. Las consultas quedan en caché.
 // Vínculo: como en vivo (server/live/vinculo/vinculoLive.mjs), scripts/vinculo/cobertura.mjs sobre el día con las
 // cartas del padrón; asigna lo que quedó abierto si la probabilidad llega a 50 %. VINCULO=0 lo saltea.
-// Igual que el servidor, una lectura ilegible que solo llegó como alerta del DSS no va a la bandeja: no es alerta.
+// Igual que el servidor, una captura errónea (sin formato de patente, solo llegó como alerta del DSS) no va a la
+// bandeja: no es alerta.
 // Uso: node scripts/replay-capas-dia.mjs 2026-11-02 [salida]
 import fs from 'node:fs'
 import path from 'node:path'
@@ -45,7 +47,8 @@ const CAPA_DE_REGLA = {
   atributos_dss: '3.2',
   corregida_antes: '3.3', confirmada_antes: '3.3', no_camion: '3.3',
   ia_imagen: '3.4',
-  leida_bien_balanza: 'balanza', doble_lectura_balanza: 'balanza', balanza_parecida: 'balanza', balanza_unica: 'balanza', acoplado_balanza: 'balanza',
+  // Respaldo SGC: la balanza resuelve lo que no está en una carta ni en las bases (capa 2).
+  leida_bien_balanza: '2', doble_lectura_balanza: '2', balanza_parecida: '2', balanza_unica: '2', acoplado_balanza: '2',
 }
 
 // Lecturas guardadas: el día, el anterior (historia del reconocedor) y el siguiente (lo que llega tarde).
@@ -193,15 +196,16 @@ for (const site of ['ricardone', 'san_lorenzo']) {
     const final = String(identified.get(p.anchorKey)?.truckPlate ?? read).toUpperCase()
     let capa, detalle
     if (!it && ilegibles.has(fk)) {
-      capa = 'ilegible'
+      capa = 'captura_erronea'
       // ¿El vínculo la habría asignado si se le diera antes de descartarla?
       const v = vinculoIndex?.at(e0.deviceCode, getEventLiveInstantMs(e0))
-      detalle = v?.plate && v.prob >= 0.5 ? 'ilegible que el vínculo asignaría' : 'ilegible, solo en alertas del DSS'
+      detalle = v?.plate && v.prob >= 0.5 ? 'captura errónea que el vínculo asignaría' : 'captura errónea'
     } else if (!it) {
       // No fue un caso: la lectura alcanzó (está en una carta, en Permitidos o en un recorrido conocido).
       const q = quienEs(read, t)
-      capa = q === 'nadie' ? (balanza.truckAt(read, t) ? 'balanza' : 'leida') : '2'
-      detalle = q === 'nadie' ? (capa === 'balanza' ? 'balanza (SGC)' : 'recorrido de cámaras') : q
+      const sgc = q === 'nadie' && balanza.truckAt(read, t)
+      capa = q === 'nadie' && !sgc ? 'leida' : '2'
+      detalle = sgc ? 'respaldo SGC' : q === 'nadie' ? 'recorrido de cámaras' : q
     } else if (it.level === 'provisorio' || it.level === 'pendiente') {
       capa = '4'
       detalle = 'lectura dudosa'
@@ -210,7 +214,7 @@ for (const site of ['ricardone', 'san_lorenzo']) {
       detalle = it.validFormat && esGranos(it.readPlate) ? 'camión de granos sin carta' : it.validFormat ? 'sin registro' : 'sin patente legible'
     } else {
       capa = CAPA_DE_REGLA[it.rule] ?? 'otra'
-      detalle = it.rule === 'no_camion' ? 'no es camión' : capa === '2' ? quienEs(it.assignedPlate ?? read, t) : it.rule
+      detalle = it.rule === 'no_camion' ? 'no es camión' : CAPA_DE_REGLA[it.rule] === '2' && /balanza/.test(it.rule) ? 'respaldo SGC' : capa === '2' ? quienEs(it.assignedPlate ?? read, t) : it.rule
     }
     pasos.push({
       site, at: p.at, node: p.node, nodo: logicalLabel(p.node), device: p.anchorKey.split('|')[1], captures: p.captures,
