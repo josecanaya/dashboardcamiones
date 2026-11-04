@@ -186,11 +186,12 @@ export function createVehiculosPermitidos({ projectRoot = ROOT, rebuildMs = 3600
     rebuild,
     /**
      * Primero una autorización vigente cargada a mano (portería, comercial: autorizaciones.mjs), después las
-     * bases del back office (particulares y sin carta, backofficeIndex.mjs) y, como respaldo, el historial
-     * de la balanza.
+     * bases del back office (particulares y sin carta, backofficeIndex.mjs). Con las bases, el historial de la
+     * balanza ya no da permiso (05/11: un vehículo que pesó alguna vez no está autorizado por eso; el SGC del
+     * día queda como respaldo de la capa 2 en el reconocedor). Sin bases configuradas se usa el historial.
      * @returns {{ plate: string, role: string, chasis?: string, category: string, alsoGrain: boolean } | null}
      */
-    lookup: (plate) => autorizaciones?.lookup(plate) ?? backoffice?.lookup(plate) ?? byPlate.get(normPlate(plate)) ?? null,
+    lookup: (plate) => autorizaciones?.lookup(plate) ?? (backoffice ? backoffice.lookup(plate) : byPlate.get(normPlate(plate))) ?? null,
     /** Solo el historial de la balanza (para mostrarle a quien carga una autorización). */
     historico: (plate) => byPlate.get(normPlate(plate)) ?? null,
     status: () => meta,

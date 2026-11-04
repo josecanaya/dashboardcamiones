@@ -64,18 +64,16 @@ for (const d of [arDay(start - DAY_MS + 3600_000), day, arDay(end + 3600_000)]) 
 }
 for (const s of Object.values(lecturas)) for (const k of ['ev', 'al']) s[k] = [...new Map(s[k].map((r) => [r.id, r])).values()]
 
-// Cartas del día y vecinas, Vehículos Permitidos como en el servidor (bases del back office, después la
-// lista armada con la balanza), aprendizaje.
+// Cartas del día y vecinas, Vehículos Permitidos como en el servidor (bases del back office), aprendizaje.
 const notes = new Map()
 for (let k = -2; k <= 1; k++) for (const n of tryJson(`data/padron/${arDay(start + 12 * 3600_000 + k * DAY_MS)}.json`)?.notes ?? []) notes.set(n.ctg, n)
 const byPlate = new Map()
 for (const n of notes.values()) for (const p of n.plates ?? []) byPlate.set(p, [...(byPlate.get(p) ?? []), n])
 const padronMem = { lookup: (p) => byPlate.get(p) ?? [], notes: () => notes.values() }
-const balanzaLista = new Map((tryJson('data/padron/vehiculos-permitidos.json')?.entries ?? []).map((e) => [String(e.plate).toUpperCase(), e]))
 const bases = { particulares: await connectBackofficeDb('particulares'), sin_carta: await connectBackofficeDb('sin_carta') }
 const backoffice = createBackofficeIndex({ padronDb: bases, projectRoot: root, log: {} })
 await backoffice.start()
-const permitidos = { lookup: (p) => backoffice.lookup(p) ?? balanzaLista.get(p) ?? null }
+const permitidos = { lookup: (p) => backoffice.lookup(p) }
 const padron = padronCartas(padronMem, permitidos)
 const corr = tryJson('data/padron/corregidos.json') ?? { pairs: [], real: [] }
 const pairsByRead = new Map()
@@ -149,14 +147,14 @@ if (process.env.VINCULO !== '0') {
   }
 }
 
-/** Quién es la patente final: carta, base de particulares, base sin carta, lista de balanza o nadie. */
+/** Quién es la patente final: carta, base de particulares, base sin carta o nadie. */
 function quienEs(plate, t) {
   if (!isValidPlate(plate)) return 'sin patente'
   const h = padron.at(plate, t)
   if (h?.source === 'carta') return 'carta de porte'
   if (h?.source === 'permitido') {
     const b = backoffice.lookup(plate)
-    return b ? (b.backoffice.base === 'particulares' ? 'base particulares' : 'base sin carta') : 'lista de balanza'
+    return b?.backoffice.base === 'particulares' ? 'base particulares' : 'base sin carta'
   }
   return 'nadie'
 }

@@ -1,6 +1,6 @@
 /**
  * Capa 2 del reconocedor («¿Quién es?»). Cada lectura se busca primero en Vehículos Permitidos
- * (agua, residuos, proveedores, registro manual: server/live/padron/vehiculosPermitidos.mjs) y después
+ * (autorizaciones y bases del back office: server/live/padron/vehiculosPermitidos.mjs) y después
  * en la carta de porte del padrón del día (server/live/padron). Si la patente es un chasis conocido no
  * es un caso; si es un acoplado, la lectura es del chasis. Las que no están se buscan por parecido entre
  * las patentes de las cartas vigentes (`platesAt`) antes que en la balanza; lo que no resuelve la carta pasa

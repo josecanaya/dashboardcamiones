@@ -18,11 +18,11 @@ describe('bases del back office en la capa 2', () => {
     expect(entradasBackoffice('particulares', [{ _id: 'OCB815', decision: { categoria: 'camion' } }]).get('OCB815').category).toBe('servicio')
   })
 
-  it('Vehículos Permitidos los encuentra antes que la balanza; los de granos rechazados quedan marcados', async () => {
+  it('Vehículos Permitidos los encuentra en las bases y ya no por el historial de balanza; los de granos rechazados quedan marcados', async () => {
     const root = mkdtempSync(path.join(os.tmpdir(), 'backoffice-'))
     mkdirSync(path.join(root, 'data', 'padron'), { recursive: true })
     writeFileSync(path.join(root, 'data', 'padron', 'backoffice-descartados.json'), JSON.stringify({ entries: [{ base: 'particulares', patente: 'OAV421', motivo: 'camion_granos' }] }))
-    writeFileSync(path.join(root, 'data', 'padron', 'vehiculos-permitidos.json'), JSON.stringify({ builtAt: new Date().toISOString(), entries: [{ plate: 'SZG666', role: 'chasis', category: 'agua' }] }))
+    writeFileSync(path.join(root, 'data', 'padron', 'vehiculos-permitidos.json'), JSON.stringify({ builtAt: new Date().toISOString(), entries: [{ plate: 'SZG666', role: 'chasis', category: 'agua' }, { plate: 'ZZZ999', role: 'chasis', category: 'agua' }] }))
     const padronDb = {
       particulares: { vehiculos: col([{ _id: 'SZG666', decision: { categoria: 'agua' } }, { _id: 'IMH787', decision: { categoria: 'particular' } }]) },
       sin_carta: { vehiculos: col([{ _id: 'RUK692', rol: 'chasis', categoria: 'descarga', decision: {} }]) },
@@ -35,6 +35,9 @@ describe('bases del back office en la capa 2', () => {
     expect(vp.lookup('RUK692').category).toBe('descarga_sin_carta')
     expect(vp.lookup('SZG666').sources).toEqual(['backoffice'])
     expect(vp.lookup('OAV421')).toBeNull()
+    // Pesó alguna vez (historial) pero no está en las bases: no tiene permiso.
+    expect(vp.lookup('ZZZ999')).toBeNull()
+    expect(vp.historico('ZZZ999')?.category).toBe('agua')
     expect(bo.esCamionDeGranos('OAV421')).toBe(true)
   })
 })

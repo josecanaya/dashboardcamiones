@@ -5,7 +5,7 @@
  * - Comercial: camiones que vienen a despachar (el cliente avisa por mail) o a descargar sin CTG/CTDG.
  *
  * Una autorización vigente (activa y con hoy dentro de desde–hasta) es un Vehículo Permitido para el
- * reconocedor de En vivo: vehiculosPermitidos.mjs la consulta antes que la lista armada con la balanza.
+ * reconocedor de En vivo: vehiculosPermitidos.mjs la consulta antes que las bases del back office.
  *
  * Por ahora vive en data/padron/autorizaciones.json. Cuando se defina dónde va la base (al lado de las
  * cartas de porte o en la máquina del microservicio), se reemplaza `fileStore` sin tocar lo demás.
