@@ -41,6 +41,7 @@ import { createCartasSource } from './live/padron/cartasSource.mjs'
 import { createVehiculosPermitidos } from './live/padron/vehiculosPermitidos.mjs'
 import { createAutorizaciones, createAutorizacionesRouter } from './live/padron/autorizaciones.mjs'
 import { connectBackofficeDb, fichaBackoffice, mongoAutorizacionesStore } from './live/padron/padronDb.mjs'
+import { createBackofficeIndex } from './live/padron/backofficeIndex.mjs'
 import { createAprendizaje } from './live/padron/aprendizaje.mjs'
 import { createVisionJudge } from './live/vision/visionJudge.mjs'
 import { createAlertStore } from './live/alerts/alertStore.mjs'
@@ -296,7 +297,10 @@ const padronDb = await Promise.all([connectBackofficeDb('particulares'), connect
 if (padronDb) console.log(`[padron] MongoDB ${padronDb.particulares.nombre} + ${padronDb.sin_carta.nombre}`)
 /** Autorizaciones cargadas por portería y comercial (/autorizaciones): pesan antes que la balanza. */
 const autorizaciones = createAutorizaciones({ projectRoot: PROJECT_ROOT, ...(padronDb ? { store: mongoAutorizacionesStore(padronDb) } : {}) })
-const vehiculosPermitidos = createVehiculosPermitidos({ projectRoot: PROJECT_ROOT, autorizaciones })
+/** Aceptados de las dos bases como Vehículos Permitidos; los rechazados como camión de granos, para las alertas. */
+const backoffice = createBackofficeIndex({ padronDb, projectRoot: PROJECT_ROOT })
+await backoffice.start()
+const vehiculosPermitidos = createVehiculosPermitidos({ projectRoot: PROJECT_ROOT, autorizaciones, backoffice })
 vehiculosPermitidos.start()
 app.use(createAutorizacionesRouter({
   autorizaciones,
@@ -507,7 +511,11 @@ if (process.env.VISION_IA === '1') visionJudge.start()
  * Alertas: capturas que ninguna capa identificó (capa 2 carta/Permitidos, capa 3 corrección + IA), guardadas
  * por día en data/alertas con su paso por cada capa. Se actualizan cada minuto.
  */
-const alertStore = createAlertStore({ projectRoot: PROJECT_ROOT })
+const alertStore = createAlertStore({
+  projectRoot: PROJECT_ROOT,
+  // Camión de granos = rechazado como tal en el back office o con alguna carta de porte (aunque hoy no vigente).
+  esCamionDeGranos: (plate) => backoffice.esCamionDeGranos(plate) || (padron.lookup(plate) ?? []).length > 0,
+})
 /** El vínculo (scripts/vinculo/cobertura.mjs) cada 5 min sobre lo que hay en memoria: completa lo que el reconocedor dejó. */
 const vinculoLive = createVinculoLive({
   projectRoot: PROJECT_ROOT,

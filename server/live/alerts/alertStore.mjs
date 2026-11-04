@@ -45,7 +45,12 @@ export function layerTrail(item) {
   }
 }
 
-export function createAlertStore({ projectRoot, log = console }) {
+/**
+ * @param {{ projectRoot: string, log?: object, esCamionDeGranos?: (plate: string) => boolean }} opts
+ *   esCamionDeGranos: la patente es de un camión de granos (vino con carta otras veces o se rechazó como tal
+ *   en el back office); sin carta vigente, la alerta lo dice.
+ */
+export function createAlertStore({ projectRoot, log = console, esCamionDeGranos = () => false }) {
   const dir = path.join(projectRoot, 'data', 'alertas')
   /** @type {Map<string, Map<string, object>>} día → clave (planta|fragmento) → alerta */
   const days = new Map()
@@ -88,6 +93,7 @@ export function createAlertStore({ projectRoot, log = console }) {
       const key = `${site}|${it.fragmentKey}`
       const prev = m.get(key)
       if (isAlert(it)) {
+        const granos = it.validFormat && esCamionDeGranos(it.readPlate)
         const a = {
           site,
           fragmentKey: it.fragmentKey,
@@ -98,7 +104,8 @@ export function createAlertStore({ projectRoot, log = console }) {
           deviceCode: it.deviceCode,
           at: it.at,
           level: it.level,
-          capas: layerTrail(it),
+          capas: granos ? { ...layerTrail(it), capa2: `${it.readPlate} es un camión de granos y no tiene carta de porte vigente` } : layerTrail(it),
+          tipo: granos ? 'camion_granos_sin_carta' : null,
           /** Los candidatos más parecidos, para que operaciones la resuelva desde la alerta. */
           candidatos: (it.candidates ?? []).slice(0, 4).map((c) => ({ plate: c.plate, similarity: c.similarity ?? null })),
           alertAt: prev?.alertAt ?? nowIso,

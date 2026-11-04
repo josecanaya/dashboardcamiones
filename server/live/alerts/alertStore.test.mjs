@@ -35,3 +35,15 @@ describe('alertas', () => {
     expect(disk.alertas).toHaveLength(1)
   })
 })
+
+describe('alerta de camión de granos sin carta', () => {
+  it('lo nombra cuando la patente es de un camión de granos', () => {
+    const root = mkdtempSync(path.join(os.tmpdir(), 'alertas-'))
+    const store = createAlertStore({ projectRoot: root, log: {}, esCamionDeGranos: (p) => p === 'TGO035' })
+    store.update('ricardone', [item({ level: 'fuera_sistema', rule: 'fuera_sistema' }), item({ fragmentKey: 'f2', readPlate: 'AB123CD', level: 'fuera_sistema', rule: 'fuera_sistema' })], '2026-10-29T13:01:00Z')
+    const [b, a] = store.list('ricardone', '2026-10-29').alertas.sort((x, y) => x.fragmentKey.localeCompare(y.fragmentKey)).reverse()
+    expect(a).toMatchObject({ tipo: 'camion_granos_sin_carta' })
+    expect(a.capas.capa2).toContain('camión de granos y no tiene carta de porte vigente')
+    expect(b.tipo).toBeNull()
+  })
+})
