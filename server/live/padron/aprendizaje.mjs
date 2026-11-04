@@ -21,6 +21,7 @@ import { existsSync, mkdirSync, readFileSync, renameSync, statSync, writeFileSyn
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { normPlate } from './cartasSource.mjs'
+import { learnConfusions, setLearnedConfusions } from '../../plantState/plateIdentification.mjs'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..')
 const OUT_CORREGIDOS = (root) => path.join(root, 'data', 'padron', 'corregidos.json')
@@ -217,6 +218,8 @@ export function createAprendizaje({ projectRoot = ROOT, rebuildMs = 3600_000, lo
       pairsByRead = new Map()
       for (const p of c.pairs) if (!p.readIsReal) pairsByRead.set(p.read, [...(pairsByRead.get(p.read) ?? []), p])
       real = new Set(c.real.map((r) => r.plate))
+      // Las letras que operaciones corrige seguido pasan a contar como confusión de la cámara (capa 3.3).
+      setLearnedConfusions(learnConfusions(c.pairs))
     }
     if (n) noCam = new Map(n.entries.map((e) => [e.plate, e]))
     meta = { builtAt: c?.builtAt ?? n?.builtAt ?? null, ia: c?.ia ?? null, pares: c?.pairs.length ?? 0, confirmadas: c?.real.length ?? 0, noCamiones: n?.entries.length ?? 0, porTipo: n?.counts ?? {} }

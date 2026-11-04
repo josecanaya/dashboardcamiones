@@ -47,6 +47,8 @@ import { createAprendizaje } from './live/padron/aprendizaje.mjs'
 import { createVisionJudge } from './live/vision/visionJudge.mjs'
 import { createAlertStore } from './live/alerts/alertStore.mjs'
 import { createVinculoLive } from './live/vinculo/vinculoLive.mjs'
+import { lecturasVistas, universoExtra31, viajesSinCarta } from './live/vinculo/viajesSinCarta.mjs'
+import { liveBalanzaRegistry } from './plantState/balanzaRegistry.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PROJECT_ROOT = path.resolve(__dirname, '..')
@@ -308,7 +310,31 @@ app.use(createAutorizacionesRouter({
   historico: vehiculosPermitidos.historico,
   ficha: (patente) => (padronDb ? fichaBackoffice(padronDb, patente) : null),
 }))
-plantState.setPadron(padron, vehiculosPermitidos)
+/**
+ * Lote de los camiones sin carta (paso 0, docs/RECONOCEDOR_RECORRIDO_CAPTURA.md): base sin carta y, como última
+ * instancia, el SGC. Lo rearma el vínculo cada 5 min; la primera corrección (3.1) usa las mismas patentes.
+ */
+let universo31 = () => []
+const armarLoteSinCarta = (events, alerts) => {
+  const ahora = Date.now()
+  const desdeMs = ahora - 30 * 3600_000
+  const vistas = lecturasVistas(events, alerts, desdeMs, ahora + 3600_000)
+  let visits = []
+  try {
+    visits = liveBalanzaRegistry(ahora).visits ?? []
+  } catch {
+    visits = []
+  }
+  const viajes = viajesSinCarta({
+    vistas, desdeMs, hastaMs: ahora + 3600_000,
+    conCarta: (p) => padron.lookup(p).length > 0,
+    baseDe: (p) => backoffice.lookup(p)?.backoffice.base ?? null,
+    visits,
+  })
+  if (process.env.UNIVERSO_31 !== '0') universo31 = universoExtra31(viajes, backoffice.todas(), vistas)
+  return process.env.LOTE_UNIVERSO === '0' ? [] : viajes
+}
+plantState.setPadron(padron, vehiculosPermitidos, (t) => universo31(t))
 /** Lo aprendido de operaciones: lecturas malas ya corregidas y vehículos que no son camiones (data/padron). */
 const aprendizaje = createAprendizaje({ projectRoot: PROJECT_ROOT })
 aprendizaje.start()
@@ -534,6 +560,7 @@ const vinculoLive = createVinculoLive({
   projectRoot: PROJECT_ROOT,
   getInputs: () => plantState.getVinculoInputs(),
   getCartas: () => padron.notes(),
+  getExtra: armarLoteSinCarta,
   onResult: (r) => plantState.setVinculo(r),
 })
 if (process.env.VINCULO_LIVE !== '0') vinculoLive.start()
@@ -541,7 +568,9 @@ app.get('/api/truckflow/live/vinculo', (_req, res) => res.json(vinculoLive.statu
 const refreshAlerts = async () => {
   for (const site of ['ricardone', 'san_lorenzo']) {
     try {
-      alertStore.update(site, (await plantState.getIdentifications(site)).items)
+      // Las lecturas ilegibles que nadie asignó (`erroneas`) también son alerta: completan pasos perdidos.
+      const r = await plantState.getIdentifications(site)
+      alertStore.update(site, [...r.items, ...(r.erroneas ?? [])])
     } catch (e) {
       console.warn('[alertas]', site, e instanceof Error ? e.message : e)
     }

@@ -14,7 +14,7 @@ import { buildBaselines, quarterOf } from './baselines.mjs'
 import { resolveSectorStatus, resolveZoneStatus, resolveBottleneck } from './status.mjs'
 import { POINTS, zonesOfSite } from './plantGraph.mjs'
 import { SECTOR_DEVICES } from './sectorProfiles.mjs'
-import { applyIdentifications, applyLinks, autoPredecessorLinks, findPredecessors, identifyFragments, journeyKeyOf, MIN_SIMILARITY, nodeModelCatalog, plateSimilarity, recentCaptures, updateRecentCircuits } from './plateIdentification.mjs'
+import { applyIdentifications, applyLinks, autoPredecessorLinks, findPredecessors, identifyFragments, isValidPlate, journeyKeyOf, MIN_SIMILARITY, nodeModelCatalog, plateSimilarity, recentCaptures, updateRecentCircuits } from './plateIdentification.mjs'
 import { liveBalanzaRegistry, outsideTruckSystem, replayBalanzaRegistry } from './balanzaRegistry.mjs'
 import { createIdentificationArchive } from './identificationArchive.mjs'
 import { padronCartas } from './padronCartas.mjs'
@@ -22,6 +22,7 @@ import { assessVehicleRelevance, excludeIrrelevantEvents, splitNonTrucks } from 
 import { alertInstantMs, alertReadEvents, withAlertAttributes } from './alertReads.mjs'
 import { summarizeLayers } from './algorithmLayers.mjs'
 import { applyPasoRewrites, ensamblarPasos } from './pasos.mjs'
+import { clasificarErroneas } from './erroneasConfirmadas.mjs'
 import { applyVisionVerdict, checkSeenPlate } from '../live/vision/seenPlate.mjs'
 import { applyVinculo, indexAssignments } from '../live/vinculo/vinculoLive.mjs'
 
@@ -426,12 +427,23 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
       pasos: ensamble?.pasos ?? null,
       pasoRewrites: ensamble?.rewrites ?? null,
     }
-    // Lectura de alerta que el reconocedor no resolvió: va a la bandeja solo si tiene formato de patente
-    // (mal leída pero patente). La captura errónea (sin formato de patente, solo llegó como alerta del DSS)
-    // queda afuera (serían ~700 por día).
-    result.items = result.items.filter((it) => !String(it.fragmentKey).startsWith('alert-') || it.assignedPlate || it.decision || it.validFormat)
-    // Capa vínculo (capa 3, algoritmo): lo que el reconocedor dejó sin resolver va al camión que eligió el vínculo.
+    // Capa vínculo = lote (3.2): lo que el reconocedor dejó sin resolver va al camión que tenía ese paso pendiente.
+    // Mira también las lecturas sin formato que solo llegaron como alerta, antes de separarlas.
     if (process.env.VINCULO_APPLY !== '0') result.items = applyVinculo(result.items, vinculoIndex, rawEvents, { minProb: Number(process.env.VINCULO_MIN_PROB ?? 0.5), timeOf: getEventLiveInstantMs })
+    // Lectura sin formato de patente, solo de alerta, que nadie asignó: no va a la bandeja de operaciones
+    // (serían cientos por día). Junto a un paso guardado de la misma cámara es lectura errónea confirmada
+    // (`erroneasConfirmadas`); el resto va a Alertas (`erroneas`, una por racimo) para completar pasos perdidos.
+    const erronea = (it) => String(it.fragmentKey).startsWith('alert-') && !it.assignedPlate && !it.decision && !it.validFormat
+    const sueltas = result.items.filter(erronea)
+    result.items = result.items.filter((it) => !erronea(it))
+    const guardados = [
+      ...rawEvents.filter((e) => isValidPlate(String(e.normalizedPlate || e.truckPlate || '').toUpperCase().replace(/[^A-Z0-9]/g, ''))).map((e) => ({ device: e.deviceCode, node: null, t: getEventLiveInstantMs(e) })),
+      ...result.items.filter((it) => it.assignedPlate).map((it) => ({ device: it.deviceCode, node: it.node, t: Date.parse(it.at) })),
+    ]
+    const clasif = clasificarErroneas(sueltas.map((it) => ({ key: it.fragmentKey, device: it.deviceCode, node: it.node, t: Date.parse(it.at) })), guardados)
+    const porKey = new Map(sueltas.map((it) => [it.fragmentKey, it]))
+    result.erroneasConfirmadas = clasif.confirmadas.size
+    result.erroneas = clasif.alertas.map((a) => ({ ...porKey.get(a.key), agrupa: a.agrupa }))
     const ia = visionVerdicts.get(site)
     if (ia) {
       // La patente que la IA lee en la foto vuelve a buscarse en la capa 2, los no camiones, la balanza y las cámaras.
@@ -1203,8 +1215,8 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
 
   return {
     /** Capa 2 del reconocedor: Vehículos Permitidos y padrón de cartas. Se enganchan después porque los crea el server. */
-    setPadron(p, permitidos = null) {
-      padronIndex = p || permitidos ? padronCartas(p, permitidos) : null
+    setPadron(p, permitidos = null, extraPlatesAt = null) {
+      padronIndex = p || permitidos ? padronCartas(p, permitidos, extraPlatesAt) : null
       identificationCache.clear()
     },
     /**

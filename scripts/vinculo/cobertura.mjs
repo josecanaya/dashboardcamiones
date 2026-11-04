@@ -142,6 +142,9 @@ caps.sort((a, b) => a.t - b.t)
 
 // ── Cartas del Nodo Sur (entran, internas o salen) con su ventana de visita ──
 // VINCULO_CARTAS: archivo de cartas ya normalizadas (p. ej. bajar-cartas-api.mjs) en vez de la copia de data/arca.
+// VINCULO_EXTRA: viajes que no tienen carta, con la misma forma (ctg «BASE:…» o «SGC:…», plates, departure, desde,
+// hasta, origen): los camiones de la base sin carta y, como última instancia, los del SGC que no están en una carta
+// ni en las bases (lote del reconocedor: docs/RECONOCEDOR_RECORRIDO_CAPTURA.md). Pueden hacer circuitos de líquidos.
 const cartasRaw = process.env.VINCULO_CARTAS ? JSON.parse(fs.readFileSync(path.resolve(root, process.env.VINCULO_CARTAS), 'utf8')) : dataJson('arca/arca_consignment_notes.json')
 const cartas = cartasRaw.map((n) => (Array.isArray(n.plates) ? n : normalizeNote(n))).filter((n) => n.departure && (
   (n.destCuit === VICENTIN_CUIT && (n.locality === NODO_SUR_LOCALITY || NODO_SUR_PLANTS.has(n.plant))) ||
@@ -150,7 +153,13 @@ const cartas = cartasRaw.map((n) => (Array.isArray(n.plates) ? n : normalizeNote
 // son del viaje siguiente del mismo camión (INV971, 28/10: su carta del 24/10 cerrada en CN se llevaba la
 // lectura de hoy y quedaba con 4 pasos faltantes).
 const CLOSED = new Set(['CN', 'AN', 'RE', 'DE'])
+if (process.env.VINCULO_EXTRA) {
+  const ya = new Set(cartas.flatMap((n) => n.plates))
+  for (const n of JSON.parse(fs.readFileSync(path.resolve(root, process.env.VINCULO_EXTRA), 'utf8'))) if (!n.plates.some((p) => ya.has(p))) cartas.push(n)
+}
 for (const n of cartas) {
+  // Viaje sin carta: la ventana la da quien lo armó (el día de la visita).
+  if (n.origen) { n.from = Date.parse(n.desde); n.to = Date.parse(n.hasta); continue }
   const dep = Date.parse(n.departure)
   const closedAt = CLOSED.has(n.stateCode) ? Date.parse(n.stateSince) : NaN
   n.from = dep - 48 * H
@@ -257,7 +266,7 @@ const circuits = model.circuits.map((c) => {
     if (n?.hasCamera && !n.optional && !NO_MEDIBLES.has(id) && !exp.includes(id)) exp.push(id)
   }
   return { id: c.id, exp, liquid: c.seq.some((s) => LIQUID_NODES.has(s)) }
-}).filter((c) => c.exp.length && !c.liquid) // las cartas de porte son de granos: nunca un circuito de líquidos
+}).filter((c) => c.exp.length) // las cartas de porte son de granos: nunca un circuito de líquidos (ver abajo)
 // Rechazado en la calada de Ricardone (no está en el modelo): sale por donde entró y nunca va a balanza.
 // Solo con evidencia: leído en Ingreso más de 5 min después de la Calada y en ninguna balanza.
 const BALANZAS = ['ricardone:Balanza Ingreso', 'ricardone:Balanza Egreso', 'san_lorenzo:Balanza Ingreso', 'san_lorenzo:Balanza Egreso']
@@ -277,9 +286,10 @@ for (const n of cartas) {
   // (sin este último, SL3 le ganaba a R7 a un camión leído en la Calada y la Salida 2 de Ricardone).
   const score = (c) => c.hit - c.miss.length - c.extra
   const isRech = rechazado(mine)
-  const best = circuits.filter((c) => !c.rechazo || isRech).map((c) => ({ ...c, hit: c.exp.filter((x) => seen.has(x)).length, miss: c.exp.filter((x) => !seen.has(x)), extra: [...seen].filter((x) => !c.exp.includes(x)).length }))
+  // Los viajes sin carta (base sin carta, SGC) sí pueden ser de líquidos (aceites, glicerina, químicos).
+  const best = circuits.filter((c) => (!c.rechazo || isRech) && (!c.liquid || n.origen)).map((c) => ({ ...c, hit: c.exp.filter((x) => seen.has(x)).length, miss: c.exp.filter((x) => !seen.has(x)), extra: [...seen].filter((x) => !c.exp.includes(x)).length }))
     .sort((a, b) => score(b) - score(a) || a.exp.length - b.exp.length)[0]
-  trucks.push({ ctg: n.ctg, plate: n.plates[0], circuit: best.id, expected: best.exp.length, missing: best.miss, byClass: Object.fromEntries([...new Set(mine.map((c) => c.cls))].map((k) => [k, mine.filter((c) => c.cls === k).length])) })
+  trucks.push({ ctg: n.ctg, plate: n.plates[0], origen: n.origen ?? 'carta', circuit: best.id, expected: best.exp.length, missing: best.miss, byClass: Object.fromEntries([...new Set(mine.map((c) => c.cls))].map((k) => [k, mine.filter((c) => c.cls === k).length])) })
 }
 // ── Pasos de cada camión con carta y capturas sin dueño ──
 // Hueco = paso del circuito sin lectura propia, con su ventana (entre el paso anterior y el siguiente) y la hora

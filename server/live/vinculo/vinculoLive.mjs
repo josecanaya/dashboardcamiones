@@ -42,16 +42,20 @@ export function assignmentsFromCobertura(cob) {
 /**
  * @param {{ projectRoot: string, getInputs: () => Promise<{ events: object[], alerts: object[] }>, getCartas: () => object[], onResult: (r: { at: string, assignments: ReturnType<typeof assignmentsFromCobertura> }) => void, intervalMs?: number, log?: Console }} opts
  */
-export function createVinculoLive({ projectRoot, getInputs, getCartas, onResult, intervalMs = 5 * 60_000, log = console }) {
+/**
+ * getExtra: viajes sin carta (base sin carta y, como última instancia, SGC) con la forma de VINCULO_EXTRA
+ * (scripts/vinculo/cobertura.mjs); recibe las lecturas en memoria.
+ */
+export function createVinculoLive({ projectRoot, getInputs, getCartas, getExtra = null, onResult, intervalMs = 5 * 60_000, log = console }) {
   let running = false
   let last = null
   let lastError = null
 
-  function runScript(dataDir, from, to, outDir, cartasFile) {
+  function runScript(dataDir, from, to, outDir, cartasFile, extraFile) {
     return new Promise((resolve, reject) => {
       const child = spawn(process.execPath, [path.join(projectRoot, 'scripts', 'vinculo', 'cobertura.mjs'), from, to], {
         cwd: projectRoot,
-        env: { ...process.env, VINCULO_DATA: dataDir, VINCULO_CARTAS: cartasFile, VINCULO_OUT: outDir, VINCULO_SIN_DSS: '1' },
+        env: { ...process.env, VINCULO_DATA: dataDir, VINCULO_CARTAS: cartasFile, VINCULO_EXTRA: extraFile, VINCULO_OUT: outDir, VINCULO_SIN_DSS: '1' },
         stdio: ['ignore', 'pipe', 'pipe'],
         windowsHide: true,
       })
@@ -83,8 +87,10 @@ export function createVinculoLive({ projectRoot, getInputs, getCartas, onResult,
       writeFileSync(path.join(day, 'alert-list.json'), JSON.stringify(alerts))
       const cartasFile = path.join(dir, 'cartas.json')
       writeFileSync(cartasFile, JSON.stringify(cartas))
+      const extraFile = path.join(dir, 'extra.json')
+      writeFileSync(extraFile, JSON.stringify(getExtra ? getExtra(events, alerts) : []))
       const outDir = path.join(dir, 'out')
-      await runScript(dir, from, to, outDir, cartasFile)
+      await runScript(dir, from, to, outDir, cartasFile, extraFile)
       const cob = JSON.parse(readFileSync(path.join(outDir, 'cobertura.json'), 'utf8'))
       const assignments = assignmentsFromCobertura(cob)
       last = { at: new Date().toISOString(), ms: Date.now() - t0, camiones: cob.camiones?.length ?? 0, asignaciones: assignments.length }

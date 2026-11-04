@@ -151,6 +151,32 @@ const CONFUSABLE = new Set(
   ].flatMap((p) => [p, p[1] + p[0]])
 )
 
+/** Confusiones aprendidas de lo que corrigió operaciones (capa 3.3, data/padron/corregidos.json). */
+const LEARNED_CONFUSABLE = new Set()
+
+/**
+ * Pares de caracteres que se confunden según las correcciones de operaciones (lectura → patente real del mismo
+ * largo, hasta 2 caracteres distintos), con al menos `min` casos. 04/11: suma 8↔9 y E↔L a la tabla fija.
+ * @param {{ read: string, real: string, count?: number, readIsReal?: boolean }[]} pairs
+ */
+export function learnConfusions(pairs, min = 3) {
+  const n = new Map()
+  for (const p of pairs ?? []) {
+    const a = String(p.read ?? ''), b = String(p.real ?? '')
+    if (!a || a.length !== b.length || p.readIsReal) continue
+    const diffs = [...a].map((x, i) => [x, b[i]]).filter(([x, y]) => x !== y)
+    if (diffs.length > 2) continue
+    for (const [x, y] of diffs) { const k = [x, y].sort().join(''); n.set(k, (n.get(k) ?? 0) + (p.count ?? 1)) }
+  }
+  return [...n].filter(([, c]) => c >= min).map(([k]) => k)
+}
+
+/** Reemplaza las confusiones aprendidas (se suman a la tabla fija CONFUSABLE). */
+export function setLearnedConfusions(list) {
+  LEARNED_CONFUSABLE.clear()
+  for (const k of list ?? []) { LEARNED_CONFUSABLE.add(k); LEARNED_CONFUSABLE.add(k[1] + k[0]) }
+}
+
 /** Levenshtein ponderado: confusión OCR 0,3 · otra sustitución 1 · borrado/inserción 0,6. */
 export function weightedEditCost(a, b) {
   const n = a.length
@@ -159,7 +185,8 @@ export function weightedEditCost(a, b) {
   for (let i = 1; i <= n; i++) {
     const cur = [i * 0.6]
     for (let j = 1; j <= m; j++) {
-      const sub = a[i - 1] === b[j - 1] ? 0 : CONFUSABLE.has(a[i - 1] + b[j - 1]) ? 0.3 : 1
+      const pair = a[i - 1] + b[j - 1]
+      const sub = a[i - 1] === b[j - 1] ? 0 : CONFUSABLE.has(pair) || LEARNED_CONFUSABLE.has(pair) ? 0.3 : 1
       cur[j] = Math.min(prev[j - 1] + sub, prev[j] + 0.6, cur[j - 1] + 0.6)
     }
     prev = cur

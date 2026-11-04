@@ -18,6 +18,8 @@ import { sectorToLogical } from './circuitPrefix.mjs'
 
 /** Repetición de la misma cámara: la captura siguiente a ≤ 2 min de la anterior del paso. */
 export const REPEAT_MS = 2 * 60_000
+/** Parecido mínimo de una lectura sin formato con la patente del paso para tomarla como repetición. */
+export const REPEAT_SIMILARITY = 0.5
 /** Mismo disparo de la cámara. */
 export const SAME_TRIGGER_MS = 5_000
 /**
@@ -64,6 +66,10 @@ function sameVehicle(p, c) {
   const b = pasoBrand(p)
   if (b && c.brand && b !== c.brand) return false
   if (p.caps.some((x) => x.plate === c.plate) && !GENERIC.has(c.plate)) return true
+  // Lectura sin formato de patente que se parece a la patente bien leída del paso (la cámara volvió a captar al
+  // mismo camión al moverse, a segundos o minutos): es una lectura errónea confirmada de ese mismo paso.
+  // 03/11: 45 de las 302 sin formato a ≤ 2 min de una buena en la misma cámara.
+  if (isValidPlate(p.anchor.plate) && !isValidPlate(c.plate) && !GENERIC.has(c.plate) && plateSimilarity(c.plate, p.anchor.plate) >= REPEAT_SIMILARITY) return true
   if (isValidPlate(p.anchor.plate) || isValidPlate(c.plate)) return false
   return Boolean(b && c.brand && b === c.brand)
 }

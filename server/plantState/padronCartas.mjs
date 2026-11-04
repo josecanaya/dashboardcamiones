@@ -31,7 +31,12 @@ function vigente(note, t) {
  * @param {{ lookup: (plate: string) => object|null } | null} [permitidos]
  * @returns {{ at: (plate: string, t: number) => PadronHit | null, cartaAt: (plate: string, t: number) => object | null, platesAt: (t: number) => { plate: string, chasis: string, role: 'chasis'|'acoplado', ctg: string }[] }}
  */
-export function padronCartas(padron, permitidos = null) {
+/**
+ * @param {((t: number) => { plate: string, chasis: string, role: 'chasis'|'acoplado', ctg: string }[]) | null} [extraPlatesAt]
+ *   Más patentes esperadas para la primera corrección (capa 3.1): bases del back office y SGC del día
+ *   (docs/RECONOCEDOR_RECORRIDO_CAPTURA.md).
+ */
+export function padronCartas(padron, permitidos = null, extraPlatesAt = null) {
   /** Universo por hora: las cartas vigentes cambian por día de turno, no minuto a minuto. */
   const universe = new Map()
   return {
@@ -50,7 +55,7 @@ export function padronCartas(padron, permitidos = null) {
         if (universe.size > 48) universe.clear()
         universe.set(hour, out)
       }
-      return universe.get(hour)
+      return extraPlatesAt ? [...universe.get(hour), ...extraPlatesAt(t)] : universe.get(hour)
     },
     at(plate, t) {
       const p = plateOf(plate)

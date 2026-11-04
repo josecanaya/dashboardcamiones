@@ -105,7 +105,7 @@ export function createAlertStore({ projectRoot, log = console, camionDeGranos = 
           at: it.at,
           level: it.level,
           capas: granos ? { ...layerTrail(it), capa2: granos } : layerTrail(it),
-          tipo: granos ? 'camion_granos_sin_carta' : null,
+          tipo: granos ? 'camion_granos_sin_carta' : !it.validFormat ? 'lectura_ilegible' : null,
           /** Los candidatos más parecidos, para que operaciones la resuelva desde la alerta. */
           candidatos: (it.candidates ?? []).slice(0, 4).map((c) => ({ plate: c.plate, similarity: c.similarity ?? null })),
           alertAt: prev?.alertAt ?? nowIso,

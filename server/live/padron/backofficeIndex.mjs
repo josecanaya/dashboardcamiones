@@ -78,6 +78,8 @@ export function createBackofficeIndex({ padronDb, projectRoot, refreshMs = 120_0
       setInterval(() => void recargar(), refreshMs).unref?.()
     },
     recargar,
+    /** Todas las entradas aceptadas (universo de la primera corrección, capa 3.1). */
+    todas: () => [...entradas.values()],
     /** Entrada de Vehículos Permitidos de la patente aceptada, o null. */
     lookup: (plate) => entradas.get(normPlate(plate)) ?? null,
     /** ¿Se rechazó como camión de granos? (tiene que venir con carta). */

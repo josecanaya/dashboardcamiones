@@ -16,10 +16,16 @@
 // lo que reconstruye con P ≥ 0,6 se aplica (regla «lote», capa 3.1), también a capturas erróneas. LOTE=0 lo saltea.
 // Marca/color de cada captura: si existe data/dss-capturas/<día>.json (scripts/estado-planta/dss-capturas-camaras.mjs,
 // todas las capturas del DSS), de ahí; si no, solo las que trajo la alerta. DSS_CAPTURAS=0 lo ignora.
+// Recorrido objetivo (docs/RECONOCEDOR_RECORRIDO_CAPTURA.md):
+// - Lote = vínculo con universo carta → base sin carta → SGC (último recurso). LOTE_UNIVERSO=0: solo cartas.
+// - 3.1 compara la lectura mala con todas las patentes esperadas (cartas, bases, SGC del día). UNIVERSO_31=0: solo cartas.
+// - El vínculo (3.2) mira también las capturas erróneas antes de descartarlas; las que nadie asigna son alerta.
+//   VINCULO_ANTES=0: como antes (se descartan primero y no son alerta).
+// - El lote viejo (balanza + recorrido por producto) queda apagado: LOTE=1 lo prende para comparar.
 // Uso: node scripts/replay-capas-dia.mjs 2026-11-02 [salida]
 import fs from 'node:fs'
 import path from 'node:path'
-import { applyIdentifications, identifyFragments, isValidPlate, journeyKeyOf, nodeModelCatalog } from '../server/plantState/plateIdentification.mjs'
+import { applyIdentifications, identifyFragments, isValidPlate, journeyKeyOf, learnConfusions, nodeModelCatalog, setLearnedConfusions } from '../server/plantState/plateIdentification.mjs'
 import { replayBalanzaRegistry } from '../server/plantState/balanzaRegistry.mjs'
 import { getEventLiveInstantMs } from '../server/plantState/liveEventTime.mjs'
 import { alertReadEvents, withAlertAttributes } from '../server/plantState/alertReads.mjs'
@@ -34,6 +40,8 @@ import { CUENTA_AUTO_PROBABILITY } from '../server/plantState/plateIdentificatio
 import { applyVinculo, assignmentsFromCobertura, indexAssignments } from '../server/live/vinculo/vinculoLive.mjs'
 import { applyLoteToItems, buildLiveLote, captureAttrsLookup, dssExportAttrs, loteVerdict } from '../server/plantState/loteLive.mjs'
 import { finalSteps } from '../server/plantState/loteCore.mjs'
+import { lecturasVistas, universoExtra31, viajesSinCarta as armarViajesSinCarta } from '../server/live/vinculo/viajesSinCarta.mjs'
+import { clasificarErroneas } from '../server/plantState/erroneasConfirmadas.mjs'
 import { execFileSync } from 'node:child_process'
 import os from 'node:os'
 
@@ -86,6 +94,7 @@ const corr = tryJson('data/padron/corregidos.json') ?? { pairs: [], real: [] }
 const pairsByRead = new Map()
 for (const p of corr.pairs ?? []) if (!p.readIsReal) pairsByRead.set(p.read, [...(pairsByRead.get(p.read) ?? []), p])
 const realSet = new Set((corr.real ?? []).map((r) => r.plate))
+setLearnedConfusions(learnConfusions(corr.pairs))
 const corregidos = { realOf: (read) => [...(pairsByRead.get(read) ?? [])].sort((a, b) => b.count - a.count), isReal: (p) => realSet.has(p) }
 const noCamBy = new Map((tryJson('data/padron/no-camiones.json')?.entries ?? []).map((v) => [v.plate, v]))
 const noCamiones = { lookup: (p) => noCamBy.get(p) ?? null }
@@ -137,16 +146,35 @@ async function veredictos(items) {
 }
 const metadatos = { elegibles: 0, aplicados: 0 }
 
+// ── Lote (paso 0): viajes sin carta para el vínculo, carta → base sin carta → SGC como última instancia.
+const vistas = lecturasVistas(Object.values(lecturas).flatMap((s) => s.ev), Object.values(lecturas).flatMap((s) => s.al), start - 6 * 3600_000, end)
+const conCarta = (p) => padronMem.lookup(p).length > 0
+const viajesSinCarta = armarViajesSinCarta({ vistas, desdeMs: start - 6 * 3600_000, hastaMs: end, conCarta, baseDe: (p) => backoffice.lookup(p)?.backoffice.base ?? null, visits: balanza.visits ?? [] })
+/** Estado de cada paso esperado de los viajes del lote (vínculo): cámara, reconstruido, deducido, falta… */
+function resumenLote(cob) {
+  const porOrigen = {}
+  for (const tr of cob.camiones ?? []) {
+    const o = (porOrigen[tr.origen ?? 'carta'] ??= { viajes: 0 })
+    o.viajes++
+    for (const st of Object.values(tr.status ?? {})) o[st] = (o[st] ?? 0) + 1
+  }
+  return porOrigen
+}
+let loteVinculo = null
+
 // ── Vínculo del día (mismo script y entradas que en vivo: lecturas guardadas y cartas del padrón, sin DSS).
 let vinculoIndex = null
 if (process.env.VINCULO !== '0') {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'vinculo-replay-'))
   try {
     fs.writeFileSync(path.join(tmp, 'cartas.json'), JSON.stringify([...notes.values()]))
+    fs.writeFileSync(path.join(tmp, 'extra.json'), JSON.stringify(process.env.LOTE_UNIVERSO === '0' ? [] : viajesSinCarta))
     execFileSync(process.execPath, ['--max-old-space-size=8192', path.join(root, 'scripts', 'vinculo', 'cobertura.mjs'), day, day], {
-      cwd: root, stdio: 'ignore', env: { ...process.env, VINCULO_CARTAS: path.join(tmp, 'cartas.json'), VINCULO_OUT: path.join(tmp, 'out'), VINCULO_SIN_DSS: '1' },
+      cwd: root, stdio: 'ignore', env: { ...process.env, VINCULO_CARTAS: path.join(tmp, 'cartas.json'), VINCULO_EXTRA: path.join(tmp, 'extra.json'), VINCULO_OUT: path.join(tmp, 'out'), VINCULO_SIN_DSS: '1' },
     })
-    vinculoIndex = indexAssignments(assignmentsFromCobertura(JSON.parse(fs.readFileSync(path.join(tmp, 'out', 'cobertura.json'), 'utf8'))))
+    const cob = JSON.parse(fs.readFileSync(path.join(tmp, 'out', 'cobertura.json'), 'utf8'))
+    vinculoIndex = indexAssignments(assignmentsFromCobertura(cob))
+    loteVinculo = resumenLote(cob)
   } catch (e) {
     console.warn(`[vínculo] no corrió: ${e instanceof Error ? e.message : e}`)
   } finally {
@@ -165,6 +193,9 @@ function quienEs(plate, t) {
   }
   return 'nadie'
 }
+// 3.1 · Primera corrección contra todas las patentes esperadas: cartas vigentes, bases y SGC del día.
+const extraUniverso = process.env.UNIVERSO_31 === '0' ? () => [] : universoExtra31(viajesSinCarta, backoffice.todas(), vistas)
+const padron31 = { ...padron, platesAt: (t) => [...padron.platesAt(t), ...extraUniverso(t)] }
 const esGranos = (p) => backoffice.esCamionDeGranos(p) || padronMem.lookup(p).length > 0
 
 const pasos = []
@@ -186,7 +217,7 @@ if (!dssAttrs && process.env.DSS_CAPTURAS !== '0' && fs.existsSync(dssFile)) {
   dssAttrs = captureAttrsLookup(byDev)
 }
 // El lote recorre las dos plantas juntas (un camión pasa de Ricardone al puerto).
-const lote = process.env.LOTE === '0' ? null : buildLiveLote({
+const lote = process.env.LOTE !== '1' ? null : buildLiveLote({
   events: [...ensambles.ricardone.events, ...ensambles.san_lorenzo.events],
   nowMs: end,
   balanza,
@@ -206,7 +237,7 @@ const loteResumen = lote ? { dssCapturas: Boolean(dssAttrs), camiones: lote.lote
 for (const site of ['ricardone', 'san_lorenzo']) {
   const ens = ensambles[site]
   const other = site === 'ricardone' ? 'san_lorenzo' : 'ricardone'
-  const ctxBase = { catalog, balanza, padron, corregidos, noCamiones, otherSiteEvents: lecturas[other].ev.filter((e) => getEventLiveInstantMs(e) < end) }
+  const ctxBase = { catalog, balanza, padron: padron31, corregidos, noCamiones, otherSiteEvents: lecturas[other].ev.filter((e) => getEventLiveInstantMs(e) < end) }
   let { items } = identifyFragments(ens.events, end, ctxBase)
   if (process.env.METADATOS !== '0') {
     const { verdicts, consultados } = await veredictos(items.filter((it) => Date.parse(it.at) >= start))
@@ -218,10 +249,16 @@ for (const site of ['ricardone', 'san_lorenzo']) {
   }
   // El lote, antes de descartar las capturas erróneas: puede ubicarlas por el paso pendiente.
   if (lote) items = applyLoteToItems(items, lote, site)
-  // Como el servidor: la lectura ilegible que solo llegó como alerta no va a la bandeja; después, el vínculo.
-  const ilegibles = new Set(items.filter((it) => String(it.fragmentKey).startsWith('alert-') && !it.assignedPlate && !it.decision && !it.validFormat).map((it) => it.fragmentKey))
-  items = items.filter((it) => !ilegibles.has(it.fragmentKey))
-  if (vinculoIndex) items = applyVinculo(items, vinculoIndex, ens.events, { minProb: 0.5, timeOf: getEventLiveInstantMs })
+  // Lectura sin formato que solo llegó como alerta. Objetivo: el vínculo la mira antes y, si nadie la asigna,
+  // es alerta. Antes (VINCULO_ANTES=0): se descartaba primero, como hoy en el servidor.
+  const esErronea = (it) => String(it.fragmentKey).startsWith('alert-') && !it.assignedPlate && !it.decision && !it.validFormat
+  const antes = process.env.VINCULO_ANTES !== '0'
+  if (antes && vinculoIndex) items = applyVinculo(items, vinculoIndex, ens.events, { minProb: 0.5, timeOf: getEventLiveInstantMs })
+  const ilegibles = new Set(items.filter(esErronea).map((it) => it.fragmentKey))
+  if (!antes) {
+    items = items.filter((it) => !ilegibles.has(it.fragmentKey))
+    if (vinculoIndex) items = applyVinculo(items, vinculoIndex, ens.events, { minProb: 0.5, timeOf: getEventLiveInstantMs })
+  }
   const itemBy = new Map(items.map((it) => [it.fragmentKey, it]))
   const evBy = new Map(ens.events.map((e) => [captureKey(e), e]))
   const identified = new Map(applyIdentifications(ens.events, items).map((e) => [captureKey(e), e]))
@@ -234,7 +271,10 @@ for (const site of ['ricardone', 'san_lorenzo']) {
     const read = String(p.plate ?? '').toUpperCase()
     const final = String(identified.get(p.anchorKey)?.truckPlate ?? read).toUpperCase()
     let capa, detalle, loteDiag = null
-    if (!it && ilegibles.has(fk)) {
+    if (antes && it && ilegibles.has(fk)) {
+      capa = '4'
+      detalle = 'lectura ilegible sin asignar'
+    } else if (!it && ilegibles.has(fk)) {
       capa = 'captura_erronea'
       // ¿El vínculo la habría asignado si se le diera antes de descartarla?
       const v = vinculoIndex?.at(e0.deviceCode, getEventLiveInstantMs(e0))
@@ -273,15 +313,31 @@ for (const site of ['ricardone', 'san_lorenzo']) {
 }
 for (const b of Object.values(bases)) await b.close()
 
+// Final: la ilegible sin asignar junto a un paso guardado de la misma cámara es lectura errónea confirmada;
+// el resto es alerta y las seguidas en la misma cámara van juntas (server/plantState/erroneasConfirmadas.mjs).
+if (process.env.ERRONEA_CONFIRMADA !== '0') {
+  const ileg = pasos.filter((x) => x.detalle === 'lectura ilegible sin asignar')
+  const guardados = pasos.filter((x) => /^(2|3\.\d)$/.test(x.capa)).map((x) => ({ device: x.device, node: x.node, site: x.site, t: Date.parse(x.at) }))
+  const { confirmadas, alertas } = clasificarErroneas(ileg.map((x, i) => ({ key: String(i), device: x.device, node: x.node, site: x.site, t: Date.parse(x.at) })), guardados)
+  const agrupadas = new Set(alertas.flatMap((a) => a.agrupa))
+  ileg.forEach((x, i) => {
+    if (confirmadas.has(String(i))) Object.assign(x, { capa: 'lectura_erronea', detalle: 'repetición de paso guardado' })
+    else if (agrupadas.has(String(i))) Object.assign(x, { capa: '4', detalle: 'ilegible en la misma alerta' })
+  })
+}
+
 const cuenta = (l, f) => l.reduce((m, x) => ((m[f(x)] = (m[f(x)] ?? 0) + 1), m), {})
 const resumen = {
   dia: day,
   pasos: pasos.length,
   porCapa: cuenta(pasos, (x) => x.capa),
+  alertas: pasos.filter((x) => x.capa === '4' && x.detalle !== 'ilegible en la misma alerta').length,
   porDetalle: cuenta(pasos, (x) => `${x.capa} · ${x.detalle}`),
   correccionesVuelvenA: cuenta(pasos.filter((x) => x.vuelveA), (x) => x.vuelveA),
   metadatos,
   lote: loteResumen,
+  loteVinculo,
+  viajesSinCarta: { base: viajesSinCarta.filter((x) => x.origen === 'base').length, sgc: viajesSinCarta.filter((x) => x.origen === 'sgc').length },
   porPlanta: Object.fromEntries(['ricardone', 'san_lorenzo'].map((s) => [s, cuenta(pasos.filter((x) => x.site === s), (x) => x.capa)])),
 }
 fs.mkdirSync(outDir, { recursive: true })
