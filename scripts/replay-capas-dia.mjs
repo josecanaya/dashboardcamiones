@@ -11,6 +11,11 @@
 // cartas del padrón; asigna lo que quedó abierto si la probabilidad llega a 50 %. VINCULO=0 lo saltea.
 // Igual que el servidor, una captura errónea (sin formato de patente, solo llegó como alerta del DSS) no va a la
 // bandeja: no es alerta.
+// Lote (server/plantState/loteLive.mjs): el lote de ingreso (balanza del día + camiones con carta vigente o de
+// la base sin carta que se leyeron al entrar) avanza nodo por nodo con peso por tiempo de tramo y marca/color;
+// lo que reconstruye con P ≥ 0,6 se aplica (regla «lote», capa 3.1), también a capturas erróneas. LOTE=0 lo saltea.
+// Marca/color de cada captura: si existe data/dss-capturas/<día>.json (scripts/estado-planta/dss-capturas-camaras.mjs,
+// todas las capturas del DSS), de ahí; si no, solo las que trajo la alerta. DSS_CAPTURAS=0 lo ignora.
 // Uso: node scripts/replay-capas-dia.mjs 2026-11-02 [salida]
 import fs from 'node:fs'
 import path from 'node:path'
@@ -27,6 +32,8 @@ import { AUTO_EVIDENCE_PROBABILITY, AUTO_EVIDENCE_SAME_NODE_PROBABILITY, scoreCa
 import { scoreWithNodeModel } from '../server/plantState/nodeModelScore.mjs'
 import { CUENTA_AUTO_PROBABILITY } from '../server/plantState/plateIdentification.mjs'
 import { applyVinculo, assignmentsFromCobertura, indexAssignments } from '../server/live/vinculo/vinculoLive.mjs'
+import { applyLoteToItems, buildLiveLote, captureAttrsLookup, dssExportAttrs, loteVerdict } from '../server/plantState/loteLive.mjs'
+import { finalSteps } from '../server/plantState/loteCore.mjs'
 import { execFileSync } from 'node:child_process'
 import os from 'node:os'
 
@@ -43,7 +50,7 @@ const tryJson = (p) => (fs.existsSync(path.join(root, p)) ? json(p) : null)
 /** Capa de la lámina según la regla del reconocedor. */
 const CAPA_DE_REGLA = {
   carta_porte: '2', vehiculo_permitido: '2', acoplado_carta: '2', acoplado_permitido: '2', doble_lectura_carta: '2', doble_lectura_permitido: '2',
-  carta_parecida: '3.1', vinculo: '3.1', doble_lectura: '3.1', universo: '3.1', cuenta: '3.1', busqueda_atras: '3.1', par_trasera: '3.1',
+  carta_parecida: '3.1', vinculo: '3.1', lote: '3.1', doble_lectura: '3.1', universo: '3.1', cuenta: '3.1', busqueda_atras: '3.1', par_trasera: '3.1',
   atributos_dss: '3.2',
   corregida_antes: '3.3', confirmada_antes: '3.3', no_camion: '3.3',
   ia_imagen: '3.4',
@@ -161,11 +168,43 @@ function quienEs(plate, t) {
 const esGranos = (p) => backoffice.esCamionDeGranos(p) || padronMem.lookup(p).length > 0
 
 const pasos = []
+const acopladoChasis = (plate, t) => { const h = padron.at(plate, t); return h?.role === 'acoplado' && h.source === 'carta' ? h.chasis : null }
+const ensambles = {}
 for (const site of ['ricardone', 'san_lorenzo']) {
   const { ev, al } = lecturas[site]
-  const events = withAlertAttributes([...ev, ...alertReadEvents(al, ev)], al).filter((e) => getEventLiveInstantMs(e) < end)
-  const acopladoChasis = (plate, t) => { const h = padron.at(plate, t); return h?.role === 'acoplado' && h.source === 'carta' ? h.chasis : null }
-  const ens = ensamblarPasos(events, { acopladoChasis })
+  ensambles[site] = ensamblarPasos(withAlertAttributes([...ev, ...alertReadEvents(al, ev)], al).filter((e) => getEventLiveInstantMs(e) < end), { acopladoChasis })
+}
+// Todas las capturas del DSS del día (hora de cámara + 240 s = hora del feed), para marca/color de cada lectura.
+// Primero el export del DSS (data/dss-export/<desde>_<dd hasta>/capturas.csv, «Vehicle Search»).
+let dssAttrs = process.env.DSS_CAPTURAS === '0' ? null : dssExportAttrs(day, day, root)
+const dssFile = path.join(root, 'data', 'dss-capturas', `${day}.json`)
+if (!dssAttrs && process.env.DSS_CAPTURAS !== '0' && fs.existsSync(dssFile)) {
+  const byDev = new Map()
+  for (const [dev, rows] of Object.entries(JSON.parse(fs.readFileSync(dssFile, 'utf8')).capturas ?? {})) {
+    byDev.set(dev.toLowerCase(), rows.map((r) => ({ t: Date.parse(r.at) + 240_000, plate: String(r.plate ?? '').toUpperCase().replace(/[^A-Z0-9]/g, ''), vehicleColor: r.vehicleColor, vehicleBrand: r.vehicleBrand, vehicleCategory: r.vehicleCategory })).sort((a, b) => a.t - b.t))
+  }
+  dssAttrs = captureAttrsLookup(byDev)
+}
+// El lote recorre las dos plantas juntas (un camión pasa de Ricardone al puerto).
+const lote = process.env.LOTE === '0' ? null : buildLiveLote({
+  events: [...ensambles.ricardone.events, ...ensambles.san_lorenzo.events],
+  nowMs: end,
+  balanza,
+  attrsAt: dssAttrs,
+  conocido: (p, t) => Boolean(padron.cartaAt(p, t)) || backoffice.lookup(p)?.backoffice.base === 'sin_carta',
+  root,
+})
+// Como en lote.mjs: cada paso esperado de cada camión del lote que entró ese día, con su estado final.
+const pasosLote = {}
+if (lote) {
+  for (const m of lote.lote) {
+    if (m.ing < start || m.ing >= end || !m.status) continue
+    for (const e of finalSteps(m, lote.front, end)) pasosLote[e] = (pasosLote[e] ?? 0) + 1
+  }
+}
+const loteResumen = lote ? { dssCapturas: Boolean(dssAttrs), camiones: lote.lote.length, porFuente: lote.lote.reduce((m, x) => ((m[x.source] = (m[x.source] ?? 0) + 1), m), {}), pasosDelLote: pasosLote } : null
+for (const site of ['ricardone', 'san_lorenzo']) {
+  const ens = ensambles[site]
   const other = site === 'ricardone' ? 'san_lorenzo' : 'ricardone'
   const ctxBase = { catalog, balanza, padron, corregidos, noCamiones, otherSiteEvents: lecturas[other].ev.filter((e) => getEventLiveInstantMs(e) < end) }
   let { items } = identifyFragments(ens.events, end, ctxBase)
@@ -177,6 +216,8 @@ for (const site of ['ricardone', 'san_lorenzo']) {
     fs.mkdirSync(outDir, { recursive: true })
     fs.writeFileSync(cacheFile, JSON.stringify(attrsCache))
   }
+  // El lote, antes de descartar las capturas erróneas: puede ubicarlas por el paso pendiente.
+  if (lote) items = applyLoteToItems(items, lote, site)
   // Como el servidor: la lectura ilegible que solo llegó como alerta no va a la bandeja; después, el vínculo.
   const ilegibles = new Set(items.filter((it) => String(it.fragmentKey).startsWith('alert-') && !it.assignedPlate && !it.decision && !it.validFormat).map((it) => it.fragmentKey))
   items = items.filter((it) => !ilegibles.has(it.fragmentKey))
@@ -192,12 +233,18 @@ for (const site of ['ricardone', 'san_lorenzo']) {
     const it = fk ? itemBy.get(fk) : null
     const read = String(p.plate ?? '').toUpperCase()
     const final = String(identified.get(p.anchorKey)?.truckPlate ?? read).toUpperCase()
-    let capa, detalle
+    let capa, detalle, loteDiag = null
     if (!it && ilegibles.has(fk)) {
       capa = 'captura_erronea'
       // ¿El vínculo la habría asignado si se le diera antes de descartarla?
       const v = vinculoIndex?.at(e0.deviceCode, getEventLiveInstantMs(e0))
       detalle = v?.plate && v.prob >= 0.5 ? 'captura errónea que el vínculo asignaría' : 'captura errónea'
+      // Por qué el lote no la ubicó.
+      if (lote) {
+        const lv = loteVerdict(lote, fk)
+        const best = lv?.caps.map((c) => c.lote).filter((x) => x?.via === 'sin_decidir').sort((a, b) => (b.P ?? 0) - (a.P ?? 0))[0]
+        loteDiag = !lv ? (lote.byKey.has(fk) ? 'el lote no la miró' : 'fuera del lote (nodo sin modelo o trasera)') : lv.member ? 'el lote la asignó pero no se aplicó (no se parece)' : best ? `sin decidir (P ${Math.round((best.P ?? 0) * 100)} %)` : 'sin candidato en el lote'
+      }
     } else if (!it) {
       // No fue un caso: la lectura alcanzó (está en una carta, en Permitidos o en un recorrido conocido).
       const q = quienEs(read, t)
@@ -217,7 +264,7 @@ for (const site of ['ricardone', 'san_lorenzo']) {
     pasos.push({
       site, at: p.at, node: p.node, nodo: logicalLabel(p.node), device: p.anchorKey.split('|')[1], captures: p.captures,
       leida: read, final: isValidPlate(final) ? final : null, corregida: isValidPlate(final) && final !== read,
-      capa, detalle, regla: it?.rule ?? null, motivo: it?.reason ?? null,
+      capa, detalle, loteDiag, regla: it?.rule ?? null, motivo: it?.reason ?? null,
       // Después de una corrección, la patente vuelve a la capa 2: quién es la patente final.
       vuelveA: capa.startsWith('3') && isValidPlate(final) ? quienEs(final, t) : null,
       candidatos: (it?.candidates ?? []).slice(0, 3).map((c) => ({ plate: c.plate, similarity: c.similarity ?? null })),
@@ -234,6 +281,7 @@ const resumen = {
   porDetalle: cuenta(pasos, (x) => `${x.capa} · ${x.detalle}`),
   correccionesVuelvenA: cuenta(pasos.filter((x) => x.vuelveA), (x) => x.vuelveA),
   metadatos,
+  lote: loteResumen,
   porPlanta: Object.fromEntries(['ricardone', 'san_lorenzo'].map((s) => [s, cuenta(pasos.filter((x) => x.site === s), (x) => x.capa)])),
 }
 fs.mkdirSync(outDir, { recursive: true })

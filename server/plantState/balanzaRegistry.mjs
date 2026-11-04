@@ -11,6 +11,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { normalizeSgcPlant } from '../sgc/sgcMovimientos.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '../..')
@@ -55,6 +56,8 @@ export function buildBalanzaRegistry(visits, known = new Set()) {
   const latest = Math.max(0, ...visits.map((v) => v.ingresoMs).filter(Number.isFinite))
   return {
     size: visits.length,
+    /** Visitas válidas (lote de ingreso del reconocedor por lote, loteLive.mjs). */
+    visits: [...byPlate.values()].flat(),
     /** Última alta registrada: si la lectura es posterior, el registro todavía no la puede cubrir. */
     latestIngresoMs: latest || null,
     /** Visita del camión con esta patente que estaba en planta a la hora t. */
@@ -136,6 +139,8 @@ export function visitsFromSgc(rows) {
     salidaMs: r.FECHASALIDA ? localMs(r.FECHASALIDA) : null,
     /** Código de producto: separa camiones de granos de los demás vehículos (isGrainProduct). */
     cod: r.PRODUCTOCODIGO != null ? String(r.PRODUCTOCODIGO).padStart(4, '0') : null,
+    planta: normalizeSgcPlant(r.PLANTA),
+    product: r.PRODUCTO ?? null,
     source: 'sgc',
   }))
 }
@@ -147,6 +152,9 @@ export function visitsFromMovimientos(rows) {
     trailer: plateOf(r.trailer_plate ?? r.patente_acoplado) || null,
     ingresoMs: localMs(r.external_ingreso_at),
     salidaMs: r.external_salida_at ? localMs(r.external_salida_at) : null,
+    planta: r.planta_normalized ?? null,
+    product: r.product_normalized ?? null,
+    movementType: r.movement_type ?? null,
     source: 'movimientos',
   }))
 }
