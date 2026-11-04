@@ -27,7 +27,8 @@
     "test:watch": "vitest",
     "contract-first:local": "node scripts/run-truckflow-transform-local.mjs",
     "sim:build": "python scripts/simulador/build_replay.py --all --out public/simulador && npm run sim:motor && python scripts/simulador/build_replay_html.py public/simulador public/simulador/index.html --standalone",
-    "sim:motor": "python scripts/simulador/motor_colas.py todos --visual"
+    "sim:motor": "python scripts/simulador/motor_colas.py todos --visual",
+    "padron:armar": "node --max-old-space-size=8192 scripts/padron/armar-bases-backoffice.mjs"
   },
   "dependencies": {
     "@huggingface/transformers": "3.7.6",
@@ -38,6 +39,7 @@
     "fflate": "^0.8.3",
     "html-to-image": "^1.11.13",
     "jspdf": "^4.2.1",
+    "mongodb": "^6.22.0",
     "oracledb": "^6.10.0",
     "pg": "^8.13.3",
     "react": "^18.3.1",

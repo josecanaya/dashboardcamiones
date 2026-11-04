@@ -40,6 +40,7 @@ import { createPadron } from './live/padron/padron.mjs'
 import { createCartasSource } from './live/padron/cartasSource.mjs'
 import { createVehiculosPermitidos } from './live/padron/vehiculosPermitidos.mjs'
 import { createAutorizaciones, createAutorizacionesRouter } from './live/padron/autorizaciones.mjs'
+import { connectBackofficeDb, fichaBackoffice, mongoAutorizacionesStore } from './live/padron/padronDb.mjs'
 import { createAprendizaje } from './live/padron/aprendizaje.mjs'
 import { createVisionJudge } from './live/vision/visionJudge.mjs'
 import { createAlertStore } from './live/alerts/alertStore.mjs'
@@ -282,11 +283,26 @@ app.use(sgc.router)
 const padron = createPadron({ projectRoot: PROJECT_ROOT, source: createCartasSource({ projectRoot: PROJECT_ROOT }) })
 padron.start()
 /** Vehículos Permitidos (sin carta: agua, residuos, proveedores, registro): se consultan antes que la carta. */
-/** Autorizaciones cargadas por portería, comercial y sin carta (/autorizaciones): pesan antes que la balanza. */
-const autorizaciones = createAutorizaciones({ projectRoot: PROJECT_ROOT })
+/**
+ * Bases del back office (MongoDB local, server/live/padron/padronDb.mjs): particulares y sin carta. Sin Mongo,
+ * las autorizaciones siguen en data/padron/autorizaciones.json.
+ */
+const padronDb = await Promise.all([connectBackofficeDb('particulares'), connectBackofficeDb('sin_carta')])
+  .then(([particulares, sin_carta]) => ({ particulares, sin_carta }))
+  .catch((e) => {
+    console.warn(`[padron] sin MongoDB (${e instanceof Error ? e.message : e}): autorizaciones en data/padron/autorizaciones.json`)
+    return null
+  })
+if (padronDb) console.log(`[padron] MongoDB ${padronDb.particulares.nombre} + ${padronDb.sin_carta.nombre}`)
+/** Autorizaciones cargadas por portería y comercial (/autorizaciones): pesan antes que la balanza. */
+const autorizaciones = createAutorizaciones({ projectRoot: PROJECT_ROOT, ...(padronDb ? { store: mongoAutorizacionesStore(padronDb) } : {}) })
 const vehiculosPermitidos = createVehiculosPermitidos({ projectRoot: PROJECT_ROOT, autorizaciones })
 vehiculosPermitidos.start()
-app.use(createAutorizacionesRouter({ autorizaciones, historico: vehiculosPermitidos.historico }))
+app.use(createAutorizacionesRouter({
+  autorizaciones,
+  historico: vehiculosPermitidos.historico,
+  ficha: (patente) => (padronDb ? fichaBackoffice(padronDb, patente) : null),
+}))
 plantState.setPadron(padron, vehiculosPermitidos)
 /** Lo aprendido de operaciones: lecturas malas ya corregidas y vehículos que no son camiones (data/padron). */
 const aprendizaje = createAprendizaje({ projectRoot: PROJECT_ROOT })

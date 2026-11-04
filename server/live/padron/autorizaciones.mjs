@@ -97,12 +97,19 @@ export function fileStore(file) {
   }
 }
 
+/**
+ * `store` es fileStore o el de Mongo (padronDb.mjs): load() puede ser asíncrono (`ready` avisa cuando
+ * terminó) y, si tiene upsert(doc), se guarda solo la autorización que cambió.
+ */
 export function createAutorizaciones({ projectRoot = ROOT, store = fileStore(path.join(projectRoot, 'data', 'padron', 'autorizaciones.json')) } = {}) {
-  let list = store.load()
+  const cargadas = store.load()
+  let list = Array.isArray(cargadas) ? cargadas : []
+  const ready = Array.isArray(cargadas) ? Promise.resolve() : cargadas.then((l) => { list = [...l, ...list] })
   const byId = (id) => list.find((a) => a.id === id) ?? null
-  const persist = () => store.save(list)
+  const persist = (a) => Promise.resolve().then(() => (store.upsert ? store.upsert(a) : store.save(list)))
 
   return {
+    ready,
     list: ({ perfil, soloVigentes = false, dia = hoyAr() } = {}) =>
       list.filter((a) => (!perfil || a.perfil === perfil) && (!soloVigentes || vigente(a, dia))),
     get: byId,
@@ -112,8 +119,7 @@ export function createAutorizaciones({ projectRoot = ROOT, store = fileStore(pat
       const at = new Date().toISOString()
       const a = { id: randomUUID(), ...v.ok, estado: 'activa', creadoPor: usuario || null, creadoAt: at, historial: [{ at, por: usuario || null, accion: 'alta' }] }
       list.push(a)
-      persist()
-      return { ok: a }
+      return { ok: a, guardado: persist(a) }
     },
     editar(id, body, usuario) {
       const a = byId(id)
@@ -123,16 +129,14 @@ export function createAutorizaciones({ projectRoot = ROOT, store = fileStore(pat
       const cambios = Object.keys(v.ok).filter((k) => v.ok[k] !== a[k])
       Object.assign(a, v.ok)
       a.historial.push({ at: new Date().toISOString(), por: usuario || null, accion: 'edicion', cambios })
-      persist()
-      return { ok: a }
+      return { ok: a, guardado: persist(a) }
     },
     anular(id, usuario, motivo) {
       const a = byId(id)
       if (!a) return { error: 'no existe', status: 404 }
       a.estado = 'anulada'
       a.historial.push({ at: new Date().toISOString(), por: usuario || null, accion: 'anulada', motivo: motivo || null })
-      persist()
-      return { ok: a }
+      return { ok: a, guardado: persist(a) }
     },
     /**
      * Autorización vigente de la patente (como chasis o acoplado), con la forma de una entrada de
@@ -154,22 +158,31 @@ export function createAutorizaciones({ projectRoot = ROOT, store = fileStore(pat
 }
 
 /**
- * API y páginas. `historico(plate)` da lo que se sabe de la patente por la balanza (Vehículos Permitidos)
- * para ayudar a quien carga.
+ * API y páginas. `historico(plate)` da lo que se sabe de la patente por la balanza (Vehículos Permitidos) y
+ * `ficha(plate)` su ficha de la base del padrón (viajes sin carta y capturas), para ayudar a quien carga.
  */
-export function createAutorizacionesRouter({ autorizaciones, historico = () => null }) {
+export function createAutorizacionesRouter({ autorizaciones, historico = () => null, ficha = async () => null }) {
   const r = express.Router()
   const usuario = (req) => String(req.get('x-usuario') ?? req.body?.usuario ?? '').trim().slice(0, 80)
-  const send = (res, out, status = 200) => (out.error ? res.status(out.status ?? 400).json({ error: out.error }) : res.status(status).json(out.ok))
+  const send = async (res, out, status = 200) => {
+    if (out.error) return res.status(out.status ?? 400).json({ error: out.error })
+    try {
+      await out.guardado
+    } catch (e) {
+      return res.status(500).json({ error: `no se pudo guardar en la base: ${e instanceof Error ? e.message : e}` })
+    }
+    res.status(status).json(out.ok)
+  }
 
   r.get('/api/autorizaciones', (req, res) => {
     const perfil = req.query.perfil ? String(req.query.perfil) : undefined
     res.json({ hoy: hoyAr(), autorizaciones: autorizaciones.list({ perfil, soloVigentes: req.query.vigentes === '1' }) })
   })
-  r.get('/api/autorizaciones/consulta', (req, res) => {
+  r.get('/api/autorizaciones/consulta', async (req, res) => {
     const p = normPlate(req.query.patente)
     const todas = autorizaciones.list().filter((a) => a.patente === p || a.acoplado === p)
-    res.json({ patente: p, vigente: autorizaciones.lookup(p), autorizaciones: todas, historico: historico(p) })
+    const f = await Promise.resolve(ficha(p)).catch(() => null)
+    res.json({ patente: p, vigente: autorizaciones.lookup(p), autorizaciones: todas, historico: historico(p), ficha: f })
   })
   r.post('/api/autorizaciones', (req, res) => send(res, autorizaciones.crear(req.body, usuario(req)), 201))
   r.patch('/api/autorizaciones/:id', (req, res) => send(res, autorizaciones.editar(req.params.id, req.body, usuario(req))))

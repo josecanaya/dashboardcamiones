@@ -52,3 +52,16 @@ describe('autorizaciones', () => {
     expect(vp.historico('SZG666').category).toBe('agua')
   })
 })
+
+describe('autorizaciones con store asíncrono (Mongo)', () => {
+  it('carga en segundo plano y guarda solo la que cambió', async () => {
+    const guardadas = []
+    const previa = { id: 'x1', perfil: 'porteria', tipo: 'particular', acceso: 'ingreso', patente: 'AB123CD', planta: 'ambas', desde: '2026-11-01', hasta: '2026-11-30', estado: 'activa', historial: [] }
+    const a = createAutorizaciones({ store: { load: async () => [previa], upsert: async (doc) => { guardadas.push(doc.id) } } })
+    await a.ready
+    expect(a.lookup('AB123CD', '2026-11-03')?.autorizacion.id).toBe('x1')
+    const { ok, guardado } = a.crear({ perfil: 'porteria', acceso: 'ingreso', patente: 'AA111BB' }, 'ana')
+    await guardado
+    expect(guardadas).toEqual([ok.id])
+  })
+})

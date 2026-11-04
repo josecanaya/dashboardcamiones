@@ -218,7 +218,12 @@
       const v = r.vigente?.autorizacion
       if (v && (!editando || v.id !== editando.id)) { partes.push(`Ya autorizada hasta el ${fecha(v.hasta)} (${v.perfil.replace('_', ' ')}, ${v.tipo})`); warn = true }
       const h = r.historico
-      if (h) partes.push(`Vino ${h.movements} ${h.movements === 1 ? 'vez' : 'veces'} por balanza${h.category ? ' (' + h.category.replace(/_/g, ' ') + ')' : ''}, última ${fecha(h.lastSeen)}`)
+      const f = r.ficha
+      if (f?.balanza?.viajes) {
+        const prods = f.productos.slice(0, 2).map((p) => bonito(p.nombre)).join(', ')
+        partes.push(`Vino ${f.balanza.viajes} ${f.balanza.viajes === 1 ? 'vez' : 'veces'} sin carta (${prods}), última ${fecha(new Date(f.balanza.ultimo).toLocaleDateString('sv-SE', { timeZone: 'America/Argentina/Buenos_Aires' }))}`)
+        if (f.camaras?.capturas) partes.push(`${f.camaras.capturas} capturas de cámara`)
+      } else if (h) partes.push(`Vino ${h.movements} ${h.movements === 1 ? 'vez' : 'veces'} por balanza${h.category ? ' (' + h.category.replace(/_/g, ' ') + ')' : ''}, última ${fecha(h.lastSeen)}`)
       const previas = r.autorizaciones.filter((a) => !v || a.id !== v.id).length
       if (previas) partes.push(`${previas} autorización${previas > 1 ? 'es' : ''} anterior${previas > 1 ? 'es' : ''}`)
       hint.textContent = partes.length ? partes.join(' · ') : 'Patente nueva: no está en la balanza ni en autorizaciones.'
