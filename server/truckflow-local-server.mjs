@@ -42,6 +42,7 @@ import { createVehiculosPermitidos } from './live/padron/vehiculosPermitidos.mjs
 import { createAutorizaciones, createAutorizacionesRouter } from './live/padron/autorizaciones.mjs'
 import { connectBackofficeDb, fichaBackoffice, mongoAutorizacionesStore } from './live/padron/padronDb.mjs'
 import { createBackofficeIndex } from './live/padron/backofficeIndex.mjs'
+import { padronCartas } from './plantState/padronCartas.mjs'
 import { createAprendizaje } from './live/padron/aprendizaje.mjs'
 import { createVisionJudge } from './live/vision/visionJudge.mjs'
 import { createAlertStore } from './live/alerts/alertStore.mjs'
@@ -511,10 +512,22 @@ if (process.env.VISION_IA === '1') visionJudge.start()
  * Alertas: capturas que ninguna capa identificó (capa 2 carta/Permitidos, capa 3 corrección + IA), guardadas
  * por día en data/alertas con su paso por cada capa. Se actualizan cada minuto.
  */
+/** Capa 2 sobre lo que hay ahora en memoria: para volver a mirar alertas abiertas (la carta pudo llegar tarde). */
+const capa2 = padronCartas(padron, vehiculosPermitidos)
+const diaCorto = (iso) => (iso ? `${iso.slice(8, 10)}/${iso.slice(5, 7)}` : '?')
 const alertStore = createAlertStore({
   projectRoot: PROJECT_ROOT,
-  // Camión de granos = rechazado como tal en el back office o con alguna carta de porte (aunque hoy no vigente).
-  esCamionDeGranos: (plate) => backoffice.esCamionDeGranos(plate) || (padron.lookup(plate) ?? []).length > 0,
+  // Camión de granos = rechazado como tal en el back office o con alguna carta de porte. Una carta de otro día
+  // no vale para este viaje: sigue siendo alerta, con el dato de la carta.
+  camionDeGranos: (plate, t) => {
+    const notas = padron.lookup(plate) ?? []
+    if (notas.length) {
+      const ref = (n) => Date.parse(n.turnDay ? `${n.turnDay}T15:00:00Z` : n.departure)
+      const n = [...notas].sort((a, b) => Math.abs(ref(a) - t) - Math.abs(ref(b) - t))[0]
+      return `${plate} es un camión de granos: su carta ${n.ctg} es del ${diaCorto(n.turnDay ?? n.departure)}, de otro día; no vale para este viaje`
+    }
+    return backoffice.esCamionDeGranos(plate) ? `${plate} es un camión de granos y no tiene carta de porte` : null
+  },
 })
 /** El vínculo (scripts/vinculo/cobertura.mjs) cada 5 min sobre lo que hay en memoria: completa lo que el reconocedor dejó. */
 const vinculoLive = createVinculoLive({
@@ -533,6 +546,11 @@ const refreshAlerts = async () => {
       console.warn('[alertas]', site, e instanceof Error ? e.message : e)
     }
   }
+  // La carta pudo entrar al padrón después de la lectura (o la patente se aceptó en el back office).
+  alertStore.recheck((a) => {
+    const hit = capa2.at(a.readPlate, Date.parse(a.at))
+    return hit ? { by: hit.source === 'permitido' ? 'vehiculo_permitido' : 'carta_porte', plate: hit.chasis } : null
+  })
 }
 setInterval(() => void refreshAlerts(), 60_000).unref?.()
 app.get('/api/truckflow/live/alertas', async (req, res) => {
@@ -587,6 +605,10 @@ app.post('/api/truckflow/live/identifications/:fragmentKey', express.json(), asy
   try {
     const result = plantState.decideIdentification(site, req.params.fragmentKey, req.body)
     res.json(result)
+    // La alerta queda resuelta aunque sea de un día que el reconocedor ya no vuelve a pasar.
+    if (!result.replayed && ['confirm', 'reject'].includes(req.body?.action)) {
+      alertStore.resolve(site, req.params.fragmentKey, { plate: req.body.action === 'confirm' ? String(req.body.plate ?? '') || null : null, level: req.body.action === 'confirm' ? 'confirmado' : 'rechazado' })
+    }
     if (!result.replayed) scheduleAprendizaje()
     // EV-40: fotos vistas al decidir, copiadas en segundo plano (no demora ni condiciona la respuesta).
     if (!result.replayed && req.body?.photos && ['confirm', 'reject'].includes(req.body.action)) {

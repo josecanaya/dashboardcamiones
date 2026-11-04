@@ -39,11 +39,25 @@ describe('alertas', () => {
 describe('alerta de camión de granos sin carta', () => {
   it('lo nombra cuando la patente es de un camión de granos', () => {
     const root = mkdtempSync(path.join(os.tmpdir(), 'alertas-'))
-    const store = createAlertStore({ projectRoot: root, log: {}, esCamionDeGranos: (p) => p === 'TGO035' })
+    const store = createAlertStore({ projectRoot: root, log: {}, camionDeGranos: (p) => (p === 'TGO035' ? `${p} es un camión de granos y no tiene carta de porte vigente` : null) })
     store.update('ricardone', [item({ level: 'fuera_sistema', rule: 'fuera_sistema' }), item({ fragmentKey: 'f2', readPlate: 'AB123CD', level: 'fuera_sistema', rule: 'fuera_sistema' })], '2026-10-29T13:01:00Z')
     const [b, a] = store.list('ricardone', '2026-10-29').alertas.sort((x, y) => x.fragmentKey.localeCompare(y.fragmentKey)).reverse()
     expect(a).toMatchObject({ tipo: 'camion_granos_sin_carta' })
     expect(a.capas.capa2).toContain('camión de granos y no tiene carta de porte vigente')
     expect(b.tipo).toBeNull()
+  })
+})
+
+describe('alertas que se resuelven después', () => {
+  it('se cierra si la carta entra después y si operaciones la corrige, aunque sea de otro día', () => {
+    const root = mkdtempSync(path.join(os.tmpdir(), 'alertas-'))
+    const store = createAlertStore({ projectRoot: root, log: {} })
+    store.update('ricardone', [item({ level: 'fuera_sistema', rule: 'fuera_sistema' }), item({ fragmentKey: 'f2', readPlate: 'AB123CD', level: 'fuera_sistema', rule: 'fuera_sistema' })], '2026-10-29T13:01:00Z')
+    expect(store.recheck((a) => (a.readPlate === 'TGO035' ? { by: 'carta_porte' } : null), {}, '2026-10-30T10:00:00Z')).toBe(1)
+    expect(store.resolve('ricardone', 'f2', { plate: 'AB128CD', level: 'confirmado' }, '2026-10-31T10:00:00Z')).toBe(true)
+    const l = store.list('ricardone', '2026-10-29')
+    expect(l).toMatchObject({ open: 0, resolved: 2 })
+    expect(l.alertas.find((a) => a.fragmentKey === 'f1').resolved).toMatchObject({ by: 'carta_porte', plate: 'TGO035' })
+    expect(l.alertas.find((a) => a.fragmentKey === 'f2').resolved).toMatchObject({ by: 'operaciones', plate: 'AB128CD' })
   })
 })

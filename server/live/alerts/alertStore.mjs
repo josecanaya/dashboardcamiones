@@ -46,11 +46,11 @@ export function layerTrail(item) {
 }
 
 /**
- * @param {{ projectRoot: string, log?: object, esCamionDeGranos?: (plate: string) => boolean }} opts
- *   esCamionDeGranos: la patente es de un camión de granos (vino con carta otras veces o se rechazó como tal
- *   en el back office); sin carta vigente, la alerta lo dice.
+ * @param {{ projectRoot: string, log?: object, camionDeGranos?: (plate: string, atMs: number) => string|null }} opts
+ *   camionDeGranos: si la patente es de un camión de granos (vino con carta otras veces o se rechazó como tal
+ *   en el back office), el texto de la capa 2 para la alerta; si no, null.
  */
-export function createAlertStore({ projectRoot, log = console, esCamionDeGranos = () => false }) {
+export function createAlertStore({ projectRoot, log = console, camionDeGranos = () => null }) {
   const dir = path.join(projectRoot, 'data', 'alertas')
   /** @type {Map<string, Map<string, object>>} día → clave (planta|fragmento) → alerta */
   const days = new Map()
@@ -93,7 +93,7 @@ export function createAlertStore({ projectRoot, log = console, esCamionDeGranos 
       const key = `${site}|${it.fragmentKey}`
       const prev = m.get(key)
       if (isAlert(it)) {
-        const granos = it.validFormat && esCamionDeGranos(it.readPlate)
+        const granos = it.validFormat ? camionDeGranos(it.readPlate, Date.parse(it.at)) : null
         const a = {
           site,
           fragmentKey: it.fragmentKey,
@@ -104,7 +104,7 @@ export function createAlertStore({ projectRoot, log = console, esCamionDeGranos 
           deviceCode: it.deviceCode,
           at: it.at,
           level: it.level,
-          capas: granos ? { ...layerTrail(it), capa2: `${it.readPlate} es un camión de granos y no tiene carta de porte vigente` } : layerTrail(it),
+          capas: granos ? { ...layerTrail(it), capa2: granos } : layerTrail(it),
           tipo: granos ? 'camion_granos_sin_carta' : null,
           /** Los candidatos más parecidos, para que operaciones la resuelva desde la alerta. */
           candidatos: (it.candidates ?? []).slice(0, 4).map((c) => ({ plate: c.plate, similarity: c.similarity ?? null })),
@@ -132,11 +132,50 @@ export function createAlertStore({ projectRoot, log = console, esCamionDeGranos 
     return opened
   }
 
+  const recentDays = (n, now = Date.now()) => Array.from({ length: n }, (_, i) => arDay(new Date(now - i * 86_400_000).toISOString()))
+
+  /**
+   * La resuelve operaciones desde el panel (corrige la lectura o la descarta). Sirve también para alertas de
+   * días anteriores, que el reconocedor ya no vuelve a pasar.
+   */
+  function resolve(site, fragmentKey, { by = 'operaciones', plate = null, level = null } = {}, nowIso = new Date().toISOString()) {
+    for (const day of recentDays(7, Date.parse(nowIso))) {
+      const a = dayMap(day).get(`${site}|${fragmentKey}`)
+      if (!a || a.resolved) continue
+      a.resolved = { at: nowIso, by, plate, level }
+      dirty.add(day)
+      flush()
+      return true
+    }
+    return false
+  }
+
+  /**
+   * Vuelve a mirar las alertas abiertas de los últimos días: si ahora la identifica alguien (la carta de porte
+   * entró al padrón después de la lectura, o la patente se aceptó en el back office), queda resuelta.
+   * @param {(a: object) => ({ by: string, plate?: string|null }|null)} check
+   */
+  function recheck(check, { dias = 3 } = {}, nowIso = new Date().toISOString()) {
+    let n = 0
+    for (const day of recentDays(dias, Date.parse(nowIso))) {
+      for (const a of dayMap(day).values()) {
+        if (a.resolved || !a.validFormat) continue
+        const hit = check(a)
+        if (!hit) continue
+        a.resolved = { at: nowIso, by: hit.by, plate: hit.plate ?? a.readPlate, level: 'casi_seguro' }
+        dirty.add(day)
+        n++
+      }
+    }
+    flush()
+    return n
+  }
+
   /** Alertas de un día (de una planta o de las dos), las más recientes primero. */
   function list(site, day) {
     const all = [...dayMap(day).values()].filter((a) => !site || a.site === site).sort((x, y) => y.at.localeCompare(x.at))
     return { day, open: all.filter((a) => !a.resolved).length, resolved: all.filter((a) => a.resolved).length, alertas: all }
   }
 
-  return { update, list }
+  return { update, list, resolve, recheck }
 }
