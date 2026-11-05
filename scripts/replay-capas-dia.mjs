@@ -175,6 +175,8 @@ if (process.env.VINCULO !== '0') {
     const cob = JSON.parse(fs.readFileSync(path.join(tmp, 'out', 'cobertura.json'), 'utf8'))
     vinculoIndex = indexAssignments(assignmentsFromCobertura(cob))
     loteVinculo = resumenLote(cob)
+    fs.mkdirSync(outDir, { recursive: true })
+    fs.writeFileSync(path.join(outDir, 'cobertura.json'), JSON.stringify(cob))
   } catch (e) {
     console.warn(`[vínculo] no corrió: ${e instanceof Error ? e.message : e}`)
   } finally {

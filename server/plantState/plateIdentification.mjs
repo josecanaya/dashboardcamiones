@@ -421,8 +421,11 @@ export function identifyFragments(events, nowMs, ctx) {
   // Un vehículo que no es camión (base de no camiones, particular de Vehículos Permitidos) no puede llevarse
   // lecturas de camiones: AD001TD (un auto) se quedaba con 9 capturas ilegibles por «la cuenta» (29/10).
   // Si la balanza lo tiene en planta, es un camión.
+  // ¿La balanza lo tiene en planta en alguna lectura del tramo? Con la primera sola, un camión leído en la portería
+  // más de 30 min antes de su ingreso quedaba «sin registro» todo el tramo (AH829SU 02/11, glicerina).
+  const enBalanza = (j) => Boolean(ctx.balanza && j.rows.some((r) => ctx.balanza.truckAt(j.plate, r.t)))
   const nonTruck = (j) => {
-    if (ctx.balanza?.truckAt(j.plate, j.rows[0].t)) return false
+    if (enBalanza(j)) return false
     if (ctx.noCamiones?.lookup(j.plate)) return true
     const h = ctx.padron && isValidPlate(j.plate) ? ctx.padron.at(j.plate, j.rows[0].t) : null
     return h?.source === 'permitido' && h.category === 'vehiculo_particular'
@@ -457,7 +460,7 @@ export function identifyFragments(events, nowMs, ctx) {
    * Cruce 13–19/10: 57 de 175 lecturas malas eran viajes así y nunca llegaban a la bandeja.
    */
   const ghostOfJourney = (j) =>
-    Boolean(bz && isValidPlate(j.plate) && !bz.truckAt(j.plate, j.rows[0].t) && !bz.isKnown(j.plate) && !cartaOf(j.plate, j.rows[0].t) &&
+    Boolean(bz && isValidPlate(j.plate) && !enBalanza(j) && !bz.isKnown(j.plate) && !cartaOf(j.plate, j.rows[0].t) &&
       bz.platesAt(j.rows[0].t).some((p) => p !== j.plate && plateSimilarity(j.plate, p) >= GHOST_SIMILARITY))
   const fragments = journeys.filter((j) => {
     if (decided(j)) return true
@@ -687,7 +690,7 @@ export function identifyFragments(events, nowMs, ctx) {
 
     // Refuerzo de balanza (SGC): ¿es el acoplado de un camión en planta? ¿es un camión que entró?
     const trailerHit = trailerOfJourney(f)
-    const readInBalanza = Boolean(bz && valid && bz.truckAt(f.plate, head.t))
+    const readInBalanza = Boolean(bz && valid && enBalanza(f))
     // Capa 2: la patente leída es un vehículo permitido o el chasis de una carta vigente → conocido, la cámara leyó bien.
     const readCartaHit = valid ? cartaOf(f.plate, head.t) : null
     const readCarta = readCartaHit?.role === 'chasis' ? readCartaHit : null
