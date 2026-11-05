@@ -1,0 +1,2677 @@
+{
+ "tipo": "pellet",
+ "desde": "2026-10-28",
+ "hasta": "2026-11-03",
+ "criterio": "Operativo de transile por cartas de porte + cámaras vinculadas (algoritmo de vínculo).\nViajes = cartas de porte (verdad); tiempos = lecturas de cámara que el vínculo (scripts/vinculo/cobertura.mjs) asignó\na esas cartas. Con varias vueltas por día, las lecturas de un camión se unen por patente y el viaje se corta cuando\nvuelve a Ricardone después del puerto. Salida de Ricardone = Balanza Egreso (el transile no pasa por la salida\ntradicional). Se corta también tras 8 h sin lecturas del camión. Día = día operativo (22 h) de la Balanza Egreso de Ricardone (o del ingreso al puerto).",
+ "cartas": 571,
+ "camiones": 58,
+ "toneladas": 15222,
+ "estados": {
+  "CN": 570,
+  "DD": 1
+ },
+ "viajesCamara": 563,
+ "viajesPorCamion": {
+  "media": 9.8,
+  "max": [
+   [
+    "VJG112",
+    17
+   ],
+   [
+    "EUV766",
+    15
+   ],
+   [
+    "HNE318",
+    15
+   ]
+  ]
+ },
+ "tramos": {
+  "ric": {
+   "media": 147,
+   "mediana": 124,
+   "n": 279
+  },
+  "playa3": {
+   "media": 129,
+   "mediana": 113,
+   "n": 249
+  },
+  "ida": {
+   "media": 26,
+   "mediana": 16,
+   "n": 295
+  },
+  "playaOsl": {
+   "media": 102,
+   "mediana": 64,
+   "n": 441
+  },
+  "descarga": {
+   "media": 63,
+   "mediana": 50,
+   "n": 400
+  },
+  "puerto": {
+   "media": 183,
+   "mediana": 134,
+   "n": 500
+  },
+  "vuelta": {
+   "media": 72,
+   "mediana": 12,
+   "n": 419
+  },
+  "ciclo": {
+   "media": 429,
+   "mediana": 414,
+   "n": 201
+  }
+ },
+ "porDia": {
+  "2026-10-28": {
+   "cartas": 0,
+   "camiones": 0,
+   "viajesCamara": 9,
+   "tramos": {
+    "ric": {
+     "media": 196,
+     "mediana": 178,
+     "n": 6
+    },
+    "playa3": {
+     "media": 182,
+     "mediana": 166,
+     "n": 8
+    },
+    "ida": null,
+    "playaOsl": null,
+    "descarga": null,
+    "puerto": null,
+    "vuelta": null,
+    "ciclo": null
+   }
+  },
+  "2026-10-29": {
+   "cartas": 22,
+   "camiones": 8,
+   "viajesCamara": 41,
+   "tramos": {
+    "ric": {
+     "media": 162,
+     "mediana": 92,
+     "n": 30
+    },
+    "playa3": {
+     "media": 108,
+     "mediana": 68,
+     "n": 30
+    },
+    "ida": {
+     "media": 98,
+     "mediana": 18,
+     "n": 18
+    },
+    "playaOsl": {
+     "media": 4,
+     "mediana": 3,
+     "n": 26
+    },
+    "descarga": {
+     "media": 19,
+     "mediana": 7,
+     "n": 24
+    },
+    "puerto": {
+     "media": 44,
+     "mediana": 32,
+     "n": 25
+    },
+    "vuelta": {
+     "media": 10,
+     "mediana": 9,
+     "n": 22
+    },
+    "ciclo": {
+     "media": 190,
+     "mediana": 177,
+     "n": 14
+    }
+   }
+  },
+  "2026-10-30": {
+   "cartas": 104,
+   "camiones": 52,
+   "viajesCamara": 95,
+   "tramos": {
+    "ric": {
+     "media": 208,
+     "mediana": 206,
+     "n": 62
+    },
+    "playa3": {
+     "media": 179,
+     "mediana": 176,
+     "n": 55
+    },
+    "ida": {
+     "media": 22,
+     "mediana": 17,
+     "n": 63
+    },
+    "playaOsl": {
+     "media": 97,
+     "mediana": 54,
+     "n": 76
+    },
+    "descarga": {
+     "media": 90,
+     "mediana": 91,
+     "n": 70
+    },
+    "puerto": {
+     "media": 207,
+     "mediana": 234,
+     "n": 90
+    },
+    "vuelta": {
+     "media": 81,
+     "mediana": 14,
+     "n": 85
+    },
+    "ciclo": {
+     "media": 532,
+     "mediana": 502,
+     "n": 54
+    }
+   }
+  },
+  "2026-10-31": {
+   "cartas": 122,
+   "camiones": 54,
+   "viajesCamara": 117,
+   "tramos": {
+    "ric": {
+     "media": 70,
+     "mediana": 62,
+     "n": 53
+    },
+    "playa3": {
+     "media": 49,
+     "mediana": 39,
+     "n": 51
+    },
+    "ida": {
+     "media": 21,
+     "mediana": 16,
+     "n": 53
+    },
+    "playaOsl": {
+     "media": 263,
+     "mediana": 293,
+     "n": 100
+    },
+    "descarga": {
+     "media": 88,
+     "mediana": 94,
+     "n": 88
+    },
+    "puerto": {
+     "media": 378,
+     "mediana": 417,
+     "n": 107
+    },
+    "vuelta": {
+     "media": 114,
+     "mediana": 11,
+     "n": 91
+    },
+    "ciclo": {
+     "media": 638,
+     "mediana": 567,
+     "n": 38
+    }
+   }
+  },
+  "2026-11-01": {
+   "cartas": 110,
+   "camiones": 48,
+   "viajesCamara": 99,
+   "tramos": {
+    "ric": {
+     "media": 294,
+     "mediana": 308,
+     "n": 27
+    },
+    "playa3": {
+     "media": 283,
+     "mediana": 291,
+     "n": 28
+    },
+    "ida": {
+     "media": 22,
+     "mediana": 15,
+     "n": 54
+    },
+    "playaOsl": {
+     "media": 9,
+     "mediana": 3,
+     "n": 69
+    },
+    "descarga": {
+     "media": 43,
+     "mediana": 39,
+     "n": 61
+    },
+    "puerto": {
+     "media": 75,
+     "mediana": 65,
+     "n": 91
+    },
+    "vuelta": {
+     "media": 117,
+     "mediana": 12,
+     "n": 79
+    },
+    "ciclo": {
+     "media": 497,
+     "mediana": 531,
+     "n": 24
+    }
+   }
+  },
+  "2026-11-02": {
+   "cartas": 193,
+   "camiones": 53,
+   "viajesCamara": 184,
+   "tramos": {
+    "ric": {
+     "media": 103,
+     "mediana": 99,
+     "n": 100
+    },
+    "playa3": {
+     "media": 92,
+     "mediana": 91,
+     "n": 77
+    },
+    "ida": {
+     "media": 22,
+     "mediana": 17,
+     "n": 106
+    },
+    "playaOsl": {
+     "media": 68,
+     "mediana": 79,
+     "n": 157
+    },
+    "descarga": {
+     "media": 52,
+     "mediana": 36,
+     "n": 150
+    },
+    "puerto": {
+     "media": 139,
+     "mediana": 132,
+     "n": 172
+    },
+    "vuelta": {
+     "media": 24,
+     "mediana": 11,
+     "n": 136
+    },
+    "ciclo": {
+     "media": 263,
+     "mediana": 223,
+     "n": 71
+    }
+   }
+  },
+  "2026-11-03": {
+   "cartas": 20,
+   "camiones": 12,
+   "viajesCamara": 18,
+   "tramos": {
+    "ric": {
+     "media": 57,
+     "mediana": 57,
+     "n": 1
+    },
+    "playa3": null,
+    "ida": {
+     "media": 17,
+     "mediana": 17,
+     "n": 1
+    },
+    "playaOsl": {
+     "media": 3,
+     "mediana": 3,
+     "n": 13
+    },
+    "descarga": {
+     "media": 13,
+     "mediana": 7,
+     "n": 7
+    },
+    "puerto": {
+     "media": 33,
+     "mediana": 29,
+     "n": 15
+    },
+    "vuelta": {
+     "media": 10,
+     "mediana": 10,
+     "n": 6
+    },
+    "ciclo": null
+   }
+  }
+ },
+ "ultimaCarta": "2026-11-03T07:08:44Z",
+ "esperaPorHora": {
+  "horas": [
+   "2026-10-27T22:00",
+   "2026-10-27T23:00",
+   "2026-10-28T00:00",
+   "2026-10-28T01:00",
+   "2026-10-28T02:00",
+   "2026-10-28T03:00",
+   "2026-10-28T04:00",
+   "2026-10-28T05:00",
+   "2026-10-28T06:00",
+   "2026-10-28T07:00",
+   "2026-10-28T08:00",
+   "2026-10-28T09:00",
+   "2026-10-28T10:00",
+   "2026-10-28T11:00",
+   "2026-10-28T12:00",
+   "2026-10-28T13:00",
+   "2026-10-28T14:00",
+   "2026-10-28T15:00",
+   "2026-10-28T16:00",
+   "2026-10-28T17:00",
+   "2026-10-28T18:00",
+   "2026-10-28T19:00",
+   "2026-10-28T20:00",
+   "2026-10-28T21:00",
+   "2026-10-28T22:00",
+   "2026-10-28T23:00",
+   "2026-10-29T00:00",
+   "2026-10-29T01:00",
+   "2026-10-29T02:00",
+   "2026-10-29T03:00",
+   "2026-10-29T04:00",
+   "2026-10-29T05:00",
+   "2026-10-29T06:00",
+   "2026-10-29T07:00",
+   "2026-10-29T08:00",
+   "2026-10-29T09:00",
+   "2026-10-29T10:00",
+   "2026-10-29T11:00",
+   "2026-10-29T12:00",
+   "2026-10-29T13:00",
+   "2026-10-29T14:00",
+   "2026-10-29T15:00",
+   "2026-10-29T16:00",
+   "2026-10-29T17:00",
+   "2026-10-29T18:00",
+   "2026-10-29T19:00",
+   "2026-10-29T20:00",
+   "2026-10-29T21:00",
+   "2026-10-29T22:00",
+   "2026-10-29T23:00",
+   "2026-10-30T00:00",
+   "2026-10-30T01:00",
+   "2026-10-30T02:00",
+   "2026-10-30T03:00",
+   "2026-10-30T04:00",
+   "2026-10-30T05:00",
+   "2026-10-30T06:00",
+   "2026-10-30T07:00",
+   "2026-10-30T08:00",
+   "2026-10-30T09:00",
+   "2026-10-30T10:00",
+   "2026-10-30T11:00",
+   "2026-10-30T12:00",
+   "2026-10-30T13:00",
+   "2026-10-30T14:00",
+   "2026-10-30T15:00",
+   "2026-10-30T16:00",
+   "2026-10-30T17:00",
+   "2026-10-30T18:00",
+   "2026-10-30T19:00",
+   "2026-10-30T20:00",
+   "2026-10-30T21:00",
+   "2026-10-30T22:00",
+   "2026-10-30T23:00",
+   "2026-10-31T00:00",
+   "2026-10-31T01:00",
+   "2026-10-31T02:00",
+   "2026-10-31T03:00",
+   "2026-10-31T04:00",
+   "2026-10-31T05:00",
+   "2026-10-31T06:00",
+   "2026-10-31T07:00",
+   "2026-10-31T08:00",
+   "2026-10-31T09:00",
+   "2026-10-31T10:00",
+   "2026-10-31T11:00",
+   "2026-10-31T12:00",
+   "2026-10-31T13:00",
+   "2026-10-31T14:00",
+   "2026-10-31T15:00",
+   "2026-10-31T16:00",
+   "2026-10-31T17:00",
+   "2026-10-31T18:00",
+   "2026-10-31T19:00",
+   "2026-10-31T20:00",
+   "2026-10-31T21:00",
+   "2026-10-31T22:00",
+   "2026-10-31T23:00",
+   "2026-11-01T00:00",
+   "2026-11-01T01:00",
+   "2026-11-01T02:00",
+   "2026-11-01T03:00",
+   "2026-11-01T04:00",
+   "2026-11-01T05:00",
+   "2026-11-01T06:00",
+   "2026-11-01T07:00",
+   "2026-11-01T08:00",
+   "2026-11-01T09:00",
+   "2026-11-01T10:00",
+   "2026-11-01T11:00",
+   "2026-11-01T12:00",
+   "2026-11-01T13:00",
+   "2026-11-01T14:00",
+   "2026-11-01T15:00",
+   "2026-11-01T16:00",
+   "2026-11-01T17:00",
+   "2026-11-01T18:00",
+   "2026-11-01T19:00",
+   "2026-11-01T20:00",
+   "2026-11-01T21:00",
+   "2026-11-01T22:00",
+   "2026-11-01T23:00",
+   "2026-11-02T00:00",
+   "2026-11-02T01:00",
+   "2026-11-02T02:00",
+   "2026-11-02T03:00",
+   "2026-11-02T04:00",
+   "2026-11-02T05:00",
+   "2026-11-02T06:00",
+   "2026-11-02T07:00",
+   "2026-11-02T08:00",
+   "2026-11-02T09:00",
+   "2026-11-02T10:00",
+   "2026-11-02T11:00",
+   "2026-11-02T12:00",
+   "2026-11-02T13:00",
+   "2026-11-02T14:00",
+   "2026-11-02T15:00",
+   "2026-11-02T16:00",
+   "2026-11-02T17:00",
+   "2026-11-02T18:00",
+   "2026-11-02T19:00",
+   "2026-11-02T20:00",
+   "2026-11-02T21:00",
+   "2026-11-02T22:00",
+   "2026-11-02T23:00",
+   "2026-11-03T00:00",
+   "2026-11-03T01:00",
+   "2026-11-03T02:00",
+   "2026-11-03T03:00",
+   "2026-11-03T04:00",
+   "2026-11-03T05:00",
+   "2026-11-03T06:00",
+   "2026-11-03T07:00",
+   "2026-11-03T08:00",
+   "2026-11-03T09:00",
+   "2026-11-03T10:00",
+   "2026-11-03T11:00",
+   "2026-11-03T12:00",
+   "2026-11-03T13:00",
+   "2026-11-03T14:00",
+   "2026-11-03T15:00",
+   "2026-11-03T16:00",
+   "2026-11-03T17:00",
+   "2026-11-03T18:00",
+   "2026-11-03T19:00",
+   "2026-11-03T20:00",
+   "2026-11-03T21:00"
+  ],
+  "playa3": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   1,
+   2,
+   2,
+   1,
+   0,
+   3,
+   3,
+   4,
+   4,
+   5,
+   5,
+   2,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   0,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   8,
+   9,
+   7,
+   5,
+   5,
+   8,
+   9,
+   9,
+   6,
+   2,
+   2,
+   0,
+   1,
+   1,
+   2,
+   2,
+   1,
+   1,
+   0,
+   1,
+   2,
+   5,
+   6,
+   9,
+   15,
+   18,
+   18,
+   19,
+   15,
+   21,
+   24,
+   21,
+   19,
+   12,
+   5,
+   0,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   0,
+   0,
+   1,
+   6,
+   3,
+   6,
+   10,
+   8,
+   4,
+   4,
+   7,
+   11,
+   8,
+   6,
+   4,
+   4,
+   2,
+   2,
+   1,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   2,
+   3,
+   3,
+   8,
+   13,
+   15,
+   13,
+   13,
+   19,
+   19,
+   23,
+   20,
+   7,
+   1,
+   2,
+   3,
+   3,
+   3,
+   2,
+   1,
+   1,
+   2,
+   3,
+   7,
+   8,
+   10,
+   9,
+   15,
+   18,
+   9,
+   4,
+   13,
+   21,
+   27,
+   22,
+   13,
+   6,
+   1,
+   1,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "playaOsl": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   4,
+   0,
+   1,
+   5,
+   4,
+   0,
+   0,
+   2,
+   2,
+   1,
+   1,
+   2,
+   0,
+   1,
+   1,
+   1,
+   3,
+   3,
+   3,
+   4,
+   1,
+   4,
+   0,
+   4,
+   5,
+   7,
+   7,
+   10,
+   5,
+   2,
+   3,
+   13,
+   20,
+   22,
+   18,
+   19,
+   12,
+   16,
+   13,
+   17,
+   15,
+   23,
+   25,
+   28,
+   30,
+   36,
+   32,
+   30,
+   36,
+   28,
+   29,
+   25,
+   23,
+   20,
+   26,
+   21,
+   22,
+   25,
+   22,
+   17,
+   9,
+   2,
+   6,
+   6,
+   1,
+   0,
+   0,
+   0,
+   0,
+   0,
+   1,
+   5,
+   5,
+   6,
+   6,
+   0,
+   0,
+   1,
+   3,
+   3,
+   4,
+   6,
+   8,
+   8,
+   6,
+   4,
+   8,
+   4,
+   3,
+   6,
+   6,
+   9,
+   12,
+   17,
+   17,
+   30,
+   28,
+   30,
+   26,
+   31,
+   22,
+   23,
+   14,
+   1,
+   6,
+   10,
+   4,
+   8,
+   12,
+   0,
+   4,
+   1,
+   4,
+   2,
+   0,
+   1,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "nota": "camiones con la espera abierta en esa hora (Playa 3 → Balanza Egreso de Ricardone; Ingreso → Balanza Ingreso del puerto), viajes vinculados por cámaras"
+ },
+ "flota": {
+  "camiones": [
+   {
+    "patente": "VJG112",
+    "viajes": 17,
+    "dias": 5,
+    "viajesCamara": 18,
+    "mas12": 0,
+    "durMax": 9.9,
+    "durMediana": 5.6,
+    "corridoMax": 103.1,
+    "corridoMaxViajes": 17,
+    "corridoMaxDesde": "2026-10-29 21:44",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "EUV766",
+    "viajes": 15,
+    "dias": 5,
+    "viajesCamara": 15,
+    "mas12": 0,
+    "durMax": 10.0,
+    "durMediana": 5.3,
+    "corridoMax": 97.8,
+    "corridoMaxViajes": 15,
+    "corridoMaxDesde": "2026-10-29 21:51",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "HNE318",
+    "viajes": 15,
+    "dias": 5,
+    "viajesCamara": 15,
+    "mas12": 0,
+    "durMax": 10.3,
+    "durMediana": 6.0,
+    "corridoMax": 48.5,
+    "corridoMaxViajes": 6,
+    "corridoMaxDesde": "2026-10-29 21:58",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "EEW075",
+    "viajes": 14,
+    "dias": 5,
+    "viajesCamara": 14,
+    "mas12": 0,
+    "durMax": 10.2,
+    "durMediana": 4.3,
+    "corridoMax": 31.1,
+    "corridoMaxViajes": 7,
+    "corridoMaxDesde": "2026-10-29 08:10",
+    "tramosMas12": 3
+   },
+   {
+    "patente": "UUO981",
+    "viajes": 14,
+    "dias": 5,
+    "viajesCamara": 14,
+    "mas12": 0,
+    "durMax": 9.6,
+    "durMediana": 4.3,
+    "corridoMax": 39.1,
+    "corridoMaxViajes": 7,
+    "corridoMaxDesde": "2026-10-29 08:01",
+    "tramosMas12": 4
+   },
+   {
+    "patente": "UWX998",
+    "viajes": 14,
+    "dias": 4,
+    "viajesCamara": 12,
+    "mas12": 1,
+    "durMax": 15.5,
+    "durMediana": 3.6,
+    "corridoMax": 55.3,
+    "corridoMaxViajes": 4,
+    "corridoMaxDesde": "2026-10-29 23:24",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "TAC436",
+    "viajes": 14,
+    "dias": 4,
+    "viajesCamara": 14,
+    "mas12": 1,
+    "durMax": 24.8,
+    "durMediana": 6.5,
+    "corridoMax": 95.4,
+    "corridoMaxViajes": 13,
+    "corridoMaxDesde": "2026-10-29 22:35",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "BVS300",
+    "viajes": 14,
+    "dias": 4,
+    "viajesCamara": 14,
+    "mas12": 0,
+    "durMax": 10.0,
+    "durMediana": 6.8,
+    "corridoMax": 96.0,
+    "corridoMaxViajes": 14,
+    "corridoMaxDesde": "2026-10-29 20:05",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "UUL425",
+    "viajes": 14,
+    "dias": 5,
+    "viajesCamara": 14,
+    "mas12": 0,
+    "durMax": 9.9,
+    "durMediana": 4.5,
+    "corridoMax": 88.8,
+    "corridoMaxViajes": 14,
+    "corridoMaxDesde": "2026-10-30 11:44",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "SPH945",
+    "viajes": 14,
+    "dias": 5,
+    "viajesCamara": 13,
+    "mas12": 0,
+    "durMax": 9.5,
+    "durMediana": 5.3,
+    "corridoMax": 90.7,
+    "corridoMaxViajes": 13,
+    "corridoMaxDesde": "2026-10-30 07:16",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "RAW481",
+    "viajes": 14,
+    "dias": 4,
+    "viajesCamara": 14,
+    "mas12": 0,
+    "durMax": 10.6,
+    "durMediana": 4.6,
+    "corridoMax": 49.2,
+    "corridoMaxViajes": 7,
+    "corridoMaxDesde": "2026-10-29 21:38",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "TVH101",
+    "viajes": 13,
+    "dias": 4,
+    "viajesCamara": 13,
+    "mas12": 0,
+    "durMax": 10.4,
+    "durMediana": 3.4,
+    "corridoMax": 41.5,
+    "corridoMaxViajes": 10,
+    "corridoMaxDesde": "2026-11-01 10:24",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "SNE399",
+    "viajes": 13,
+    "dias": 5,
+    "viajesCamara": 13,
+    "mas12": 0,
+    "durMax": 9.9,
+    "durMediana": 3.3,
+    "corridoMax": 49.8,
+    "corridoMaxViajes": 4,
+    "corridoMaxDesde": "2026-10-29 19:50",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "EYH843",
+    "viajes": 13,
+    "dias": 5,
+    "viajesCamara": 13,
+    "mas12": 0,
+    "durMax": 9.8,
+    "durMediana": 5.9,
+    "corridoMax": 88.4,
+    "corridoMaxViajes": 13,
+    "corridoMaxDesde": "2026-10-30 07:13",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "RYJ562",
+    "viajes": 13,
+    "dias": 4,
+    "viajesCamara": 13,
+    "mas12": 1,
+    "durMax": 13.5,
+    "durMediana": 4.8,
+    "corridoMax": 49.3,
+    "corridoMaxViajes": 6,
+    "corridoMaxDesde": "2026-10-29 22:34",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "WPB419",
+    "viajes": 13,
+    "dias": 5,
+    "viajesCamara": 12,
+    "mas12": 0,
+    "durMax": 10.1,
+    "durMediana": 5.7,
+    "corridoMax": 42.3,
+    "corridoMaxViajes": 8,
+    "corridoMaxDesde": "2026-11-01 09:25",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "CRJ139",
+    "viajes": 12,
+    "dias": 5,
+    "viajesCamara": 12,
+    "mas12": 0,
+    "durMax": 10.2,
+    "durMediana": 5.8,
+    "corridoMax": 44.0,
+    "corridoMaxViajes": 5,
+    "corridoMaxDesde": "2026-10-30 12:43",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "STF654",
+    "viajes": 12,
+    "dias": 4,
+    "viajesCamara": 0,
+    "mas12": 0,
+    "durMax": 0,
+    "durMediana": null,
+    "corridoMax": null,
+    "corridoMaxViajes": null,
+    "corridoMaxDesde": null,
+    "tramosMas12": 0
+   },
+   {
+    "patente": "RXV065",
+    "viajes": 12,
+    "dias": 4,
+    "viajesCamara": 13,
+    "mas12": 0,
+    "durMax": 9.9,
+    "durMediana": 6.0,
+    "corridoMax": 82.1,
+    "corridoMaxViajes": 12,
+    "corridoMaxDesde": "2026-10-30 10:49",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "TOE184",
+    "viajes": 12,
+    "dias": 4,
+    "viajesCamara": 13,
+    "mas12": 1,
+    "durMax": 12.7,
+    "durMediana": 5.8,
+    "corridoMax": 106.8,
+    "corridoMaxViajes": 12,
+    "corridoMaxDesde": "2026-10-29 11:27",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "RDL445",
+    "viajes": 11,
+    "dias": 5,
+    "viajesCamara": 11,
+    "mas12": 0,
+    "durMax": 8.9,
+    "durMediana": 5.3,
+    "corridoMax": 79.7,
+    "corridoMaxViajes": 8,
+    "corridoMaxDesde": "2026-10-29 10:26",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "GES056",
+    "viajes": 11,
+    "dias": 4,
+    "viajesCamara": 12,
+    "mas12": 0,
+    "durMax": 9.7,
+    "durMediana": 5.4,
+    "corridoMax": 79.1,
+    "corridoMaxViajes": 11,
+    "corridoMaxDesde": "2026-10-30 10:45",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "RRE349",
+    "viajes": 11,
+    "dias": 4,
+    "viajesCamara": 11,
+    "mas12": 1,
+    "durMax": 19.5,
+    "durMediana": 7.2,
+    "corridoMax": 94.8,
+    "corridoMaxViajes": 11,
+    "corridoMaxDesde": "2026-10-29 07:17",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "EDQ876",
+    "viajes": 11,
+    "dias": 4,
+    "viajesCamara": 12,
+    "mas12": 1,
+    "durMax": 23.6,
+    "durMediana": 4.7,
+    "corridoMax": 57.8,
+    "corridoMaxViajes": 7,
+    "corridoMaxDesde": "2026-10-29 21:58",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "ROS380",
+    "viajes": 11,
+    "dias": 4,
+    "viajesCamara": 12,
+    "mas12": 0,
+    "durMax": 10.1,
+    "durMediana": 5.1,
+    "corridoMax": 34.2,
+    "corridoMaxViajes": 4,
+    "corridoMaxDesde": "2026-10-30 13:32",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "CGS172",
+    "viajes": 10,
+    "dias": 5,
+    "viajesCamara": 10,
+    "mas12": 0,
+    "durMax": 10.1,
+    "durMediana": 4.6,
+    "corridoMax": 15.2,
+    "corridoMaxViajes": 2,
+    "corridoMaxDesde": "2026-10-30 05:37",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "DIH255",
+    "viajes": 10,
+    "dias": 4,
+    "viajesCamara": 11,
+    "mas12": 0,
+    "durMax": 9.9,
+    "durMediana": 5.7,
+    "corridoMax": 60.6,
+    "corridoMaxViajes": 7,
+    "corridoMaxDesde": "2026-10-30 04:41",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "UKL882",
+    "viajes": 10,
+    "dias": 4,
+    "viajesCamara": 10,
+    "mas12": 0,
+    "durMax": 8.5,
+    "durMediana": 6.7,
+    "corridoMax": 24.9,
+    "corridoMaxViajes": 3,
+    "corridoMaxDesde": "2026-10-30 09:52",
+    "tramosMas12": 3
+   },
+   {
+    "patente": "VAJ028",
+    "viajes": 10,
+    "dias": 4,
+    "viajesCamara": 10,
+    "mas12": 0,
+    "durMax": 9.9,
+    "durMediana": 6.2,
+    "corridoMax": 34.8,
+    "corridoMaxViajes": 4,
+    "corridoMaxDesde": "2026-10-30 09:18",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "AAE877",
+    "viajes": 10,
+    "dias": 4,
+    "viajesCamara": 6,
+    "mas12": 0,
+    "durMax": 9.4,
+    "durMediana": 5.4,
+    "corridoMax": 82.6,
+    "corridoMaxViajes": 6,
+    "corridoMaxDesde": "2026-10-30 07:45",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "XBL711",
+    "viajes": 10,
+    "dias": 4,
+    "viajesCamara": 6,
+    "mas12": 0,
+    "durMax": 9.6,
+    "durMediana": 7.0,
+    "corridoMax": 40.4,
+    "corridoMaxViajes": 3,
+    "corridoMaxDesde": "2026-10-30 07:54",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "WHR567",
+    "viajes": 10,
+    "dias": 4,
+    "viajesCamara": 10,
+    "mas12": 0,
+    "durMax": 9.4,
+    "durMediana": 4.4,
+    "corridoMax": 72.8,
+    "corridoMaxViajes": 10,
+    "corridoMaxDesde": "2026-10-30 16:01",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "VRA989",
+    "viajes": 10,
+    "dias": 4,
+    "viajesCamara": 8,
+    "mas12": 1,
+    "durMax": 15.2,
+    "durMediana": 4.6,
+    "corridoMax": 30.3,
+    "corridoMaxViajes": 4,
+    "corridoMaxDesde": "2026-11-01 10:42",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "UYM942",
+    "viajes": 9,
+    "dias": 5,
+    "viajesCamara": 9,
+    "mas12": 0,
+    "durMax": 8.4,
+    "durMediana": 5.3,
+    "corridoMax": 36.4,
+    "corridoMaxViajes": 4,
+    "corridoMaxDesde": "2026-10-29 12:34",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "ECX249",
+    "viajes": 9,
+    "dias": 4,
+    "viajesCamara": 9,
+    "mas12": 0,
+    "durMax": 9.6,
+    "durMediana": 3.9,
+    "corridoMax": 28.9,
+    "corridoMaxViajes": 4,
+    "corridoMaxDesde": "2026-10-29 07:38",
+    "tramosMas12": 3
+   },
+   {
+    "patente": "CIE516",
+    "viajes": 9,
+    "dias": 4,
+    "viajesCamara": 5,
+    "mas12": 0,
+    "durMax": 7.1,
+    "durMediana": 3.6,
+    "corridoMax": 29.1,
+    "corridoMaxViajes": 4,
+    "corridoMaxDesde": "2026-11-01 15:41",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "CKQ212",
+    "viajes": 9,
+    "dias": 4,
+    "viajesCamara": 10,
+    "mas12": 0,
+    "durMax": 10.0,
+    "durMediana": 5.7,
+    "corridoMax": 33.5,
+    "corridoMaxViajes": 4,
+    "corridoMaxDesde": "2026-10-30 10:37",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "MWK218",
+    "viajes": 9,
+    "dias": 4,
+    "viajesCamara": 9,
+    "mas12": 1,
+    "durMax": 13.2,
+    "durMediana": 4.7,
+    "corridoMax": 78.8,
+    "corridoMaxViajes": 9,
+    "corridoMaxDesde": "2026-10-30 10:26",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "RHM819",
+    "viajes": 9,
+    "dias": 4,
+    "viajesCamara": 10,
+    "mas12": 0,
+    "durMax": 9.9,
+    "durMediana": 5.8,
+    "corridoMax": 77.2,
+    "corridoMaxViajes": 9,
+    "corridoMaxDesde": "2026-10-30 12:54",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "DTG181",
+    "viajes": 9,
+    "dias": 4,
+    "viajesCamara": 10,
+    "mas12": 0,
+    "durMax": 11.2,
+    "durMediana": 6.8,
+    "corridoMax": 79.5,
+    "corridoMaxViajes": 9,
+    "corridoMaxDesde": "2026-10-30 12:54",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "ESB427",
+    "viajes": 9,
+    "dias": 3,
+    "viajesCamara": 9,
+    "mas12": 0,
+    "durMax": 9.4,
+    "durMediana": 4.8,
+    "corridoMax": 33.7,
+    "corridoMaxViajes": 7,
+    "corridoMaxDesde": "2026-11-01 09:12",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "RNM392",
+    "viajes": 8,
+    "dias": 4,
+    "viajesCamara": 8,
+    "mas12": 0,
+    "durMax": 10.4,
+    "durMediana": 5.1,
+    "corridoMax": 15.2,
+    "corridoMaxViajes": 2,
+    "corridoMaxDesde": "2026-10-30 06:37",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "UER485",
+    "viajes": 8,
+    "dias": 5,
+    "viajesCamara": 6,
+    "mas12": 0,
+    "durMax": 9.3,
+    "durMediana": 4.9,
+    "corridoMax": 16.8,
+    "corridoMaxViajes": 2,
+    "corridoMaxDesde": "2026-10-31 05:29",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "DGR440",
+    "viajes": 8,
+    "dias": 4,
+    "viajesCamara": 8,
+    "mas12": 0,
+    "durMax": 10.2,
+    "durMediana": 5.8,
+    "corridoMax": 17.1,
+    "corridoMaxViajes": 2,
+    "corridoMaxDesde": "2026-10-30 07:21",
+    "tramosMas12": 3
+   },
+   {
+    "patente": "EVL273",
+    "viajes": 8,
+    "dias": 4,
+    "viajesCamara": 9,
+    "mas12": 1,
+    "durMax": 13.9,
+    "durMediana": 8.0,
+    "corridoMax": 32.9,
+    "corridoMaxViajes": 5,
+    "corridoMaxDesde": "2026-10-30 15:14",
+    "tramosMas12": 2
+   },
+   {
+    "patente": "SAT582",
+    "viajes": 8,
+    "dias": 4,
+    "viajesCamara": 8,
+    "mas12": 0,
+    "durMax": 10.7,
+    "durMediana": 6.1,
+    "corridoMax": 60.1,
+    "corridoMaxViajes": 6,
+    "corridoMaxDesde": "2026-10-30 09:48",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "LFT141",
+    "viajes": 8,
+    "dias": 3,
+    "viajesCamara": 8,
+    "mas12": 0,
+    "durMax": 8.7,
+    "durMediana": 4.1,
+    "corridoMax": 52.8,
+    "corridoMaxViajes": 8,
+    "corridoMaxDesde": "2026-10-31 13:57",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "VHL423",
+    "viajes": 7,
+    "dias": 4,
+    "viajesCamara": 7,
+    "mas12": 0,
+    "durMax": 7.0,
+    "durMediana": 3.7,
+    "corridoMax": 77.5,
+    "corridoMaxViajes": 7,
+    "corridoMaxDesde": "2026-10-30 16:31",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "BHL749",
+    "viajes": 6,
+    "dias": 4,
+    "viajesCamara": 7,
+    "mas12": 1,
+    "durMax": 13.9,
+    "durMediana": 8.2,
+    "corridoMax": 78.5,
+    "corridoMaxViajes": 6,
+    "corridoMaxDesde": "2026-10-30 08:58",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "AZG422",
+    "viajes": 6,
+    "dias": 3,
+    "viajesCamara": 6,
+    "mas12": 0,
+    "durMax": 10.8,
+    "durMediana": 7.2,
+    "corridoMax": 18.1,
+    "corridoMaxViajes": 2,
+    "corridoMaxDesde": "2026-10-30 08:29",
+    "tramosMas12": 3
+   },
+   {
+    "patente": "RWJ030",
+    "viajes": 6,
+    "dias": 3,
+    "viajesCamara": 6,
+    "mas12": 0,
+    "durMax": 9.8,
+    "durMediana": 7.1,
+    "corridoMax": 33.3,
+    "corridoMaxViajes": 4,
+    "corridoMaxDesde": "2026-10-30 15:37",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "SBY377",
+    "viajes": 5,
+    "dias": 3,
+    "viajesCamara": 6,
+    "mas12": 0,
+    "durMax": 10.2,
+    "durMediana": 8.1,
+    "corridoMax": 58.4,
+    "corridoMaxViajes": 5,
+    "corridoMaxDesde": "2026-10-30 12:59",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "AYM824",
+    "viajes": 3,
+    "dias": 2,
+    "viajesCamara": 4,
+    "mas12": 0,
+    "durMax": 10.2,
+    "durMediana": 8.3,
+    "corridoMax": 28.8,
+    "corridoMaxViajes": 3,
+    "corridoMaxDesde": "2026-10-30 11:25",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "TAO150",
+    "viajes": 3,
+    "dias": 2,
+    "viajesCamara": 3,
+    "mas12": 0,
+    "durMax": 9.7,
+    "durMediana": 8.3,
+    "corridoMax": 26.9,
+    "corridoMaxViajes": 3,
+    "corridoMaxDesde": "2026-10-30 08:47",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "BWV144",
+    "viajes": 2,
+    "dias": 1,
+    "viajesCamara": 3,
+    "mas12": 0,
+    "durMax": 7.2,
+    "durMediana": 6.3,
+    "corridoMax": 13.6,
+    "corridoMaxViajes": 2,
+    "corridoMaxDesde": "2026-10-29 22:49",
+    "tramosMas12": 1
+   },
+   {
+    "patente": "UPW705",
+    "viajes": 2,
+    "dias": 2,
+    "viajesCamara": 2,
+    "mas12": 0,
+    "durMax": 7.7,
+    "durMediana": 5.4,
+    "corridoMax": 10.9,
+    "corridoMaxViajes": 2,
+    "corridoMaxDesde": "2026-11-02 15:15",
+    "tramosMas12": 0
+   },
+   {
+    "patente": "TZQ583",
+    "viajes": 2,
+    "dias": 1,
+    "viajesCamara": 2,
+    "mas12": 0,
+    "durMax": 6.0,
+    "durMediana": 5.5,
+    "corridoMax": 11.5,
+    "corridoMaxViajes": 2,
+    "corridoMaxDesde": "2026-11-02 09:35",
+    "tramosMas12": 0
+   },
+   {
+    "patente": "NLR442",
+    "viajes": 2,
+    "dias": 1,
+    "viajesCamara": 2,
+    "mas12": 0,
+    "durMax": 5.5,
+    "durMediana": 4.3,
+    "corridoMax": 8.9,
+    "corridoMaxViajes": 2,
+    "corridoMaxDesde": "2026-11-02 11:16",
+    "tramosMas12": 0
+   }
+  ],
+  "histViajes": {
+   "2": 4,
+   "3": 2,
+   "5": 1,
+   "6": 3,
+   "7": 1,
+   "8": 6,
+   "9": 8,
+   "10": 8,
+   "11": 5,
+   "12": 4,
+   "13": 5,
+   "14": 8,
+   "15": 2,
+   "17": 1
+  },
+  "viajesMedidos": 554,
+  "durMediana": 5.4,
+  "porDuracion": {
+   "menos de 4 h": 206,
+   "4 a 8 h": 193,
+   "8 a 12 h": 145,
+   "12 a 24 h": 9,
+   "más de 24 h": 1
+  },
+  "viajesMas12": 10,
+  "camionesMas12": 10,
+  "masLargos": [
+   {
+    "patente": "TAC436",
+    "dia": "2026-10-29",
+    "horas": 24.8
+   },
+   {
+    "patente": "EDQ876",
+    "dia": "2026-10-30",
+    "horas": 23.6
+   },
+   {
+    "patente": "RRE349",
+    "dia": "2026-10-29",
+    "horas": 19.5
+   },
+   {
+    "patente": "UWX998",
+    "dia": "2026-10-29",
+    "horas": 15.5
+   },
+   {
+    "patente": "VRA989",
+    "dia": "2026-11-02",
+    "horas": 15.2
+   },
+   {
+    "patente": "BHL749",
+    "dia": "2026-11-01",
+    "horas": 13.9
+   },
+   {
+    "patente": "EVL273",
+    "dia": "2026-11-01",
+    "horas": 13.9
+   },
+   {
+    "patente": "RYJ562",
+    "dia": "2026-10-29",
+    "horas": 13.5
+   }
+  ],
+  "pausaCorte": 6.0,
+  "tramosCorridos": [
+   {
+    "patente": "TOE184",
+    "desde": "2026-10-29 11:27",
+    "hasta": "2026-11-02 22:16",
+    "horas": 106.8,
+    "viajes": 12
+   },
+   {
+    "patente": "VJG112",
+    "desde": "2026-10-29 21:44",
+    "hasta": "2026-11-03 04:52",
+    "horas": 103.1,
+    "viajes": 17
+   },
+   {
+    "patente": "EUV766",
+    "desde": "2026-10-29 21:51",
+    "hasta": "2026-11-02 23:42",
+    "horas": 97.8,
+    "viajes": 15
+   },
+   {
+    "patente": "BVS300",
+    "desde": "2026-10-29 20:05",
+    "hasta": "2026-11-02 20:03",
+    "horas": 96.0,
+    "viajes": 14
+   },
+   {
+    "patente": "TAC436",
+    "desde": "2026-10-29 22:35",
+    "hasta": "2026-11-02 21:59",
+    "horas": 95.4,
+    "viajes": 13
+   },
+   {
+    "patente": "RRE349",
+    "desde": "2026-10-29 07:17",
+    "hasta": "2026-11-02 06:04",
+    "horas": 94.8,
+    "viajes": 11
+   },
+   {
+    "patente": "SPH945",
+    "desde": "2026-10-30 07:16",
+    "hasta": "2026-11-03 02:00",
+    "horas": 90.7,
+    "viajes": 13
+   },
+   {
+    "patente": "UUL425",
+    "desde": "2026-10-30 11:44",
+    "hasta": "2026-11-03 04:35",
+    "horas": 88.8,
+    "viajes": 14
+   },
+   {
+    "patente": "EYH843",
+    "desde": "2026-10-30 07:13",
+    "hasta": "2026-11-02 23:37",
+    "horas": 88.4,
+    "viajes": 13
+   },
+   {
+    "patente": "AAE877",
+    "desde": "2026-10-30 07:45",
+    "hasta": "2026-11-02 18:22",
+    "horas": 82.6,
+    "viajes": 6
+   },
+   {
+    "patente": "RXV065",
+    "desde": "2026-10-30 10:49",
+    "hasta": "2026-11-02 20:57",
+    "horas": 82.1,
+    "viajes": 12
+   },
+   {
+    "patente": "RDL445",
+    "desde": "2026-10-29 10:26",
+    "hasta": "2026-11-01 18:06",
+    "horas": 79.7,
+    "viajes": 8
+   },
+   {
+    "patente": "DTG181",
+    "desde": "2026-10-30 12:54",
+    "hasta": "2026-11-02 20:22",
+    "horas": 79.5,
+    "viajes": 9
+   },
+   {
+    "patente": "GES056",
+    "desde": "2026-10-30 10:45",
+    "hasta": "2026-11-02 17:50",
+    "horas": 79.1,
+    "viajes": 11
+   },
+   {
+    "patente": "MWK218",
+    "desde": "2026-10-30 10:26",
+    "hasta": "2026-11-02 17:14",
+    "horas": 78.8,
+    "viajes": 9
+   },
+   {
+    "patente": "BHL749",
+    "desde": "2026-10-30 08:58",
+    "hasta": "2026-11-02 15:28",
+    "horas": 78.5,
+    "viajes": 6
+   },
+   {
+    "patente": "VHL423",
+    "desde": "2026-10-30 16:31",
+    "hasta": "2026-11-02 21:58",
+    "horas": 77.5,
+    "viajes": 7
+   },
+   {
+    "patente": "RHM819",
+    "desde": "2026-10-30 12:54",
+    "hasta": "2026-11-02 18:08",
+    "horas": 77.2,
+    "viajes": 9
+   },
+   {
+    "patente": "WHR567",
+    "desde": "2026-10-30 16:01",
+    "hasta": "2026-11-02 16:47",
+    "horas": 72.8,
+    "viajes": 10
+   },
+   {
+    "patente": "DIH255",
+    "desde": "2026-10-30 04:41",
+    "hasta": "2026-11-01 17:20",
+    "horas": 60.6,
+    "viajes": 7
+   },
+   {
+    "patente": "SAT582",
+    "desde": "2026-10-30 09:48",
+    "hasta": "2026-11-01 21:57",
+    "horas": 60.1,
+    "viajes": 6
+   },
+   {
+    "patente": "SBY377",
+    "desde": "2026-10-30 12:59",
+    "hasta": "2026-11-01 23:21",
+    "horas": 58.4,
+    "viajes": 5
+   },
+   {
+    "patente": "EDQ876",
+    "desde": "2026-10-29 21:58",
+    "hasta": "2026-11-01 07:43",
+    "horas": 57.8,
+    "viajes": 7
+   },
+   {
+    "patente": "UWX998",
+    "desde": "2026-10-29 23:24",
+    "hasta": "2026-11-01 06:40",
+    "horas": 55.3,
+    "viajes": 4
+   },
+   {
+    "patente": "LFT141",
+    "desde": "2026-10-31 13:57",
+    "hasta": "2026-11-02 18:42",
+    "horas": 52.8,
+    "viajes": 8
+   },
+   {
+    "patente": "SNE399",
+    "desde": "2026-10-29 19:50",
+    "hasta": "2026-10-31 21:38",
+    "horas": 49.8,
+    "viajes": 4
+   },
+   {
+    "patente": "RYJ562",
+    "desde": "2026-10-29 22:34",
+    "hasta": "2026-10-31 23:52",
+    "horas": 49.3,
+    "viajes": 6
+   },
+   {
+    "patente": "RAW481",
+    "desde": "2026-10-29 21:38",
+    "hasta": "2026-10-31 22:50",
+    "horas": 49.2,
+    "viajes": 7
+   },
+   {
+    "patente": "HNE318",
+    "desde": "2026-10-29 21:58",
+    "hasta": "2026-10-31 22:29",
+    "horas": 48.5,
+    "viajes": 6
+   },
+   {
+    "patente": "CRJ139",
+    "desde": "2026-10-30 12:43",
+    "hasta": "2026-11-01 08:43",
+    "horas": 44.0,
+    "viajes": 5
+   },
+   {
+    "patente": "WPB419",
+    "desde": "2026-11-01 09:25",
+    "hasta": "2026-11-03 03:43",
+    "horas": 42.3,
+    "viajes": 8
+   },
+   {
+    "patente": "TVH101",
+    "desde": "2026-11-01 10:24",
+    "hasta": "2026-11-03 03:55",
+    "horas": 41.5,
+    "viajes": 10
+   },
+   {
+    "patente": "XBL711",
+    "desde": "2026-10-30 07:54",
+    "hasta": "2026-11-01 00:17",
+    "horas": 40.4,
+    "viajes": 3
+   },
+   {
+    "patente": "HNE318",
+    "desde": "2026-11-01 08:04",
+    "hasta": "2026-11-02 23:36",
+    "horas": 39.5,
+    "viajes": 9
+   },
+   {
+    "patente": "UUO981",
+    "desde": "2026-10-29 08:01",
+    "hasta": "2026-10-30 23:05",
+    "horas": 39.1,
+    "viajes": 7
+   },
+   {
+    "patente": "UYM942",
+    "desde": "2026-10-29 12:34",
+    "hasta": "2026-10-31 00:55",
+    "horas": 36.4,
+    "viajes": 4
+   },
+   {
+    "patente": "VAJ028",
+    "desde": "2026-10-30 09:18",
+    "hasta": "2026-10-31 20:07",
+    "horas": 34.8,
+    "viajes": 4
+   },
+   {
+    "patente": "ROS380",
+    "desde": "2026-10-30 13:32",
+    "hasta": "2026-10-31 23:42",
+    "horas": 34.2,
+    "viajes": 4
+   },
+   {
+    "patente": "WPB419",
+    "desde": "2026-10-30 13:33",
+    "hasta": "2026-10-31 23:36",
+    "horas": 34.0,
+    "viajes": 4
+   },
+   {
+    "patente": "ESB427",
+    "desde": "2026-11-01 09:12",
+    "hasta": "2026-11-02 18:55",
+    "horas": 33.7,
+    "viajes": 7
+   },
+   {
+    "patente": "CKQ212",
+    "desde": "2026-10-30 10:37",
+    "hasta": "2026-10-31 20:08",
+    "horas": 33.5,
+    "viajes": 4
+   },
+   {
+    "patente": "RWJ030",
+    "desde": "2026-10-30 15:37",
+    "hasta": "2026-11-01 00:56",
+    "horas": 33.3,
+    "viajes": 4
+   },
+   {
+    "patente": "ROS380",
+    "desde": "2026-11-01 09:59",
+    "hasta": "2026-11-02 19:17",
+    "horas": 33.3,
+    "viajes": 7
+   },
+   {
+    "patente": "EVL273",
+    "desde": "2026-10-30 15:14",
+    "hasta": "2026-11-01 00:07",
+    "horas": 32.9,
+    "viajes": 5
+   },
+   {
+    "patente": "SNE399",
+    "desde": "2026-11-01 15:53",
+    "hasta": "2026-11-02 23:32",
+    "horas": 31.6,
+    "viajes": 8
+   },
+   {
+    "patente": "RAW481",
+    "desde": "2026-11-01 08:57",
+    "hasta": "2026-11-02 16:29",
+    "horas": 31.5,
+    "viajes": 7
+   },
+   {
+    "patente": "EEW075",
+    "desde": "2026-10-29 08:10",
+    "hasta": "2026-10-30 15:18",
+    "horas": 31.1,
+    "viajes": 7
+   },
+   {
+    "patente": "RYJ562",
+    "desde": "2026-11-01 10:19",
+    "hasta": "2026-11-02 17:12",
+    "horas": 30.9,
+    "viajes": 6
+   },
+   {
+    "patente": "VRA989",
+    "desde": "2026-11-01 10:42",
+    "hasta": "2026-11-02 16:58",
+    "horas": 30.3,
+    "viajes": 4
+   },
+   {
+    "patente": "CIE516",
+    "desde": "2026-11-01 15:41",
+    "hasta": "2026-11-02 20:50",
+    "horas": 29.1,
+    "viajes": 4
+   },
+   {
+    "patente": "ECX249",
+    "desde": "2026-10-29 07:38",
+    "hasta": "2026-10-30 12:35",
+    "horas": 28.9,
+    "viajes": 4
+   },
+   {
+    "patente": "AYM824",
+    "desde": "2026-10-30 11:25",
+    "hasta": "2026-10-31 16:11",
+    "horas": 28.8,
+    "viajes": 3
+   },
+   {
+    "patente": "VAJ028",
+    "desde": "2026-11-01 18:12",
+    "hasta": "2026-11-02 22:35",
+    "horas": 28.4,
+    "viajes": 6
+   },
+   {
+    "patente": "TVH101",
+    "desde": "2026-10-30 21:08",
+    "hasta": "2026-10-31 23:59",
+    "horas": 26.9,
+    "viajes": 3
+   },
+   {
+    "patente": "TAO150",
+    "desde": "2026-10-30 08:47",
+    "hasta": "2026-10-31 11:41",
+    "horas": 26.9,
+    "viajes": 3
+   },
+   {
+    "patente": "EEW075",
+    "desde": "2026-10-31 06:02",
+    "hasta": "2026-11-01 08:47",
+    "horas": 26.8,
+    "viajes": 3
+   },
+   {
+    "patente": "UWX998",
+    "desde": "2026-11-01 16:03",
+    "hasta": "2026-11-02 18:41",
+    "horas": 26.6,
+    "viajes": 7
+   },
+   {
+    "patente": "XBL711",
+    "desde": "2026-11-01 19:31",
+    "hasta": "2026-11-02 20:47",
+    "horas": 25.3,
+    "viajes": 3
+   },
+   {
+    "patente": "UKL882",
+    "desde": "2026-10-30 09:52",
+    "hasta": "2026-10-31 10:43",
+    "horas": 24.9,
+    "viajes": 3
+   },
+   {
+    "patente": "UKL882",
+    "desde": "2026-11-01 20:23",
+    "hasta": "2026-11-02 21:10",
+    "horas": 24.8,
+    "viajes": 5
+   },
+   {
+    "patente": "EVL273",
+    "desde": "2026-11-01 06:26",
+    "hasta": "2026-11-02 06:48",
+    "horas": 24.4,
+    "viajes": 3
+   },
+   {
+    "patente": "CKQ212",
+    "desde": "2026-11-01 19:21",
+    "hasta": "2026-11-02 17:56",
+    "horas": 22.6,
+    "viajes": 5
+   },
+   {
+    "patente": "EEW075",
+    "desde": "2026-11-01 22:48",
+    "hasta": "2026-11-02 18:15",
+    "horas": 19.4,
+    "viajes": 4
+   },
+   {
+    "patente": "AZG422",
+    "desde": "2026-10-30 08:29",
+    "hasta": "2026-10-31 02:33",
+    "horas": 18.1,
+    "viajes": 2
+   },
+   {
+    "patente": "VRA989",
+    "desde": "2026-10-31 06:17",
+    "hasta": "2026-11-01 00:20",
+    "horas": 18.1,
+    "viajes": 3
+   },
+   {
+    "patente": "UKL882",
+    "desde": "2026-10-31 20:26",
+    "hasta": "2026-11-01 13:42",
+    "horas": 17.3,
+    "viajes": 2
+   },
+   {
+    "patente": "DGR440",
+    "desde": "2026-10-30 07:21",
+    "hasta": "2026-10-31 00:28",
+    "horas": 17.1,
+    "viajes": 2
+   },
+   {
+    "patente": "UER485",
+    "desde": "2026-10-31 05:29",
+    "hasta": "2026-10-31 22:16",
+    "horas": 16.8,
+    "viajes": 2
+   },
+   {
+    "patente": "UUO981",
+    "desde": "2026-10-31 05:06",
+    "hasta": "2026-10-31 21:36",
+    "horas": 16.5,
+    "viajes": 2
+   },
+   {
+    "patente": "ECX249",
+    "desde": "2026-10-31 04:01",
+    "hasta": "2026-10-31 20:31",
+    "horas": 16.5,
+    "viajes": 2
+   },
+   {
+    "patente": "CIE516",
+    "desde": "2026-10-30 10:54",
+    "hasta": "2026-10-31 03:00",
+    "horas": 16.1,
+    "viajes": 1
+   },
+   {
+    "patente": "DGR440",
+    "desde": "2026-10-31 06:52",
+    "hasta": "2026-10-31 22:48",
+    "horas": 15.9,
+    "viajes": 2
+   },
+   {
+    "patente": "RNM392",
+    "desde": "2026-10-30 06:37",
+    "hasta": "2026-10-30 21:48",
+    "horas": 15.2,
+    "viajes": 2
+   },
+   {
+    "patente": "CGS172",
+    "desde": "2026-10-30 05:37",
+    "hasta": "2026-10-30 20:46",
+    "horas": 15.2,
+    "viajes": 2
+   },
+   {
+    "patente": "ESB427",
+    "desde": "2026-10-31 08:20",
+    "hasta": "2026-10-31 23:06",
+    "horas": 14.8,
+    "viajes": 2
+   },
+   {
+    "patente": "RNM392",
+    "desde": "2026-11-02 06:01",
+    "hasta": "2026-11-02 19:57",
+    "horas": 13.9,
+    "viajes": 3
+   },
+   {
+    "patente": "DIH255",
+    "desde": "2026-11-02 03:50",
+    "hasta": "2026-11-02 17:31",
+    "horas": 13.7,
+    "viajes": 4
+   },
+   {
+    "patente": "DGR440",
+    "desde": "2026-11-02 07:10",
+    "hasta": "2026-11-02 20:54",
+    "horas": 13.7,
+    "viajes": 3
+   },
+   {
+    "patente": "AZG422",
+    "desde": "2026-11-02 06:30",
+    "hasta": "2026-11-02 20:08",
+    "horas": 13.6,
+    "viajes": 3
+   },
+   {
+    "patente": "EDQ876",
+    "desde": "2026-11-02 14:09",
+    "hasta": "2026-11-03 03:42",
+    "horas": 13.6,
+    "viajes": 4
+   },
+   {
+    "patente": "BWV144",
+    "desde": "2026-10-29 22:49",
+    "hasta": "2026-10-30 12:24",
+    "horas": 13.6,
+    "viajes": 2
+   },
+   {
+    "patente": "AZG422",
+    "desde": "2026-10-29 04:04",
+    "hasta": "2026-10-29 17:09",
+    "horas": 13.1,
+    "viajes": 1
+   },
+   {
+    "patente": "UYM942",
+    "desde": "2026-11-02 08:22",
+    "hasta": "2026-11-02 21:20",
+    "horas": 13.0,
+    "viajes": 3
+   },
+   {
+    "patente": "CGS172",
+    "desde": "2026-11-02 05:08",
+    "hasta": "2026-11-02 18:05",
+    "horas": 12.9,
+    "viajes": 3
+   },
+   {
+    "patente": "ECX249",
+    "desde": "2026-11-02 05:00",
+    "hasta": "2026-11-02 17:31",
+    "horas": 12.5,
+    "viajes": 3
+   },
+   {
+    "patente": "CRJ139",
+    "desde": "2026-10-29 11:50",
+    "hasta": "2026-10-30 00:13",
+    "horas": 12.4,
+    "viajes": 3
+   },
+   {
+    "patente": "UUO981",
+    "desde": "2026-11-01 09:15",
+    "hasta": "2026-11-01 21:34",
+    "horas": 12.3,
+    "viajes": 2
+   },
+   {
+    "patente": "UUO981",
+    "desde": "2026-11-02 05:01",
+    "hasta": "2026-11-02 17:13",
+    "horas": 12.2,
+    "viajes": 3
+   },
+   {
+    "patente": "RDL445",
+    "desde": "2026-11-02 04:56",
+    "hasta": "2026-11-02 16:36",
+    "horas": 11.7,
+    "viajes": 3
+   },
+   {
+    "patente": "TZQ583",
+    "desde": "2026-11-02 09:35",
+    "hasta": "2026-11-02 21:06",
+    "horas": 11.5,
+    "viajes": 2
+   },
+   {
+    "patente": "UPW705",
+    "desde": "2026-11-02 15:15",
+    "hasta": "2026-11-03 02:08",
+    "horas": 10.9,
+    "viajes": 2
+   },
+   {
+    "patente": "RHM819",
+    "desde": "2026-10-29 09:08",
+    "hasta": "2026-10-29 19:49",
+    "horas": 10.7,
+    "viajes": 1
+   },
+   {
+    "patente": "RNM392",
+    "desde": "2026-10-31 06:16",
+    "hasta": "2026-10-31 16:42",
+    "horas": 10.4,
+    "viajes": 1
+   },
+   {
+    "patente": "RXV065",
+    "desde": "2026-10-29 10:49",
+    "hasta": "2026-10-29 21:13",
+    "horas": 10.4,
+    "viajes": 0
+   },
+   {
+    "patente": "UER485",
+    "desde": "2026-10-30 10:15",
+    "hasta": "2026-10-30 20:29",
+    "horas": 10.2,
+    "viajes": 1
+   },
+   {
+    "patente": "CGS172",
+    "desde": "2026-10-31 05:29",
+    "hasta": "2026-10-31 15:33",
+    "horas": 10.1,
+    "viajes": 1
+   },
+   {
+    "patente": "DGR440",
+    "desde": "2026-11-01 07:35",
+    "hasta": "2026-11-01 17:43",
+    "horas": 10.1,
+    "viajes": 1
+   },
+   {
+    "patente": "CRJ139",
+    "desde": "2026-11-02 12:26",
+    "hasta": "2026-11-02 22:28",
+    "horas": 10.0,
+    "viajes": 2
+   },
+   {
+    "patente": "UER485",
+    "desde": "2026-11-02 11:12",
+    "hasta": "2026-11-02 21:09",
+    "horas": 9.9,
+    "viajes": 2
+   },
+   {
+    "patente": "CGS172",
+    "desde": "2026-10-29 07:57",
+    "hasta": "2026-10-29 17:11",
+    "horas": 9.2,
+    "viajes": 3
+   },
+   {
+    "patente": "CRJ139",
+    "desde": "2026-11-01 19:11",
+    "hasta": "2026-11-02 04:07",
+    "horas": 8.9,
+    "viajes": 2
+   },
+   {
+    "patente": "RWJ030",
+    "desde": "2026-11-01 11:15",
+    "hasta": "2026-11-01 20:11",
+    "horas": 8.9,
+    "viajes": 2
+   },
+   {
+    "patente": "NLR442",
+    "desde": "2026-11-02 11:16",
+    "hasta": "2026-11-02 20:10",
+    "horas": 8.9,
+    "viajes": 2
+   },
+   {
+    "patente": "CGS172",
+    "desde": "2026-11-01 09:24",
+    "hasta": "2026-11-01 18:13",
+    "horas": 8.8,
+    "viajes": 1
+   },
+   {
+    "patente": "VRA989",
+    "desde": "2026-10-30 13:23",
+    "hasta": "2026-10-30 22:14",
+    "horas": 8.8,
+    "viajes": 1
+   },
+   {
+    "patente": "SAT582",
+    "desde": "2026-11-02 07:42",
+    "hasta": "2026-11-02 16:28",
+    "horas": 8.8,
+    "viajes": 2
+   },
+   {
+    "patente": "UYM942",
+    "desde": "2026-10-31 11:08",
+    "hasta": "2026-10-31 19:34",
+    "horas": 8.4,
+    "viajes": 1
+   },
+   {
+    "patente": "RNM392",
+    "desde": "2026-10-29 11:13",
+    "hasta": "2026-10-29 18:02",
+    "horas": 6.8,
+    "viajes": 2
+   },
+   {
+    "patente": "BHL749",
+    "desde": "2026-10-28 18:30",
+    "hasta": "2026-10-29 00:54",
+    "horas": 6.4,
+    "viajes": 1
+   },
+   {
+    "patente": "DTG181",
+    "desde": "2026-10-29 14:16",
+    "hasta": "2026-10-29 19:47",
+    "horas": 5.5,
+    "viajes": 1
+   },
+   {
+    "patente": "UYM942",
+    "desde": "2026-11-01 14:18",
+    "hasta": "2026-11-01 19:39",
+    "horas": 5.3,
+    "viajes": 1
+   },
+   {
+    "patente": "SBY377",
+    "desde": "2026-10-29 18:44",
+    "hasta": "2026-10-29 23:14",
+    "horas": 4.5,
+    "viajes": 0
+   },
+   {
+    "patente": "EVL273",
+    "desde": "2026-10-29 14:11",
+    "hasta": "2026-10-29 18:13",
+    "horas": 4.0,
+    "viajes": 1
+   },
+   {
+    "patente": "ROS380",
+    "desde": "2026-10-29 20:02",
+    "hasta": "2026-10-30 00:00",
+    "horas": 4.0,
+    "viajes": 0
+   },
+   {
+    "patente": "UWX998",
+    "desde": "2026-10-29 13:07",
+    "hasta": "2026-10-29 16:38",
+    "horas": 3.5,
+    "viajes": 1
+   },
+   {
+    "patente": "ROS380",
+    "desde": "2026-10-29 06:59",
+    "hasta": "2026-10-29 10:30",
+    "horas": 3.5,
+    "viajes": 1
+   },
+   {
+    "patente": "AYM824",
+    "desde": "2026-10-29 15:13",
+    "hasta": "2026-10-29 18:31",
+    "horas": 3.3,
+    "viajes": 1
+   },
+   {
+    "patente": "SNE399",
+    "desde": "2026-10-29 06:45",
+    "hasta": "2026-10-29 10:02",
+    "horas": 3.3,
+    "viajes": 1
+   },
+   {
+    "patente": "VJG112",
+    "desde": "2026-10-29 10:33",
+    "hasta": "2026-10-29 13:37",
+    "horas": 3.1,
+    "viajes": 1
+   },
+   {
+    "patente": "EDQ876",
+    "desde": "2026-10-29 03:03",
+    "hasta": "2026-10-29 05:59",
+    "horas": 2.9,
+    "viajes": 1
+   },
+   {
+    "patente": "TAC436",
+    "desde": "2026-10-29 12:58",
+    "hasta": "2026-10-29 15:44",
+    "horas": 2.8,
+    "viajes": 0
+   },
+   {
+    "patente": "GES056",
+    "desde": "2026-10-29 09:27",
+    "hasta": "2026-10-29 12:02",
+    "horas": 2.6,
+    "viajes": 1
+   },
+   {
+    "patente": "GES056",
+    "desde": "2026-10-29 18:13",
+    "hasta": "2026-10-29 20:49",
+    "horas": 2.6,
+    "viajes": 0
+   },
+   {
+    "patente": "SBY377",
+    "desde": "2026-10-29 09:22",
+    "hasta": "2026-10-29 12:00",
+    "horas": 2.6,
+    "viajes": 1
+   },
+   {
+    "patente": "TAC436",
+    "desde": "2026-10-29 03:28",
+    "hasta": "2026-10-29 06:00",
+    "horas": 2.5,
+    "viajes": 1
+   },
+   {
+    "patente": "TOE184",
+    "desde": "2026-10-29 02:30",
+    "hasta": "2026-10-29 04:52",
+    "horas": 2.4,
+    "viajes": 1
+   },
+   {
+    "patente": "AZG422",
+    "desde": "2026-10-31 09:54",
+    "hasta": "2026-10-31 11:51",
+    "horas": 1.9,
+    "viajes": 0
+   },
+   {
+    "patente": "RYJ562",
+    "desde": "2026-10-29 12:55",
+    "hasta": "2026-10-29 14:46",
+    "horas": 1.9,
+    "viajes": 1
+   },
+   {
+    "patente": "EDQ876",
+    "desde": "2026-10-29 12:18",
+    "hasta": "2026-10-29 14:15",
+    "horas": 1.9,
+    "viajes": 0
+   },
+   {
+    "patente": "BWV144",
+    "desde": "2026-10-29 09:43",
+    "hasta": "2026-10-29 11:39",
+    "horas": 1.9,
+    "viajes": 1
+   },
+   {
+    "patente": "BHL749",
+    "desde": "2026-10-29 10:20",
+    "hasta": "2026-10-29 12:01",
+    "horas": 1.7,
+    "viajes": 0
+   },
+   {
+    "patente": "RXV065",
+    "desde": "2026-10-29 02:27",
+    "hasta": "2026-10-29 03:46",
+    "horas": 1.3,
+    "viajes": 1
+   },
+   {
+    "patente": "UER485",
+    "desde": "2026-11-01 07:53",
+    "hasta": "2026-11-01 08:28",
+    "horas": 0.6,
+    "viajes": 1
+   },
+   {
+    "patente": "CKQ212",
+    "desde": "2026-10-29 07:57",
+    "hasta": "2026-10-29 08:34",
+    "horas": 0.6,
+    "viajes": 1
+   },
+   {
+    "patente": "CIE516",
+    "desde": "2026-10-31 12:43",
+    "hasta": "2026-10-31 12:56",
+    "horas": 0.2,
+    "viajes": 0
+   },
+   {
+    "patente": "SNE399",
+    "desde": "2026-11-01 06:34",
+    "hasta": "2026-11-01 06:37",
+    "horas": 0.1,
+    "viajes": 0
+   }
+  ],
+  "corridoPorCamion": {
+   "menos de 8 h": 0,
+   "8 a 12 h": 3,
+   "12 a 18 h": 5,
+   "18 a 24 h": 1,
+   "más de 24 h": 48
+  },
+  "camionesCorridoMas12": 54,
+  "nota": "trabajo de corrido = lecturas de cámara encadenadas; descanso = 6 h o más sin lecturas después de un egreso (Egreso SL, Salida 2 Ricardone o Balanza Egreso); dura de la primera a la última lectura; viajes por camión = cartas de porte; duración del viaje = de la primera lectura en Ricardone a la última en el puerto (cámaras, algoritmo de vínculo), sin la vuelta; día = el de la Balanza Egreso de Ricardone"
+ }
+}

@@ -25,9 +25,9 @@ TSX = os.path.join(ROOT, 'node_modules', 'tsx', 'dist', 'cli.mjs')
 ENV = {**os.environ, 'VICENTIN_ROOT': ROOT, 'PYTHONIOENCODING': 'utf-8'}
 shift = lambda d, n: (datetime.date.fromisoformat(d) + datetime.timedelta(days=n)).isoformat()
 
-def run(cmd, cwd=WT, quiet=True):
+def run(cmd, cwd=WT, quiet=True, env_extra=None):
     print('  $', ' '.join(os.path.relpath(c, WT) if os.path.isabs(c) and c.startswith(WT) else c for c in cmd), flush=True)
-    r = subprocess.run(cmd, cwd=cwd, env=ENV, capture_output=True, text=True, encoding='utf-8', errors='replace')
+    r = subprocess.run(cmd, cwd=cwd, env={**ENV, **(env_extra or {})}, capture_output=True, text=True, encoding='utf-8', errors='replace')
     if r.returncode != 0:
         print(r.stdout[-3000:], r.stderr[-3000:]); sys.exit(f'Falló: {cmd[0]} {cmd[1] if len(cmd) > 1 else ""}')
     if not quiet: print(r.stdout[-4000:])
@@ -45,6 +45,7 @@ def main():
                     help='carpeta del comité anterior (datos.json + calculo-pc/) para los comparativos')
     ap.add_argument('--calibracion', default='2026-09-30:2026-10-04', help='días con planilla y cámaras para calibrar (si faltan los archivos)')
     ap.add_argument('--sin-etl', action='store_true', help='no reprocesar la corrida')
+    ap.add_argument('--pellet-desde', help='inicio del operativo de pellet si empezó antes del período (anexo)')
     ap.add_argument('--carpeta', help='carpeta de salida (por defecto reportes/logistica/<desde>_<hasta>/comite-logistica)')
     a = ap.parse_args()
     D = os.path.abspath(a.carpeta) if a.carpeta else os.path.join(WT, 'reportes', 'logistica', f'{a.desde}_{a.hasta}', 'comite-logistica'); C = os.path.join(D, 'calculo')
@@ -109,6 +110,22 @@ def main():
         ax = json.load(open(os.path.join(a.anterior, 'datos.json'), encoding='utf-8'))
         ad = ax['periodo']['days'] if 'periodo' in ax else ax['days']
         run([sys.executable, 'scripts/estado-planta/silos-internos.py', os.path.join(C, 'silos-internos-anterior.json'), ad[0], ad[-1]])
+    # base y anexos (agentes/conocimiento/COMITE_LOGISTICA_BASE_Y_ANEXOS.md): viajes por cartas, tiempos por el vínculo
+    pd0 = min(a.desde, a.pellet_desde or a.desde)
+    cartas = os.path.join(C, 'cartas.json')
+    run(['node', '--env-file=.env.local', 'scripts/cruce-cartas-sin-carta/bajar-cartas-api.mjs', shift(pd0, -3), shift(a.hasta, 1), cartas], cwd=ROOT)
+    mes0 = a.hasta[:8] + '01'
+    run([sys.executable, 'scripts/estado-planta/ponderado-producto.py', os.path.join(C, 'ponderado-producto.json'), f'desde-junio:{a.hasta[:4]}-06-01:{a.hasta}', f'mes:{mes0}:{a.hasta}',
+         '--girasol-serie', os.path.join(ROOT, 'data', 'cache', 'girasol-comites.json')])
+    VW = os.environ.get('VINCULO_WORKTREE') or os.path.join(ROOT, '.claude', 'worktrees', 'dss-vinculo-e5702c')
+    cob = os.path.join(VW, 'reportes', 'vinculo', f'{pd0}_{a.hasta}', 'cobertura.json')
+    run(['node', '--max-old-space-size=8192', 'scripts/vinculo/cobertura.mjs', pd0, a.hasta], cwd=VW,
+        env_extra={'VINCULO_DATA': os.path.join(ROOT, 'data'), 'VINCULO_CARTAS': cartas})
+    run([sys.executable, 'scripts/estado-planta/transile-cartas-camaras.py', cartas, cob, pd0, a.hasta, os.path.join(C, 'pellet-operativo.json'), 'pellet'])
+    run([sys.executable, 'scripts/estado-planta/calada-producto.py', cartas, cob, a.desde, a.hasta, os.path.join(C, 'calada-producto.json')])
+    run([sys.executable, 'scripts/estado-planta/despachos-cartas.py', cartas, a.desde, a.hasta, os.path.join(C, 'despachos-cartas.json')])
+    for sc, out in (('tramos-circuitos.py', 'tramos-circuitos.json'), ('liquidos-puntos.py', 'liquidos-puntos.json'), ('calles-volcables-sgc.py', 'calles-volcables-sgc.json')):
+        run([sys.executable, f'scripts/estado-planta/{sc}', a.desde, a.hasta, os.path.join(C, out)])
     run(big + ['scripts/estado-planta/metricas-camaras.cjs', os.path.join(C, 'metricas-camaras.json'), shift(a.desde, -7), a.desde,
                str((datetime.date.fromisoformat(a.hasta) - datetime.date.fromisoformat(a.desde)).days + 1)])
 
