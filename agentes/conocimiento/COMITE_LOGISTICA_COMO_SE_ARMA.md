@@ -1,5 +1,7 @@
 # Comité de Logística semanal · cómo se arma el deck
 
+> **Superado en parte (06/11/2026).** Describe el modo planilla/ETL del 19/10. Lo vigente: `docs/SISTEMA_NODO_SUR.md` (sección 5) y `COMITE_LOGISTICA_BASE_Y_ANEXOS.md`.
+
 Guía para el agente que arma el comité. Dice qué corre, de dónde sale cada lámina y qué revisar
 antes de publicar. **Desde el 15/10/2026 los movimientos salen de la balanza (SGC), no del Excel**;
 la sección 3 dice qué cambia por eso.

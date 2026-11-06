@@ -1,5 +1,7 @@
 # Comité de Logística · deck base y anexos
 
+> Mapa general (fuentes, En vivo, comités, índice de documentos): `docs/SISTEMA_NODO_SUR.md`.
+
 Estándar fijado el 02/11/2026 a partir del comité 23–29/10 (último trabajado, 25 láminas).
 Complementa `COMITE_LOGISTICA_COMO_SE_ARMA.md` (flujo y scripts). Regla: **la base va siempre**;
 los **anexos** solo cuando la semana trae ese hecho (operativo de pellet, transile interno, etc.).
@@ -84,4 +86,4 @@ Falta:
 - Que el generador use `tramos-circuitos.json` (girasol R12 y líquidos por circuito), `liquidos-puntos.json` (líquidos por punto de carga) y `calles-volcables-sgc.json` (volcables por calle con el SGC) en vez de las versiones viejas.
 - Otros productos (cártamo): generalizar `cartamo.py` a cualquier producto nuevo.
 - Anexo de transile interno con el algoritmo: hoy usa `silos-internos.py` (lecturas directas).
-- `VINCULO_CARTAS` vive en la rama `claude/dss-vinculo-e5702c`: mergearla para no depender del worktree.
+- ~~`VINCULO_CARTAS` vive en la rama `claude/dss-vinculo-e5702c`~~: unida el 03/11 (`9cfc3e7`); el vínculo se corre desde el repo, sin el worktree.

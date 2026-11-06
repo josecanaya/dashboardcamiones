@@ -1,5 +1,7 @@
 # Comités semanales (Logística + Seguridad) · esquema para hacerlos automáticos
 
+> **Superado en parte (06/11/2026).** No conoce las cartas de porte como fuente de viajes ni el vínculo. Empezar por `docs/SISTEMA_NODO_SUR.md` (sección 5) y `COMITE_LOGISTICA_BASE_Y_ANEXOS.md`.
+
 Estado al 21/10/2026. Complementa `COMITE_LOGISTICA_COMO_SE_ARMA.md` (detalle lámina por lámina de
 Logística) y `reportes/logistica/<semana>/PROMPT-cierre-con-excel.md` (cierre manual de una semana).
 

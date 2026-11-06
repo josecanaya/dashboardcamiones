@@ -1,5 +1,7 @@
 # Dashboard camiones — capa de agentes (Claude Code + MCP)
 
+> **Leer primero `docs/SISTEMA_NODO_SUR.md`**: estado de En vivo, fuentes de datos, cómo se arman los comités e índice de documentos vigentes. Si cambia algo de eso, actualizarlo en el mismo commit.
+
 Este repo expone las tools del ETL como **servidor MCP** (`etl`, ver `.mcp.json`) para
 analizar datos de logística de la planta Ricardone / Puerto San Lorenzo (Vicentin)
 **usando la suscripción** (Claude Code), sin `ANTHROPIC_API_KEY`.

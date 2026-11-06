@@ -1,5 +1,7 @@
 # Continuar: reconocedor por pasos, universo del 02/11 y vínculo (03/11/2026)
 
+> **Histórico (06/11/2026).** El estado actual está en `docs/SISTEMA_NODO_SUR.md` y `docs/CONTINUAR_2026-11-05_reconocedor-en-vivo.md`. Acá quedan el ensamblador de pasos, el universo del 02/11 y los hallazgos de cámaras.
+
 Traspaso de la sesión del 03/11 (rama `automatizacion`). Todo lo de abajo está commiteado salvo lo marcado como
 pendiente. Para seguir, leer primero «Dónde quedamos» y «Siguiente paso».
 
