@@ -135,6 +135,7 @@ python scripts/estado-planta/gen_comite_seguridad.py reportes/logistica/<desde>_
 |---|---|
 | **Recorrido de cada camión de un día** (cámara / reconstruido / deducido / falta) | `VINCULO_DATA=<carpeta con truckflow/<día>/{event,alert}-list.json completos> VINCULO_CARTAS=data/arca/api/cartas-<rango>.json node --max-old-space-size=8192 scripts/vinculo/cobertura.mjs DESDE HASTA` → `reportes/vinculo/<desde>_<hasta>/cobertura.json`. Necesita una carpeta `dss-export` (puede estar vacía). |
 | **Simular En vivo un día por capas** (alertas, erróneas, cobertura) | `node --max-old-space-size=8192 scripts/replay-capas-dia.mjs AAAA-MM-DD <carpeta>` (MongoDB arriba). Medir acá todo cambio antes de llevarlo a En vivo. |
+| **Informe por capas de uno o varios días** (qué resolvió cada capa, alertas por motivo, nodo y patente, lote) | `node scripts/informe-capas-dias.mjs reportes/reconocimiento-capas/<día1> [<día2> …] --salida <informe.md>`. Último: `reportes/reconocimiento-capas/informe-capas-03-04-nov.md`. |
 | Replay simple por pasos + cruce con SGC + fotos + clasificación por foto | `scripts/replay-pasos-dia.mjs`, `scripts/cruce-pasos-sgc.mjs`, `scripts/fotos-pasos-dss.mjs`; flujo en `docs/CONTINUAR_2026-11-03_reconocedor-y-vinculo.md`. |
 | Simulador del vínculo (qué camiones compiten por cada captura) | `scripts/vinculo/simulador-server.mjs` (puerto 8820). |
 | Bases del back office | `npm run padron:armar`; revisión en el artifact de back office (sección 7). |
