@@ -8,7 +8,7 @@ demás documentos son el detalle (índice en la sección 7).
 
 | Qué | Estado |
 |---|---|
-| Rama de trabajo | **`claude/laminas-vinculo`**: tiene todo (`automatizacion` + los commits del 04–06/11) y está en GitHub desde el 06/11. Falta unirla a `automatizacion` (en GitHub llega hasta `e9feb2f`). |
+| Rama de trabajo | **`automatizacion`**, en GitHub y al día (06/11): se le unió `claude/laminas-vinculo`, que quedó igual. Lo nuevo va a `automatizacion`. |
 | Servidor local 8787 (En vivo + API del ETL) | **Apagado** al 06/11. Se levanta con `node server/truckflow-local-server.mjs` (o `pnpm run server:truckflow`). Lo usan varias sesiones: avisar antes de reiniciarlo. |
 | Reconocedor por capas (sección 3) | Commiteado y medido en el replay. **En vivo no lo corre todavía**: el usuario decidió no pasarlo hasta bajar las alertas (hoy 170–225 por día; objetivo: una alerta por vehículo, 17–28 por día). |
 | Vínculo (lote: cada captura al camión más probable) | En el servidor desde el 03/11 (`f8d1a31`): corre cada 5 min y completa lo que el reconocedor deja abierto. Fuera de línea reconstruye el 02/11 con 99,3 % de viajes completos. |
@@ -177,4 +177,3 @@ y `claude.ai/artifact/Y47tsjJJKgJMcqmdAS4qV6`.
 7. Pedido a Enesimal: `eventId` de la cámara en `journey-event`. Pedido a Vicentin: columnas faltantes del SGC
    (`docs/sgc/PEDIDO_COLUMNAS_VISTA.md`).
 8. Ruta de VPN al SGC que se pierde al reiniciar (agregarla al `.ovpn`).
-9. Unir `claude/laminas-vinculo` a `automatizacion` (ya está en GitHub).
