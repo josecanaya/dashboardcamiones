@@ -1,8 +1,9 @@
 {
- "updatedAt": "2026-11-03T15:52:34.606Z",
+ "updatedAt": "2026-11-06T19:44:18.180Z",
  "fuente": [
   "https://claude.ai/artifact/D9aYMWumMqwXBe727Ayzqo",
-  "https://claude.ai/artifact/Y47tsjJJKgJMcqmdAS4qV6"
+  "https://claude.ai/artifact/Y47tsjJJKgJMcqmdAS4qV6",
+  "https://claude.ai/artifact/B4CDbRsi51wKbpTf71bjM6"
  ],
  "dia": "2026-11-02",
  "entries": [
@@ -91,6 +92,14 @@
    "tipo": "auto",
    "nota": "",
    "at": "2026-11-03T15:27:29.032Z"
+  },
+  {
+   "plate": "AC539YP",
+   "tipo": "camion",
+   "real": "AC539YB",
+   "nota": "AC539YB",
+   "at": "2026-11-06T19:41:56.089Z",
+   "fuente": "sin-registro-04-11"
   },
   {
    "plate": "AD117ZL",
@@ -332,6 +341,14 @@
    "at": "2026-11-03T15:29:54.706Z"
   },
   {
+   "plate": "AYL780",
+   "tipo": "camion",
+   "real": "AYJ760",
+   "nota": "AYJ760",
+   "at": "2026-11-06T19:40:01.207Z",
+   "fuente": "sin-registro-04-11"
+  },
+  {
    "plate": "BCT029",
    "tipo": "auto",
    "nota": "",
@@ -342,6 +359,29 @@
    "tipo": "camion",
    "nota": "",
    "at": "2026-11-03T15:30:02.244Z"
+  },
+  {
+   "plate": "BVG200",
+   "tipo": "mal_leida",
+   "nota": "ERROR DE LECTURA",
+   "at": "2026-11-06T19:40:26.556Z",
+   "fuente": "sin-registro-04-11"
+  },
+  {
+   "plate": "CCQ063",
+   "tipo": "camion",
+   "real": "CCQ635",
+   "nota": "CCQ635",
+   "at": "2026-11-06T19:37:12.948Z",
+   "fuente": "sin-registro-04-11"
+  },
+  {
+   "plate": "CVA136",
+   "tipo": "camion",
+   "real": "EVK736",
+   "nota": "EVK736",
+   "at": "2026-11-06T19:42:10.711Z",
+   "fuente": "sin-registro-04-11"
   },
   {
    "plate": "DBZ307",
@@ -368,10 +408,32 @@
    "at": "2026-11-03T15:28:39.702Z"
   },
   {
+   "plate": "DVS998",
+   "tipo": "mal_leida",
+   "nota": "acoplado",
+   "at": "2026-11-06T19:38:27.331Z",
+   "fuente": "sin-registro-04-11"
+  },
+  {
+   "plate": "EDP750",
+   "tipo": "mal_leida",
+   "nota": "ILEGIBLE",
+   "at": "2026-11-06T19:40:43.060Z",
+   "fuente": "sin-registro-04-11"
+  },
+  {
    "plate": "EFD527",
    "tipo": "camion",
    "nota": "",
    "at": "2026-11-03T15:30:04.648Z"
+  },
+  {
+   "plate": "ESI930",
+   "tipo": "camion",
+   "real": "EST930",
+   "nota": "EST930",
+   "at": "2026-11-06T19:41:24.506Z",
+   "fuente": "sin-registro-04-11"
   },
   {
    "plate": "EWL984",
@@ -458,6 +520,13 @@
    "at": "2026-11-03T15:47:03.813Z"
   },
   {
+   "plate": "ICD135",
+   "tipo": "mal_leida",
+   "nota": "MALA LECTURA",
+   "at": "2026-11-06T19:41:12.706Z",
+   "fuente": "sin-registro-04-11"
+  },
+  {
    "plate": "IEU171",
    "tipo": "auto",
    "nota": "",
@@ -468,6 +537,22 @@
    "tipo": "camion",
    "nota": "",
    "at": "2026-11-03T15:28:08.990Z"
+  },
+  {
+   "plate": "IFR518",
+   "tipo": "camion",
+   "real": "JFR518",
+   "nota": "JFR518",
+   "at": "2026-11-06T19:39:35.420Z",
+   "fuente": "sin-registro-04-11"
+  },
+  {
+   "plate": "IHH338",
+   "tipo": "camion",
+   "real": "JNN338",
+   "nota": "JNN338",
+   "at": "2026-11-06T19:40:55.175Z",
+   "fuente": "sin-registro-04-11"
   },
   {
    "plate": "IHL989",
@@ -613,6 +698,14 @@
    "at": "2026-11-03T15:30:50.908Z"
   },
   {
+   "plate": "MLK555",
+   "tipo": "camion",
+   "real": "NLK555",
+   "nota": "NLK555",
+   "at": "2026-11-06T19:39:07.947Z",
+   "fuente": "sin-registro-04-11"
+  },
+  {
    "plate": "MNS277",
    "tipo": "camion",
    "nota": "",
@@ -664,6 +757,13 @@
    "at": "2026-11-03T15:49:00.940Z"
   },
   {
+   "plate": "OOF155",
+   "tipo": "mal_leida",
+   "nota": "MALA LECTURA",
+   "at": "2026-11-06T19:42:45.231Z",
+   "fuente": "sin-registro-04-11"
+  },
+  {
    "plate": "OSY724",
    "tipo": "auto",
    "nota": "",
@@ -687,6 +787,13 @@
    "tipo": "camion",
    "nota": "",
    "at": "2026-11-03T15:30:52.439Z"
+  },
+  {
+   "plate": "PQQ1U70",
+   "tipo": "mal_leida",
+   "nota": "error de captura",
+   "at": "2026-11-06T19:39:17.137Z",
+   "fuente": "sin-registro-04-11"
   },
   {
    "plate": "PTL445",
@@ -721,6 +828,14 @@
    "nota": "",
    "real": "RAW481",
    "at": "2026-11-03T15:45:36.776Z"
+  },
+  {
+   "plate": "STN749",
+   "tipo": "camion",
+   "real": "SUC749",
+   "nota": "SUC749",
+   "at": "2026-11-06T19:36:14.977Z",
+   "fuente": "sin-registro-04-11"
   },
   {
    "plate": "TBP883",

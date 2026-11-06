@@ -330,3 +330,30 @@ Por pulir, en orden:
    margen contra el segundo candidato.
 5. **Base sin carta:** el 03/11 le faltan 16 pasos (11 %), muy por encima de las cartas.
 6. Medir de nuevo con metadatos (servidor arriba) y con el respaldo SGC más largo para líquidos.
+
+## 7 · Las 46 «sin registro» del 04/11, etiquetadas por foto
+
+Etiquetado del usuario en `claude.ai/artifact/B4CDbRsi51wKbpTf71bjM6` (una foto del DSS por paso). 42 de 46; quedan sin
+etiquetar EGL373, CJV1M51, BNX098 (sin foto) y MVK630.
+
+| Etiqueta | Patentes | Adónde fue |
+|---|---:|---|
+| Vehículo particular | 12 | base de particulares (MongoDB), aceptados, categoría `particular` |
+| Camión de servicio | 15 | base de particulares, aceptados, categoría `camion` (incluye NAD656 y FSW142 del anexo de seguridad) |
+| Camión de grano, patente real conocida | 9 | `data/padron/clasificacion-manual.json` → `corregidos.json` (lectura → real) |
+| Camión de grano, mal leído sin patente real | 6 | `clasificacion-manual.json` como `mal_leida` (no se toma como patente real) |
+
+Replay del 04/11 después de cargar (`reportes/reconocimiento-capas/2026-11-04-etiquetado/`): **alertas 237 → 178 pasos**;
+sin registro **46 → 17 patentes** (79 → 25 pasos); base de particulares 524 → 579 pasos.
+
+Lo que queda y por qué:
+
+- **Los 15 camiones de grano mal leídos siguen en alerta.** El banco (3.3) solo aplica una corrección aprendida si el
+  camión real ya está en planta como candidato (se leyó bien ese día). SUC749 (leído STN749 en 4 pasos) nunca se leyó
+  bien, así que no es candidato. 4 de ellos tenían carta vigente con la patente real (STN749 → SUC749, IHH338 → JNN338
+  chasis de soja; IFR518 → JFR518, CVA136 → EVK736 acoplados): son camiones del lote.
+- **Por pulir:**
+  1. Una patente con formato válido que no está en ningún universo es probablemente una lectura mala: ofrecerla al lote
+     (vínculo) como a las ilegibles, para que vaya al paso pendiente del camión con carta.
+  2. El banco debería poder corregir contra las patentes del universo (cartas, bases) y no solo contra camiones ya leídos.
+  3. Confusión I ↔ J (IFR518 → JFR518) no está entre las confusiones típicas.
