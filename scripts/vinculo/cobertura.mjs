@@ -15,7 +15,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
-import { isValidPlate } from '../../server/plantState/plateIdentification.mjs'
+import { isValidPlate, plateSimilarity } from '../../server/plantState/plateIdentification.mjs'
 import { compareAttribute } from '../../server/plantState/identificationEvidence.mjs'
 import { getEventLiveInstantMs } from '../../server/plantState/liveEventTime.mjs'
 import { alertReadEvents } from '../../server/plantState/alertReads.mjs'
@@ -190,6 +190,36 @@ const present = (t) => [...exactByPlate].filter(([, ts]) => ts.some((x) => Math.
 const byPlate = new Map()
 for (const c of caps) byPlate.set(c.plate, [...(byPlate.get(c.plate) ?? []), c])
 
+// Patente válida desconocida = probable lectura mala de un camión con carta que no se leyó bien en todo el día.
+// La cámara repite el mismo error en cada paso (SUC749 leído STN749 en 4 pasos el 04/11, IHH338 por JNN338): como
+// el camión real nunca aparece, la corrección a 1 carácter contra los «presentes» no lo encuentra. Se corrige todo el
+// vehículo si hay una sola carta vigente sin lecturas con parecido ponderado ≥ 0,8 (`plateSimilarity`, que pesa las
+// confusiones típicas) y ninguna otra igual de cerca. Con «hasta 2 caracteres» corregía patentes reales: hay ~2.000
+// patentes de carta vigentes y casi cualquier patente queda a 2 de alguna (04/11: HHH881 → HVH981, AE556ZN con 13
+// lecturas → AE550ZJ; los pares buenos dan ≥ 0,8 y los malos ≤ 0,71). No se toca lo que ya es conocido (bases del
+// back office, no camiones, patentes confirmadas por operaciones: VINCULO_CONOCIDAS) ni lo que el DSS ve como auto.
+const DESCONOCIDA_MIN = 0.8
+const LIVIANO = /^(SaloonCar|PassengerCar|SUV|Pickup|MPV|Motorcycle)$/i
+const conocidas = new Set(process.env.VINCULO_CONOCIDAS ? JSON.parse(fs.readFileSync(path.resolve(root, process.env.VINCULO_CONOCIDAS), 'utf8')).map(plateOf) : [])
+const desconocidaA = new Map()
+{
+  const leidasEnDia = (q, ts) => (exactByPlate.get(q) ?? []).some((x) => ts.some((t) => Math.abs(x - t) <= 12 * H))
+  for (const [p, list] of byPlate) {
+    if (!isValidPlate(p) || conocidas.has(p) || list.some((c) => cartaAt(p, c.t))) continue
+    if (list.some((c) => LIVIANO.test(c.attrs?.vehicleCategory ?? ''))) continue
+    const ts = list.map((c) => c.t)
+    const t = ts[Math.floor(ts.length / 2)]
+    const cands = []
+    for (const q of cartasByPlate.keys()) {
+      if (q === p || conocidas.has(q) || !cartaAt(q, t) || leidasEnDia(q, ts)) continue
+      const s = plateSimilarity(p, q)
+      if (s >= DESCONOCIDA_MIN) cands.push({ q, s })
+    }
+    cands.sort((a, b) => b.s - a.s)
+    if (cands.length && (cands.length === 1 || cands[0].s > cands[1].s)) desconocidaA.set(p, cands[0].q)
+  }
+}
+
 const counts = {}
 const perNode = {}
 const samples = { carta_corregida: [], sin_carta: [], mismo_paso: [], suelta: [], ilegible: [], sin_patente: [] }
@@ -203,6 +233,7 @@ for (const c of caps) {
     const near = present(c.t).map((p) => ({ p, d: readDist(c.plate, p) })).filter((x) => x.d <= 1).sort((a, b) => a.d - b.d)
     // Una sola carta parecida: corregida. Dos o más a la misma distancia: ambigua, no se fuerza.
     if (c.plate && near.length && (near.length === 1 || near[0].d < near[1].d)) { cls = 'carta_corregida'; detail = near[0].p }
+    else if (desconocidaA.has(c.plate)) { cls = 'carta_corregida'; detail = desconocidaA.get(c.plate); c.desconocida = true }
     else if (isValidPlate(c.plate)) {
       const otherNodes = new Set((byPlate.get(c.plate) ?? []).filter((o) => Math.abs(o.t - c.t) <= 12 * H).map((o) => o.node))
       cls = otherNodes.size >= 2 ? 'sin_carta' : 'suelta'
@@ -536,6 +567,8 @@ fs.writeFileSync(path.join(out, 'cobertura.json'), JSON.stringify({
   // Cada captura asignada con los camiones que se la disputaban (para el simulador).
   capturas: [...decisions].map(([c, d]) => ({ at: new Date(c.t).toISOString(), hora: hhmm(c.t), camara: c.device, nodo: c.node, patente: c.plate || '', fuente: c.src, marca: c.attrs?.vehicleBrand ?? null,
     rivales: d.rank.map((x) => { const m = lrAttrs(c, x.s.truck), h = timeFit(c, x.s); return { ctg: x.s.truck.ctg, patente: x.s.truck.plate, prob: Math.round(x.P * 100), por: x.s.read ? 'leido' : 'pendiente', desde: hhmm(x.s.from), hasta: hhmm(x.s.to), partes: { patente: Math.round((affinity(c, x.s) / m) * 100) / 100, marca: Math.round(m * 100) / 100, horario: Math.round(h * 100) / 100 } } }) })),
+  // Patentes desconocidas llevadas a un camión con carta sin lecturas (lectura → camión).
+  desconocidas: [...desconocidaA].map(([leida, camion]) => ({ leida, camion, lecturas: byPlate.get(leida)?.length ?? 0 })),
   sinCarta: [...sinCartaPlates].map(([plate, nodes]) => ({ plate, lecturas: byPlate.get(plate).length, nodos: [...nodes] })).sort((a, b) => b.lecturas - a.lecturas),
 }, null, 1))
 console.log(`\n→ ${path.relative(root, out)}/cobertura.json`)

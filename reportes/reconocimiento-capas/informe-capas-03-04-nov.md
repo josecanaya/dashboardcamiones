@@ -357,3 +357,20 @@ Lo que queda y por qué:
      (vínculo) como a las ilegibles, para que vaya al paso pendiente del camión con carta.
   2. El banco debería poder corregir contra las patentes del universo (cartas, bases) y no solo contra camiones ya leídos.
   3. Confusión I ↔ J (IFR518 → JFR518) no está entre las confusiones típicas.
+
+### Patente desconocida → camión del lote (06/11)
+
+Una patente válida que no es de nadie se ofrece al lote: se lleva a la carta vigente cuyo camión no se leyó en el día
+si es la única con parecido ponderado ≥ 0,8 (`scripts/vinculo/cobertura.mjs`, `desconocidas` en `cobertura.json`).
+
+| Día | Correcciones | Alertas (antes → ahora) | Sin registro (patentes) |
+|---|---:|---|---|
+| 03/11 | 1 (KKW150 → KKW159) | 224 → 202* | 38 → 28* |
+| 04/11 | 10 (EUF420 → EUD420, UDJ569/UDO569 → UDQ569, FIW151 → EIW151, AF214XK → AF214XQ, AI494RH → AI494PR, ESI930 → EST930 ✓…) | 178 → 174 | 17 → 16 |
+
+\* el 03/11 suma también lo cargado del etiquetado del 04/11 (los mismos particulares y camiones de servicio pasan los dos días).
+
+Primero se probó con «hasta 2 caracteres» y corregía patentes reales (HHH881, KZS251 y PBI796, que el usuario había
+marcado como camiones; AE556ZN con 13 lecturas): con ~2.000 patentes de carta vigentes, casi cualquiera queda a 2 de
+alguna. Con 0,8 ninguna corrección contradice el etiquetado. STN749 → SUC749 y AYL780 → AYJ760 (0,67) siguen sin
+corregirse solas: sin foto no se distinguen del ruido.

@@ -33,6 +33,13 @@ que tiene que pisar). Sin recorrido previsto no se puede poner una patente en el
 - Recorrido previsto: el vínculo ajusta el circuito con los nodos vistos (carta + historial del camión).
   Cada paso esperado queda como `camara`, `reconstruido`, `deducido`, `en_curso` o `falta`.
 - En vivo: lo rearma `vinculoLive` cada 5 min (`getExtra: armarLoteSinCarta` en el servidor).
+- **Patente desconocida = posible lectura mala de un camión del lote** (06/11). Una patente válida que no está en
+  ninguna carta ni es conocida (bases del back office, no camiones, confirmadas por operaciones: `VINCULO_CONOCIDAS`,
+  `getConocidas` en el servidor) se lleva entera a la carta vigente cuyo camión no se leyó en el día, si es la única
+  con parecido ponderado ≥ 0,8 (`plateSimilarity`) y el DSS no la ve como auto. Sale como `carta_corregida` y
+  `cobertura.json → desconocidas`. Con «hasta 2 caracteres» corregía patentes reales; con 0,8 el 04/11 da 10
+  correcciones (ESI930 → EST930 confirmada por foto) y ninguna contra el etiquetado del usuario. No alcanza a
+  STN749 → SUC749 (0,67): dos letras distintas que no son confusiones típicas.
 
 ## Paso 1 y 2 · Cámara, TruckFlow y ensamblador
 

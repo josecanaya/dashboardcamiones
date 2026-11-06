@@ -247,10 +247,14 @@ export function createAprendizaje({ projectRoot = ROOT, rebuildMs = 3600_000, lo
       realOf: (read) => [...(pairsByRead.get(normPlate(read)) ?? [])].sort((a, b) => b.count - a.count),
       /** Operaciones confirmó que la cámara leyó bien esta patente. */
       isReal: (plate) => real.has(normPlate(plate)),
+      /** Todas las patentes que operaciones confirmó como bien leídas. */
+      reales: () => [...real],
     },
     noCamiones: {
       /** @returns {{ plate: string, kind: string, sources: Record<string, number> } | null} */
       lookup: (plate) => noCam.get(normPlate(plate)) ?? null,
+      /** Todas las patentes de no camiones (para que el vínculo no las tome por lecturas malas). */
+      plates: () => [...noCam.keys()],
     },
     status: () => meta,
   }

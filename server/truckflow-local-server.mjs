@@ -561,6 +561,8 @@ const vinculoLive = createVinculoLive({
   getInputs: () => plantState.getVinculoInputs(),
   getCartas: () => padron.notes(),
   getExtra: armarLoteSinCarta,
+  // Las que ya se sabe quiénes son no se toman como lectura mala de un camión con carta.
+  getConocidas: () => [...backoffice.todas().map((e) => e.plate), ...aprendizaje.noCamiones.plates(), ...aprendizaje.corregidos.reales()],
   onResult: (r) => plantState.setVinculo(r),
 })
 if (process.env.VINCULO_LIVE !== '0') vinculoLive.start()
