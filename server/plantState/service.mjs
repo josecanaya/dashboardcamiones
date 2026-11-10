@@ -44,7 +44,11 @@ const SENSOR_CLOCK_SKEW_MS = 206 * 60_000
 const MANUAL_OVERRIDE_TTL_MS = 12 * 60 * 60 * 1000
 const IDENTIFICATION_DECISIONS_PATH = path.join(ROOT, 'data', 'plate-identification-decisions.json')
 // 60 s: con las lecturas de alertas el cálculo tarda 1–4 s por planta (19/10).
-const IDENTIFICATION_CACHE_MS = 60_000
+// Cada recálculo del reconocedor tarda 5–30 s por planta: con 60 s el servidor no descansaba nunca. Una decisión
+// de operaciones o un veredicto nuevo lo recalcula al momento igual (borran la caché). IDENTIFICATION_CACHE_MS lo cambia.
+const IDENTIFICATION_CACHE_MS = Number(process.env.IDENTIFICATION_CACHE_MS ?? 180_000)
+/** Con un veredicto automático nuevo, se recalcula a lo sumo cada este tiempo. */
+const IDENTIFICATION_SOFT_MS = Number(process.env.IDENTIFICATION_SOFT_MS ?? 30_000)
 
 function normalizePlate(value) {
   return String(value ?? '').replace(/[^A-Za-z0-9]/g, '').toUpperCase()
@@ -361,7 +365,16 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     const key = String(site || '').trim().toLowerCase()
     if (!evidenceVerdicts.has(key)) evidenceVerdicts.set(key, {})
     evidenceVerdicts.get(key)[fragmentKey] = verdict
-    identificationCache.delete(key)
+    softInvalidate(key)
+  }
+
+  /**
+   * Lo automático (veredictos por atributos, limpieza de relevancia, vínculo) no borra la caché: la marca vieja y
+   * se recalcula como mucho cada IDENTIFICATION_SOFT_MS. Borrarla en cada veredicto recalculaba todo (5–30 s por
+   * planta) varias veces por minuto.
+   */
+  function softInvalidate(key = null) {
+    for (const [k, c] of identificationCache) if (key == null || k === key) c.stale = true
   }
 
   /** Registro de balanza por día para los casos archivados (ya fuera del buffer de 24 h). */
@@ -394,16 +407,23 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
 
   function identifyRaw(site, rawEvents, nowMs = Date.now()) {
     const cached = identificationCache.get(site)
-    if (cached && nowMs - cached.at < IDENTIFICATION_CACHE_MS) return cached.result
+    if (cached && nowMs - cached.at < (cached.stale ? IDENTIFICATION_SOFT_MS : IDENTIFICATION_CACHE_MS)) return cached.result
     const catalog = nodeModelCatalog()
     // Lecturas que solo llegaron como alerta: entran al reconocedor como lecturas sueltas.
     const alertRaw = bySite.get(site)?.alertRaw
     // Y los atributos del vehículo (tipo, tamaño, color, marca) que solo traen las alertas se suman a cada lectura.
     if (alertRaw?.size) rawEvents = withAlertAttributes([...rawEvents, ...alertReadEvents([...alertRaw.values()], rawEvents)], [...alertRaw.values()])
     // La unidad es el paso (repeticiones de la cámara + frontal/trasera del nodo): una decisión por paso.
+    // El ensamblador lo pregunta por cada par de capturas (miles por vuelta): se recuerda por patente y hora
+    // (la vigencia de la carta va por día, así que la respuesta no cambia dentro de la hora).
+    const acopladoMemo = new Map()
     const acopladoChasis = (plate, t) => {
+      const k = `${plate}|${Math.floor(t / 3600_000)}`
+      if (acopladoMemo.has(k)) return acopladoMemo.get(k)
       const h = process.env.IDENTIFICATION_PADRON === '0' ? null : padronIndex?.at(plate, t)
-      return h?.role === 'acoplado' && h.source === 'carta' ? h.chasis : null
+      const r = h?.role === 'acoplado' && h.source === 'carta' ? h.chasis : null
+      acopladoMemo.set(k, r)
+      return r
     }
     const ensamble = process.env.IDENTIFICATION_PASOS === '0' ? null : ensamblarPasos(rawEvents, { acopladoChasis })
     if (ensamble) rawEvents = ensamble.events
@@ -857,7 +877,9 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
       logged = false
       console.warn('[plant-state] log de identificación falló:', e instanceof Error ? e.message : e)
     }
-    identificationCache.delete(key)
+    // Una decisión de una persona se ve al instante; la del sistema (limpieza de relevancia) espera la próxima vuelta.
+    if (String(body?.operator ?? '').startsWith('Sistema')) softInvalidate(key)
+    else identificationCache.delete(key)
     const decision = identificationDecisions[key][fk] ?? null
     const result = { ok: true, site: key, fragmentKey: fk, decision, version: decision?.updatedAt ?? null, siblings, logged }
     if (opId) {
@@ -1231,7 +1253,7 @@ export function createPlantStateService({ projectRoot = ROOT, apiBase = DEFAULT_
     /** Resultado del vínculo (todas las capturas de las dos plantas). */
     setVinculo({ assignments }) {
       vinculoIndex = indexAssignments(assignments)
-      identificationCache.clear()
+      softInvalidate()
     },
     /** Lecturas crudas y alertas de las dos plantas (24 h), para correr el vínculo. */
     async getVinculoInputs() {

@@ -41,8 +41,17 @@ export const PATENTE_AR = /^(?:[A-Z]{3}\d{3}|[A-Z]{2}\d{3}[A-Z]{2}|\d{3}[A-Z]{3}
 const PATENTE_OTRO_PAIS = /^[A-Z0-9]{4,10}$/
 const TEXTOS = ['titular', 'empresa', 'cliente', 'transportista', 'producto', 'referencia', 'motivo', 'observaciones', 'hdesde', 'hhasta']
 
-/** Fecha de hoy en Argentina, YYYY-MM-DD. */
-export const hoyAr = (now = new Date()) => now.toLocaleDateString('sv-SE', { timeZone: 'America/Argentina/Buenos_Aires' })
+/**
+ * Fecha de hoy en Argentina, YYYY-MM-DD. toLocaleDateString con zona es lento y el ensamblador de pasos lo
+ * llama miles de veces por vuelta (lookup por cada par de capturas): se recuerda por minuto.
+ */
+const fmtAr = new Intl.DateTimeFormat('sv-SE', { timeZone: 'America/Argentina/Buenos_Aires' })
+let hoyMemo = { minuto: NaN, dia: '' }
+export const hoyAr = (now = new Date()) => {
+  const minuto = Math.floor(now.getTime() / 60_000)
+  if (minuto !== hoyMemo.minuto) hoyMemo = { minuto, dia: fmtAr.format(now) }
+  return hoyMemo.dia
+}
 
 export const vigente = (a, dia = hoyAr()) => a.estado === 'activa' && a.desde <= dia && dia <= a.hasta
 
