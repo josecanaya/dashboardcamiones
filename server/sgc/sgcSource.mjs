@@ -17,6 +17,7 @@ import { buildSgcPriors, normalizeSgcPlant, pairTransiles, sgcRecordToMovimiento
 import { categoryOf, isGrainProduct } from '../live/padron/vehiculosPermitidos.mjs'
 
 const POLL_MS = Number(process.env.SGC_POLL_MS || 120_000)
+const CALL_TIMEOUT_MS = Number(process.env.SGC_CALL_TIMEOUT_MS || 60_000)
 const MOVIMIENTOS_FROM = process.env.SGC_MOVIMIENTOS_FROM?.trim() || '2026-10-15'
 const PRIOR_DAYS = 60
 const SITE_PLANTS = { ricardone: ['RICARDONE'], san_lorenzo: ['TERMINAL_EMBARQUE'] }
@@ -53,6 +54,9 @@ export function createSgcSource({ projectRoot }) {
       connectTimeout: 10,
     })
     try {
+      // Con la VPN inestable la descarga se colgaba a mitad sin error: cada consulta colgada retenía sus filas y
+      // el servidor llegó a 4 GB y se cayó (10/11). Tiempo máximo por llamada (SGC_CALL_TIMEOUT_MS, 60 s).
+      con.callTimeout = CALL_TIMEOUT_MS
       const r = await con.execute(`SELECT * FROM ${env.ORACLE_SGC_SCHEMA}.${env.ORACLE_SGC_VIEW}`, [], { outFormat: oracledb.OUT_FORMAT_OBJECT })
       return r.rows.map(row => Object.fromEntries(Object.entries(row).map(([k, v]) => [k, v instanceof Date ? localIso(v) : v])))
     } finally {
@@ -133,11 +137,29 @@ export function createSgcSource({ projectRoot }) {
     return { day, rows: rows.length }
   }
 
-  async function tick() {
+  /**
+   * Una sola consulta a la vez: antes cada 2 min arrancaba otra aunque la anterior siguiera colgada.
+   * Si la consulta no vuelve en CALL_TIMEOUT_MS + 30 s se registra como colgada y las vueltas siguientes
+   * no abren otra hasta que esa termine (callTimeout no corta un socket de VPN muerto).
+   */
+  let ticking = null
+  let inflight = null
+  function tick() {
+    ticking ??= tickOnce().finally(() => { ticking = null })
+    return ticking
+  }
+  function fetchGuarded() {
+    if (inflight) return Promise.reject(new Error('la consulta anterior al SGC sigue colgada (VPN)'))
+    inflight = fetchView().finally(() => { inflight = null })
+    let timer
+    const limit = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(`consulta al SGC colgada más de ${Math.round((CALL_TIMEOUT_MS + 30_000) / 1000)} s (VPN)`)), CALL_TIMEOUT_MS + 30_000); timer.unref?.() })
+    return Promise.race([inflight, limit]).finally(() => clearTimeout(timer))
+  }
+  async function tickOnce() {
     const nowIso = localIso(new Date())
     state.fetchedAt = nowIso
     try {
-      const rows = await fetchView()
+      const rows = await fetchGuarded()
       state.rows = rows
       state.lastOkAt = nowIso
       state.error = null
