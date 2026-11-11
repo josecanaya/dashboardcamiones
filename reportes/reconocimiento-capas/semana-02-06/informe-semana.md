@@ -1,18 +1,19 @@
 # Reconocimiento por capas · 02/11 y 03/11 y 04/11 y 05/11 y 06/11
 
-> **Semana del lunes 02/11 al viernes 06/11 (hasta las 16:55).** Corrida del 06/11 con el código de `automatizacion` (`3253fcf`), sin metadatos (3.2) ni IA (3.4). **El 06/11 no tiene datos del sistema de camiones** (el servidor que los guarda está apagado desde el 05/11 a la tarde): el respaldo SGC resuelve 12 pasos contra ~120 de los otros días y el universo SGC del lote queda vacío, así que sus alertas están infladas. El 06/11 es además un día en curso: los viajes «en curso» son los camiones que todavía están en planta.
+> **Semana del lunes 02/11 al viernes 06/11, días completos.** Fuente: `data/reconocido/<día>` (`npm run reconocer`, 10/11), con cámaras de todo el día, cartas, bases del back office y sistema de camiones de cada día. Reemplaza la versión del 06/11, que tenía el 06/11 en curso y sin sistema de camiones.
 
 ## Resumen
 
-| | 02/11 | 03/11 | 04/11 | 05/11 | 06/11* |
+| | Lun 02 | Mar 03 | Mié 04 | Jue 05 | Vie 06 |
 |---|---:|---:|---:|---:|---:|
-| Pasos | 4.395 | 2.756 | 3.428 | 4.248 | 3.783 |
-| Resueltos sin alerta | 96 % | 93 % | 95 % | 96 % | 89 % |
-| Alertas (pasos) | 190 | 202 | 174 | 190 | 403 |
-| Camiones con carta | 183 | 159 | 218 | 344 | 248 |
-| Pasos de esos camiones explicados (cámara + reconstruido + deducido + carta) | 99,9 % | 99,8 % | 99,9 % | 99,9 % | 86 % + 14 % en curso |
+| Pasos | 4.395 | 2.756 | 3.428 | 4.248 | 5.097 |
+| **Resueltos sin alerta** | **96 %** | **92 %** | **95 %** | **96 %** | **93 %** |
+| Alertas (pasos) | 190 | 210 | 184 | 184 | 336 |
+| Camiones con carta (viajes) | 192 | 167 | 218 | 344 | 365 |
+| Pasos de esos camiones explicados (cámara + reconstruido + deducido + carta) | 99,7 % | 99,7 % | 99,9 % | 99,9 % | 99,8 % |
+| Leídos por la cámara | 85 % | 87 % | 87 % | 89 % | 89 % |
 
-* sin SGC y día en curso.
+El viernes 06/11 fue el día de más movimiento (365 viajes con carta, 5.097 pasos): sube la cantidad de alertas, pero el porcentaje (7 %) queda dentro de la semana. Lo que crece ese día son las ilegibles agrupadas en una misma alerta (66) y las dudosas (84).
 
 Replay de cada día por el recorrido acordado (`docs/RECONOCEDOR_RECORRIDO_CAPTURA.md`), con `scripts/replay-capas-dia.mjs`. Cada paso (frontal + trasera + repeticiones de un vehículo en un nodo) termina en una sola capa.
 
@@ -20,47 +21,49 @@ Replay de cada día por el recorrido acordado (`docs/RECONOCEDOR_RECORRIDO_CAPTU
 
 | Capa | 02/11 | 03/11 | 04/11 | 05/11 | 06/11 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Capa 2 · ¿quién es? (comparación exacta) | 3499 (80 %) | 2065 (75 %) | 2618 (76 %) | 3374 (79 %) | 2797 (74 %) |
-| Leída por recorrido de cámaras | 19 (0 %) | 16 (1 %) | 39 (1 %) | 8 (0 %) | 20 (1 %) |
-| Capa 3.1 · patentes parecidas, lote y vínculo | 502 (11 %) | 352 (13 %) | 443 (13 %) | 490 (12 %) | 407 (11 %) |
-| Capa 3.3 · banco de corregidas | 32 (1 %) | 13 (0 %) | 16 (0 %) | 19 (0 %) | 4 (0 %) |
-| Lectura errónea confirmada (ilegible junto a un paso guardado) | 153 (3 %) | 108 (4 %) | 138 (4 %) | 167 (4 %) | 152 (4 %) |
-| Capa 4 · alerta | 190 (4 %) | 202 (7 %) | 174 (5 %) | 190 (4 %) | 403 (11 %) |
-| **Total de pasos** | **4395** | **2756** | **3428** | **4248** | **3783** |
+| Capa 2 · ¿quién es? (comparación exacta) | 3499 (80 %) | 2065 (75 %) | 2618 (76 %) | 3383 (80 %) | 3950 (77 %) |
+| Leída por recorrido de cámaras | 19 (0 %) | 16 (1 %) | 39 (1 %) | 8 (0 %) | 15 (0 %) |
+| Capa 3.1 · patentes parecidas contra las esperadas | 307 (7 %) | 233 (8 %) | 278 (8 %) | 279 (7 %) | 375 (7 %) |
+| Capa 3.2 · asignación por lote (vínculo; marca y color pesan) | 191 (4 %) | 111 (4 %) | 156 (5 %) | 208 (5 %) | 187 (4 %) |
+| Capa 3.3 · banco de corregidas | 32 (1 %) | 13 (0 %) | 16 (0 %) | 19 (0 %) | 9 (0 %) |
+| Lectura errónea confirmada (ilegible junto a un paso guardado) | 157 (4 %) | 108 (4 %) | 137 (4 %) | 167 (4 %) | 225 (4 %) |
+| Capa 4 · alerta | 190 (4 %) | 210 (8 %) | 184 (5 %) | 184 (4 %) | 336 (7 %) |
+| **Total de pasos** | **4395** | **2756** | **3428** | **4248** | **5097** |
 
 ## 2 · Con qué regla resolvió cada capa
 
 | Capa · regla | 02/11 | 03/11 | 04/11 | 05/11 | 06/11 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 2 · carta de porte | 2423 | 1123 | 1634 | 2424 | 2159 |
-| 2 · base particulares | 739 | 594 | 579 | 599 | 501 |
-| 2 · base sin carta | 242 | 211 | 259 | 232 | 125 |
-| 2 · respaldo SGC | 95 | 137 | 146 | 119 | 12 |
-| leida · recorrido de cámaras | 19 | 16 | 39 | 8 | 20 |
-| 3.1 · vinculo | 195 | 120 | 165 | 209 | 139 |
-| 3.1 · carta_parecida | 167 | 135 | 139 | 122 | 132 |
-| 3.1 · universo | 59 | 41 | 60 | 72 | 65 |
-| 3.1 · par_trasera | 49 | 34 | 51 | 59 | 49 |
-| 3.1 · cuenta | 31 | 16 | 14 | 23 | 17 |
-| 3.1 · doble_lectura | 1 | 6 | 14 | 5 | 5 |
+| 2 · carta de porte | 2423 | 1123 | 1634 | 2424 | 2998 |
+| 2 · base particulares | 739 | 594 | 579 | 598 | 566 |
+| 2 · base sin carta | 242 | 211 | 259 | 232 | 163 |
+| 2 · respaldo SGC | 95 | 137 | 146 | 129 | 223 |
+| leida · recorrido de cámaras | 19 | 16 | 39 | 8 | 15 |
+| 3.1 · carta_parecida | 167 | 136 | 139 | 125 | 202 |
+| 3.1 · universo | 59 | 41 | 60 | 68 | 75 |
+| 3.1 · par_trasera | 49 | 34 | 51 | 58 | 63 |
+| 3.1 · cuenta | 31 | 16 | 14 | 23 | 27 |
+| 3.1 · doble_lectura | 1 | 6 | 14 | 5 | 8 |
+| 3.2 · vinculo | 168 | 107 | 153 | 206 | 185 |
+| 3.2 · atributos_dss | 23 | 4 | 3 | 2 | 2 |
 | 3.3 · corregida_antes | 19 | 7 | 8 | 2 | 1 |
-| 3.3 · no es camión | 6 | 6 | 6 | 5 | 3 |
-| 3.3 · confirmada_antes | 7 | 0 | 2 | 12 | 0 |
-| lectura_erronea · repetición de paso guardado | 153 | 108 | 138 | 167 | 152 |
-| 4 · lectura ilegible sin asignar | 130 | 119 | 85 | 88 | 91 |
-| 4 · sin registro | 26 | 50 | 24 | 43 | 133 |
-| 4 · lectura dudosa | 19 | 28 | 49 | 44 | 110 |
-| 4 · ilegible en la misma alerta | 15 | 5 | 13 | 7 | 59 |
-| 4 · camión de granos sin carta | 0 | 0 | 3 | 8 | 10 |
+| 3.3 · no es camión | 6 | 6 | 6 | 5 | 5 |
+| 3.3 · confirmada_antes | 7 | 0 | 2 | 12 | 3 |
+| lectura_erronea · repetición de paso guardado | 157 | 108 | 137 | 167 | 225 |
+| 4 · lectura ilegible sin asignar | 132 | 126 | 95 | 86 | 138 |
+| 4 · lectura dudosa | 19 | 29 | 49 | 43 | 84 |
+| 4 · sin registro | 26 | 50 | 24 | 38 | 48 |
+| 4 · ilegible en la misma alerta | 13 | 5 | 13 | 9 | 66 |
+| 4 · camión de granos sin carta | 0 | 0 | 3 | 8 | 0 |
 
 ## 3 · Las correcciones vuelven a la capa 2 contra…
 
 | Base | 02/11 | 03/11 | 04/11 | 05/11 | 06/11 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| carta de porte | 409 | 249 | 320 | 336 | 293 |
-| base sin carta | 71 | 74 | 76 | 66 | 43 |
-| nadie | 18 | 21 | 24 | 82 | 27 |
-| base particulares | 34 | 20 | 34 | 21 | 46 |
+| carta de porte | 386 | 239 | 301 | 325 | 417 |
+| base sin carta | 90 | 77 | 86 | 76 | 58 |
+| nadie | 18 | 20 | 24 | 78 | 47 |
+| base particulares | 34 | 20 | 34 | 23 | 46 |
 
 «nadie»: la patente corregida no está en ninguna base; queda como camión sin registro.
 
@@ -68,33 +71,33 @@ Replay de cada día por el recorrido acordado (`docs/RECONOCEDOR_RECORRIDO_CAPTU
 
 | Motivo | 02/11 | 03/11 | 04/11 | 05/11 | 06/11 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| lectura ilegible sin asignar | 130 | 119 | 85 | 88 | 91 |
-| sin registro | 26 | 50 | 24 | 43 | 133 |
-| ilegible en la misma alerta | 15 | 5 | 13 | 7 | 59 |
-| lectura dudosa | 19 | 28 | 49 | 44 | 110 |
-| camión de granos sin carta | 0 | 0 | 3 | 8 | 10 |
-| **Total** | **190** | **202** | **174** | **190** | **403** |
+| lectura ilegible sin asignar | 132 | 126 | 95 | 86 | 138 |
+| sin registro | 26 | 50 | 24 | 38 | 48 |
+| ilegible en la misma alerta | 13 | 5 | 13 | 9 | 66 |
+| lectura dudosa | 19 | 29 | 49 | 43 | 84 |
+| camión de granos sin carta | 0 | 0 | 3 | 8 | 0 |
+| **Total** | **190** | **210** | **184** | **184** | **336** |
 
 ### Por nodo
 
 | Nodo (planta) | 02/11 | 03/11 | 04/11 | 05/11 | 06/11 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Egreso SL (SL) | 28 | 42 | 32 | 35 | 49 |
-| Renova (SL) | 11 | 26 | 23 | 14 | 82 |
-| Volcables SL (SL) | 21 | 14 | 21 | 29 | 31 |
-| Balanza (Ric) | 30 | 27 | 12 | 28 | 15 |
-| Balanza egreso SL (SL) | 13 | 30 | 14 | 15 | 29 |
-| Salida 2 (Ric) | 17 | 10 | 15 | 10 | 31 |
-| Ingreso (Ric) | 19 | 10 | 12 | 10 | 28 |
-| Balanza ingreso SL (SL) | 8 | 5 | 9 | 2 | 39 |
-| Ingreso SL (SL) | 9 | 11 | 7 | 5 | 30 |
-| Preingreso (Ric) | 6 | 7 | 9 | 11 | 21 |
-| Calada (Ric) | 3 | 4 | 5 | 8 | 20 |
-| Playa 3 (Ric) | 14 | 6 | 4 | 7 | 8 |
-| Carga OSL (Ric) | 9 | 5 | 5 | 6 | 3 |
+| Egreso SL (SL) | 29 | 42 | 35 | 37 | 43 |
+| Renova (SL) | 11 | 26 | 23 | 14 | 84 |
+| Balanza (Ric) | 29 | 31 | 13 | 32 | 22 |
+| Volcables SL (SL) | 21 | 16 | 21 | 25 | 37 |
+| Balanza egreso SL (SL) | 13 | 30 | 16 | 11 | 12 |
+| Ingreso (Ric) | 19 | 11 | 14 | 9 | 18 |
+| Salida 2 (Ric) | 18 | 9 | 17 | 13 | 12 |
+| Ingreso SL (SL) | 10 | 12 | 7 | 5 | 19 |
+| Playa 3 (Ric) | 16 | 6 | 5 | 8 | 14 |
+| Preingreso (Ric) | 7 | 7 | 9 | 7 | 17 |
+| Balanza ingreso SL (SL) | 8 | 6 | 9 | 1 | 21 |
+| Calada (Ric) | 4 | 5 | 5 | 9 | 15 |
+| Carga OSL (Ric) | 3 | 4 | 4 | 3 | 7 |
 | Carga y descarga SL (SL) | 1 | 3 | 1 | 6 | 6 |
-| Calada SL (SL) |  |  | 5 | 2 | 8 |
-| Silo Keppler (Ric) | 1 | 2 |  | 2 | 3 |
+| Silo Keppler (Ric) | 1 | 2 |  | 2 | 6 |
+| Calada SL (SL) |  |  | 5 | 2 | 3 |
 
 ### Sin registro el 02/11: 11 patentes, 26 pasos
 
@@ -128,6 +131,7 @@ Hay candidatos, pero ninguno alcanza para asignar solo.
 | 16:42 | Salida 2 (Ric) | AF708IV | AF798IV, AG496SJ, UUO981 |
 | 20:19 | Carga OSL (Ric) | SWH1701 | TWH091, BHL749, TVH101 |
 | 20:40 | Playa 3 (Ric) | JAC0178 | AH091UQ, CRJ139, DTG181 |
+| 21:59 | Playa 3 (Ric) | VOE74 | VHL423, XBL711, AE792UC |
 | 00:35 | Egreso SL (SL) | EOU97 | EOU772, EOD272, EUV766 |
 | 01:39 | Volcables SL (SL) | FTF4654 | GTF854, GTF654, SIF654 |
 | 01:45 | Balanza ingreso SL (SL) | AA71520 | MKA520, AA581UQ, KKW150 |
@@ -138,7 +142,6 @@ Hay candidatos, pero ninguno alcanza para asignar solo.
 | 05:54 | Balanza egreso SL (SL) | OD7240 | EOD272, JUQ710, AD872CS |
 | 07:01 | Renova (SL) | WP9954 | EPH797, CCD635, EMG070 |
 | 12:19 | Renova (SL) | AB70501 | AB700WH, AA875OG, HAQ820 |
-| 23:32 | Balanza ingreso SL (SL) | HNG34 | HNE318, WGG348, DNH321 |
 
 ### Sin registro el 03/11: 28 patentes, 50 pasos
 
@@ -175,14 +178,13 @@ Patente válida que no está en cartas, bases ni SGC. Las de 2 o más nodos son 
 | FTC550 | 1 | Renova | 20:00–20:00 |
 | SLV371 | 1 | Balanza egreso SL | 20:59–20:59 |
 
-### Lecturas dudosas el 03/11: 28
+### Lecturas dudosas el 03/11: 29
 
 Hay candidatos, pero ninguno alcanza para asignar solo.
 
 | Hora | Nodo | Leyó | Candidatos |
 |---|---|---|---|
 | 00:10 | Playa 3 (Ric) | LU3901 | EGV380, HNE318, CRJ139 |
-| 01:15 | Salida 2 (Ric) | EEI05 | EEW075, EIW151, BQI495 |
 | 07:29 | Balanza (Ric) | IMH787 | IWH787, KOU871 |
 | 07:35 | Balanza (Ric) | IMH787 | IWH787, KOU871 |
 | 10:42 | Ingreso (Ric) | NHB772 | KHB772, GDW647, AC297XI |
@@ -195,6 +197,7 @@ Hay candidatos, pero ninguno alcanza para asignar solo.
 | 00:45 | Ingreso SL (SL) | NMT181 | NYT101, NIT101, NYI181 |
 | 02:23 | Renova (SL) | EMC07 | NCC287, MCB678, EKC425 |
 | 02:25 | Egreso SL (SL) | SB2945 | SPB945, SPH945, DUL425 |
+| 04:11 | Balanza ingreso SL (SL) | AD42669 | AB426GP, AD066NJ, AD829RW |
 | 04:55 | Ingreso SL (SL) | LVI32 | EVD342, UTS820, VJG112 |
 | 05:18 | Balanza egreso SL (SL) | NMT181 | NYT101, NIT101, NYI181 |
 | 05:22 | Egreso SL (SL) | NWAP181 | JBX310, BQI495, NYI181 |
@@ -208,6 +211,7 @@ Hay candidatos, pero ninguno alcanza para asignar solo.
 | 12:31 | Renova (SL) | EMG07 | EMD070, EPH797, AE624GL |
 | 12:48 | Volcables SL (SL) | AF55073 | FTB573, AE556ZN, AE870JF |
 | 12:57 | Egreso SL (SL) | AF55073 | FTB573, AE556ZN, AE870JF |
+| 15:50 | Egreso SL (SL) | AD0137 | AF439MP, AA875OG, AF316PR |
 | 16:20 | Renova (SL) | II1104 | TIE100, AG103DO, SNP211 |
 
 ### Sin registro el 04/11: 16 patentes, 24 pasos
@@ -289,7 +293,7 @@ Hay candidatos, pero ninguno alcanza para asignar solo.
 | 22:55 | Balanza ingreso SL (SL) | FLD104 | EDG101, EAO104, NUD400 |
 | 23:32 | Egreso SL (SL) | FOR199 | GQF199, TZN189, ENF949 |
 
-### Sin registro el 05/11: 33 patentes, 43 pasos
+### Sin registro el 05/11: 29 patentes, 38 pasos
 
 Patente válida que no está en cartas, bases ni SGC. Las de 2 o más nodos son vehículos reales que recorren la planta.
 
@@ -300,7 +304,6 @@ Patente válida que no está en cartas, bases ni SGC. Las de 2 o más nodos son 
 | SLF772 | 3 | Egreso SL, Renova | 08:46–09:15 |
 | OLL595 | 2 | Preingreso, Salida 2 | 09:10–09:12 |
 | AH240WO | 2 | Salida 2, Ingreso | 11:14–11:14 |
-| AD232IZ | 2 | Ingreso, Preingreso | 23:36–23:41 |
 | AN461XN | 1 | Balanza | 06:16–06:16 |
 | LCN723 | 1 | Balanza | 06:47–06:47 |
 | AI251EH | 1 | Balanza | 06:59–06:59 |
@@ -312,8 +315,6 @@ Patente válida que no está en cartas, bases ni SGC. Las de 2 o más nodos son 
 | XFO008 | 1 | Salida 2 | 14:36–14:36 |
 | AB531FN | 1 | Balanza | 18:18–18:18 |
 | AP383RP | 1 | Balanza | 19:37–19:37 |
-| KMA505 | 1 | Preingreso | 22:26–22:26 |
-| RWY479 | 1 | Preingreso | 23:39–23:39 |
 | UEL794 | 1 | Egreso SL | 00:07–00:07 |
 | BXO711 | 1 | Volcables SL | 02:29–02:29 |
 | ICF228 | 1 | Balanza egreso SL | 03:11–03:11 |
@@ -327,9 +328,8 @@ Patente válida que no está en cartas, bases ni SGC. Las de 2 o más nodos son 
 | AD002TC | 1 | Renova | 14:39–14:39 |
 | AB539LF | 1 | Egreso SL | 16:08–16:08 |
 | JWM802 | 1 | Balanza egreso SL | 20:41–20:41 |
-| EJL360 | 1 | Ingreso SL | 22:23–22:23 |
 
-### Lecturas dudosas el 05/11: 44
+### Lecturas dudosas el 05/11: 43
 
 Hay candidatos, pero ninguno alcanza para asignar solo.
 
@@ -348,9 +348,8 @@ Hay candidatos, pero ninguno alcanza para asignar solo.
 | 10:53 | Calada (Ric) | QP2112 | UJG112, AE251SZ, AF281PC |
 | 14:37 | Balanza (Ric) | AB069ID | AB348IO, AB469EB, AB271DR |
 | 15:39 | Calada (Ric) | BER228 | BPT228, AB622IB, BHW129 |
-| 17:38 | Preingreso (Ric) | AF681QS | AF804QL, AH779NM, AF031GN |
 | 20:32 | Ingreso (Ric) | AVA300 | AA350QC, AKF023, VWF587 |
-| 23:56 | Ingreso (Ric) | AG830CD | AG902CO, AA330CA, AG923TA |
+| 22:17 | Calada (Ric) | NCG7190 | NGN794, MPG490, KNI690 |
 | 00:36 | Ingreso SL (SL) | GRE440 | OQE440, OOE440, BIT440 |
 | 00:49 | Balanza egreso SL (SL) | GVE35 | CCD635, MQF335, MOF325 |
 | 01:02 | Volcables SL (SL) | AF24104 | AF711DG, AF243UL, AI241RW |
@@ -372,119 +371,102 @@ Hay candidatos, pero ninguno alcanza para asignar solo.
 | 13:34 | Balanza egreso SL (SL) | AH724AD | AH928AB, AH859DF, AB140YJ |
 | 13:34 | Egreso SL (SL) | AH724AD | AH928AB, AH859DF, AB140YJ |
 | 15:30 | Egreso SL (SL) | AF417LL | AF413LL, AH437LL, AF316PR |
+| 15:32 | Egreso SL (SL) | AD0137 | AF413LL, AE857DR, AB942MF |
 | 15:51 | Egreso SL (SL) | ERJ885 | EKJ885, AE857DR, AE999OW |
 | 16:30 | Balanza egreso SL (SL) | ION372 | DDN372, DON372, DUN372 |
-| 19:22 | Volcables SL (SL) | RP4721 | AB472CS, ABA752, PAI457 |
-| 19:46 | Volcables SL (SL) | SCA04 | DCA012, OGA047, GAI805 |
 | 21:39 | Balanza egreso SL (SL) | UUL25 | VLZ705, KVP275, EVL715 |
 | 22:18 | Volcables SL (SL) | DCA012 | OGA047, OWT012, AD600LV |
 | 22:19 | Ingreso SL (SL) | ZX0331 | WEI381, BPI833, LZM344 |
+| 22:23 | Ingreso SL (SL) | EJL360 | EGV360, AE364UM, EXF800 |
 
-### Sin registro el 06/11: 48 patentes, 133 pasos
+### Sin registro el 06/11: 38 patentes, 48 pasos
 
 Patente válida que no está en cartas, bases ni SGC. Las de 2 o más nodos son vehículos reales que recorren la planta.
 
 | Patente | Pasos | Nodos | Primera–última |
 |---|---:|---|---|
-| MQM566 | 9 | Ingreso, Preingreso, Salida 2, Egreso SL, Ingreso SL, Calada SL, Balanza ingreso SL, Carga y descarga SL, Balanza egreso SL | 09:06–12:11 |
-| AE500WO | 12 | Ingreso, Preingreso, Salida 2, Ingreso SL, Calada SL, Balanza ingreso SL, Carga y descarga SL, Balanza egreso SL | 09:00–13:10 |
-| AVJ581 | 8 | Ingreso, Preingreso, Salida 2, Ingreso SL, Balanza ingreso SL, Volcables SL, Balanza egreso SL, Egreso SL | 02:38–11:04 |
-| RWY479 | 7 | Calada, Salida 2, Ingreso SL, Balanza ingreso SL, Volcables SL, Balanza egreso SL, Egreso SL | 01:00–05:10 |
-| AD232IZ | 7 | Calada, Salida 2, Ingreso SL, Balanza ingreso SL, Volcables SL, Balanza egreso SL, Egreso SL | 01:06–05:11 |
-| KMA505 | 7 | Salida 2, Ingreso, Calada, Ingreso SL, Balanza ingreso SL, Balanza egreso SL | 07:49–16:52 |
-| AF681QS | 7 | Ingreso, Calada, Salida 2, Ingreso SL, Balanza ingreso SL, Balanza egreso SL | 07:50–16:38 |
 | AD595WQ | 7 | Ingreso SL, Calada SL, Balanza ingreso SL, Balanza egreso SL, Egreso SL | 07:37–16:06 |
-| AI469CT | 5 | Ingreso SL, Balanza ingreso SL, Renova, Balanza egreso SL, Egreso SL | 09:26–12:24 |
-| AI205AY | 5 | Ingreso, Preingreso, Calada, Salida 2 | 06:17–08:23 |
-| AA171DA | 4 | Calada, Playa 3, Balanza, Salida 2 | 07:42–11:30 |
-| NWV854 | 4 | Ingreso SL, Balanza ingreso SL, Balanza egreso SL, Egreso SL | 01:56–02:12 |
-| LVV530 | 4 | Ingreso SL, Balanza ingreso SL, Balanza egreso SL, Egreso SL | 05:00–07:57 |
-| EWJ342 | 4 | Balanza ingreso SL, Volcables SL, Balanza egreso SL, Egreso SL | 06:47–09:23 |
-| NML819 | 3 | Preingreso, Calada, Salida 2 | 06:04–08:02 |
-| AA174DA | 3 | Ingreso, Preingreso, Salida 2 | 06:57–07:37 |
 | AF937IB | 3 | Egreso SL, Balanza egreso SL | 15:23–15:30 |
-| EDQ878 | 2 | Preingreso, Salida 2 | 03:36–06:11 |
 | DJP028 | 2 | Calada, Balanza ingreso SL | 05:43–10:26 |
-| FJN030 | 2 | Ingreso, Salida 2 | 08:31–10:22 |
-| AA986HF | 1 | Salida 2 | 00:31–00:31 |
+| LII678 | 2 | Calada, Balanza ingreso SL | 23:29–23:53 |
 | SCJ6I14 | 1 | Calada | 02:20–02:20 |
 | BQD631 | 1 | Calada | 02:32–02:32 |
 | IYI952 | 1 | Calada | 02:41–02:41 |
 | ILR651 | 1 | Balanza | 06:30–06:30 |
-| NFL955 | 1 | Balanza | 06:44–06:44 |
 | ICE146 | 1 | Balanza | 06:57–06:57 |
 | HCO327 | 1 | Balanza | 07:06–07:06 |
 | JYU269 | 1 | Balanza | 09:04–09:04 |
 | LUZ255 | 1 | Balanza | 11:46–11:46 |
 | IMH181 | 1 | Balanza | 15:41–15:41 |
+| LPZ703 | 1 | Balanza | 17:26–17:26 |
+| AB531FN | 1 | Balanza | 18:13–18:13 |
+| BJT990 | 1 | Balanza | 18:21–18:21 |
+| AT393RH | 1 | Balanza | 19:24–19:24 |
+| DCY351 | 1 | Playa 3 | 21:34–21:34 |
+| HUU751 | 1 | Ingreso | 21:43–21:43 |
+| AG607WK | 1 | Preingreso | 22:27–22:27 |
+| GMI887 | 1 | Preingreso | 22:30–22:30 |
+| HUY730 | 1 | Ingreso | 22:41–22:41 |
 | HPW190 | 1 | Balanza ingreso SL | 00:18–00:18 |
 | TDC004 | 1 | Balanza ingreso SL | 00:34–00:34 |
-| AD099AY | 1 | Volcables SL | 00:39–00:39 |
-| FFB901 | 1 | Ingreso SL | 00:56–00:56 |
-| EMH688 | 1 | Ingreso SL | 01:46–01:46 |
-| FFA295 | 1 | Balanza ingreso SL | 01:53–01:53 |
-| BNA281 | 1 | Balanza ingreso SL | 05:13–05:13 |
 | VJG804 | 1 | Renova | 08:19–08:19 |
 | MSI910 | 1 | Egreso SL | 09:59–09:59 |
 | OBF932 | 1 | Egreso SL | 10:14–10:14 |
-| JBF982 | 1 | Egreso SL | 10:28–10:28 |
 | WBF934 | 1 | Egreso SL | 10:29–10:29 |
 | ROS3T10 | 1 | Renova | 11:39–11:39 |
+| AI237MV | 1 | Egreso SL | 13:11–13:11 |
 | AD406SH | 1 | Egreso SL | 15:02–15:02 |
 | ID606SH | 1 | Egreso SL | 15:06–15:06 |
 | IPK959 | 1 | Egreso SL | 15:44–15:44 |
-| DOU018 | 1 | Renova | 15:51–15:51 |
+| HWZ482 | 1 | Egreso SL | 18:05–18:05 |
+| RSZ590 | 1 | Balanza ingreso SL | 19:43–19:43 |
+| IZI680 | 1 | Ingreso SL | 20:31–20:31 |
+| PTW107 | 1 | Volcables SL | 23:10–23:10 |
+| PBG483 | 1 | Volcables SL | 23:45–23:45 |
 
-### Lecturas dudosas el 06/11: 110
+### Lecturas dudosas el 06/11: 84
 
 Hay candidatos, pero ninguno alcanza para asignar solo.
 
 | Hora | Nodo | Leyó | Candidatos |
 |---|---|---|---|
-| 00:00 | Preingreso (Ric) | AG830CD | AG902CO, AA330CA, AG923TA |
 | 00:44 | Salida 2 (Ric) | IJD94 | IHO984, TNJ019, HFD941 |
 | 01:06 | Carga OSL (Ric) | GZI01 | GJO015, KGQ228, SZU043 |
-| 01:27 | Calada (Ric) | DF3003 | CFK006, AF130KP, AD360MF |
-| 01:32 | Calada (Ric) | AG830CD | AG902CO, AA330CA, AG923TA |
-| 01:38 | Salida 2 (Ric) | AG830CD | AG902CO, AA330CA, AG923TA |
 | 03:20 | Calada (Ric) | LU3901 | EGV380, AB398KI, AH829DN |
+| 03:30 | Calada (Ric) | SO8673 | SBR876, PJO728, AB839ZF |
+| 03:36 | Preingreso (Ric) | EDQ878 | EXQ838, PJD728, PJO728 |
 | 05:14 | Preingreso (Ric) | HHH881 | HHZ891, HHO984, AH361YD |
+| 06:04 | Preingreso (Ric) | NML819 | DMO819, AI149SR, MKR055 |
+| 06:11 | Salida 2 (Ric) | EDQ878 | EXQ838, PJD728, PJO728 |
+| 06:44 | Balanza (Ric) | NFL955 | ELD855, ILR651 |
 | 07:38 | Calada (Ric) | HHH881 | HHZ891, HHO984, AH361YD |
-| 07:48 | Salida 2 (Ric) | AF681QS | AF804QL, AH779NM, AF031GN |
+| 07:50 | Calada (Ric) | NML819 | DMO819, AI149SR, MKR055 |
 | 07:51 | Salida 2 (Ric) | HHH881 | HHZ891, HHO984, AH361YD |
-| 08:29 | Salida 2 (Ric) | AI008BO | AG103DO, AI308DN, AI423DE |
-| 08:40 | Ingreso (Ric) | AG815BD | AG815FI, AG815YP, AI315BY |
+| 08:02 | Salida 2 (Ric) | NML819 | DMO819, AI149SR, MKR055 |
+| 08:31 | Ingreso (Ric) | FJN030 | FJN508, FJC930, JFS381 |
 | 08:43 | Silo Keppler (Ric) | GI0402 | AIH662, GHO245, AA171DA |
-| 08:53 | Ingreso (Ric) | AI206KN | AI286PA, AI308DN, AG815BD |
-| 08:56 | Preingreso (Ric) | AI206KN | AI286PA, AI308DN, AG815BD |
-| 09:01 | Salida 2 (Ric) | AI206KN | AI286PA, AI308DN, AG815BD |
-| 09:07 | Ingreso (Ric) | LZA483 | LZV033, KZA683, AG873YJ |
-| 09:18 | Preingreso (Ric) | LZA483 | LZV033, KZA683, AG873YJ |
 | 09:27 | Playa 3 (Ric) | AC19711 | AI651US, VNA879, ICE146 |
-| 09:28 | Salida 2 (Ric) | LZA483 | LZV033, KZA683, AG873YJ |
 | 09:53 | Preingreso (Ric) | VJG112 | CFG112, VAI992, AG815FI |
 | 10:16 | Salida 2 (Ric) | VJG112 | CFG112, VAI992, AG815FI |
-| 10:42 | Ingreso (Ric) | LYX784 | EKX731, LLZ838 |
-| 10:44 | Preingreso (Ric) | LYX784 | EKX731, LLZ838 |
-| 10:50 | Salida 2 (Ric) | LYX784 | EKX731, LLZ838 |
-| 11:02 | Ingreso (Ric) | AA177DA | AA677DJ, AA174DA, AA171DA |
-| 11:05 | Calada (Ric) | AA177DA | AA677DJ, AA174DA, AA171DA |
-| 12:17 | Ingreso (Ric) | AB470QT | AC406QT |
-| 12:20 | Preingreso (Ric) | AB470QT | AC406QT |
+| 10:22 | Salida 2 (Ric) | FJN030 | FJN508, FJC930, JFS381 |
 | 12:20 | Playa 3 (Ric) | 924XHAT | AE766XQ, AI651US, ICE146 |
-| 12:34 | Salida 2 (Ric) | AB470QT | AC406QT |
-| 12:35 | Ingreso (Ric) | AE453HZ | AE513HZ |
-| 12:38 | Preingreso (Ric) | AE453HZ | AE513HZ |
-| 14:04 | Balanza (Ric) | MTM450 | MSN054, AH831XA, AE197HX |
+| 14:04 | Balanza (Ric) | MTM450 | MSN054, AH831XA, AC197HX |
 | 14:12 | Ingreso (Ric) | EQZ192 | EUZ192, FUZ192, OLZ492 |
 | 14:17 | Preingreso (Ric) | EQZ192 | EUZ192, FUZ192, OLZ492 |
-| 14:23 | Calada (Ric) | AE453HZ | AE513HZ |
+| 17:48 | Silo Keppler (Ric) | GT0265 | GTF263, GHO245, AG282SL |
+| 20:09 | Salida 2 (Ric) | EUJ75 | LUJ767, AE871QT, HJI453 |
+| 20:59 | Carga OSL (Ric) | GZI01 | GJO015, KGQ228, SZU043 |
+| 21:12 | Calada (Ric) | JIH800 | JET000, TSB880, AIH662 |
+| 23:38 | Preingreso (Ric) | BXB72 | DNM729, UYX502, AB351ZL |
+| 23:39 | Preingreso (Ric) | KKW15 | WIY025, GZW735, AIZ153 |
+| 00:39 | Volcables SL (SL) | AD099AY | AD895XY, AB492GV, TDC004 |
 | 00:43 | Egreso SL (SL) | ECL370 | EJL360, EXF800, LZM344 |
 | 00:43 | Volcables SL (SL) | CF0079 | CKF069, CFK006, FDO218 |
+| 00:56 | Ingreso SL (SL) | FFB901 | HFD941, EXF800, FDO218 |
 | 01:18 | Volcables SL (SL) | BT8546 | DKM546, BNI284, OIY954 |
-| 01:47 | Ingreso SL (SL) | AG830CD | AG902CO, AA330CA, AB886TO |
+| 01:46 | Ingreso SL (SL) | EMH688 | EWH682, EMG070, GLK688 |
+| 01:53 | Balanza ingreso SL (SL) | FFA295 | EZI429, FFB901, GEX250 |
 | 02:03 | Ingreso SL (SL) | RC77019 | ROP788, CAH774, AG419KW |
-| 02:05 | Balanza ingreso SL (SL) | ACA963 | AGR963, AG923TA, AG830CD |
 | 03:52 | Volcables SL (SL) | AI1681 | AI101HX, AI263XP, AI058IM |
 | 03:57 | Balanza ingreso SL (SL) | OUP690 | OUP680, OUP630, OLP630 |
 | 04:03 | Balanza ingreso SL (SL) | FDD911 | HFD941, FFB901, LTF084 |
@@ -493,64 +475,45 @@ Hay candidatos, pero ninguno alcanza para asignar solo.
 | 04:42 | Balanza egreso SL (SL) | OUP690 | OUP680, OUP630, OLP630 |
 | 04:44 | Volcables SL (SL) | DVS878 | OVS674, OJV576, DTV755 |
 | 04:45 | Balanza ingreso SL (SL) | WH2582 | EWH682, JWE262, IWM581 |
-| 04:47 | Balanza ingreso SL (SL) | AG830CD | AG902CO, AA330CA, AB886TO |
-| 05:22 | Volcables SL (SL) | AG830CD | AG902CO, AA330CA, AB886TO |
+| 05:13 | Balanza ingreso SL (SL) | BNA281 | BNI284, BPA054, AC258IH |
 | 05:32 | Egreso SL (SL) | ECH18 | CHR107, EHN104, CFG112 |
-| 05:34 | Balanza egreso SL (SL) | AG830CD | AG902CO, AA330CA, AB886TO |
-| 05:39 | Egreso SL (SL) | AG830CD | AG902CO, AA330CA, AB886TO |
 | 05:53 | Balanza ingreso SL (SL) | AD360MP | AD360MF, AD788NP, AB886TP |
 | 07:46 | Renova (SL) | JZW72 | LOQ416, JWE262, PJD728 |
 | 08:08 | Egreso SL (SL) | DRF28 | DNH321, HDD726, EFA323 |
-| 09:09 | Ingreso SL (SL) | AI206KN | AI308DN, AI286PA, AD250NG |
-| 09:14 | Balanza ingreso SL (SL) | AI206KN | AI308DN, AI286PA, AD250NG |
 | 09:35 | Egreso SL (SL) | AE372UI | AE882UD, AF532VJ, AI370ZR |
-| 09:45 | Egreso SL (SL) | LZA483 | KZA683, AE506AI, AC026RV |
-| 09:46 | Egreso SL (SL) | LZA483 | KZA683, AA703FC, GJL143 |
-| 09:50 | Ingreso SL (SL) | LZA483 | KZA683, LAU467, LEQ188 |
-| 10:12 | Calada SL (SL) | LZA483 | KZA683, LAU467, LEQ188 |
-| 10:19 | Balanza ingreso SL (SL) | LZA483 | KZA683, LAU467, LEQ188 |
 | 10:29 | Ingreso SL (SL) | AA516AQ | AA541AA, AF591JQ, AA543NP |
-| 10:31 | Balanza ingreso SL (SL) | LGS586 | EBS566, LEQ188, MQM566 |
-| 10:36 | Renova (SL) | AI206KN | AI308DN, AI286PA, AD250NG |
 | 10:37 | Ingreso SL (SL) | AA516AQ | AA541AA, AF591JQ, AA543NP |
 | 10:41 | Ingreso SL (SL) | AF878VQ | AE878VO, AE879OO, AF681QS |
 | 10:41 | Balanza ingreso SL (SL) | AA516AQ | AA541AA, AF591JQ, AA543NP |
 | 10:54 | Balanza ingreso SL (SL) | AF878VQ | AE878VO, AE879OO, AF681QS |
-| 10:58 | Egreso SL (SL) | AF734XO | AC731XT, AE814FQ, AB343CG |
-| 11:05 | Ingreso SL (SL) | LYX784 | EKX731, BEY774, NVX871 |
+| 10:58 | Egreso SL (SL) | AF734XO | AC731XT, AE814FQ, AA703FC |
 | 11:08 | Renova (SL) | AF878VQ | AE878VO, AE879OO, AF681QS |
-| 11:24 | Balanza ingreso SL (SL) | LYX784 | EKX731, BEY774, EXU131 |
-| 11:24 | Balanza ingreso SL (SL) | LYX784 | EKX731, BEY774, NVX871 |
 | 11:24 | Balanza egreso SL (SL) | AA516AQ | AA541AA, AF591JQ, AA543NP |
 | 11:26 | Egreso SL (SL) | AA516AQ | AA541AA, AF591JQ, AA543NP |
-| 11:38 | Ingreso SL (SL) | AB470QT | AC406QT, AC417CO, AA174DA |
 | 11:45 | Egreso SL (SL) | AE372UI | AE882UD, AF591JQ, AG803AO |
-| 11:51 | Balanza ingreso SL (SL) | AB470QT | AC406QT, AC417CO, AA174DA |
-| 12:01 | Carga y descarga SL (SL) | LZA483 | KZA683, LAU467, LEQ188 |
-| 12:07 | Balanza egreso SL (SL) | AB470QT | AC406QT, AC417CO, AA174DA |
-| 12:09 | Egreso SL (SL) | AB470QT | AC406QT, AC417CO, AA174DA |
-| 12:15 | Balanza egreso SL (SL) | AI206KN | AI308DN, AI286PA, AD250NG |
-| 12:28 | Ingreso SL (SL) | AB646GZ | AD605CZ, AD643GA, AB601OZ |
-| 12:33 | Balanza ingreso SL (SL) | AB646GZ | AD605CZ, AD643GA, AB601OZ |
 | 12:34 | Ingreso SL (SL) | ION372 | DUN372, DON372, GYW157 |
-| 12:39 | Balanza egreso SL (SL) | LZA483 | KZA683, LAU467, LEQ188 |
 | 12:41 | Balanza egreso SL (SL) | AF878VQ | AE878VO, AE879OO, AF681QS |
-| 12:42 | Ingreso SL (SL) | AB470QT | AC406QT, AC417CO, AA174DA |
 | 12:43 | Egreso SL (SL) | AF878VQ | AE878VO, AE879OO, AF681QS |
 | 12:45 | Egreso SL (SL) | AE878VO | AF878VQ, AE879OO, AE882UD |
-| 12:52 | Renova (SL) | AB646GZ | AD605CZ, AD643GA, AB601OZ |
-| 13:22 | Calada SL (SL) | AB470QT | AC406QT, AC417CO, AA174DA |
-| 13:24 | Balanza ingreso SL (SL) | AB470QT | AC406QT, AC417CO, AA174DA |
-| 13:54 | Renova (SL) | LYX784 | EKX731, BEY774, NVX871 |
-| 13:55 | Balanza ingreso SL (SL) | AB470QT | AC406QT, AC417CO, AA174DA |
-| 14:12 | Carga y descarga SL (SL) | AB470QT | AC406QT, AC417CO, AA174DA |
-| 14:23 | Egreso SL (SL) | AE848XX | AE848CX, AE849JD, AE506AI |
-| 14:25 | Balanza egreso SL (SL) | AB646GZ | AD605CZ, AD643GA, AB601OZ |
-| 14:28 | Egreso SL (SL) | AB646GZ | AD605CZ, AD643GA, AB601OZ |
-| 15:20 | Balanza egreso SL (SL) | LYX784 | EKX731, BEY774, NVX871 |
-| 15:45 | Balanza egreso SL (SL) | AB470QT | AC406QT, AC417CO, AA174DA |
-| 16:25 | Egreso SL (SL) | AI206KN | AI308DN, AI286PA, AD250NG |
-| 16:28 | Egreso SL (SL) | LYX784 | EKX731, BEY774, NVX871 |
+| 15:51 | Renova (SL) | DOU018 | DMO819, OGA047, SNP211 |
+| 16:57 | Egreso SL (SL) | LFQ464 | LEQ188, LYX784, AE886SA |
+| 17:51 | Balanza ingreso SL (SL) | AA460TM | AA469TM, AA488IX, AC406QT |
+| 18:27 | Egreso SL (SL) | OIY765 | DTV765, OTV705, AR078CF |
+| 18:57 | Renova (SL) | ABH072 | AB472CS, AH872OE, KOQ228 |
+| 19:18 | Volcables SL (SL) | EQZ192 | EUZ192, FUZ192, DLZ492 |
+| 19:46 | Volcables SL (SL) | PUD10 | PQV114, PDC059, PQV112 |
+| 20:27 | Carga y descarga SL (SL) | RBN4011 | MTM450, AB711JL, AH831XA |
+| 20:54 | Renova (SL) | EMC07 | RFG372, EMM462, EOI579 |
+| 21:15 | Ingreso SL (SL) | AC583BB | AC682BB, AG639OD, AC953JP |
+| 21:16 | Balanza ingreso SL (SL) | JD3330 | EJF888, JIH800, KNO339 |
+| 21:16 | Balanza ingreso SL (SL) | AAB189 | AA809NI, AA488IX, AA818AY |
+| 21:52 | Ingreso SL (SL) | EDY860 | EQY960, EYL669, ETD346 |
+| 21:55 | Balanza ingreso SL (SL) | EDY860 | EQY960, EYL669, ETD346 |
+| 21:57 | Volcables SL (SL) | QQ71444 | PQV114, JPK444, AB711JL |
+| 22:01 | Egreso SL (SL) | AC583BB | AC682BB, AG639OD, AC953JP |
+| 22:15 | Ingreso SL (SL) | DJ8402 | JIH800, AB810KM, DLZ492 |
+| 22:46 | Egreso SL (SL) | EDY860 | EQY960, EYL669, ETD346 |
+| 23:49 | Balanza ingreso SL (SL) | BAHL858 | AH135DG, BNL618, HLA678 |
 
 ## 5 · El lote: viajes esperados y sus pasos
 
@@ -558,29 +521,27 @@ Cada viaje que se esperaba (por carta de porte, base sin carta o SGC) y el estad
 
 | Universo: cartas de porte | 02/11 | 03/11 | 04/11 | 05/11 | 06/11 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| viajes | 183 | 159 | 218 | 344 | 248 |
-| camara | 1397 (86 %) | 1190 (87 %) | 1643 (87 %) | 2619 (87 %) | 1635 (79 %) |
-| reconstruido | 132 (8 %) | 82 (6 %) | 137 (7 %) | 198 (7 %) | 104 (5 %) |
-| deducido | 68 (4 %) | 68 (5 %) | 91 (5 %) | 145 (5 %) | 40 (2 %) |
-| por carta | 10 (1 %) | 9 (1 %) | 11 (1 %) | 16 (1 %) | 0 (0 %) |
-| en curso | 19 (1 %) | 18 (1 %) | 16 (1 %) | 13 (0 %) | 281 (14 %) |
-| falta | 1 (0 %) | 3 (0 %) | 1 (0 %) | 3 (0 %) | 2 (0 %) |
+| viajes | 192 | 167 | 218 | 344 | 365 |
+| camara | 1445 (85 %) | 1244 (87 %) | 1656 (87 %) | 2656 (89 %) | 2819 (89 %) |
+| reconstruido | 123 (7 %) | 82 (6 %) | 131 (7 %) | 165 (6 %) | 187 (6 %) |
+| deducido | 92 (5 %) | 79 (6 %) | 99 (5 %) | 157 (5 %) | 133 (4 %) |
+| por carta | 10 (1 %) | 9 (1 %) | 13 (1 %) | 17 (1 %) | 25 (1 %) |
+| en curso | 19 (1 %) | 18 (1 %) | 5 (0 %) | 4 (0 %) | 0 (0 %) |
+| falta | 5 (0 %) | 4 (0 %) | 2 (0 %) | 1 (0 %) | 6 (0 %) |
 
 | Universo: base sin carta | 02/11 | 03/11 | 04/11 | 05/11 | 06/11 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| viajes | 37 | 29 | 34 | 37 | 22 |
-| camara | 157 (81 %) | 102 (68 %) | 168 (79 %) | 146 (76 %) | 88 (69 %) |
-| reconstruido | 23 (12 %) | 26 (17 %) | 20 (9 %) | 28 (15 %) | 19 (15 %) |
-| deducido | 10 (5 %) | 7 (5 %) | 20 (9 %) | 12 (6 %) | 9 (7 %) |
-| en curso | 0 (0 %) | 0 (0 %) | 2 (1 %) | 3 (2 %) | 6 (5 %) |
-| falta | 4 (2 %) | 16 (11 %) | 4 (2 %) | 2 (1 %) | 5 (4 %) |
+| viajes | 37 | 29 | 34 | 37 | 23 |
+| camara | 157 (81 %) | 102 (68 %) | 168 (79 %) | 146 (76 %) | 93 (70 %) |
+| reconstruido | 24 (12 %) | 26 (17 %) | 23 (11 %) | 32 (17 %) | 21 (16 %) |
+| deducido | 9 (5 %) | 7 (5 %) | 18 (8 %) | 12 (6 %) | 10 (8 %) |
+| falta | 4 (2 %) | 16 (11 %) | 5 (2 %) | 1 (1 %) | 8 (6 %) |
 
 | Universo: SGC | 02/11 | 03/11 | 04/11 | 05/11 | 06/11 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| viajes | 12 | 11 | 12 | 12 | 0 |
-| camara | 78 (76 %) | 50 (86 %) | 64 (76 %) | 56 (71 %) | 0 (—) |
-| reconstruido | 4 (4 %) | 1 (2 %) | 3 (4 %) | 4 (5 %) | 0 (—) |
-| deducido | 20 (20 %) | 7 (12 %) | 12 (14 %) | 14 (18 %) | 0 (—) |
-| en curso | 0 (0 %) | 0 (0 %) | 1 (1 %) | 0 (0 %) | 0 (—) |
-| falta | 0 (0 %) | 0 (0 %) | 4 (5 %) | 5 (6 %) | 0 (—) |
+| viajes | 12 | 9 | 12 | 24 | 30 |
+| camara | 78 (76 %) | 40 (83 %) | 64 (76 %) | 142 (82 %) | 178 (81 %) |
+| reconstruido | 4 (4 %) | 1 (2 %) | 3 (4 %) | 7 (4 %) | 11 (5 %) |
+| deducido | 20 (20 %) | 7 (15 %) | 12 (14 %) | 19 (11 %) | 25 (11 %) |
+| falta | 0 (0 %) | 0 (0 %) | 5 (6 %) | 6 (3 %) | 6 (3 %) |
 
