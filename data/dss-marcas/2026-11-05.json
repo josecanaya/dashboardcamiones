@@ -1,0 +1,2487 @@
+{
+ "AAB330": {
+  "marca": null,
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T05:07:01.023Z",
+    "leyo": "AAB330",
+    "marca": null,
+    "color": "White",
+    "tipo": "Sedan"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T05:10:01.915Z",
+    "leyo": "AAB330",
+    "marca": null,
+    "color": "White",
+    "tipo": "Sedan"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-05T07:55:11.717Z",
+    "leyo": "AAB330",
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "AE297UD": {
+  "marca": "scania",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T03:29:41.859Z",
+    "leyo": "AE297UD",
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T03:31:43.171Z",
+    "leyo": "AE297UD",
+    "marca": null,
+    "color": "Blue",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-05T03:55:17.346Z",
+    "leyo": "AE297UD",
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "PFN935": {
+  "marca": "mercedes",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T03:51:46.579Z",
+    "leyo": "PFN935",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Pickup"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T03:55:36.375Z",
+    "leyo": "PFN935",
+    "marca": null,
+    "color": "White",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-05T04:05:49.830Z",
+    "leyo": "PFN935",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "OSM454": {
+  "marca": "ford",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T03:56:05.896Z",
+    "leyo": "OSM454",
+    "marca": null,
+    "color": "White",
+    "tipo": null
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-05T04:24:45.676Z",
+    "leyo": "OSM454",
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-05T05:05:33.169Z",
+    "leyo": "OSM454",
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "AB351ZL": {
+  "marca": "volkswagen",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T03:14:05.349Z",
+    "leyo": "AB351ZL",
+    "marca": null,
+    "color": "Black",
+    "tipo": null
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-05T03:42:07.884Z",
+    "leyo": "AB351ZL",
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-05T03:53:09.004Z",
+    "leyo": "AB351ZL",
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "EHZ322": {
+  "marca": "iveco",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T04:15:32.981Z",
+    "leyo": "EHZ322",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T04:18:59.737Z",
+    "leyo": "EHZ322",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-05T04:57:25.252Z",
+    "leyo": "EHZ322",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "IJD586": {
+  "marca": "mercedes",
+  "color": null,
+  "vistas": [
+   {
+    "camara": "SLZIngCamFrente",
+    "at": "2026-11-05T04:56:13.353Z",
+    "leyo": "IJD586",
+    "marca": "Mercedes-Benz",
+    "color": "Brown",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "SLZBalIngFte",
+    "at": "2026-11-05T06:47:03.260Z",
+    "leyo": "IJD586",
+    "marca": "Mercedes-Benz",
+    "color": "Gray",
+    "tipo": "Sedan"
+   },
+   {
+    "camara": "SLZBalSC2Fte",
+    "at": "2026-11-05T07:37:55.589Z",
+    "leyo": "IJD585",
+    "marca": "Peugeot",
+    "color": "White",
+    "tipo": "Van"
+   }
+  ]
+ },
+ "AE870JF": {
+  "marca": "volvo",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T20:16:18.914Z",
+    "leyo": "AE870JF",
+    "marca": "Volvo",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T20:20:27.456Z",
+    "leyo": "AE870JF",
+    "marca": null,
+    "color": "Silver",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-05T20:36:13.638Z",
+    "leyo": "AE870JF",
+    "marca": "Volvo",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "PCE176": {
+  "marca": null,
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T04:04:29.422Z",
+    "leyo": "PCE176",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T04:06:44.972Z",
+    "leyo": "PCE176",
+    "marca": null,
+    "color": "White",
+    "tipo": null
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-05T04:18:53.923Z",
+    "leyo": "PCE176",
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "HJK329": {
+  "marca": "mercedes",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T19:43:46.765Z",
+    "leyo": "HJK329",
+    "marca": "Nissan",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-05T20:07:03.487Z",
+    "leyo": "HJK329",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-05T20:15:24.101Z",
+    "leyo": "HJK329",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "KMC922": {
+  "marca": "volkswagen",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-06T01:53:01.155Z",
+    "leyo": "KMC922",
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T01:56:46.859Z",
+    "leyo": "KMC922",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T03:00:57.007Z",
+    "leyo": "KMC922",
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "EWH682": {
+  "marca": "mercedes",
+  "color": null,
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T02:56:27.629Z",
+    "leyo": "EWH682",
+    "marca": "Chevrolet",
+    "color": "Gray",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-06T04:26:49.234Z",
+    "leyo": "ELH582",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T04:36:12.004Z",
+    "leyo": "EWH682",
+    "marca": "Mercedes-Benz",
+    "color": "Brown",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "SMS039": {
+  "marca": "scania",
+  "color": "Silver",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T00:26:34.362Z",
+    "leyo": "SMS039",
+    "marca": null,
+    "color": "Silver",
+    "tipo": "Small Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T00:30:43.019Z",
+    "leyo": "SMS039",
+    "marca": "Scania",
+    "color": "Silver",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-06T01:00:00.411Z",
+    "leyo": "SMS039",
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "LEV032": {
+  "marca": "mercedes",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T23:24:07.516Z",
+    "leyo": "LEV032",
+    "marca": null,
+    "color": "White",
+    "tipo": "Sedan"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T23:26:01.829Z",
+    "leyo": "LEV032",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-06T00:51:35.153Z",
+    "leyo": "LEV032",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "NVQ144": {
+  "marca": "mercedes",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-05T18:45:52.111Z",
+    "leyo": "NVQ144",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T18:53:03.467Z",
+    "leyo": "NVQ144",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal06",
+    "at": "2026-11-05T20:05:28.300Z",
+    "leyo": "NVQ144",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "GRQ310": {
+  "marca": "ford",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T18:30:32.762Z",
+    "leyo": "GRQ310",
+    "marca": null,
+    "color": "Blue",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T18:32:55.159Z",
+    "leyo": "GRQ310",
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-05T19:37:40.486Z",
+    "leyo": "GRQ310",
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "SZU043": {
+  "marca": "scania",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T23:26:47.432Z",
+    "leyo": "SZU043",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-06T00:54:37.538Z",
+    "leyo": "SZU043",
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "SLZIngCamFrente",
+    "at": "2026-11-06T01:25:10.941Z",
+    "leyo": "SZU043",
+    "marca": "Scania",
+    "color": "Yellow",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "AE477RE": {
+  "marca": "volkswagen",
+  "color": null,
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T21:02:27.717Z",
+    "leyo": "AE477RE",
+    "marca": "Volkswagen",
+    "color": "Black",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T21:05:20.596Z",
+    "leyo": "AE477RE",
+    "marca": null,
+    "color": "Gray",
+    "tipo": null
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-05T21:08:06.766Z",
+    "leyo": "AE477RE",
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "GLK688": {
+  "marca": "iveco",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T21:46:21.230Z",
+    "leyo": "GLK688",
+    "marca": "Iveco",
+    "color": "Blue",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T22:01:12.312Z",
+    "leyo": "GLK688",
+    "marca": null,
+    "color": "White",
+    "tipo": "Sedan"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-05T23:00:41.285Z",
+    "leyo": "GLK688",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "EZI429": {
+  "marca": "mercedes",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T01:33:07.316Z",
+    "leyo": "EZI429",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-06T02:20:52.353Z",
+    "leyo": "EZI429",
+    "marca": "Mercedes-Benz",
+    "color": "Silver",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T02:34:27.955Z",
+    "leyo": "EZI429",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "GGB292": {
+  "marca": "scania",
+  "color": null,
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T18:05:30.800Z",
+    "leyo": "GGB292",
+    "marca": null,
+    "color": "Black",
+    "tipo": "Sedan"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-05T18:43:42.101Z",
+    "leyo": "GGB292",
+    "marca": "Scania",
+    "color": "Gray",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "RicCal06",
+    "at": "2026-11-05T21:21:02.623Z",
+    "leyo": "GGB292",
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "AD895XY": {
+  "marca": null,
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T23:47:07.914Z",
+    "leyo": "AD895XY",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T23:51:16.159Z",
+    "leyo": "AD895XY",
+    "marca": null,
+    "color": "Red",
+    "tipo": null
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-06T01:01:03.533Z",
+    "leyo": "AD895XY",
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "OVS674": {
+  "marca": "mercedes",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T02:40:00.053Z",
+    "leyo": "OVS674",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-06T04:10:01.284Z",
+    "leyo": "OVS674",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T04:26:09.086Z",
+    "leyo": "OVS674",
+    "marca": "Mercedes-Benz",
+    "color": null,
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "HCR316": {
+  "marca": "Mercedes-Benz",
+  "color": "Yellow",
+  "vistas": [
+   {
+    "camara": "SLZIngCamFrente",
+    "at": "2026-11-05T23:18:08.956Z",
+    "leyo": "HCR316",
+    "marca": "Mercedes-Benz",
+    "color": "Yellow",
+    "tipo": "Bus"
+   }
+  ]
+ },
+ "SKL459": {
+  "marca": "mercedes",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T19:16:08.782Z",
+    "leyo": "SKL459",
+    "marca": null,
+    "color": "White",
+    "tipo": "Sedan"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-05T19:59:27.777Z",
+    "leyo": "SKL459",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-05T20:12:32.571Z",
+    "leyo": "SKL459",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "UJU340": {
+  "marca": null,
+  "color": "Red",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-06T00:37:31.773Z",
+    "leyo": "UJU340",
+    "marca": null,
+    "color": "Red",
+    "tipo": null
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T00:40:13.609Z",
+    "leyo": "JJU340",
+    "marca": "Renault",
+    "color": "Red",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T01:26:15.075Z",
+    "leyo": "OJJ340",
+    "marca": null,
+    "color": "Red",
+    "tipo": "Van"
+   }
+  ]
+ },
+ "KPB016": {
+  "marca": "iveco",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T20:05:42.798Z",
+    "leyo": "KPB016",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T20:08:26.373Z",
+    "leyo": "KPB016",
+    "marca": null,
+    "color": "Silver",
+    "tipo": null
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-05T20:20:41.668Z",
+    "leyo": "KPB016",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "EXF800": {
+  "marca": null,
+  "color": "Red",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T23:36:01.706Z",
+    "leyo": "EXF800",
+    "marca": null,
+    "color": "Red",
+    "tipo": null
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T01:06:49.065Z",
+    "leyo": "EXF800",
+    "marca": "Iveco",
+    "color": "Red",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "SLZIngCamFrente",
+    "at": "2026-11-06T01:17:32.276Z",
+    "leyo": "EXF800",
+    "marca": null,
+    "color": "Red",
+    "tipo": null
+   }
+  ]
+ },
+ "SED437": {
+  "marca": "iveco",
+  "color": null,
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T18:12:59.502Z",
+    "leyo": "SED437",
+    "marca": null,
+    "color": "Blue",
+    "tipo": "Sedan"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T18:16:41.502Z",
+    "leyo": "SED437",
+    "marca": "Iveco",
+    "color": "Black",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-05T18:49:01.245Z",
+    "leyo": "SED437",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "AB700WH": {
+  "marca": "mercedes",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T19:01:55.510Z",
+    "leyo": "AB700WH",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T19:05:24.631Z",
+    "leyo": "AB700WH",
+    "marca": "Dongfeng",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-05T19:53:47.304Z",
+    "leyo": "AB700WH",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "JJQ900": {
+  "marca": "iveco",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T21:34:46.457Z",
+    "leyo": "JJQ900",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-05T22:55:54.124Z",
+    "leyo": "JJQ900",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-05T23:08:04.809Z",
+    "leyo": "JJQ900",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "AH479OX": {
+  "marca": "mercedes",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T02:03:57.526Z",
+    "leyo": "AH479OX",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-06T02:53:01.201Z",
+    "leyo": "AH479OX",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T03:05:24.700Z",
+    "leyo": "AH479OX",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "NUW682": {
+  "marca": "ford",
+  "color": "Silver",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T18:53:55.644Z",
+    "leyo": "NUW682",
+    "marca": "Ford",
+    "color": "Silver",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T18:57:52.604Z",
+    "leyo": "NUW682",
+    "marca": null,
+    "color": "Silver",
+    "tipo": null
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-05T19:52:33.094Z",
+    "leyo": "NUW682",
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "TNJ810": {
+  "marca": "scania",
+  "color": "Red",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T17:41:38.671Z",
+    "leyo": "TNJ810",
+    "marca": "Scania",
+    "color": "Red",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T17:46:36.496Z",
+    "leyo": "TNJ810",
+    "marca": null,
+    "color": "Red",
+    "tipo": "Sedan"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-05T18:34:33.845Z",
+    "leyo": "TNJ810",
+    "marca": "Scania",
+    "color": null,
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "OUP680": {
+  "marca": "iveco",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-06T02:12:10.742Z",
+    "leyo": "OUP680",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T02:17:01.409Z",
+    "leyo": "OUP680",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T03:28:56.065Z",
+    "leyo": "OUP680",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "FEW780": {
+  "marca": "scania",
+  "color": "Blue",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T03:39:57.358Z",
+    "leyo": "FEW780",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-05T04:09:40.423Z",
+    "leyo": "FEW780",
+    "marca": "Scania",
+    "color": "Blue",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "SLZIngCamFrente",
+    "at": "2026-11-05T04:19:47.841Z",
+    "leyo": "FEW780",
+    "marca": "Scania",
+    "color": "Blue",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "TQR883": {
+  "marca": "mercedes",
+  "color": null,
+  "vistas": [
+   {
+    "camara": "SLZBalSC2Fte",
+    "at": "2026-11-05T12:48:51.254Z",
+    "leyo": "TQR883",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "SLZSalidaC1Fte",
+    "at": "2026-11-05T12:53:56.455Z",
+    "leyo": "TQR883",
+    "marca": "Mercedes-Benz",
+    "color": "Silver",
+    "tipo": "SUV"
+   },
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T07:03:28.231Z",
+    "leyo": "TQR883",
+    "marca": "Mercedes-Benz",
+    "color": "Gray",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "IBZ191": {
+  "marca": "scania",
+  "color": null,
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T01:48:41.129Z",
+    "leyo": "IBZ191",
+    "marca": null,
+    "color": "Black",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-06T02:36:44.698Z",
+    "leyo": "IBZ191",
+    "marca": "Scania",
+    "color": "Gray",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T02:45:14.311Z",
+    "leyo": "IBZ191",
+    "marca": "Scania",
+    "color": "Red",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "KVP275": {
+  "marca": "renault",
+  "color": "Blue",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T16:05:09.021Z",
+    "leyo": "KVP275",
+    "marca": "Peugeot",
+    "color": "Blue",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-05T16:46:16.041Z",
+    "leyo": "KVP275",
+    "marca": "Renault",
+    "color": "Silver",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "SLZIngCamFrente",
+    "at": "2026-11-05T17:12:31.788Z",
+    "leyo": "KVP275",
+    "marca": "Renault",
+    "color": "Blue",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "DIU264": {
+  "marca": "mercedes",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-05T03:39:58.957Z",
+    "leyo": "DIU264",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "SLZIngCamFrente",
+    "at": "2026-11-05T03:50:30.939Z",
+    "leyo": "DIU264",
+    "marca": "Mercedes-Benz",
+    "color": "Gray",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "SLZBalIngFte",
+    "at": "2026-11-05T04:39:32.526Z",
+    "leyo": "DIU264",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Pickup"
+   }
+  ]
+ },
+ "BPA054": {
+  "marca": "volvo",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T04:37:51.161Z",
+    "leyo": "BPA054",
+    "marca": "Iveco",
+    "color": "Silver",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-05T08:13:24.479Z",
+    "leyo": "DPA054",
+    "marca": "Volvo",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-05T08:25:41.180Z",
+    "leyo": "BPA054",
+    "marca": "Volvo",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "UKN465": {
+  "marca": null,
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T03:34:49.399Z",
+    "leyo": "UKN465",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T03:37:47.832Z",
+    "leyo": "UKN465",
+    "marca": null,
+    "color": "White",
+    "tipo": null
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-05T03:57:05.218Z",
+    "leyo": "UKN465",
+    "marca": null,
+    "color": "Silver",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "CFK006": {
+  "marca": "scania",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T04:34:12.728Z",
+    "leyo": "CFK006",
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T04:36:55.157Z",
+    "leyo": "CFK006",
+    "marca": null,
+    "color": "White",
+    "tipo": null
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-05T05:22:32.116Z",
+    "leyo": "CFK006",
+    "marca": "Scania",
+    "color": null,
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "GZB436": {
+  "marca": "volvo",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T05:45:15.877Z",
+    "leyo": "GZB436",
+    "marca": "Volvo",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T05:48:39.109Z",
+    "leyo": "GZB436",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-05T08:24:25.736Z",
+    "leyo": "GZB436",
+    "marca": "Volvo",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "FMQ655": {
+  "marca": null,
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T05:45:48.117Z",
+    "leyo": "FMQ655",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T05:49:03.111Z",
+    "leyo": "FMQ655",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-05T08:19:20.571Z",
+    "leyo": "FMQ655",
+    "marca": null,
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "AF243LK": {
+  "marca": "mercedes",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T03:19:57.026Z",
+    "leyo": "AF243LK",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T03:22:03.695Z",
+    "leyo": "AF243LK",
+    "marca": null,
+    "color": "White",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-05T03:49:39.131Z",
+    "leyo": "AF243LK",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "DLP334": {
+  "marca": null,
+  "color": null,
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T00:47:18.275Z",
+    "leyo": "DLP334",
+    "marca": "Suzuki",
+    "color": "Silver",
+    "tipo": "Pickup"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-06T01:35:54.720Z",
+    "leyo": "DLP334",
+    "marca": "ISUZU",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "SLZIngCamFrente",
+    "at": "2026-11-06T02:00:15.863Z",
+    "leyo": "DLP334",
+    "marca": null,
+    "color": "Gray",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "EYL559": {
+  "marca": "ford",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T04:15:36.203Z",
+    "leyo": "EYL559",
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-05T04:50:48.438Z",
+    "leyo": "EYL559",
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-05T05:01:11.242Z",
+    "leyo": "EYL559",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "AF350JA": {
+  "marca": "iveco",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T03:17:18.720Z",
+    "leyo": "AF350JA",
+    "marca": null,
+    "color": "White",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-05T03:45:15.592Z",
+    "leyo": "AF350JA",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-05T03:54:51.091Z",
+    "leyo": "AF350JA",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "KNI690": {
+  "marca": "volkswagen",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T23:09:48.746Z",
+    "leyo": "KNI690",
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T23:12:27.302Z",
+    "leyo": "KNI690",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-06T01:44:26.143Z",
+    "leyo": "KNI690",
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "ROP788": {
+  "marca": null,
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T01:16:25.335Z",
+    "leyo": "ROP788",
+    "marca": null,
+    "color": "White",
+    "tipo": null
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-06T02:03:57.309Z",
+    "leyo": "ROP788",
+    "marca": null,
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T02:13:50.681Z",
+    "leyo": "ROP789",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "OWT012": {
+  "marca": "volkswagen",
+  "color": "Blue",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T19:52:06.030Z",
+    "leyo": "OWT012",
+    "marca": null,
+    "color": "Blue",
+    "tipo": "Sedan"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T19:57:30.655Z",
+    "leyo": "OWT012",
+    "marca": "Volkswagen",
+    "color": "Blue",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-05T20:33:01.339Z",
+    "leyo": "OWT012",
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "ELP274": {
+  "marca": null,
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T02:15:57.648Z",
+    "leyo": "ELP274",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "SLZIngCamFrente",
+    "at": "2026-11-06T03:33:40.375Z",
+    "leyo": "ELP274",
+    "marca": "Volkswagen",
+    "color": "Silver",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "SLZBalIngFte",
+    "at": "2026-11-06T06:54:46.185Z",
+    "leyo": "ELP274",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "SLJ217": {
+  "marca": "mercedes",
+  "color": null,
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T02:28:45.532Z",
+    "leyo": "SLJ217",
+    "marca": null,
+    "color": "Red",
+    "tipo": null
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-06T03:40:15.460Z",
+    "leyo": "GLJ217",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T03:52:04.626Z",
+    "leyo": "SLJ217",
+    "marca": "Mercedes-Benz",
+    "color": null,
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "ABA752": {
+  "marca": null,
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T18:51:08.034Z",
+    "leyo": "ABA752",
+    "marca": "Mercedes-Benz",
+    "color": "Blue",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T18:53:25.950Z",
+    "leyo": "ABA752",
+    "marca": "Renault",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-05T19:45:54.836Z",
+    "leyo": "ABA752",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "CAH774": {
+  "marca": "scania",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-06T00:44:24.435Z",
+    "leyo": "CAH774",
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T00:47:58.837Z",
+    "leyo": "CAH774",
+    "marca": null,
+    "color": "Silver",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-06T01:38:57.659Z",
+    "leyo": "CAH774",
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "CKF069": {
+  "marca": null,
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T22:05:01.284Z",
+    "leyo": "CKF069",
+    "marca": null,
+    "color": "White",
+    "tipo": "Sedan"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-05T23:07:02.643Z",
+    "leyo": "CKF069",
+    "marca": "Volvo",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T00:53:21.659Z",
+    "leyo": "CKF069",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "HRR602": {
+  "marca": null,
+  "color": null,
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-06T02:21:12.536Z",
+    "leyo": "HRR602",
+    "marca": "Aston Martin",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T02:23:18.152Z",
+    "leyo": "HRR602",
+    "marca": null,
+    "color": "Blue",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-06T03:36:43.283Z",
+    "leyo": "HRR602",
+    "marca": "Mercedes-Benz",
+    "color": "Silver",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "AA988HF": {
+  "marca": null,
+  "color": null,
+  "vistas": []
+ },
+ "JWJ493": {
+  "marca": "scania",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T19:25:55.903Z",
+    "leyo": "JWJ493",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-05T20:02:09.842Z",
+    "leyo": "JWJ493",
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-05T20:13:46.176Z",
+    "leyo": "JWJ493",
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "GIZ755": {
+  "marca": null,
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T01:34:54.043Z",
+    "leyo": "GIZ755",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T02:36:26.281Z",
+    "leyo": "GIZ755",
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "KFQ820": {
+  "marca": null,
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T21:55:08.539Z",
+    "leyo": "KFQ820",
+    "marca": null,
+    "color": "White",
+    "tipo": "Sedan"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T22:02:16.953Z",
+    "leyo": "KFQ820",
+    "marca": null,
+    "color": "White",
+    "tipo": null
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-05T23:02:19.946Z",
+    "leyo": "KFQ820",
+    "marca": "Volvo",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "EVL715": {
+  "marca": null,
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T21:19:51.137Z",
+    "leyo": "EVL715",
+    "marca": "Volkswagen",
+    "color": "Blue",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T21:24:31.464Z",
+    "leyo": "EVL715",
+    "marca": null,
+    "color": "White",
+    "tipo": "Sedan"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-05T22:51:02.830Z",
+    "leyo": "EVPC715",
+    "marca": null,
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "CTS647": {
+  "marca": "iveco",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T01:53:33.001Z",
+    "leyo": "CTS647",
+    "marca": "Jeep",
+    "color": "Red",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-06T02:38:33.535Z",
+    "leyo": "CTS647",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T02:44:35.349Z",
+    "leyo": "CTS647",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "CCR179": {
+  "marca": "scania",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-06T01:04:52.507Z",
+    "leyo": "CCR179",
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T01:08:11.707Z",
+    "leyo": "CCR179",
+    "marca": null,
+    "color": "Pink",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-06T01:57:29.994Z",
+    "leyo": "CCR179",
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "ETO684": {
+  "marca": "volkswagen",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-06T02:58:34.667Z",
+    "leyo": "ETO684",
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T03:02:51.570Z",
+    "leyo": "ETO684",
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-06T04:35:46.234Z",
+    "leyo": "ETO684",
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "EUX851": {
+  "marca": null,
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-06T02:05:27.918Z",
+    "leyo": "EUX851",
+    "marca": "Infiniti",
+    "color": "Black",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T02:10:04.105Z",
+    "leyo": "EUX851",
+    "marca": null,
+    "color": "White",
+    "tipo": null
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-06T02:58:38.167Z",
+    "leyo": "EUX851",
+    "marca": "Hino",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "FCU793": {
+  "marca": null,
+  "color": null,
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T01:58:55.746Z",
+    "leyo": "FCU793",
+    "marca": null,
+    "color": "Black",
+    "tipo": null
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-06T02:41:31.526Z",
+    "leyo": "FCU793",
+    "marca": "Jeep",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "SLZIngCamFrente",
+    "at": "2026-11-06T03:07:52.923Z",
+    "leyo": "FCU793",
+    "marca": null,
+    "color": "Gray",
+    "tipo": null
+   }
+  ]
+ },
+ "AKF023": {
+  "marca": null,
+  "color": "Silver",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T23:32:20.663Z",
+    "leyo": "AKF023",
+    "marca": null,
+    "color": "White",
+    "tipo": "Sedan"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T23:34:05.939Z",
+    "leyo": "AKF023",
+    "marca": null,
+    "color": "Silver",
+    "tipo": null
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-06T00:53:02.889Z",
+    "leyo": "AKF023",
+    "marca": "Chenglong",
+    "color": "Silver",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "FDO218": {
+  "marca": null,
+  "color": null,
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-06T02:11:10.900Z",
+    "leyo": "FDO218",
+    "marca": null,
+    "color": "Blue",
+    "tipo": "Sedan"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T02:14:22.920Z",
+    "leyo": "FDO218",
+    "marca": null,
+    "color": "Black",
+    "tipo": null
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-06T03:08:39.391Z",
+    "leyo": "FDO218",
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "CFG112": {
+  "marca": null,
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-06T02:53:09.447Z",
+    "leyo": "CFG112",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T02:55:46.345Z",
+    "leyo": "CFG112",
+    "marca": null,
+    "color": "White",
+    "tipo": "Sedan"
+   }
+  ]
+ },
+ "GSA321": {
+  "marca": "mercedes",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T01:19:21.909Z",
+    "leyo": "GSA321",
+    "marca": "Renault",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-06T02:09:55.172Z",
+    "leyo": "GSA321",
+    "marca": "Mercedes-Benz",
+    "color": "Silver",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T02:22:40.551Z",
+    "leyo": "GSA321",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "AI058IM": {
+  "marca": "iveco",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-06T02:05:51.761Z",
+    "leyo": "AI058IM",
+    "marca": "Iveco",
+    "color": "Pink",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T02:10:54.109Z",
+    "leyo": "AI058IM",
+    "marca": null,
+    "color": "White",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-06T03:00:29.658Z",
+    "leyo": "AI058IM",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "AB037XS": {
+  "marca": null,
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-06T01:59:59.899Z",
+    "leyo": "AB037XS",
+    "marca": null,
+    "color": "White",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T02:02:32.959Z",
+    "leyo": "AB037XS",
+    "marca": null,
+    "color": "White",
+    "tipo": "Sedan"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-06T02:51:37.704Z",
+    "leyo": "AB037XS",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "AI286PA": {
+  "marca": "mercedes",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-06T01:57:29.732Z",
+    "leyo": "AI286PA",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T02:00:08.550Z",
+    "leyo": "AI286PA",
+    "marca": "Mercedes-Benz",
+    "color": "Pink",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-06T02:49:44.563Z",
+    "leyo": "AI286PA",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "LVM546": {
+  "marca": null,
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T00:45:31.390Z",
+    "leyo": "LVM546",
+    "marca": null,
+    "color": "Black",
+    "tipo": null
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-06T01:28:29.299Z",
+    "leyo": "LVM546",
+    "marca": null,
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T01:46:17.785Z",
+    "leyo": "LVM546",
+    "marca": "Renault",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "IWM581": {
+  "marca": "Mercedes-Benz",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T01:40:01.018Z",
+    "leyo": "IWM581",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T02:45:55.914Z",
+    "leyo": "IWMG581",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "KCY113": {
+  "marca": "volkswagen",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-06T02:13:02.586Z",
+    "leyo": "KCY113",
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T02:18:35.257Z",
+    "leyo": "KCY113",
+    "marca": "Volkswagen",
+    "color": "Silver",
+    "tipo": "Bus"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-06T03:24:15.061Z",
+    "leyo": "KCY113",
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "OER844": {
+  "marca": "scania",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T01:30:45.308Z",
+    "leyo": "OER844",
+    "marca": null,
+    "color": "White",
+    "tipo": "Sedan"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-06T02:17:25.470Z",
+    "leyo": "OER844",
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T02:23:21.595Z",
+    "leyo": "OER844",
+    "marca": "Scania",
+    "color": "Brown",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "MWP665": {
+  "marca": "iveco",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T02:13:44.360Z",
+    "leyo": "MWP665",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-06T03:04:40.339Z",
+    "leyo": "MWP065",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-06T03:18:08.587Z",
+    "leyo": "MWP665",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "EQK505": {
+  "marca": null,
+  "color": "Blue",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-06T01:04:23.704Z",
+    "leyo": "EQK505",
+    "marca": null,
+    "color": "Blue",
+    "tipo": "Sedan"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T01:07:21.226Z",
+    "leyo": "EQK505",
+    "marca": null,
+    "color": "Blue",
+    "tipo": null
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-06T01:56:18.940Z",
+    "leyo": "EQK505",
+    "marca": "Scania",
+    "color": "Black",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "GDP575": {
+  "marca": "iveco",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-06T01:17:03.028Z",
+    "leyo": "GDP575",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-06T01:20:47.673Z",
+    "leyo": "GDP575",
+    "marca": "Iveco",
+    "color": "Red",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal04",
+    "at": "2026-11-06T02:08:17.342Z",
+    "leyo": "GDP575",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "VNI813": {
+  "marca": null,
+  "color": "Blue",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T23:06:40.335Z",
+    "leyo": "VNI813",
+    "marca": "Suzuki",
+    "color": "Blue",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T23:08:57.051Z",
+    "leyo": "VNI813",
+    "marca": null,
+    "color": "Blue",
+    "tipo": null
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-06T00:39:55.183Z",
+    "leyo": "VNI813",
+    "marca": "Mitsubishi",
+    "color": "Black",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ "MSJ873": {
+  "marca": "iveco",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicIngCamFrente",
+    "at": "2026-11-05T21:25:47.078Z",
+    "leyo": "MSJ873",
+    "marca": "Iveco",
+    "color": "Blue",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T21:30:36.443Z",
+    "leyo": "MSJ873",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicCal03",
+    "at": "2026-11-05T22:54:22.420Z",
+    "leyo": "MSJ873",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ "MOF325": {
+  "marca": "iveco",
+  "color": "White",
+  "vistas": [
+   {
+    "camara": "RicPreIngInFr",
+    "at": "2026-11-05T21:25:48.987Z",
+    "leyo": "MOF325",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "camara": "RicEgrCamFrente",
+    "at": "2026-11-05T22:58:51.897Z",
+    "leyo": "MOF325",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "camara": "SLZBalSC2Fte",
+    "at": "2026-11-06T02:17:29.536Z",
+    "leyo": "MOF325",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ }
+}

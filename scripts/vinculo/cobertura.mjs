@@ -164,7 +164,9 @@ const cartas = cartasRaw.map((n) => (Array.isArray(n.plates) ? n : normalizeNote
 const CLOSED = new Set(['CN', 'AN', 'RE', 'DE'])
 if (process.env.VINCULO_EXTRA) {
   const ya = new Set(cartas.flatMap((n) => n.plates))
-  for (const n of JSON.parse(fs.readFileSync(path.resolve(root, process.env.VINCULO_EXTRA), 'utf8'))) if (!n.plates.some((p) => ya.has(p))) cartas.push(n)
+  // Mismo viaje repetido en la lista (JYP960 «SGC:…» dos veces el 05/11): competía dos veces por las capturas.
+  const ctgs = new Set()
+  for (const n of JSON.parse(fs.readFileSync(path.resolve(root, process.env.VINCULO_EXTRA), 'utf8'))) if (!n.plates.some((p) => ya.has(p)) && !ctgs.has(n.ctg)) { ctgs.add(n.ctg); cartas.push(n) }
 }
 for (const n of cartas) {
   // Viaje sin carta: la ventana la da quien lo armó (el día de la visita).
@@ -326,9 +328,74 @@ const capsByVehicle = new Map()
 for (const c of caps) if (c.vehicle) capsByVehicle.set(c.vehicle, [...(capsByVehicle.get(c.vehicle) ?? []), c])
 // VINCULO_SOLO_DIA=1: como antes (solo capturas y viajes del rango), para comparar.
 const SOLO_DIA = process.env.VINCULO_SOLO_DIA === '1'
+// ── Un camión con varias cartas (viajes seguidos): cada visita a una sola carta ──
+// La ventana de una carta va de −48 h a +120 h de la partida, así que la carta del segundo viaje cubría también el
+// primero y se quedaba con sus capturas: el segundo viaje se evaluaba con los pasos del primero y sus propios pasos
+// no se miraban nunca (EYL559, 05/11: dos cartas, viajes 01:13 y 23:41; 35 de 405 camiones del 05/11).
+// Visita = capturas seguidas del camión; empieza otra cuando:
+//  · después de salir del puerto (Balanza Egreso o Egreso) se lo lee en Ricardone (vuelve: otro viaje), o vuelve a entrar
+//    al puerto con más de 20 min sin lecturas;
+//  · vuelve a entrar a Ricardone (Ingreso o Pre ingreso) con más de 1 h sin lecturas después de haber pasado más adentro.
+//    Con 20 min cortaba los viajes que cargan en Ricardone y salen por Ingreso hacia el puerto (DFP716, RAW481, SAT582
+//    el 09/11: Playa 3 → carga S8 → Ingreso → Calada → Salida 2 → puerto, varios viajes por día).
+// Cada carta cerrada (CN) se queda con la visita que pasó por la balanza de egreso a la hora del cierre (coincide a
+// ±2 min); las demás, en orden de partida, con las visitas que quedan dentro de su ventana. Solo camiones con más de una
+// carta: con una sola, separar partía viajes largos legítimos (AF763AJ, aceite, 05→06/11: 27 h entre Ricardone y el
+// puerto). Sin corte por horas sin lecturas por lo mismo. VINCULO_UNA_VISITA=0 lo apaga; =todas lo aplica a todos.
+const visitaDe = new Map() // captura → carta dueña (null: visita sin carta)
+if (process.env.VINCULO_UNA_VISITA !== '0') {
+  const ENTRADA_RIC = new Set(['ricardone:Ingreso', 'ricardone:Pre ingreso'])
+  const SALIDA_SL = new Set(['san_lorenzo:Egreso', 'san_lorenzo:Balanza Egreso'])
+  const grupoDe = new Map() // patente → cartas que la comparten
+  for (const n of cartas) {
+    const g = new Set([n])
+    for (const p of n.plates) for (const o of grupoDe.get(p) ?? []) g.add(o)
+    for (const o of g) for (const p of o.plates) grupoDe.set(p, g)
+  }
+  for (const g of new Set(grupoDe.values())) {
+    if (g.size < 2 && process.env.VINCULO_UNA_VISITA !== 'todas') continue
+    const ns = [...g]
+    const plates = new Set(ns.flatMap((n) => n.plates))
+    const lo = Math.min(...ns.map((n) => n.from)), hi = Math.max(...ns.map((n) => n.to))
+    const cs = [...plates].flatMap((p) => capsByVehicle.get(p) ?? []).filter((c) => c.t >= lo && c.t <= hi).sort((a, b) => a.t - b.t)
+    if (!cs.length) continue
+    const visitas = []
+    let v = null
+    for (const c of cs) {
+      const gap = v ? c.t - v.at(-1).t : Infinity
+      const salioDelPuerto = v?.some((x) => SALIDA_SL.has(x.node))
+      const otra = !v ||
+        (salioDelPuerto && c.node.startsWith('ricardone:') && gap > 3 * 60_000) ||
+        (salioDelPuerto && c.node === 'san_lorenzo:Ingreso' && gap > 20 * 60_000) ||
+        (gap > H && ENTRADA_RIC.has(c.node) && v.some((x) => !ENTRADA_RIC.has(x.node)))
+      if (otra) { v = []; visitas.push(v) }
+      v.push(c)
+    }
+    const duena = new Map() // visita → carta
+    const libres = new Set(visitas)
+    // 1) Cartas cerradas: la visita con lectura más cercana a la hora de cierre (balanza de egreso a ±2 min).
+    for (const n of ns.filter((n) => CLOSED.has(n.stateCode) && n.stateCode === 'CN').sort((a, b) => Date.parse(a.stateSince) - Date.parse(b.stateSince))) {
+      const cn = Date.parse(n.stateSince)
+      let best = null
+      for (const vis of libres) {
+        const d = Math.min(...vis.map((c) => Math.abs(c.t - cn)))
+        const dentro = cn >= vis[0].t - 30 * 60_000 && cn <= vis.at(-1).t + 3 * H
+        if (dentro && (!best || d < best.d)) best = { vis, d }
+      }
+      if (best) { duena.set(best.vis, n); libres.delete(best.vis) }
+    }
+    // 2) El resto por orden de partida, con la primera visita libre que cae en su ventana.
+    for (const n of ns.filter((n) => ![...duena.values()].includes(n)).sort((a, b) => Date.parse(a.departure ?? a.desde) - Date.parse(b.departure ?? b.desde))) {
+      const vis = [...libres].sort((a, b) => a[0].t - b[0].t).find((x) => x[0].t <= n.to && x.at(-1).t >= n.from)
+      if (vis) { duena.set(vis, n); libres.delete(vis) }
+    }
+    for (const vis of visitas) for (const c of vis) visitaDe.set(c, duena.get(vis) ?? null)
+  }
+}
+const mineOf = (n) => n.plates.flatMap((p) => capsByVehicle.get(p) ?? []).filter((c) => c.t >= n.from && c.t <= n.to && (!visitaDe.has(c) || visitaDe.get(c) === n))
 const trucks = []
 for (const n of cartas) {
-  const mine = n.plates.flatMap((p) => capsByVehicle.get(p) ?? []).filter((c) => c.t >= n.from && c.t <= n.to)
+  const mine = mineOf(n)
   if (!mine.length) continue
   // Viajes de los días vecinos también compiten por las capturas (ver `free` más abajo); al final solo se informan
   // los que empiezan en el rango (enSemana).
@@ -357,7 +424,7 @@ for (const tr of trucks) tr.plates = cartas.find((x) => x.ctg === tr.ctg).plates
 const firstAtOf = new Map()
 for (const tr of trucks) {
   const n = cartas.find((x) => x.ctg === tr.ctg)
-  tr.mine = n.plates.flatMap((p) => capsByVehicle.get(p) ?? []).filter((c) => c.t >= n.from && c.t <= n.to)
+  tr.mine = mineOf(n)
   const firstAt = new Map()
   for (const c of tr.mine) if (!firstAt.has(c.node) || c.t < firstAt.get(c.node)) firstAt.set(c.node, c.t)
   firstAtOf.set(tr, firstAt)
@@ -501,9 +568,35 @@ const taken = new Set()
 // Medido 05, 06 y 09/11: 264 de los 575 pasos sin captura caían el día siguiente. Para que la competencia sea pareja,
 // los viajes de los días vecinos también están en `trucks` (enSemana = false) y se descartan al informar.
 const free = caps.filter((c) => !c.vehicle && (!SOLO_DIA || inWeek(c.t)))
+// «Auto» del DSS: ¿se le puede creer en esta cámara a esta hora? Se mide con los camiones con carta que la misma
+// cámara leyó bien en la franja (día 7–18 h / noche): si a 1 de cada 10 o más los llamó auto, no es confiable y la
+// captura solo pesa ×0,3 en vez de quedar afuera. Medido 05, 06 y 09/11: de noche las frontales llaman auto a 20–50 %
+// de los camiones (SLZBalIngFte 24/49, Volcables C5 5/14; foto: «W68» volcables 05/11 20:56 y «MJJ» Ingreso Ricardone
+// 05/11 00:10 son camiones) y de día la balanza 1 de Ricardone (10/50; «L20» 09/11 08:04 es CIF516). La balanza 2 de
+// día sí ve autos (AH049…, Fiat blanco 05/11 08:29). Con menos de 5 camiones medidos: de día se le cree, de noche no.
+const AUTO_CAT = new Set(['Sedan', 'SaloonCar', 'PassengerCar'])
+const franja = (c) => { const h = new Date(c.t - 3 * H).getUTCHours(); return h >= 7 && h < 18 ? 'D' : 'N' }
+const autoFiable = new Map()
+{
+  const m = new Map()
+  for (const c of caps) {
+    if (c.rear || !c.alertAttrs || c.cls !== 'carta') continue
+    const k = `${c.device.toLowerCase()}|${franja(c)}`
+    const o = m.get(k) ?? { n: 0, auto: 0 }
+    o.n++
+    if (AUTO_CAT.has(c.alertAttrs.category)) o.auto++
+    m.set(k, o)
+  }
+  for (const [k, o] of m) if (o.n >= 5) autoFiable.set(k, o.auto / o.n < 0.1)
+}
+// VINCULO_LIVIANO_MEDIDO=0: como antes (al «auto» del DSS se le cree siempre).
+const livianoFiable = (c) => process.env.VINCULO_LIVIANO_MEDIDO === '0' || (autoFiable.get(`${c.device.toLowerCase()}|${franja(c)}`) ?? franja(c) === 'D')
+const lejosDe = (c, tr) => !c.plate || Math.min(...tr.plates.map((p) => readDist(c.plate, p))) >= 3
 const ranked = new Map()
 for (const c of free) {
-  const rank = (slotsByNode.get(c.node) ?? []).filter((s) => c.t > s.from && c.t < s.to && (!s.calles || s.calles.has(carril(c.device)))).map((s) => ({ s, score: affinity(c, s) * timeFit(c, s), h: timeFit(c, s) })).filter((x) => x.h >= 0.01 && x.score >= MIN_SCORE && !(c.liviano && x.s.truck.origen === 'carta' && (!c.plate || Math.min(...x.s.truck.plates.map((p) => readDist(c.plate, p))) >= 3))).sort((x, y) => y.score - x.score)
+  const livDuro = c.liviano && livianoFiable(c)
+  const livF = (s) => (c.liviano && !livDuro && s.truck.origen === 'carta' && lejosDe(c, s.truck) ? 0.3 : 1)
+  const rank = (slotsByNode.get(c.node) ?? []).filter((s) => c.t > s.from && c.t < s.to && (!s.calles || s.calles.has(carril(c.device)))).map((s) => ({ s, score: affinity(c, s) * timeFit(c, s) * livF(s), h: timeFit(c, s) })).filter((x) => x.h >= 0.01 && x.score >= MIN_SCORE && !(livDuro && x.s.truck.origen === 'carta' && lejosDe(c, x.s.truck))).sort((x, y) => y.score - x.score)
   // Patente válida que no se parece a ningún candidato: es otro vehículo, no se asigna.
   if (!rank.length || (isValidPlate(c.plate) && Math.min(...rank[0].s.truck.plates.map((p) => readDist(c.plate, p))) >= 3)) continue
   ranked.set(c, rank)
@@ -585,7 +678,18 @@ resolver()
 // pasada le asignó con ≥ 60 %. Se aplica solo a ATRIB_CAMS de 18 a 7 h. VINCULO_ATRIB_NOCHE=0 lo apaga.
 const ATRIB_CAMS = new Set((process.env.VINCULO_ATRIB_CAMS ?? 'SLZVolcableC1,SLZVolcableC2,SLZVolcableC3,SLZVolcableC4,SLZVolcableC5').split(',').map((d) => d.toLowerCase()))
 const deNoche = (t) => { const h = new Date(t - 3 * H).getUTCHours(); return h >= 18 || h < 7 }
-const marcaNorm = (m) => { const s = String(m ?? '').toLowerCase(); if (!s || /unknown|unrecognized|null/.test(s)) return null; return /benz|mercedes/.test(s) ? 'mercedes' : s.replace(/[^a-z]/g, '') }
+// Solo marcas de camión: una marca de auto en un camión (Suzuki, Jeep, Aston Martin, Honda… en las 3 lecturas por camión
+// del 05, 06 y 09/11) es un error del DSS y cuenta como sin marca. Naveco es la marca china de Iveco y el DSS las cruza
+// (KRE352, Iveco en sus 3 lecturas frontales, «Naveco» en volcables 06/11 22:26).
+const MARCAS_CAMION = new Set(['mercedes', 'scania', 'iveco', 'volkswagen', 'ford', 'volvo', 'renault', 'fiat', 'dongfeng', 'foton', 'hino', 'isuzu', 'chenglong', 'man', 'daf', 'international', 'agrale', 'jac', 'shacman', 'sinotruk', 'sitrak', 'faw', 'howo', 'kenworth', 'freightliner'])
+const marcaNorm = (m) => {
+  const s = String(m ?? '').toLowerCase()
+  if (!s || /unknown|unrecognized|null/.test(s)) return null
+  const k = /benz|mercedes/.test(s) ? 'mercedes' : /naveco|iveco/.test(s) ? 'iveco' : /volks|vw/.test(s) ? 'volkswagen' : s.replace(/[^a-z]/g, '')
+  return MARCAS_CAMION.has(k) ? k : null
+}
+// Valor de perfil: el que se repite 2 o más veces y más que cualquier otro (una sola alerta de noche no alcanza).
+const mayoria = (o) => { const [a, b] = Object.entries(o ?? {}).sort((x, y) => y[1] - x[1]); return a && a[1] >= 2 && (!b || a[1] > b[1]) ? a[0] : null }
 const tamNorm = (z) => (/light/i.test(z ?? '') ? 'liviano' : /oversize|large|mid|truck/i.test(z ?? '') ? 'camion' : null)
 if (process.env.VINCULO_ATRIB_NOCHE !== '0') {
   const perfil = new Map() // camión → { marca: {}, color: {} }
@@ -599,15 +703,29 @@ if (process.env.VINCULO_ATRIB_NOCHE !== '0') {
   }
   for (const tr of trucks) for (const c of tr.mine) if (!c.rear && !c.testOf) sumar(tr, c.alertAttrs)
   for (const [c, d] of decisions) if (!c.rear && d.P >= 0.6 && !ATRIB_CAMS.has(c.device.toLowerCase())) sumar(d.s.truck, c.alertAttrs)
-  const moda = (o) => Object.entries(o ?? {}).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null
+  // Marca y color pedidos al DSS de hasta 3 lecturas frontales propias (scripts/vinculo/marca-dss.mjs → data/dss-marcas):
+  // para los camiones que solo se leyeron por el feed, que no trae atributos. Cada lectura suma una.
+  const marcasDss = {}
+  for (const d of DAYS) { const f = path.join(DATA, 'dss-marcas', `${d}.json`); if (fs.existsSync(f)) Object.assign(marcasDss, JSON.parse(fs.readFileSync(f, 'utf8'))) }
+  let conDss = 0
+  for (const tr of trucks) {
+    const m = tr.plates.map((p) => marcasDss[p]).find((x) => x?.vistas?.length)
+    if (!m) continue
+    for (const v of m.vistas) sumar(tr, { brand: v.marca, color: v.color })
+    conDss++
+  }
+  if (conDss) console.log(`  marca del DSS para ${conDss} camiones (data/dss-marcas)`)
+  const moda =(o) => Object.entries(o ?? {}).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null
   const factor = (c, tr) => {
     const a = c.alertAttrs, p = perfil.get(tr)
     if (!a) return 1
     let f = 1
-    const mc = marcaNorm(a.brand), mt = moda(p?.marca)
+    const mc = marcaNorm(a.brand), mt = mayoria(p?.marca)
     if (mc && mt) f *= mc === mt ? 4 : 0.2
+    // Color: de noche la imagen es infrarroja (gris) y el color que da el DSS no dice nada; pesaba ×1,5/×0,6 y le sacaba
+    // a NUW682 su captura «W68» (05/11 20:56, patente a medias) por «Black». VINCULO_COLOR_NOCHE=1 lo vuelve a usar.
     const cc = String(a.color ?? '').toLowerCase(), ct = moda(p?.color)
-    if (cc && ct) f *= cc === ct ? 1.5 : 0.6
+    if (process.env.VINCULO_COLOR_NOCHE === '1' && cc && ct) f *= cc === ct ? 1.5 : 0.6
     if (tamNorm(a.size) === 'liviano' && tr.origen === 'carta') f *= 0.3
     return f
   }
@@ -620,6 +738,17 @@ if (process.env.VINCULO_ATRIB_NOCHE !== '0') {
   }
   if (tocadas) { banned.clear(); resolver() }
   console.log(`  atributos de noche: ${tocadas} capturas de volcables repuntuadas con marca/color/tamaño (${perfil.size} camiones con perfil)`)
+}
+// VINCULO_TRAZA=<cámara>|<HH:MM>: candidatos, vetos y decisión de las capturas de esa cámara en ese minuto.
+if (process.env.VINCULO_TRAZA) {
+  const [dev, hm] = process.env.VINCULO_TRAZA.split('|')
+  const hm2 = (t) => new Date(t - 3 * H).toISOString().slice(5, 16).replace("T", " ")
+  for (const c of caps.filter((c) => c.device === dev && hm2(c.t).endsWith(hm))) {
+    console.log(`TRAZA ${hm2(c.t)} ${c.device} «${c.plate}» libre=${!c.vehicle} liviano=${c.liviano} ranked=${ranked.has(c)}`)
+    for (const x of ranked.get(c) ?? []) console.log(`   ${x.s.truck.plate} ${x.s.node} ${x.s.read ? 'leido' : 'pendiente'} score=${x.score.toFixed(4)} h=${x.h.toFixed(2)} vetado=${banned.get(c)?.has(x.s) ?? false}`)
+    const d = decisions.get(c)
+    console.log(`   → ${d ? `${d.s.truck.plate} ${Math.round(d.P * 100)} %` : 'sin decisión'}`)
+  }
 }
 for (const [c, d] of decisions) {
   taken.add(c)
@@ -705,4 +834,9 @@ fs.writeFileSync(path.join(out, 'cobertura.json'), JSON.stringify({
   desconocidas: [...desconocidaA].map(([leida, camion]) => ({ leida, camion, lecturas: byPlate.get(leida)?.length ?? 0 })),
   sinCarta: [...sinCartaPlates].map(([plate, nodes]) => ({ plate, lecturas: byPlate.get(plate).length, nodos: [...nodes] })).sort((a, b) => b.lecturas - a.lecturas),
 }, null, 1))
+// VINCULO_CAPTURAS=1: todas las capturas cargadas con su dueño (para revisar casos a mano).
+if (process.env.VINCULO_CAPTURAS === '1') {
+  const dueno = (c) => c.vehicle ?? (decisions.get(c) ? `${decisions.get(c).s.truck.plate} ${Math.round(decisions.get(c).P * 100)} %` : null)
+  fs.writeFileSync(path.join(out, 'capturas.json'), JSON.stringify(caps.map((c) => ({ hora: hhmm(c.t), at: new Date(c.t).toISOString(), nodo: c.node, camara: c.device, patente: c.plate, fuente: c.src, clase: c.cls, dueno: dueno(c), liviano: c.liviano || undefined, attrs: c.alertAttrs ?? undefined }))))
+}
 console.log(`\n→ ${path.relative(root, out)}/cobertura.json`)

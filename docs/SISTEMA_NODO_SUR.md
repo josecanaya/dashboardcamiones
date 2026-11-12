@@ -138,6 +138,8 @@ python scripts/estado-planta/gen_comite_seguridad.py reportes/logistica/<desde>_
 | **Informe por capas de uno o varios días** (qué resolvió cada capa, alertas por motivo, nodo y patente, lote) | `node scripts/informe-capas-dias.mjs reportes/reconocimiento-capas/<día1> [<día2> …] --salida <informe.md>`. Último: `reportes/reconocimiento-capas/informe-capas-03-04-nov.md`. |
 | Replay simple por pasos + cruce con SGC + fotos + clasificación por foto | `scripts/replay-pasos-dia.mjs`, `scripts/cruce-pasos-sgc.mjs`, `scripts/fotos-pasos-dss.mjs`; flujo en `docs/CONTINUAR_2026-11-03_reconocedor-y-vinculo.md`. |
 | Simulador del vínculo (qué camiones compiten por cada captura) | `scripts/vinculo/simulador-server.mjs` (puerto 8820). |
+| **Marca del DSS para volcables de noche** (perfil de los camiones que solo leyó el feed) | Después de reconocer el día: `node scripts/vinculo/marca-dss.mjs DIA data/reconocido/<día>/cobertura.json` → `data/dss-marcas/<día>.json` (3 consultas de datos por camión, sin fotos); volver a reconocer el día para que el lote la use. Detalle en `docs/CONTINUAR_2026-11-12_pasos-faltantes.md`. |
+| Validar a mano una asignación del lote con foto | `node scripts/vinculo/fotos-par.mjs <cobertura.json> <patente> <cámara> <hora ISO> <salida.jpg>` (foto propia del camión + candidata). |
 | Bases del back office | `npm run padron:armar`; revisión en el artifact de back office (sección 7). |
 | SGC por rango | `python scripts/sgc/consultar_rango.py` (parte en lotes de 5 días; `--simular` para ver los lotes). |
 | Tests | `npx vitest run server` (fallan 3 desde antes: reportWorkbook, reducer backlog, relevanceCleaner). |
@@ -150,6 +152,7 @@ python scripts/estado-planta/gen_comite_seguridad.py reportes/logistica/<desde>_
 | `docs/RECONOCEDOR_RECORRIDO_CAPTURA.md` | **vigente · fuente única** | recorrido de una captura y las capas |
 | `docs/CONTINUAR_2026-11-05_reconocedor-en-vivo.md` | **vigente** | estado del reconocedor, números por día y pendientes en orden |
 | `docs/CONTINUAR_2026-11-05_backoffice-y-capas.md` | vigente | bases MongoDB, páginas /autorizaciones, pruebas |
+| `docs/CONTINUAR_2026-11-12_pasos-faltantes.md` | **vigente** | pasos sin captura de los camiones con carta: causas, cambios del lote y pendientes |
 | `docs/ANEXO_SEGURIDAD_SIN_REGISTRO.md` | vigente | anexo de seguridad paso a paso |
 | `agentes/conocimiento/COMITE_LOGISTICA_BASE_Y_ANEXOS.md` | **vigente** | deck de Logística: base, anexos, scripts |
 | `agentes/conocimiento/COMITE_LOGISTICA_PELLET_OPERATIVO_29OCT_3NOV.md` | vigente (receta) | anexo de pellet |
