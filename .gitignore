@@ -87,8 +87,6 @@ reportes/cruce-sistema-truckflow/_*
 /data/alertas/
 
 # Limpieza F0/F1 (docs/PLAN_LIMPIEZA.md)
-# Tokens OAuth del MCP de Google Slides: nunca al repo
-mcp-google-slides/.tokens/
 # Respaldos y copias de datos
 *.bak
 *.vacio-*

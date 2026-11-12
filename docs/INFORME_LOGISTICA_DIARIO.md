@@ -1,7 +1,10 @@
 # Informe diario de logística
 
-Una presentación en Google Slides (portada + 6 láminas, con el diseño del semanal) que se emite **cada día, para el día anterior**,
+Una presentación de Claude (ver «Formato vigente» abajo) que se emite **cada día, para el día anterior**,
 con las mismas métricas y reglas que el semanal del comité.
+
+> El sync a Google Slides y el MCP `mcp-google-slides` se retiraron el 12/11; sus scripts quedan en
+> `scripts/_archivo/slides/` solo como referencia.
 
 ## Cómo se arma
 
@@ -15,8 +18,7 @@ npm run informe:diario:procesar -- 2026-09-24
         ├─ buildLogisticsReportPackage(día, día)   ← MISMO paquete que el semanal
         ├─ buildDailyExtras                        ← movimientos Excel, anomalías, demorados
         │
-        ├─ reportes/logistica/diario/<día>/revision-NNN/{paquete,diario,control}.json
-        └─ informe-diario-slides.mjs               ← presentación viva + copia fechada
+        └─ reportes/logistica/diario/<día>/revision-NNN/{paquete,diario,control}.json
 ```
 
 Sin `--procesar` (`npm run informe:diario -- <día>`) usa la corrida guardada que cubra el día y
@@ -25,12 +27,11 @@ no baja ni reprocesa nada. Sin fecha, toma el día anterior (hora Argentina).
 | Flag | Qué hace |
 |---|---|
 | `--procesar` | baja cámaras, repara journeyUid si hace falta, reprocesa la semana |
-| `--sin-slides` | solo la revisión local (sirve para cargar historial) |
-| `--forzar` | publica aunque falte el Excel de movimientos del día |
-| `--dry` | calcula y muestra las conclusiones; no escribe en Google |
+| `--sin-slides` | no exige el Excel de movimientos (sirve para cargar historial) |
+| `--forzar` | termina bien aunque falte el Excel de movimientos del día |
 
 **Sin Excel de movimientos del día no se publica** (sale con código 3): productos, circuitos y
-puerta a puerta darían cero y pisarían la presentación con un informe incompleto. El Excel se
+puerta a puerta darían cero y la presentación saldría incompleta. El Excel se
 sigue cargando a mano (`/api/movimientos/ingest`); es la única dependencia manual que queda.
 
 ## Qué contiene
@@ -61,27 +62,13 @@ publicables): si una métrica no se puede publicar, no aparece; el detalle queda
   con menos de 3 días no se publica variación.
 - Destacados (`destacadosDia`): máximo 4 líneas cortas; volumen −50 % = «validar con planta».
   No se listan reglas cuya evidencia es la falta de registro (R12, revisión manual).
-- Diseño: todo lo que no es gráfico se borra y se redibuja en cada corrida desde
-  `informe-diario-slides.mjs`; un ajuste de formato va en el código. Los gráficos viven en la
-  hoja y se reinsertan vinculados (reciben el estilo del semanal: `estiloGraficosHoja`).
 - Exclusiones: `reportes/logistica/diario/<día>/exclusiones.json`, mismo formato que el semanal.
-
-## Destino en Google
-
-La presentación del diario es una **copia de la semanal**, reducida a la portada y 6 láminas: hereda
-la foto de la planta, los logos y el estilo de título. En cada corrida el script conserva esos
-elementos (`destino.plantilla.conservar`), reescribe título y fecha, y redibuja el contenido con
-los marcos y colores del semanal. No se exporta PDF.
-
-`reportes/logistica/diario/destino.json` guarda la presentación, la hoja y el `chartId` de cada
-gráfico. Cada publicación deja además una **copia fechada** («Informe diario DD-MM-AAAA»; si se
-rehace el día, la nueva lleva «(rev. N)»).
 
 ## Automatización (paso 2, todavía no activada)
 
 La corrida diaria queda en un solo comando: `npm run informe:diario:procesar` a las 07:00.
-Necesita el ETL API (8787) y el MCP de Google Slides (8790) arriba en la máquina, y el Excel
-de movimientos del día anterior cargado antes de esa hora.
+Necesita el ETL API (8787) arriba en la máquina y el Excel de movimientos del día anterior
+cargado antes de esa hora.
 
 ## Formato vigente: presentación de Claude «Estado de planta · Nodo Sur»
 

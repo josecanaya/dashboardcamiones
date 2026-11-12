@@ -1,6 +1,7 @@
 /**
- * Informe DIARIO de logística: arma la revisión de un día y (salvo `--sin-slides`) actualiza
- * la presentación diaria en Google Slides.
+ * Informe DIARIO de logística: arma la revisión local de un día. La presentación se arma
+ * aparte como artefacto de Claude (ver docs/INFORME_LOGISTICA_DIARIO.md); el sync a Google
+ * Slides se retiró el 12/11.
  *
  * Mismas métricas que el semanal: el paquete sale de `buildLogisticsReportPackage` con un
  * período de un día, sobre la corrida guardada de la semana que contiene ese día. Se le suma
@@ -15,11 +16,10 @@
  * - `--procesar`: baja las cámaras del día de la nube, repara `journeyUid` si vienen vacíos y
  *   reprocesa la semana calendario (lunes→domingo) en el ETL API. Sin el flag usa la corrida
  *   ya guardada que cubra el día (no reprocesa nada).
- * - `--sin-slides`: solo escribe la revisión local (sirve para cargar el historial).
- * - `--dry`: el sync de Slides no escribe (ver `informe-diario-slides.mjs`).
- * - `--forzar`: publica aunque falte el Excel de movimientos del día (sin él, productos,
- *   circuitos y puerta a puerta salen vacíos: por defecto la revisión queda como borrador local
- *   y NO se publica, para no pisar la presentación con un informe incompleto).
+ * - `--sin-slides`: no exige el Excel de movimientos (sirve para cargar el historial).
+ * - `--forzar`: termina bien aunque falte el Excel de movimientos del día (sin él, productos,
+ *   circuitos y puerta a puerta salen vacíos: por defecto sale con código 3 para avisar que la
+ *   revisión es un borrador y no se debe publicar).
  *
  * ## Qué deja
  *
@@ -232,17 +232,10 @@ for (const a of control.advertencias.filter((x) => !/quedaron fuera del período
   console.log(`  ⚠ ${a.id}: ${a.detail}`)
 }
 
-// —— 5. Google Slides —————————————————————————————————————————————————————
+// —— 5. Sin Excel no se publica ——————————————————————————————————————————
 
 const sinExcel = control.advertencias.some((a) => a.id === 'movimientos.falta_excel' || a.id === 'movimientos.sin_filas')
 if (sinExcel && !flag('--sin-slides') && !flag('--forzar')) {
   console.error(`No se publica: falta el Excel de movimientos del ${dia}. Cargarlo y volver a correr (o --forzar).`)
   process.exit(3)
-}
-if (!flag('--sin-slides')) {
-  const r = spawnSync('node', ['scripts/informe-diario-slides.mjs', revDir, ...(flag('--dry') ? ['--dry'] : [])], {
-    cwd: RAIZ,
-    stdio: 'inherit',
-  })
-  if (r.status !== 0) process.exit(r.status ?? 1)
 }
