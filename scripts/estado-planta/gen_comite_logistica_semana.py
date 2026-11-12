@@ -1383,7 +1383,8 @@ if PP:
 _pp = JC('pellet-operativo.json') if os.path.exists(os.path.join(CAL_DIR, 'pellet-operativo.json')) else None
 _ss = JC('soja-silos-operativo.json') if os.path.exists(os.path.join(CAL_DIR, 'soja-silos-operativo.json')) else None
 # el anexo de operativo se arma con el transile que hubo: pellet, o si no hubo, soja de los silos al puerto (pedido 11/11)
-if not (_pp and _pp['cartas']) and _ss and _ss['cartas']: PO, OPN, LT_FILE = _ss, 'soja', 'soja-silos-linea-tiempo.json'
+# con los dos en la semana, manda el de más viajes (12/11: arrancó pellet con 18 cartas en plena soja de silos)
+if _ss and _ss['cartas'] and (not (_pp and _pp['cartas']) or _ss['cartas'] > _pp['cartas']): PO, OPN, LT_FILE = _ss, 'soja', 'soja-silos-linea-tiempo.json'
 else: PO, OPN, LT_FILE = _pp, 'pellet', 'pellet-linea-tiempo.json'
 OPC = OPN.capitalize(); OPDESC = 'pellet de girasol' if OPN == 'pellet' else 'soja de los silos'
 APC, APM, APL, APX = (PEL, PELM, PELL, '#E3C9A3') if OPN == 'pellet' else (GDK, GMID, GXLT, GLT)   # soja en verde (pedido 11/11)
