@@ -110,23 +110,30 @@ def main():
         ax = json.load(open(os.path.join(a.anterior, 'datos.json'), encoding='utf-8'))
         ad = ax['periodo']['days'] if 'periodo' in ax else ax['days']
         run([sys.executable, 'scripts/estado-planta/silos-internos.py', os.path.join(C, 'silos-internos-anterior.json'), ad[0], ad[-1]])
-    # base y anexos (agentes/conocimiento/COMITE_LOGISTICA_BASE_Y_ANEXOS.md): viajes por cartas, tiempos por el vínculo
+    # base y anexos (agentes/conocimiento/COMITE_LOGISTICA_BASE_Y_ANEXOS.md): viajes por cartas, tiempos por el reconocedor por capas
     pd0 = min(a.desde, a.pellet_desde or a.desde)
     cartas = os.path.join(C, 'cartas.json')
     run(['node', '--env-file=.env.local', 'scripts/cruce-cartas-sin-carta/bajar-cartas-api.mjs', shift(pd0, -3), shift(a.hasta, 1), cartas], cwd=ROOT)
     mes0 = a.hasta[:8] + '01'
     run([sys.executable, 'scripts/estado-planta/ponderado-producto.py', os.path.join(C, 'ponderado-producto.json'), f'desde-junio:{a.hasta[:4]}-06-01:{a.hasta}', f'mes:{mes0}:{a.hasta}',
          '--girasol-serie', os.path.join(ROOT, 'data', 'cache', 'girasol-comites.json')])
-    VW = os.environ.get('VINCULO_WORKTREE') or os.path.join(ROOT, '.claude', 'worktrees', 'dss-vinculo-e5702c')
-    cob = os.path.join(VW, 'reportes', 'vinculo', f'{pd0}_{a.hasta}', 'cobertura.json')
-    run(['node', '--max-old-space-size=8192', 'scripts/vinculo/cobertura.mjs', pd0, a.hasta], cwd=VW,
-        env_extra={'VINCULO_DATA': os.path.join(ROOT, 'data'), 'VINCULO_CARTAS': cartas})
+    # recorridos por camión = reconocedor por capas (lote, ensamblador de pasos y alertas), nunca el vínculo suelto
+    # ni las cámaras crudas: se exige cada día en data/reconocido/<día>/ (npm run reconocer -- DESDE HASTA)
+    cob = os.path.join(C, 'cobertura-reconocida.json')
+    run([sys.executable, 'scripts/estado-planta/reconocido.py', 'cobertura', pd0, a.hasta, cob], cwd=ROOT)
     run([sys.executable, 'scripts/estado-planta/transile-cartas-camaras.py', cartas, cob, pd0, a.hasta, os.path.join(C, 'pellet-operativo.json'), 'pellet'])
+    run([sys.executable, 'scripts/estado-planta/transile-cartas-camaras.py', cartas, cob, a.desde, a.hasta, os.path.join(C, 'soja-silos-operativo.json'), 'soja-silos'])   # transile de soja de los silos (calada y Salida 2 separados)
     run([sys.executable, 'scripts/estado-planta/calada-producto.py', cartas, cob, a.desde, a.hasta, os.path.join(C, 'calada-producto.json')])
+    run([sys.executable, 'scripts/estado-planta/calada-liquidos.py', a.desde, a.hasta, os.path.join(C, 'calada-liquidos.json')])   # calle de líquidos por producto (12/11)
+    run([sys.executable, 'scripts/estado-planta/soja-ric-sl.py', cartas, cob, a.desde, a.hasta, os.path.join(C, 'soja-ric-sl.json')])
+    run([sys.executable, 'scripts/estado-planta/volcables-cartas.py', cartas, cob, a.desde, a.hasta, os.path.join(C, 'calles-volcables-cartas.json')])
+    run([sys.executable, 'scripts/estado-planta/pellet-volcables-osl.py', cartas, cob, os.path.join(C, 'pellet-volcables-osl.json')])
     run([sys.executable, 'scripts/estado-planta/despachos-cartas.py', cartas, a.desde, a.hasta, os.path.join(C, 'despachos-cartas.json')])
+    run([sys.executable, 'scripts/estado-planta/otros-productos.py', cartas, a.desde, a.hasta, os.path.join(C, 'otros-productos.json')])
     for sc, out in (('tramos-circuitos.py', 'tramos-circuitos.json'), ('liquidos-puntos.py', 'liquidos-puntos.json'), ('calles-volcables-sgc.py', 'calles-volcables-sgc.json')):
         run([sys.executable, f'scripts/estado-planta/{sc}', a.desde, a.hasta, os.path.join(C, out)])
-    run(big + ['scripts/estado-planta/metricas-camaras.cjs', os.path.join(C, 'metricas-camaras.json'), shift(a.desde, -7), a.desde,
+    run(big + ['scripts/estado-planta/metricas-camaras.cjs', os.path.join(C, 'metricas-camaras.json'), a.desde, a.desde,   # solo se usa la semana actual ('cur'); la anterior sale del comité publicado
+              
                str((datetime.date.fromisoformat(a.hasta) - datetime.date.fromisoformat(a.desde)).days + 1)])
 
     # 4 · datos y deck

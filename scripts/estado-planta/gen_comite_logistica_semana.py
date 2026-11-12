@@ -2255,6 +2255,37 @@ if OQ:
         + ' La cámara de la balanza de ingreso casi no lee estos camiones: calada → Playa 3 incluye la pesada. Script: otros-productos.py.', gap=24)
     NUEVAS.append(('otros-granos', ('liq-ritmo', 'liq-oleico', 'liq-puntos', 'liq-semana', 'liq-tramos'), ()))
 
+# ---- sectores: calada de líquidos de Ricardone (calle RicCalLiq) por día y producto, con la espera antes de calar (pedido 12/11)
+CL = JC('calada-liquidos.json') if os.path.exists(os.path.join(CAL_DIR, 'calada-liquidos.json')) else None
+if CL and CL['camiones']:
+    GRP = [('Aceite de girasol', '#C98A12'), ('Soja de silos (transile)', GDK), ('Pellet de girasol', PEL), ('Otros', GREY)]
+    vis = lambda g: 'Otros' if g in ('Otros', 'Sin registro', 'Aceite') else g
+    dl = [d for d, v in CL['porDia'].items() if v['camiones']]
+    cnt = {g: [sum(n for k, n in CL['porDia'][d]['porProducto'].items() if vis(k) == g) for d in dl] for g, _ in GRP}
+    GRP = [(g, c) for g, c in GRP if sum(cnt[g])]
+    mx = max(sum(cnt[g][i] for g, _ in GRP) for i in range(len(dl))) or 1
+    rows = ''.join(
+        f'<div style="display:flex; flex-direction:row; align-items:center; gap:16px"><p style="width:110px; font-size:26px; font-weight:600; color:{TEXT}">{DIAS_L[wd(d)]} {dd(d)}</p>'
+        f'<div style="display:flex; flex-direction:row; border-radius:6px; overflow:hidden">'
+        + ''.join(f'<div style="width:{round(cnt[g][i] / mx * 760)}px; height:40px; background:{c}"></div>' for g, c in GRP if cnt[g][i])
+        + f'</div><p style="font-size:26px; font-weight:700; color:{TEXT}">{sum(cnt[g][i] for g, _ in GRP)}</p>'
+        + (f'<p style="font-size:22px; color:{BODY}">espera {CL["porDia"][d]["espera"]["mediana"]} min</p>' if CL['porDia'][d]['espera'] else '') + '</div>' for i, d in enumerate(dl))
+    tot = {g: sum(cnt[g]) for g, _ in GRP}; T_ = sum(tot.values())
+    EPP = CL['esperaPorProducto']
+    sj = [d for i, d in enumerate(dl) if cnt.get('Soja de silos (transile)', [0] * len(dl))[i] >= 20]
+    fdl = lambda ds: ' y '.join(f'{DIAS_L[wd(d)].lower()} {dd(d)}' for d in ds)
+    clave = (f'El {fdl(sj)} la soja de los silos se caló en la calle de líquidos ({sum(cnt["Soja de silos (transile)"][dl.index(d)] for d in sj)} camiones); el resto de la semana la calle quedó para el aceite y el pellet.'
+             if sj else f'La calle de líquidos caló {tot.get("Aceite de girasol", 0)} camiones de aceite de girasol en la semana.')
+    cards = ''.join(note(f'{tot[g]}', f'{g.lower()}' + (f'; espera mediana {EPP[g]["mediana"]} min' if EPP.get(g) else '') + '.', c) for g, c in GRP if g != 'Otros')
+    section('calada-liquidos', head('Sectores · calada', f'Calle de líquidos: {T_} camiones calados; {round(tot.get("Soja de silos (transile)", 0) / T_ * 100)} % fue soja de los silos' if tot.get('Soja de silos (transile)') else f'Calle de líquidos: {T_} camiones calados en la semana', GDK, 52)
+        + legend([(g, c) for g, c in GRP], f'<div style="width:24px"></div><p style="font-size:24px; color:{BODY}">camiones calados por día · espera mediana antes de calar</p>')
+        + f'<div style="display:flex; flex-direction:column; gap:12px">{rows}</div>'
+        + f'<div style="display:flex; flex-direction:row; gap:20px">{cards}</div>'
+        + key(clave, 24),
+        CL['criterio'].replace('\n', ' ') + f' Productos (registro de balanza): {CL["detalleProducto"]}. Movimiento: {CL["porMovimiento"]}. Espera media / mediana (camiones) por grupo: '
+        + '; '.join(f'{g} {v["media"]} / {v["mediana"]} ({v["n"]})' for g, v in EPP.items() if v) + f'. Calados por hora del día (0–23): {CL["porHora"]}.', gap=22)
+    NUEVAS.append(('calada-liquidos', ('calada-playa1', 'calada-producto', 'calada'), ()))
+
 ORDER = ['portada', 'resumen-planta', 'dia-a-dia', 'div-soja', 'tramos-r7', 'resumen-soja', 'hallazgo', 'plantas', 'cuartos', 'historico',
          'div-pellet', 'pel-periodo', 'pel-tramos', 'pel-dias', 'pel-jornadas', 'pel-numeros', 'pellet-operativo', 'pellet-tramos', 'pellet-hist', 'div-girasol', 'girasol', 'girasol-hist',
          'div-liquidos', 'liq-criterio', 'liq-productos', 'liq-tramos', 'liq-semana', 'liq-oleico', 'liq-ritmo', 'div-sectores', 'calada', 'volcables', 'volcables-mes', 'silos', 'silos-camiones', 'silos-ritmo', 'cruces']
