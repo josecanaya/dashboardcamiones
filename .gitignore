@@ -85,3 +85,14 @@ reportes/cruce-sistema-truckflow/_*
 /data/vision/
 # Alertas de En vivo por día (server/live/alerts/alertStore.mjs)
 /data/alertas/
+
+# Limpieza F0/F1 (docs/PLAN_LIMPIEZA.md)
+# Tokens OAuth del MCP de Google Slides: nunca al repo
+mcp-google-slides/.tokens/
+# Respaldos y copias de datos
+*.bak
+*.vacio-*
+# Python compilado y salidas de perfilado
+__pycache__/
+*.pyc
+/scripts/output/
