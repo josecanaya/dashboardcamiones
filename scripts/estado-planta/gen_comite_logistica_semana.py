@@ -28,9 +28,11 @@ def dd(d): return int(d[8:10])
 days = [f'{DOW[wd(d)]} {dd(d)}' for d in DAYS]                       # «Lun 5»
 ini = [DOW[wd(d)][0] for d in DAYS]                                  # «L»
 full = [f'{DOWF[wd(d)]} {dd(d)}' for d in DAYS]                       # «lunes 5»
+DIAS_L = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
 fdm = lambda d: f'{d[8:10]}/{d[5:7]}'
 LBL = f'{fdm(DAYS[0])}–{fdm(DAYS[-1])}'
-LBL_LARGO = f'Del {dd(DAYS[0])} al {dd(DAYS[-1])} de {MES[int(DAYS[-1][5:7]) - 1]} de {DAYS[-1][:4]}'
+LBL_LARGO = (f'Del {dd(DAYS[0])} al {dd(DAYS[-1])} de {MES[int(DAYS[-1][5:7]) - 1]} de {DAYS[-1][:4]}' if DAYS[0][5:7] == DAYS[-1][5:7]
+             else f'Del {dd(DAYS[0])} de {MES[int(DAYS[0][5:7]) - 1]} al {dd(DAYS[-1])} de {MES[int(DAYS[-1][5:7]) - 1]} de {DAYS[-1][:4]}')   # mes de cada punta si cambia (pedido 06/11)
 HOURS = 24 * N
 iD = {d: i for i, d in enumerate(DAYS)}
 
@@ -70,7 +72,7 @@ ANT_DAYS = ANT['dias']; ANT_N = len(ANT_DAYS); ANT_LBL = f'{fdm(ANT_DAYS[0])}–
 ASP = ANT['sojaPeriodo']; atr = {t['key']: round(t['mediaMin']) for t in ASP['tramos'] if t['mediaMin'] is not None}
 PUB = dict(r7_ops=ASP['camiones'], total=round(ASP['tiempoMedioMin']), p1=atr['PREINGRESO→CALADA'],
            ric=atr['INGRESO→PREINGRESO'] + atr['PREINGRESO→CALADA'] + atr['CALADA→EGRESO'],
-           g_p1=ANT['girasol']['p1'], g_dt=ANT['girasol']['desc'] + ANT['girasol']['tara'],
+           g_p1=ANT['girasol']['p1'], g_dt=(ANT['girasol']['desc'] or 0) + (ANT['girasol']['tara'] or 0),   # sin recepción de girasol la semana anterior: None
            slz=atr['SL_INGRESO→SL_BALANZA_INGRESO'] + atr['SL_BALANZA_INGRESO→SL_VOLCABLE'] + atr['SL_VOLCABLE→SL_EGRESO'],
            g_total=ANT['girasol']['total'], g_ops=ANT['extras']['girasol']['ops'], liq=ANT['extras']['liquidos']['camiones'],
            pel_viajes=ANT['pelletHistorico'][-1]['viajes'], pel_ciclo=ANT['pelletHistorico'][-1]['ciclo'],
@@ -118,6 +120,11 @@ if RUN_T:
     R7['slzDia'] = [_dsum(d, _sk) or c for d, c in zip(DAYS, R7['slzDia'])]
     R7['totN'] = [PQS['porDia'].get(d, {}).get('tiempoMedioN', 0) for d in DAYS]
 r7_dia, r7_dia_prev = R7['est'] / N, PUB['r7_ops'] / ANT_N
+_cp0 = os.path.join(CAL_DIR, 'calada-producto.json')   # camiones de soja por día = cartas de soja caladas en Ricardone (la misma cifra de la calada)
+_CP0 = json.load(open(_cp0, encoding='utf-8')) if os.path.exists(_cp0) else None
+SOJA_DIA = [sum(_CP0['calles'][k].get(d, {}).get('Soja', 0) for k in _CP0['calles']) for d in DAYS] if _CP0 else None
+if SOJA_DIA and not sum(SOJA_DIA): SOJA_DIA = None
+if SOJA_DIA: r7_dia = sum(SOJA_DIA) / N   # camiones por día = cartas de soja caladas (misma cifra que la calada)
 LIVIANA = r7_dia < 0.9 * r7_dia_prev; PESADA = r7_dia > 1.1 * r7_dia_prev
 QN = {q: sum(v) for q, v in RC['cuartos'].items()}; qd = RC['cuartos']
 if P2P_PLAN:   # cuartos de la planilla: todas las operaciones R7, no la muestra de cámaras
@@ -177,7 +184,7 @@ PANT = 'la tanda del 30/09–02/10' if PI else 'el operativo anterior'
 pl_blk = [b for b in PE['bloques'] if b['viajes'] >= 5]
 PEL_OP = bool(PI or pl_blk)   # hubo operativo de transile (no viajes sueltos)
 # líquidos
-LC = X['liquidos']['camaras']; LK = X['liquidos']['calibracion']; LKV = X['liquidos']['calibracionVisitas']; LCR = X['liquidos']['criterioAnterior']; LCW = X['liquidos'].get('criterioSemana') if not CAMARAS else None
+LC = X['liquidos']['camaras']; LK = X['liquidos']['calibracion']; LKV = X['liquidos']['calibracionVisitas']; LCR = X['liquidos']['criterioAnterior']; LCW = X['liquidos'].get('criterioSemana') if X['modo'] != 'camaras' else None   # con planilla parcial también: líquidos solo existen en la planilla
 LKD = len(K7['dias'])
 r29 = X['r29']
 
@@ -203,7 +210,7 @@ def add(id, html): slides.append((id, html))
 def section(id, body, notes, bg=BG, gap=40, extra=''):
     add(id, f'<section id="{id}" data-transition="fade" style="background:{bg}; color:{TEXT}; font-family:{FONT}; padding:112px 128px 160px; display:flex; flex-direction:column; gap:{gap}px{extra}">{body}{footer(0)}<aside>{notes}</aside></section>')
 def pill(t, bg): return f'<p style="font-size:24px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#F1F6F2; background:{bg}; padding:6px 18px; border-radius:999px">{t}</p>'
-def tagcam(): return f'<p style="font-size:24px; font-weight:600; color:{BODY}; border:2px solid {GREY}; padding:4px 16px; border-radius:999px">Según cámaras</p>' if CAMARAS else ''
+def tagcam(): return ''   # sin rótulos de fuente en las láminas (pedido del usuario)
 def head(tag, title, tagbg=GDK, size=64, cam=False):
     return (f'<div style="display:flex; flex-direction:column; gap:16px"><div style="display:flex; flex-direction:row; gap:16px; align-items:center">{pill(tag, tagbg)}{tagcam() if cam else ""}</div>'
             f'<h2 style="font-size:{size}px; font-weight:600; line-height:1.1; color:{TEXT}">{title}</h2></div>')
@@ -267,7 +274,7 @@ def kcard(label, big, band, col):
 def kpi(label, big, col, delta, tone, vals):
     sp = spark(vals, 300, 80, GMID, GDK) if vals else ''
     return (f'<div style="flex:1; display:flex; flex-direction:column; gap:12px; background:{CARD}; border:1px solid {LINE}; border-radius:16px; padding:32px"><p style="font-size:26px; font-weight:600; color:{BODY}">{label}</p>'
-            f'<p style="font-size:72px; font-weight:600; line-height:1.05; color:{col}">{big}</p><p style="font-size:24px; font-weight:600; color:{GDK}; background:{tone}; padding:6px 14px; border-radius:8px; align-self:start">{delta}</p><div style="flex:1"></div>{sp}</div>')
+            f'<p style="font-size:72px; font-weight:600; line-height:1.05; color:{col}">{big}</p>' + (f'<p style="font-size:24px; font-weight:600; color:{GDK}; background:{tone}; padding:6px 14px; border-radius:8px; align-self:start">{delta}</p>' if delta else '') + f'<div style="flex:1"></div>{sp}</div>')
 def linechart(vals, labels, col, vmin, vmax, avgv, X0=168, Y0=380, W=1000, H=400, hollow=()):
     n = len(vals)
     xy = lambda i, v: (X0 + round(i * W / (n - 1)), Y0 + round((vmax - v) / (vmax - vmin) * H))
@@ -300,14 +307,14 @@ def hbar(rows, width=620, col=BLU, lab_w=420, sub_w=None):
         f'<p style="font-size:30px; font-weight:600; color:{TEXT}; white-space:nowrap">{fmtn(v)}</p></div>' for a, s, v, c in rows) + '</div>'
 
 # ------------------------------------------------------------------ 1 portada
-modo_txt = ('' if not CAMARAS else 'Versión solo cámaras: la planilla de movimientos de estos días todavía no llegó' if X['modo'] == 'camaras' else f'Versión con cámaras: la planilla está incompleta (último Excel {PLAN.get("ultimoExcel")})')
+modo_txt = ''   # la portada no aclara fuentes ni versiones (pedido del usuario)
 add('portada', f'<section id="portada" data-transition="fade" style="display:flex; flex-direction:column; gap:22px; padding:96px 128px 88px; background:{GDK}; font-family:{FONT}; color:#F1F6F2"><div style="position:absolute; left:0px; top:0px; width:1920px; height:1080px; background:linear-gradient(160deg, #0B5638 0%, #0E4A33 60%, #2E1B4E 100%)"></div><img src="{AER_RIC}" alt="Vista aérea de la planta Ricardone" style="position:absolute; left:900px; top:0px; width:1020px; height:536px; object-fit:cover"><img src="{AER_SL}" alt="Vista aérea del puerto San Lorenzo" style="position:absolute; left:900px; top:544px; width:1020px; height:536px; object-fit:cover"><div style="position:absolute; left:900px; top:0px; width:460px; height:1080px; background:linear-gradient(90deg, #0B5638 0%, rgba(11,86,56,0.55) 45%, rgba(11,86,56,0) 100%)"></div><div style="position:absolute; left:900px; top:536px; width:1020px; height:8px; background:#9CCBAE"></div><div style="position:absolute; left:1512px; top:448px; width:368px; height:60px; display:flex; flex-direction:row; align-items:center; justify-content:center; gap:12px; background:rgba(14,40,28,0.82); border-left:6px solid #9CCBAE; border-radius:10px"><p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#F1F6F2">Planta Ricardone</p></div><div style="position:absolute; left:1512px; top:992px; width:368px; height:60px; display:flex; flex-direction:row; align-items:center; justify-content:center; gap:12px; background:rgba(30,18,52,0.82); border-left:6px solid #B9A8E0; border-radius:10px"><p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#F1F6F2">Puerto San Lorenzo</p></div><img src="{NVA_L}" alt="Nueva Vicentin Argentina" style="width:240px; height:128px; object-fit:contain; align-self:start"><div style="flex:1"></div><p style="width:700px; font-size:28px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#9CCBAE">Logística · Ricardone y San Lorenzo</p><h1 style="width:720px; font-size:112px; font-weight:600; line-height:1.02; color:#F1F6F2">Comité de Logística Nodo Sur</h1><div style="width:160px; height:8px; background:#9CCBAE; border-radius:4px"></div><p style="width:700px; font-size:40px; line-height:1.3; color:#D6E4DA">{LBL_LARGO}</p><p style="width:700px; font-size:26px; line-height:1.35; color:#9CCBAE">{modo_txt}</p><div style="flex:1"></div><img src="{BTZ_L}" alt="Bimtrazer" style="width:190px; height:90px; object-fit:contain; align-self:start"><aside>Portada. Comité de Logística Nodo Sur, semana {LBL} (lunes a domingo, {N} días). '
     + (f'Sin planilla de movimientos para estos días: todas las cifras salen de las cámaras ({RUNTXT}) y de los scripts por patente de scripts/estado-planta. Cada lámina dice su denominador y cómo se calibró contra la planilla de {CAL_LBL}. Cuando llegue la planilla se reemplazan los conteos.' if CAMARAS else RUNTXT)
     + f' Comparativos contra el comité anterior ({ANT_LBL}, {ANT_N} días): las cantidades se comparan por día.</aside></section>')
 
 # ------------------------------------------------------------------ 2 resumen planta
 def pcard(tag, tagcol, band, big, unit, line2, vals, dark, light, foot):
-    return (f'<div style="flex:1; display:flex; flex-direction:column; gap:10px; background:{CARD}; border:1px solid {LINE}; border-top:8px solid {band}; border-radius:16px; padding:22px 26px">'
+    return (f'<div style="flex:1; display:flex; flex-direction:column; gap:10px; background:{CARD}; border:1px solid {LINE}; border-radius:16px; padding:22px 26px">'
             f'<p style="font-size:24px; font-weight:600; color:{tagcol}; text-transform:uppercase; letter-spacing:1px">{tag}</p>'
             f'<div style="display:flex; flex-direction:row; align-items:baseline; gap:10px"><p style="font-size:60px; font-weight:600; line-height:1.05; color:{tagcol}">{big}</p><p style="font-size:24px; color:{BODY}">{unit}</p></div>'
             f'<p style="font-size:24px; color:{TEXT}">{line2}</p>{minibars(vals, dark, light)}' + (f'<p style="font-size:24px; line-height:1.3; color:{BODY}">{foot}</p>' if CAMARAS else '') + '</div>')
@@ -383,7 +390,7 @@ section('tramos-r7', head('Soja · R7', 'Tiempos medios por tramo', cam=True)
     + '<div style="display:flex; flex-direction:row; gap:24px">'
     + kcard(f'Tiempo total puerta a puerta · {hm(R7["total"])}', f'{R7["total"]} min', GDK, GDK)
     + kcard('Comparativo semana anterior' if RUN_T else f'Contra el comité anterior ({PUB["total"]})', f'{sgn(d_tot)} min', GMID, GDK)
-    + (kcard('Total de camiones', fmtn(R7['est']), VMID, VIO) if RUN_T else kcard('Viajes medidos de punta a punta', fmtn(N7['total']), VMID, VIO)) + '</div>',
+    + (kcard('Total de camiones', fmtn(R7['est']), VMID, VIO) if RUN_T else kcard('Promedio por día', f'{round(sum(SOJA_DIA) / len(SOJA_DIA))} camiones', VMID, VIO) if SOJA_DIA else kcard('Viajes medidos de punta a punta', fmtn(N7['total']), VMID, VIO)) + '</div>',
     (f'Circuito R7, tramos de la corrida {RUN["runId"]} (circuit_timing, operaciones R7 unidas a la planilla), igual que el comité publicado ({ANT_LBL}: Ricardone {PUB["ric"]}, San Lorenzo {PUB["slz"]}). Promedio por tramo (operaciones con el tramo): ' + ', '.join(f'{a} {v7[i]} ({n7[i]})' for i, a in enumerate(['ingreso', 'Playa 1', 'salida', 'interplanta', 'Playa OSL', 'descarga', 'egreso'])) + f'. Puerta a puerta = salida − ingreso de la planilla ({R7["total"]} min, {fmtn(N7["total"])} operaciones).') if RUN_T else
     f'Circuito R7, promedio de la semana por tramo en minutos (viajes con el tramo leído): ingreso {v7[0]} ({n7[0]}), Playa 1 {v7[1]} ({n7[1]}), salida {v7[2]} ({n7[2]}), interplanta {v7[3]} ({n7[3]}), Playa OSL {v7[4]} ({n7[4]}), descarga {v7[5]} ({n7[5]}), egreso {v7[6]} ({n7[6]}). '
     f'Suman {sum(v7)}; el puerta a puerta medido de punta a punta (pre-ingreso → salida de San Lorenzo) da {CAMT} sobre {N7["total"]} viajes: cada tramo se promedia sobre los viajes que lo tienen leído. '
@@ -397,23 +404,27 @@ ordinal = {1: 'el más bajo', 2: 'el 2.º más bajo', 3: 'el 3.º más bajo'}
 d_ric, d_sl = R7['ric'] - TP['ric'], R7['slz'] - TP['sl']
 quien = 'Ricardone' if d_ric < d_sl else 'San Lorenzo'
 if RUN_T:
-    d_ric, d_sl = R7['p1'] - PUB['p1'], R7['slz'] - PUB['slz']
+    d_ric, d_sl = R7['p1'] - PUB['p1'], sl_s - PUB['slz']   # San Lorenzo = tramos sumados, como la lámina de tramos (pedido 06/11)
     quien = 'Ricardone' if d_ric < d_sl else 'San Lorenzo'
-    rk_p1 = rank(P1 + [R7['p1']], R7['p1']); rk_sl = rank(SLZ + [R7['slz']], R7['slz'])
+    rk_p1 = rank(P1 + [R7['p1']], R7['p1']); rk_sl = rank(SLZ + [sl_s], sl_s)
 section('resumen-soja', head('Soja · R7', 'Resumen de la semana: soja', cam=True)
     + '<div style="flex:1; display:flex; flex-direction:row; gap:24px">'
     + kpi('Puerta a puerta', f'{R7["total"]} min', GDK, f'{sgn(d_tot)} min vs. semana anterior', GXLT, TOT + [R7['total']])
     + (kpi('Espera Playa 1 · Ricardone', f'{R7["p1"]} min', GDK, ('La más baja desde junio' if rk_p1 == 1 else f'{sgn(d_ric)} vs. semana anterior'), GXLT, P1 + [R7['p1']])
-       + kpi('San Lorenzo · playa, descarga y salida', f'{R7["slz"]} min', VIO, ('La más baja desde junio' if rk_sl == 1 else f'{sgn(d_sl)} vs. semana anterior'), VLT, SLZ + [R7['slz']]) if RUN_T else
-       kpi('Ricardone · ingreso, Playa 1 y salida', f'{R7["ric"]} min', GDK, f'{sgn(d_ric)} vs. {CAL_LBL}', GXLT, None)
-       + kpi('San Lorenzo · ingreso a salida', f'{R7["slz"]} min', VIO, f'{sgn(d_sl)} vs. {CAL_LBL}', VLT, None))
-    + kpi('Camiones R7 por día', f'{APR}{fmtn(r7_dia)}', GDK, f'{spct(pct(r7_dia, r7_dia_prev))} vs. semana anterior', GXLT, None)
-    + '</div>' + (key(f'Semana {"liviana" if LIVIANA else "cargada" if PESADA else "de volumen parecido"} {"y rápida" if d_tot < 0 else "y más lenta" if d_tot > 0 else ""}: {fmtn(r7_dia)} camiones por día y {R7["total"]} min puerta a puerta, {ordinal.get(rk_tot, f"el {rk_tot}.º")} desde junio. '
-                      + (f'Subió por Ricardone: Playa 1 pasó de {PUB["p1"]} a {R7["p1"]} min; San Lorenzo bajó de {PUB["slz"]} a {R7["slz"]}.' if d_tot > 0 and d_ric > 0 and d_sl < 0 else
-                         f'Subió por San Lorenzo ({PUB["slz"]} → {R7["slz"]} min); Playa 1 quedó en {R7["p1"]} min ({PUB["p1"]} la semana anterior).' if d_tot > 0 and d_sl > 0 and d_ric < 0 else
-                         f'La mejora vino de San Lorenzo ({PUB["slz"]} → {R7["slz"]} min); Playa 1 quedó en {R7["p1"]} min ({PUB["p1"]} la semana anterior).' if d_sl < 0 and d_sl < d_ric else
-                         f'La mejora vino de Ricardone (Playa 1 {PUB["p1"]} → {R7["p1"]} min); San Lorenzo quedó en {R7["slz"]} min ({PUB["slz"]} la semana anterior).' if d_ric < 0 else
-                         f'Playa 1 en {R7["p1"]} min ({PUB["p1"]} la semana anterior) y San Lorenzo en {R7["slz"]} ({PUB["slz"]}).')) if RUN_T else key(f'Semana {"liviana" if LIVIANA else "cargada" if PESADA else "de volumen parecido"} {"y rápida" if d_tot < 0 else "y más lenta" if d_tot > 0 else ""}: {"" if PR7 else "unos "}{fmtn(r7_dia)} camiones por día y {R7["total"]} min puerta a puerta, {ordinal.get(rk_tot, f"el {rk_tot}.º")} desde junio. Con el mismo método de cámaras, la mejora contra {CAL_LBL} vino más de {quien} (Ricardone {sgn(d_ric)}, San Lorenzo {sgn(d_sl)} min).', 28)),
+       + kpi('San Lorenzo · playa, descarga y salida', f'{sl_s} min', VIO, ('La más baja desde junio' if rk_sl == 1 else f'{sgn(d_sl)} vs. semana anterior'), VLT, SLZ + [sl_s]) if RUN_T else
+       kpi('Ricardone · ingreso, Playa 1 y salida', f'{ric_s} min', GDK, '', GXLT, None)   # tramos sumados, como la lámina de tramos (pedido 06/11)
+       + kpi('San Lorenzo · ingreso a salida', f'{sl_s} min', VIO, '', VLT, None))
+    + ('' if SOJA_DIA else kpi('Camiones R7 por día', f'{APR}{fmtn(r7_dia)}', GDK, f'{spct(pct(r7_dia, r7_dia_prev))} vs. semana anterior', GXLT, None))
+    + '</div>'
+    + (f'<div style="display:flex; flex-direction:row; gap:10px; align-items:stretch"><div style="width:220px; display:flex; flex-direction:column; justify-content:center; background:{GDK}; border-radius:12px; padding:12px 18px"><p style="font-size:22px; color:#D6E4DA">Camiones de soja</p><p style="font-size:48px; font-weight:700; line-height:1.05; color:#F1F6F2">{fmtn(sum(SOJA_DIA))}</p></div>'
+       + f'<div style="width:240px; display:flex; flex-direction:column; justify-content:center; background:{GMID}; border-radius:12px; padding:12px 18px"><p style="font-size:22px; color:#F1F6F2; white-space:nowrap">Promedio por día</p><p style="font-size:48px; font-weight:700; line-height:1.05; color:#FFFFFF">{round(sum(SOJA_DIA) / len(SOJA_DIA))}</p></div>'
+       + ''.join(f'<div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; background:{CARD}; border:1px solid {LINE}; border-radius:12px; padding:10px 4px"><p style="font-size:22px; font-weight:600; color:{BODY}">{DIAS_L[wd(d)]} {dd(d)}</p><p style="font-size:40px; font-weight:700; color:{GDK if n == max(SOJA_DIA) else TEXT}">{n}</p></div>' for d, n in zip(DAYS, SOJA_DIA)) + '</div>' if SOJA_DIA else '')
+    + (key(f'Semana {"liviana" if LIVIANA else "cargada" if PESADA else "de volumen parecido"} {"y rápida" if d_tot < 0 else "y más lenta" if d_tot > 0 else ""}: {fmtn(r7_dia)} camiones por día y {R7["total"]} min puerta a puerta, {ordinal.get(rk_tot, f"el {rk_tot}.º")} desde junio. '
+                      + (f'Subió por Ricardone: Playa 1 pasó de {PUB["p1"]} a {R7["p1"]} min; San Lorenzo bajó de {PUB["slz"]} a {sl_s}.' if d_tot > 0 and d_ric > 0 and d_sl < 0 else
+                         f'Subió por San Lorenzo ({PUB["slz"]} → {sl_s} min); Playa 1 quedó en {R7["p1"]} min ({PUB["p1"]} la semana anterior).' if d_tot > 0 and d_sl > 0 and d_ric < 0 else
+                         f'La mejora vino de San Lorenzo ({PUB["slz"]} → {sl_s} min); Playa 1 quedó en {R7["p1"]} min ({PUB["p1"]} la semana anterior).' if d_sl < 0 and d_sl < d_ric else
+                         f'La mejora vino de Ricardone (Playa 1 {PUB["p1"]} → {R7["p1"]} min); San Lorenzo quedó en {sl_s} min ({PUB["slz"]} la semana anterior).' if d_ric < 0 else
+                         f'Playa 1 en {R7["p1"]} min ({PUB["p1"]} la semana anterior) y San Lorenzo en {sl_s} ({PUB["slz"]}).')) if RUN_T else key(f'Semana {"liviana" if LIVIANA else "cargada" if PESADA else "de volumen parecido"} {"y rápida" if d_tot < 0 else "y más lenta" if d_tot > 0 else ""}: {"" if PR7 or SOJA_DIA else "unos "}{fmtn(r7_dia)} camiones por día y {R7["total"]} min puerta a puerta, {ordinal.get(rk_tot, f"el {rk_tot}.º")} desde junio. Con el mismo método, la mejora contra {CAL_LBL} vino más de {quien} (Ricardone {sgn(d_ric)}, San Lorenzo {sgn(d_sl)} min).', 28)),
     f'{APR}{fmtn(R7["est"])} {"operaciones" if PR7 else "camiones"} R7 en {N} días: {fmtn(r7_dia)} por día, contra {fmtn(r7_dia_prev)} por día del comité anterior ({fmtn(PUB["r7_ops"])} operaciones de la planilla en {ANT_N} días). ' + ('Cifra de la planilla. ' if PR7 else 'La cifra de esta semana es una estimación por cámaras (ver lámina 2). ') +
     (f'Playa 1 y San Lorenzo (playa OSL + descarga + egreso) son tramos de la corrida, el mismo método del comité publicado: Playa 1 {PUB["p1"]} → {R7["p1"]}, San Lorenzo {PUB["slz"]} → {R7["slz"]} min. Las líneas son la serie publicada desde el 17/06 más esta semana. ' if RUN_T else
     f'Ricardone y San Lorenzo se comparan contra {CAL_LBL} medido igual (cámaras por patente, misma PC): Ricardone {TP["ric"]} → {R7["ric"]}, San Lorenzo {TP["sl"]} → {R7["slz"]}. No se comparan contra los tramos publicados del comité anterior porque salen de otra muestra (recorridos unidos a una operación de la planilla). ') +
@@ -455,7 +466,11 @@ section('plantas', head('Soja · R7', f'Tiempos por planta, día por día: {mas}
     f'Minutos promedio por planta y por día, medidos por patente con cámaras (r7-camaras.cjs). Ricardone = pre-ingreso → egreso; San Lorenzo = ingreso al puerto → salida. Viajes medidos por día: {", ".join(map(str, R7["totN"]))}. '
     f'Promedio de la semana: Ricardone {R7["ric"]} ({N7["ric"]} viajes), San Lorenzo {R7["slz"]} ({N7["sl"]} viajes).')
 
-# cuartos
+# cuartos: por cartas de porte (todos los camiones de soja calados, pedido 06/11); si no hay cálculo de calada, la muestra por cámaras
+CUART_CARTAS = bool(_CP0 and _CP0.get('cuartosSoja'))
+if CUART_CARTAS:
+    qd = {q: [(_CP0['cuartosSoja'].get(d) or {}).get(q, 0) for d in DAYS] for q in ('Q1', 'Q2', 'Q3', 'Q4')}
+    QN = {q: sum(v) for q, v in qd.items()}
 QCOL = {'Q4': GDK, 'Q3': '#7B1E3A', 'Q2': '#C9651A', 'Q1': '#C8372D'}
 dayq = [sum(qd[q][i] for q in qd) for i in range(N)]
 mxq = max(dayq) or 1
@@ -467,13 +482,15 @@ pq = {q: round(QN[q] / qtot * 100) for q in QN}
 qrow = lambda q, lab: f'<div style="display:flex; flex-direction:row; align-items:center; gap:16px; background:{CARD}; border:1px solid {LINE}; border-left:12px solid {QCOL[q]}; border-radius:12px; padding:16px 24px"><p style="font-size:28px; font-weight:600; width:220px">{lab}</p><p style="font-size:40px; font-weight:600; color:{QCOL[q]}">{pq[q]} %</p><p style="font-size:24px; color:{BODY}">{QN[q]}</p></div>'
 qmax = max(pq, key=pq.get); otros = [pq[q] for q in pq if q != qmax]
 QL = {'Q1': 'la noche (Q1)', 'Q2': 'la mañana (Q2)', 'Q3': 'el mediodía (Q3)', 'Q4': 'la tarde (Q4)'}
-section('cuartos', head('Soja · R7', f'{cap(QL[qmax])} concentró el ingreso: {pq[qmax]} %', cam=True)
+CUART_PQ, CUART_MAX, CUART_LBL = dict(pq), qmax, dict(QL)   # para el cierre (más abajo líquidos reusa qmax y QL)
+section('cuartos', head('Soja · R7', f'Volvieron a venir de noche: el {pq["Q1"]} % ingresó entre las 22 y las 4 h' if qmax == 'Q1' else f'{cap(QL[qmax])} concentró el ingreso: {pq[qmax]} %', cam=True)
     + f'<div style="flex:1; display:flex; flex-direction:row; gap:40px"><div style="flex:1; display:flex; flex-direction:row; gap:4px; align-items:end">{stack}</div><div style="width:480px; display:flex; flex-direction:column; gap:20px">'
     + qrow('Q1', 'Q1 · 22–04 h') + qrow('Q2', 'Q2 · 04–10 h') + qrow('Q3', 'Q3 · 10–16 h') + qrow('Q4', 'Q4 · 16–22 h')
-    + key(f'{cap(QL[qmax])} fue el cuarto más cargado ({pq[qmax]} %); los otros tres quedaron entre {min(otros)} y {max(otros)} %.')
+    + key(f'Los camiones volvieron a venir de noche, como al principio: la noche (Q1) fue el cuarto más cargado ({pq[qmax]} %); los otros tres quedaron entre {min(otros)} y {max(otros)} %.' if qmax == 'Q1' else f'{cap(QL[qmax])} fue el cuarto más cargado ({pq[qmax]} %); los otros tres quedaron entre {min(otros)} y {max(otros)} %.')
     + '</div></div>',
-    f'Viajes R7 medidos por cámaras ({qtot}, r7-camaras.cjs) por cuarto del día operativo según la hora del pre-ingreso (o de la calada si no se leyó). Franjas: 22–04 / 04–10 / 10–16 / 16–22. '
-    'Es una muestra (los viajes que las cámaras leyeron completos), no el total de camiones: sirve para el reparto entre cuartos, no para la cantidad.', bg=BG2)
+    (f'Camiones de soja con carta de porte calados en Ricardone ({qtot}), por día de calada; cuarto = hora del primer ingreso o pre-ingreso a Ricardone (sin esa lectura, la de calada). '
+     if CUART_CARTAS else f'Viajes R7 medidos por cámaras ({qtot}, r7-camaras.cjs) por cuarto del día operativo según la hora del pre-ingreso (o de la calada si no se leyó). ')
+    + 'Franjas: 22–04 / 04–10 / 10–16 / 16–22. Q1 ' + str(QN['Q1']) + ', Q2 ' + str(QN['Q2']) + ', Q3 ' + str(QN['Q3']) + ', Q4 ' + str(QN['Q4']) + '.', bg=BG2)
 
 # histórico
 W_ = weeks + ['Actual']
@@ -482,8 +499,7 @@ section('historico', head('Soja · R7', 'Dónde queda la semana: ' + ('el tiempo
     + linechart(TOT + [R7['total']], W_, GDK, 200, 500 if max(TOT) <= 500 else 600, avg(TOT), hollow=() if P2P_PLAN else (len(W_) - 1,))
     + '<div style="position:absolute; left:1280px; top:330px; width:512px; display:flex; flex-direction:column; gap:20px">'
     + ctx('Ricardone · espera Playa 1', f'{R7["p1"]} min', P1 + [R7['p1']], GDK, f'Promedio desde junio: {avg(P1)}')
-    + (ctx('San Lorenzo · playa, descarga y salida', f'{R7["slz"]} min', SLZ + [R7['slz']], VMID, f'Promedio desde junio: {avg(SLZ)}') if RUN_T else
-       ctx(f'San Lorenzo · {CAL_LBL} → esta semana', f'{R7["slz"]} min', [TP['sl'], R7['slz']], VMID, f'Ingreso → salida por cámaras ({TP["sl"]} → {R7["slz"]})'))
+    + ctx('San Lorenzo · playa, descarga y salida', f'{sl_s} min', SLZ + [sl_s], VMID, f'Promedio desde junio: {avg(SLZ)}')   # siempre la serie desde junio (con dos puntos quedaba una recta)
     + key(f'{R7["total"]} min contra {PUB["total"]} del comité anterior; Playa 1 en {R7["p1"]} min, {"debajo" if R7["p1"] < avg(P1) else "arriba"} del promedio de la serie ({avg(P1)})' + (f', y San Lorenzo en {R7["slz"]}, {"debajo" if R7["slz"] < avg(SLZ) else "arriba"} de su promedio ({avg(SLZ)}).' if RUN_T else '.')) + '</div>',
     f'Tiempo puerta a puerta R7 por comité (rótulo = fecha del comité, que informa la semana previa); «Ant.» = comité anterior ({ANT_LBL}, {PUB["total"]} min, planilla). '
     + (f'«Actual» = esta semana, planilla ({R7["total"]} min). ' if P2P_PLAN else f'«Actual» (círculo hueco) = esta semana medida por cámaras ({R7["total"]} min): el método se calibró en {CAL_LBL} ({K7["p2pCamara"]} por cámaras contra {K7["p2pPlanilla"]} de la planilla), así que es comparable con la serie; se confirma con la planilla. ')
@@ -756,7 +772,7 @@ section('liq-semana', head('Líquidos · la semana', (f'{fmtn(LCW["total"]["n"])
     + (famsem() + '</div></div>' if LCW else '')
     + ('' if LCW else note(fmtn(LQV['TER']), f'visitas en la Terminal; {round(ter_dp)} por día en {CAL_LBL}. Cargas leídas en la playa OSL: {LC["terminalCargaDescarga"]["carga"]}.', BLU, BLU)
     + note(fmtn(LQV['RIC']), f'visitas en Ricardone ({fx(LQV["RIC"] / N)} por día; {fx(LKV["RIC"] / LKD)} en {CAL_LBL}).', GLT)
-    + (note(fmtn(LCW['total']['n']), 'movimientos de líquidos en la planilla de la semana: ' + ', '.join(f'{k.replace("TERMINAL_EMBARQUE", "Terminal").replace("RICARDONE", "Ricardone").replace(" · EGRESO", " cargas").replace(" · INGRESO", " descargas")} {v["n"]}' for k, v in LCW['porPlantaSentido'].items()) + '.', BMID)
+    + (note(fmtn(LCW['total']['n']), 'movimientos de líquidos de la semana: ' + ', '.join(f'{k.replace("TERMINAL_EMBARQUE", "Terminal").replace("RICARDONE", "Ricardone").replace(" · EGRESO", " cargas").replace(" · INGRESO", " descargas")} {v["n"]}' for k, v in LCW['porPlantaSentido'].items()) + '.', BMID)
        if LCW else note(f'{round(kT["precision"] * 100)} %', f'de las visitas de la Terminal eran líquidos en la calibración; el resto, agua, residuos y varios.', BMID))
     + '</div></div>'),
     ('Movimientos de líquidos por día (Terminal/Ricardone): ' + ', '.join(f'{days[i].lower()} {a}/{b}' for i, (a, b) in enumerate(lw)) + '. Sin Renopack ni patentes ficticias.') if LCW else
@@ -796,7 +812,7 @@ def lchart(series, labels, vmax, X0, Y0, W, H, label_fn, sub=None, seps=None):
             if l: txt += f'<p style="position:absolute; left:{xy(i, 0)[0] - 60}px; top:{Y0 + H + 54}px; width:120px; text-align:center; font-size:24px; color:{BODY}">{l}</p>'
     return out + '</svg>' + txt, xy
 
-if RI and RI['total']['camiones']:
+if RI and RI['total']['camiones'] and sum(1 for d in DAYS if RI['porDia'].get(d, {}).get('camiones')) >= 2:   # la lámina de aceite (hoy quitada) necesita 2 días o más
     T_ = RI['total']; PD = RI['porDia']
     dl = [d for d in DAYS if PD[d]['camiones']]
     v_pl = [PD[d]['adentroMediana'] / 60 for d in dl]; v_cm = [(PD[d]['caladaAEgresoMediana'] / 60 if PD[d]['caladaAEgresoMediana'] else None) for d in dl]
@@ -807,12 +823,12 @@ if RI and RI['total']['camiones']:
     ms = RI['maxSimultaneos']; msat = f'{ms["at"][8:10]}/{ms["at"][5:7]} {ms["at"][11:16]}' if ms['at'] else ''
     big = max(dl, key=lambda d: PD[d]['adentroMediana']); gap_d = [d for d in dl if PD[d]['caladaAEgresoMediana'] and PD[d]['adentroMediana'] - PD[d]['caladaAEgresoMediana'] > 180]
     section('liq-oleico', head('Líquidos · Ricardone', f'Entró aceite de {prod} a Ricardone: {T_["camiones"]} camiones, {hdec(T_["adentroMediana"])} h adentro', BLU, 56)
-        + legend([('Horas adentro, según planilla (mediana)', BLU), ('Calada de líquidos → balanza de egreso, por cámaras', BMID)])
+        + legend([('Horas adentro (mediana)', BLU), ('Calada de líquidos → balanza de egreso', BMID)])
         + chart
         + '<div style="position:absolute; left:1300px; top:290px; width:492px; display:flex; flex-direction:column; gap:14px">'
         + note(f'{T_["camiones"]} · {fmtn(T_["toneladas"])} t', f'camiones en {len(dl)} días' + ('; el comité anterior no tuvo ninguno.' if RIA is not None and not RIA['total']['camiones'] else '.'), BLU, BLU)
         + note(f'{T_["ingresoACaladaMediana"]} min', 'del ingreso a la calada de líquidos: no espera para entrar.', BMID)
-        + note(hfmt(T_['caladaAEgresoMediana']), 'de la calada a la balanza de egreso, sin lecturas en el medio: la descarga no tiene cámara.', BMID)
+        + note(hfmt(T_['caladaAEgresoMediana']), 'de la calada a la balanza de egreso, con la descarga en el medio.', BMID)
         + note(f'{ms["n"]}', f'adentro a la vez ({msat}); salió uno cada {RI["minEntreSalidasMediana"]} min.', GLT)
         + '</div>'
         + f'<div style="position:absolute; left:128px; top:870px; width:1120px">' + key('El tiempo se va en la descarga, después de la calada. Para ver con la planta: cuántos camiones de oleico puede descargar a la vez.', 24) + '</div>',
@@ -855,7 +871,7 @@ if LQC and LQC.get('cuartos') and LQC['total']['n']:
         + 'Resto: ' + '; '.join(f'{fam_lbl(k)} {str(round(v["n"] / N, 1)).replace(".", ",")} por día, mediana {v["mediana"]} min' for k, v in list(LQC['porPlantaFamiliaSentido'].items())[2:]) + '. '
         + 'Tarjetas: las dos familias con más movimientos, por día contra el comité anterior (' + (f'{ANT_LBL}, {NA} días' if LQA else 'sin dato') + ').', gap=24)
 
-divider('div-sectores', '05', 'Sectores', 'Calada, volcables y silos: dónde se concentró la actividad de la semana.', GDK, GLT)
+divider('div-sectores', '02', 'Sectores', 'Calada, volcables y silos: dónde se concentró la actividad de la semana.', GDK, GLT)
 calles = sorted([(f'Calle {k[-1]}', v) for k, v in CAL['porCalle'].items()] + [(f'Calle {n}', 0) for n in '123456' if f'RicCal0{n}' not in CAL['porCalle']], key=lambda x: -x[1])
 ccol = [GDK, GDK, GLT, GLT, GXLT, GXLT]
 crows = ''.join(f'<div style="display:flex; flex-direction:row; align-items:center; gap:20px"><p style="width:140px; font-size:28px; font-weight:600; color:{TEXT}">{a}</p><div style="width:{max(6, round(b / (calles[0][1] or 1) * 560))}px; height:48px; background:{ccol[i]}; border-radius:0px 8px 8px 0px"></div><p style="font-size:28px; font-weight:600; color:{TEXT}; white-space:nowrap">{fmtn(b)}</p></div>' for i, (a, b) in enumerate(calles))
@@ -865,7 +881,7 @@ p34 = round(c34 / calles_tot * 100)
 cal_dia, cal_dia_prev = CAL['camiones'] / N, PUB['cal'] / ANT_N
 c12 = [d for d in DAYS if CAL['calleDia'][d].get('RicCal01', 0) or CAL['calleDia'][d].get('RicCal02', 0)]
 section('calada', head('Sectores · calada', ('Calada con menos recorridos por día, solo por las calles 3 y 4' if p34 >= 99 else f'Calada con menos recorridos por día: las calles 3 y 4 hicieron el {p34} %') if cal_dia < cal_dia_prev else f'Calada: las calles 3 y 4 hicieron el {p34} %', cam=True)
-    + f'<div style="flex:1; display:flex; flex-direction:row; gap:56px"><div style="width:880px; display:flex; flex-direction:column; gap:20px"><p style="font-size:24px; color:{BODY}">Calada sólida Ricardone · recorridos de cámara por calle ({calles_tot - CAL["camiones"]} pasaron por dos)</p><div style="display:flex; flex-direction:column; gap:20px">{crows}</div></div>'
+    + f'<div style="flex:1; display:flex; flex-direction:row; gap:56px"><div style="width:880px; display:flex; flex-direction:column; gap:20px"><p style="font-size:24px; color:{BODY}">Calada sólida Ricardone · camiones por calle ({calles_tot - CAL["camiones"]} pasaron por dos)</p><div style="display:flex; flex-direction:column; gap:20px">{crows}</div></div>'
     + f'<div style="flex:1; display:flex; flex-direction:column; gap:20px"><p style="font-size:24px; color:{BODY}">Horas con actividad, sobre {HOURS}</p><div style="display:flex; flex-direction:column; gap:16px">'
     + occ('Ricardone sólida', f'{fmtn(CAL["camiones"])} recorridos en {CAL["horas"]} h', round(CAL['horas'] / HOURS * 100), GDK)
     + occ('Ricardone líquida', f'{fmtn(LIQ["camiones"])} recorridos en {LIQ["horas"]} h', round(LIQ['horas'] / HOURS * 100), VMID)
@@ -874,6 +890,22 @@ section('calada', head('Sectores · calada', ('Calada con menos recorridos por d
     f'Calada por calle, semana completa: ' + ', '.join(f'{a.lower()} {b}' for a, b in calles) + f'. Suman {fmtn(calles_tot)}, no {fmtn(CAL["camiones"])}, porque algunos recorridos pasaron por dos calles. Horas = horas con al menos una lectura, sobre {HOURS} ({N} días). '
     f'Por día: {", ".join(map(str, CAL["porDia"]))}. Pico: {CAL["pico"]} recorridos ({CAL["picoLabel"]}). Comité anterior: {fmtn(PUB["cal"])} recorridos en {ANT_N} días ({PUB["cal_h"]} h con actividad), con el transile R29 pasando por la calada. '
     f'Calada líquida {fmtn(LIQ["camiones"])} en {LIQ["horas"]} h (comité anterior {fmtn(PUB["liq_cal"])}; por día {", ".join(map(str, LIQ["porDia"]))}): cuenta también los camiones de pellet, que entran por la calle líquida rumbo a Playa 3. Fuente: paquete del dashboard sobre la {RUNTXT}.', gap=28)
+
+if _CP0 and _CP0.get('calleProducto'):   # calada por cartas de porte (pedido 06/11): mismo total que «calada por producto»
+    _cc = {k: sum(v.values()) for k, v in _CP0['calleProducto'].items() if k.startswith('RicCal0')}
+    calles = sorted([(f'Calle {k[-1]}', v) for k, v in _cc.items()] + [(f'Calle {n}', 0) for n in '123456' if f'RicCal0{n}' not in _cc], key=lambda x: -x[1])
+    crows = ''.join(f'<div style="display:flex; flex-direction:row; align-items:center; gap:20px"><p style="width:140px; font-size:28px; font-weight:600; color:{TEXT}">{a}</p><div style="width:{max(6, round(b / (calles[0][1] or 1) * 560))}px; height:48px; background:{ccol[i]}; border-radius:0px 8px 8px 0px"></div><p style="font-size:28px; font-weight:600; color:{TEXT}; white-space:nowrap">{fmtn(b)}</p></div>' for i, (a, b) in enumerate(calles))
+    _tot = sum(_cc.values()); _34 = _cc.get('RicCal03', 0) + _cc.get('RicCal04', 0)
+    _hact = sum(len(v) for v in (_CP0.get('porHora') or {}).values())
+    _c12 = [d for d in DAYS if any(k in ('RicCal01', 'RicCal02') for k in (_CP0.get('porCalleSolida') or {}).get(d, {}))]
+    slides = [x for x in slides if x[0] != 'calada']
+    section('calada', head('Sectores · calada', f'Calada: las calles 3 y 4 calaron {fmtn(_34)} de los {fmtn(_tot)} camiones', cam=True)
+        + f'<div style="flex:1; display:flex; flex-direction:row; gap:56px"><div style="width:880px; display:flex; flex-direction:column; gap:20px"><p style="font-size:24px; color:{BODY}">Calada Ricardone · camiones calados por calle</p><div style="display:flex; flex-direction:column; gap:20px">{crows}</div></div>'
+        + f'<div style="flex:1; display:flex; flex-direction:column; gap:20px"><p style="font-size:24px; color:{BODY}">Horas con actividad, sobre {HOURS}</p><div style="display:flex; flex-direction:column; gap:16px">'
+        + occ('Ricardone sólida', f'{fmtn(_tot)} calados en {_hact} h', round(_hact / HOURS * 100), GDK) + '</div></div></div>'
+        + key(f'{fmtn(round(_tot / N))} camiones calados por día. ' + (f'Las calles 1 y 2 abrieron solo el {y_([full[iD[d]] for d in _c12], last=" y el ")}.' if _c12 else 'Las calles 1 y 2 no abrieron: toda la semana con la 3 y la 4.')),
+        'Camiones con carta de porte de grano leídos en una calle de grano de la calada (RicCal01–06), primera calle leída. Horas activas = horas con al menos un calado. Por calle: '
+        + ', '.join(f'{a.lower()} {b}' for a, b in calles) + '.', gap=28)
 
 def cell(v, col=GMID):
     if v >= 20: return f'<div style="width:44px; height:52px; background:{col}; border-radius:10px"></div>'
@@ -979,7 +1011,7 @@ if SI_OK:
         + legend([('A la volcable 2', VMID), ('Al silo 7', GMID), ('Descarga sin lectura', SLG)], f'<div style="flex:1"></div><p style="font-size:24px; color:{BODY}">Viajes por día y destino</p>')
         + f'<div style="flex:1; display:flex; flex-direction:row; gap:6px; align-items:end">{sb}</div></div>'
         + '<div style="width:600px; display:flex; flex-direction:column; justify-content:center; gap:16px">'
-        + note(fmtn(tot), f'viajes: {y_([c["patente"] + " " + str(c["viajes"]) for c in IN])}, del {dact[0].lower()} al {dact[-1].lower()}; un viaje cada {cic[len(cic) // 2]} min por camión.', GDK, GDK)
+        + note(fmtn(tot), f'viajes: {y_([c["patente"] + " " + str(c["viajes"]) for c in IN])}, del {dact[0].lower()} al {dact[-1].lower()}' + (f'; un viaje cada {cic[len(cic) // 2]} min por camión.' if cic else '.'), GDK, GDK)
         + note(f'{round(noct / tot * 100)} %', 'de los viajes, de noche (22 a 6 h)' + (': trabajaron las 24 horas.' if noct / tot >= 0.2 else '.'), VMID)
         + (note(fmtn(SIA['viajes']), f'viajes en el comité anterior ({ANT_LBL}), con {num_txt(len(SIA["internos"]))} camiones desde {sil_ant}.', GLT) if SIA else '')
         + '</div></div>'
@@ -1051,10 +1083,10 @@ if SI_OK:
 sbars = daybars(SIL['porDia'], days, lambda i, v: GDK if v >= 5 else GLT, 380, 64)
 silcam = SIL['porCalle']
 section('silos-old' if SI_OK else 'silos', head('Sectores · silos Ricardone', 'Silos: transiles internos en Ricardone, sin envíos al puerto' if SIL_INT else 'Silos casi quietos: no hubo transile R29' if not r29['metricas']['total'] else f'Silos: {r29["metricas"]["total"]} transiles R29', cam=True)
-    + f'<div style="flex:1; display:flex; flex-direction:row; gap:56px"><div style="flex:1; display:flex; flex-direction:column; gap:16px"><p style="font-size:24px; color:{BODY}">Recorridos de cámara en silos por día (carga y descarga)</p><div style="flex:1; display:flex; flex-direction:row; gap:6px; align-items:end">{sbars}</div></div>'
+    + f'<div style="flex:1; display:flex; flex-direction:row; gap:56px"><div style="flex:1; display:flex; flex-direction:column; gap:16px"><p style="font-size:24px; color:{BODY}">Camiones en silos por día (carga y descarga)</p><div style="flex:1; display:flex; flex-direction:row; gap:6px; align-items:end">{sbars}</div></div>'
     + '<div style="width:480px; display:flex; flex-direction:column; gap:28px">'
     + p(f'<b>{SIL["camiones"]} recorridos</b> en silos en toda la semana, contra {fmtn(PUB["sil"])} en el comité anterior ({ANT_N} días).', 28)
-    + p((f'Las cámaras de silos leyeron cargas ({sum(r29["silosCarga"])}) y descargas ({sum(r29["silosDesc"])}) de lunes a viernes: movimientos internos de la planta. Ninguno siguió al puerto (sin transile R29).' if SIL_INT else f'Ninguna patente hizo la vuelta del transile (carga en silo → calada → volcable del puerto).') + f' El comité anterior tuvo {fmtn(PUB["r29"])} transiles R29 en la planilla, del 24 al 29/09.' if not r29['metricas']['total'] else '', 28)
+    + p((f'En silos hubo cargas ({sum(r29["silosCarga"])}) y descargas ({sum(r29["silosDesc"])}) de lunes a viernes: movimientos internos de la planta. Ninguno siguió al puerto (sin transile R29).' if SIL_INT else f'Ninguna patente hizo la vuelta del transile (carga en silo → calada → volcable del puerto).') + f' El comité anterior tuvo {fmtn(PUB["r29"])} transiles R29.' if not r29['metricas']['total'] else '', 28)
     + key('Pendiente: analizar los transiles internos de la semana (qué silos y con qué destino).' if SIL_INT else 'La soja de la semana entró directo por la calada; los silos no movieron soja al puerto.' if not r29['metricas']['total'] else 'Transile R29 activo.') + '</div></div>',
     f'Recorridos de cámara en silos por día ({", ".join(map(str, SIL["porDia"]))}); por cámara: ' + ', '.join(f'{k} {v}' for k, v in silcam.items()) + '. '
     f'Transile R29 por cámaras (metricas-camaras.cjs: carga en silo → calada → egreso → volcable del puerto): {r29["metricas"]["total"]} vueltas. Camiones leídos en carga de silo por día: {", ".join(map(str, r29["silosCarga"]))}. Con la planilla se confirma con los egresos SOJA · SILO_CHIEF.', gap=28)
@@ -1062,6 +1094,7 @@ section('silos-old' if SI_OK else 'silos', head('Sectores · silos Ricardone', '
 # ------------------------------------------------------------------ cierre
 def cx(big, title, txt, band):
     return f'<div style="display:flex; flex-direction:column; gap:10px; background:rgba(255,255,255,0.07); border:1px solid rgba(241,246,242,0.18); border-top:6px solid {band}; border-radius:16px; padding:24px 28px"><p style="font-size:48px; font-weight:600; line-height:1; color:#F1F6F2">{big}</p><h3 style="font-size:30px; font-weight:600; line-height:1.2; color:{band}">{title}</h3><p style="font-size:24px; line-height:1.4; color:#D6E4DA">{txt}</p></div>'
+cierre_card = cx   # el anexo de pellet redefine cx más abajo
 add('cruces', f'<section id="cruces" data-transition="fade" style="background:{VIO}; color:#F1F6F2; font-family:{FONT}; padding:96px 128px 96px; display:flex; flex-direction:column; gap:28px"><div style="position:absolute; left:0px; top:0px; width:1920px; height:1080px; background:linear-gradient(120deg, #2E1B4E 0%, #1F3A38 60%, #0B5638 100%)"></div>'
     f'<div style="display:flex; flex-direction:column; gap:12px"><p style="font-size:28px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:{GLT}">Cierre · análisis general</p><h2 style="font-size:72px; font-weight:600; line-height:1.1; color:#F1F6F2">La semana en seis lecturas</h2></div>'
     '<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px">'
@@ -1310,62 +1343,103 @@ def mix(c, a, base=BG):
 PP = JC('ponderado-producto.json') if os.path.exists(os.path.join(CAL_DIR, 'ponderado-producto.json')) else None
 if PP:
     kp = list(PP['periodos'])                      # [acumulado, mes]
-    lab = {kp[0]: 'Desde junio', kp[-1]: 'En el mes'} if len(kp) > 1 else {kp[0]: 'Período'}
-    PCOLS = {'Soja': GDK, 'Girasol': '#7A5608', 'Pellet': PEL, 'Líquidos': BLU}
-    def pcol(p):
-        v = PP['productos'][p]
-        cols = ''
-        for k in kp:
-            r = v[k]
-            lines = ''.join(f'<div style="display:flex; flex-direction:row; justify-content:space-between"><p style="font-size:22px; color:{BODY}">{pl}</p><p style="font-size:24px; font-weight:{700 if pl == "Total" else 600}; color:{TEXT}">{hmm(r[pl]["prom"])}</p></div>'
-                            for pl in ('Ricardone', 'San Lorenzo', 'Total') if pl in r and r[pl]['n'] and not (pl == 'Total' and len([x for x in ('Ricardone', 'San Lorenzo') if x in r]) < 2))
-            cols += f'<div style="width:190px; display:flex; flex-direction:column; gap:4px"><p style="font-size:22px; font-weight:600; color:{PCOLS[p]}">{lab[k]}</p>{lines}</div>'
-        return (f'<div style="width:420px; display:flex; flex-direction:column; gap:10px; background:{CARD}; border:1px solid {LINE}; border-top:8px solid {PCOLS[p]}; border-radius:14px; padding:16px 20px">'
-                f'<p style="font-size:28px; font-weight:700; color:{PCOLS[p]}">{p}</p><div style="display:flex; flex-direction:row; gap:20px">{cols}</div></div>')
-    def pplanta(pl):
+    MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
+    mesn = MESES[int(PP['periodos'][kp[-1]][0][5:7]) - 1].capitalize()
+    lab = {kp[0]: 'Desde junio', kp[-1]: mesn} if len(kp) > 1 else {kp[0]: 'Período'}
+    PCOLS = {'Soja': GDK, 'Otros granos': '#8A3B12', 'Pellet': PEL, 'Líquidos': BLU}   # sin girasol: no hubo movimiento (pedido 05/11)
+    _op = os.path.join(CAL_DIR, 'otros-productos.json')
+    _OQ = [q for q in (json.load(open(_op, encoding='utf-8'))['productos'] if os.path.exists(_op) else []) if q['viajes'] >= 3 and q.get('circuito')]
+    def pplanta(pl):   # tarjeta resaltada por planta: desde junio, el mes y la diferencia (como el comité anterior)
         a, b = PP['plantas'][kp[0]][pl]['prom'], PP['plantas'][kp[-1]][pl]['prom']
         dlt = (b - a) if a is not None and b is not None else None
-        sg = '−' if dlt is not None and dlt < 0 else '+'
-        return note(f'{sg}{hmm(abs(dlt))}' if dlt is not None else '—', f'<b>{pl}</b> · {lab[kp[0]].lower()} {hmm(a)} · {lab[kp[-1]].lower()} {hmm(b)}', GDK if pl != 'San Lorenzo' else VIO)
-    section('permanencia', head('Horas por viaje · ' + ' y '.join(lab.values()).lower(), 'Tiempo en planta ponderado por productos', GDK, 56)
-        + '<div style="display:flex; flex-direction:row; gap:24px"><div style="display:flex; flex-direction:row; flex-wrap:wrap; gap:20px; width:880px">' + ''.join(pcol(p) for p in PCOLS) + '</div>'
-        + '<div style="flex:1; display:flex; flex-direction:column; gap:14px">' + ''.join(pplanta(x) for x in ('Ricardone', 'San Lorenzo', 'Nodo Sur')) + '</div></div>',
+        bg, pill, sub = {'Ricardone': (GDK, '#9CCBAE', '#C9D8CE'), 'San Lorenzo': (VMID, '#DDD6EC', '#E4DDF2'), 'Nodo Sur': ('#14281E', '#9CCBAE', '#C9D8CE')}[pl]
+        return (f'<div style="flex:1; display:flex; flex-direction:column; gap:10px; background:{bg}; border-radius:16px; padding:22px 28px">'
+                f'<div style="display:flex; flex-direction:row; align-items:center"><p style="flex:1; font-size:30px; font-weight:700; color:#FFFFFF">{pl}</p>'
+                + (f'<p style="font-size:26px; font-weight:700; color:#14281E; background:{pill}; border-radius:999px; padding:4px 16px">{"−" if dlt < 0 else "+"}{hmm(abs(dlt))}</p>' if dlt is not None else '') + '</div>'
+                f'<div style="display:flex; flex-direction:row; align-items:end; gap:40px">'   # sin «Desde junio»: lo sacó el usuario 06/11 (queda la diferencia en la píldora)
+                f'<div style="display:flex; flex-direction:column"><p style="font-size:24px; color:{sub}">{lab[kp[-1]]}</p><p style="font-size:64px; font-weight:700; line-height:1; color:#FFFFFF">{hmm(b)}</p></div></div></div>')
+    def pmes(p):   # solo el mes: un número por planta y el total del recorrido
+        if p == 'Otros granos':   # cártamo y camelina: puerta a puerta de la semana en Ricardone, ponderado por viajes
+            n_ = sum(q['viajes'] for q in _OQ)
+            big_ = sum(q['totalMedia'] * q['viajes'] for q in _OQ) / n_ if n_ else None
+            sub = 'Ricardone · ' + y_([q['nombre'].lower() for q in _OQ]) if _OQ else 'Ricardone'
+        else:
+            r = PP['productos'][p][kp[-1]]
+            pls = [pl for pl in ('Ricardone', 'San Lorenzo') if pl in r and r[pl]['n']]
+            big_ = r['Total']['prom'] if len(pls) == 2 and 'Total' in r else r[pls[0]]['prom'] if pls else None
+            sub = ' · '.join(f'{pl} {hmm(r[pl]["prom"])}' for pl in pls) if len(pls) == 2 else (pls[0] if pls else '')
+        return (f'<div style="flex:1; display:flex; flex-direction:column; gap:8px; background:{CARD}; border:1px solid {LINE}; border-radius:14px; padding:20px 24px">'
+                f'<p style="font-size:30px; font-weight:700; color:{PCOLS[p]}">{p}</p><p style="font-size:64px; font-weight:600; line-height:1; color:{TEXT}">{hmm(big_) if big_ is not None else "—"}</p>'
+                f'<p style="font-size:24px; color:{BODY}">{sub}</p></div>')
+    section('permanencia', head(f'Horas por viaje · {lab[kp[-1]].lower()}', 'Tiempo en planta ponderado por productos', GDK, 56)
+        + '<div style="display:flex; flex-direction:row; gap:20px">' + ''.join(pmes(p) for p in PCOLS) + '</div>'
+        + '<div style="display:flex; flex-direction:row; gap:20px">' + ''.join(pplanta(x) for x in ('Ricardone', 'San Lorenzo', 'Nodo Sur')) + '</div>',
         PP['criterio'] + ' Períodos: ' + '; '.join(f'{lab[k]} {a}–{b}' for k, (a, b) in PP['periodos'].items()) + '. Excluidos: ' + ', '.join(f'{k} {v}' for k, v in PP['excluidos'].items())
-        + '. Viajes: ' + '; '.join(f'{p} {k}: ' + ', '.join(f'{pl} {x["n"]}' for pl, x in PP['productos'][p][k].items()) for p in PCOLS for k in kp) + '.', gap=24)
+        + '. Viajes: ' + '; '.join(f'{p} {k}: ' + ', '.join(f'{pl} {x["n"]}' for pl, x in PP['productos'][p][k].items()) for p in PCOLS if p in PP['productos'] for k in kp)
+        + '. Otros granos: puerta a puerta de la semana (' + ', '.join(f'{q["nombre"]} {q["viajes"]} viajes {round(q["totalMedia"])} min' for q in _OQ) + ').', gap=28)
     BASE_IDS.append('permanencia')
 
 # ---- anexo: operativo de transile de pellet (cartas = viajes; cámaras vinculadas = tiempos)
-PO = JC('pellet-operativo.json') if os.path.exists(os.path.join(CAL_DIR, 'pellet-operativo.json')) else None
+_pp = JC('pellet-operativo.json') if os.path.exists(os.path.join(CAL_DIR, 'pellet-operativo.json')) else None
+_ss = JC('soja-silos-operativo.json') if os.path.exists(os.path.join(CAL_DIR, 'soja-silos-operativo.json')) else None
+# el anexo de operativo se arma con el transile que hubo: pellet, o si no hubo, soja de los silos al puerto (pedido 11/11)
+if not (_pp and _pp['cartas']) and _ss and _ss['cartas']: PO, OPN, LT_FILE = _ss, 'soja', 'soja-silos-linea-tiempo.json'
+else: PO, OPN, LT_FILE = _pp, 'pellet', 'pellet-linea-tiempo.json'
+OPC = OPN.capitalize(); OPDESC = 'pellet de girasol' if OPN == 'pellet' else 'soja de los silos'
+APC, APM, APL, APX = (PEL, PELM, PELL, '#E3C9A3') if OPN == 'pellet' else (GDK, GMID, GXLT, GLT)   # soja en verde (pedido 11/11)
 if PO and PO['cartas']:
     pd_ = [(d, v) for d, v in PO['porDia'].items() if v['cartas']]
     shift = lambda d, n: (datetime.date.fromisoformat(d) + datetime.timedelta(days=n)).isoformat()
     d0, d1 = dd(pd_[0][0]), dd(pd_[-1][0])
-    divider('div-pel-op', 'A', 'Operativo de pellet', f'Transile de pellet de girasol de Ricardone al puerto: {fmtn(PO["cartas"])} viajes con carta de porte del {fdm(pd_[0][0])} al {fdm(pd_[-1][0])}.', PEL, '#E3C9A3')
+    divider('div-pel-op', 'A', f'Operativo de {OPN}', f'Transile de {OPDESC} de Ricardone al puerto: {fmtn(PO["cartas"])} viajes del {fdm(pd_[0][0])} al {fdm(pd_[-1][0])}.', APC, APX)
     mx = max(v['cartas'] for _, v in pd_)
     rows = ''.join(f'<div style="display:flex; flex-direction:row; align-items:center; gap:16px"><p style="width:150px; font-size:28px; font-weight:600; color:{TEXT}">{DIAS_L[wd(d)]} {dd(d)}</p>'
-                   f'<div style="width:{max(8, round(v["cartas"] / mx * 640))}px; height:48px; background:{PEL}; border-radius:0px 8px 8px 0px"></div>'
+                   f'<div style="width:{max(8, round(v["cartas"] / mx * 640))}px; height:48px; background:{APC}; border-radius:0px 8px 8px 0px"></div>'
                    f'<p style="font-size:28px; font-weight:700; color:{TEXT}; white-space:nowrap">{v["cartas"]}</p><p style="font-size:24px; color:{BODY}; white-space:nowrap">· {v["camiones"]} camiones</p></div>' for d, v in pd_)
     T = PO['tramos']; vpc = PO['viajesPorCamion']
     CIC = round(sum((T.get(k) or {}).get('media') or 0 for k in ('ric', 'ida', 'puerto')))   # ciclo como en los operativos publicados: Ricardone + interplanta + puerto (medias)
-    section('pel-op-viajes', head('Anexo · operativo de pellet', f'Pellet: {fmtn(PO["cartas"])} viajes en {PO["camiones"]} camiones, {fmtn(PO["toneladas"])} t', PEL, 56)
-        + f'<div style="display:flex; flex-direction:row; gap:48px"><div style="width:1120px; display:flex; flex-direction:column; gap:16px"><p style="font-size:24px; color:{BODY}">Viajes por día (cartas de porte) y camiones que trabajaron</p>{rows}</div>'
+    section('pel-op-viajes', head(f'Anexo · operativo de {OPN}', f'{OPC}: {fmtn(PO["cartas"])} viajes en {PO["camiones"]} camiones, {fmtn(PO["toneladas"])} t', APC, 56)
+        + f'<div style="display:flex; flex-direction:row; gap:48px"><div style="width:1120px; display:flex; flex-direction:column; gap:16px"><p style="font-size:24px; color:{BODY}">Viajes por día y camiones que trabajaron</p>{rows}</div>'
         + '<div style="flex:1; display:flex; flex-direction:column; gap:14px">'
-        + note(str(vpc['media']).replace('.', ','), f'viajes por camión en el operativo; el que más hizo, {vpc["max"][0][0]} con {vpc["max"][0][1]}.', PEL)
-        + note(f'{CIC} min', 'de ciclo por viaje: Ricardone, ida y puerto (promedio), igual que en los operativos anteriores.', PELM)
-        + (note(f'{T["ida"]["mediana"]} / {T["vuelta"]["mediana"]} min', 'de ida y de vuelta entre plantas: el traslado no es el problema.', GLT) if T.get('ida') and T.get('vuelta') else '')
+        + (f'<div style="display:flex; flex-direction:column; gap:4px; background:{CARD}; border:1px solid {LINE}; border-left:8px solid {APM}; border-radius:14px; padding:12px 20px">'   # solo el ciclo, en horas y explicado (pedido 06/11)
+           f'<p style="font-size:24px; font-weight:600; color:{BODY}">Ciclo por viaje</p><p style="font-size:56px; font-weight:700; line-height:1.05; color:{APC}">{hm(CIC)}</p>'
+           f'<p style="font-size:26px; font-weight:600; color:{TEXT}">{CIC} min</p><p style="font-size:24px; line-height:1.35; color:{BODY}">Desde que el camión entra a Ricardone hasta que sale del puerto: carga en Ricardone, viaje al puerto y descarga. Promedio de los viajes del operativo.</p></div>')
         + '</div></div>',
         f'{PO["criterio"]} Cartas por estado: ' + ', '.join(f'{k} {v}' for k, v in PO['estados'].items()) + f'. Viajes armados por cámaras: {PO["viajesCamara"]}. Última carta emitida: {PO["ultimaCarta"]}.', gap=24)
     FL = PO.get('flota')
+    # descansos con el mismo criterio que la línea de tiempo del operativo (pellet-linea-tiempo.json, revisado 06/11):
+    # viaje = carta de porte, del ingreso a Ricardone a la salida del puerto; descanso = 6 h o más entre la salida del puerto
+    # y el ingreso siguiente a Ricardone. La espera dentro de Ricardone (Playa 3) es fila, no descanso.
+    TLV = []
+    if FL and os.path.exists(os.path.join(CAL_DIR, LT_FILE)):
+        _TL = JC(LT_FILE); _iso = datetime.datetime.fromisoformat
+        TLV = [{'p': v['p'], 'n': v['n'], 'a': _iso(v['ri']), 'b': _iso(v['se'])} for v in _TL['viajes']]
+        _bp = collections.defaultdict(list)
+        for v in TLV: _bp[v['p']].append(v)
+        _rach = []
+        for p_, vs_ in _bp.items():
+            vs_.sort(key=lambda v: v['n']); _ini, _nv = vs_[0]['a'], 0
+            for i_, v in enumerate(vs_):
+                _nv += 1; nx = vs_[i_ + 1] if i_ + 1 < len(vs_) else None
+                if not nx or (nx['a'] - v['b']).total_seconds() >= 6 * 3600:
+                    _rach.append({'patente': p_, 'desde': _ini.strftime('%Y-%m-%d %H:%M'), 'hasta': v['b'].strftime('%Y-%m-%d %H:%M'), 'horas': round((v['b'] - _ini).total_seconds() / 3600, 1), 'viajes': _nv})
+                    if nx: _ini, _nv = nx['a'], 0
+        _rach.sort(key=lambda x: -x['horas'])
+        _mx = {}
+        for x in _rach: _mx.setdefault(x['patente'], x['horas'])
+        FL = dict(FL, tramosCorridos=_rach, pausaCorte=6, camionesCorridoMas12=sum(1 for h in _mx.values() if h > 12),
+                  corridoPorCamion={'menos de 8 h': sum(1 for h in _mx.values() if h <= 12), '12 a 18 h': sum(1 for h in _mx.values() if 12 < h <= 24), 'más de 24 h': sum(1 for h in _mx.values() if h > 24)},
+                  nota='horas seguidas = de un ingreso a Ricardone a la salida del puerto del último viaje antes de un descanso; descanso = 6 h o más entre la salida del puerto y el ingreso siguiente a Ricardone; viaje = carta de porte, horarios por cámaras vinculadas (la misma línea de tiempo del operativo)')
     if FL and FL['camiones']:
         cams = FL['camiones']
         GR = [(1, 4), (5, 8), (9, 12), (13, 99)]
         gv = [(f'{a}–{b}' if b < 99 else f'{a} o más', [c for c in cams if a <= c['viajes'] <= b]) for a, b in GR]
         mxg = max(len(c) for _, c in gv) or 1
         rows_g = ''.join(f'<div style="display:flex; flex-direction:row; align-items:center; gap:14px"><p style="width:220px; font-size:26px; font-weight:600; color:{TEXT}; white-space:nowrap">{l} viajes</p>'
-                         f'<div style="width:{max(8, round(len(c) / mxg * 420))}px; height:44px; background:{PEL}; border-radius:0px 8px 8px 0px"></div>'
+                         f'<div style="width:{max(8, round(len(c) / mxg * 420))}px; height:44px; background:{APC}; border-radius:0px 8px 8px 0px"></div>'
                          f'<p style="font-size:26px; font-weight:700; color:{TEXT}; white-space:nowrap">{len(c)} camiones</p></div>' for l, c in gv)
-        pc_ = FL['corridoPorCamion']; mxd = max(pc_.values()) or 1
-        colc = {'menos de 8 h': GLT, '8 a 12 h': GMID, '12 a 18 h': '#E0A526', '18 a 24 h': '#D9792B', 'más de 24 h': '#B83A26'}
+        _pc = FL['corridoPorCamion']; pc_ = {'menos de 12 h': _pc.get('menos de 8 h', 0) + _pc.get('8 a 12 h', 0), 'entre 12 y 24 h': _pc.get('12 a 18 h', 0) + _pc.get('18 a 24 h', 0), 'más de 24 h': _pc.get('más de 24 h', 0)}; mxd = max(pc_.values()) or 1   # tres rangos (pedido 05/11)
+        colc = {'menos de 12 h': GMID, 'entre 12 y 24 h': '#E0A526', 'más de 24 h': '#B83A26'}
         rows_d = ''.join(f'<div style="display:flex; flex-direction:row; align-items:center; gap:14px"><p style="width:190px; font-size:26px; font-weight:600; color:{TEXT}; white-space:nowrap">{l}</p>'
                          f'<div style="width:{max(8, round(v / mxd * 400))}px; height:44px; background:{colc[l]}; border-radius:0px 8px 8px 0px"></div>'
                          f'<p style="font-size:26px; font-weight:700; color:{TEXT}; white-space:nowrap">{v} {"camión" if v == 1 else "camiones"}</p></div>' for l, v in pc_.items())
@@ -1373,70 +1447,180 @@ if PO and PO['cartas']:
         tc = FL['tramosCorridos']; PZ = str(FL['pausaCorte']).replace('.0', '').replace('.', ',')
         fh = lambda t: f'{DIAS_L[wd(t[:10])].lower()} {dd(t[:10])} {int(t[11:13])} h'
         top5 = '; '.join(f'{x["patente"]} {round(x["horas"])} h ({x["viajes"]} viajes, {fh(x["desde"])} a {fh(x["hasta"])})' for x in tc[:4])
-        section('pel-op-flota', head('Anexo · operativo de pellet', f'Pellet: {n12} de {len(cams)} camiones trabajaron más de 12 h de corrido', PEL, 56)
-            + '<div style="display:flex; flex-direction:row; gap:56px">'
-            + f'<div style="display:flex; flex-direction:column; gap:16px"><p style="font-size:24px; color:{BODY}">Camiones según cuántos viajes hicieron (cartas)</p>{rows_g}</div>'
-            + f'<div style="display:flex; flex-direction:column; gap:16px"><p style="font-size:24px; color:{BODY}">Camiones según su tramo más largo sin descansar {PZ} h</p>{rows_d}</div></div>'
-            + '<div style="display:flex; flex-direction:row; gap:20px">'
-            + note(f'{n24}', f'camiones pasaron las 24 h sin un descanso de {PZ} h: bajaban en el puerto y volvían a la fila de Ricardone.', '#B83A26')
-            + note(f'{round(tc[0]["horas"])} h', f'el tramo más largo: {tc[0]["patente"]}, {tc[0]["viajes"]} viajes sin descansar {PZ} h.', '#D9792B')
-            + note(f'{cams[0]["viajes"]}', f'viajes hizo {cams[0]["patente"]}, el que más; le siguen {", ".join(c["patente"] for c in cams[1:4])}.', PELM)
-            + '</div>' + key(f'Los más largos: {top5}.'),
-            FL['nota'] + '. No se sabe si cambió el chofer: la cámara lee el camión. Tramos de más de 12 h por camión: '
-            + '; '.join(f'{x["patente"]} {x["horas"]} h ({x["viajes"]} viajes, {x["desde"]} a {x["hasta"]})' for x in tc if x['horas'] > 12) + '.', gap=24)
+        # flota por día y camiones en marcha hora por hora (pedido 06/11: dimensionar cuántos camiones activos hubo y si fue constante)
+        _P = lambda s: datetime.datetime.strptime(s, '%Y-%m-%d %H:%M')
+        dlf = [(d, v) for d, v in PO['porDia'].items() if v['cartas'] >= 50]
+        _h0 = datetime.datetime.fromisoformat(dlf[0][0]); HH = [_h0 + datetime.timedelta(hours=i) for i in range(24 * len(dlf))]
+        enm = ([len({v['p'] for v in TLV if v['a'] <= h < v['b']}) for h in HH] if TLV   # camiones en viaje a la hora en punto, como la línea de tiempo
+               else [len({x['patente'] for x in tc if _P(x['desde']) < h + datetime.timedelta(hours=1) and _P(x['hasta']) >= h}) for h in HH])
+        rng = {d: (min(enm[i * 24:(i + 1) * 24]), max(enm[i * 24:(i + 1) * 24])) for i, (d, _) in enumerate(dlf)}
+        if TLV:   # máximo del día cada 10 min, igual que la línea de tiempo del operativo
+            for d, _ in dlf:
+                _t0 = datetime.datetime.fromisoformat(d)
+                rng[d] = (rng[d][0], max(sum(1 for v in TLV if v['a'] <= _t0 + datetime.timedelta(minutes=10 * k) < v['b']) for k in range(144)))
+        dmax = max(dlf, key=lambda kv: kv[1]['cartas'])[0]
+        def fcard(d, v):
+            on = d == dmax; c_ = APC if on else BODY
+            return (f'<div style="flex:1; display:flex; flex-direction:column; gap:4px; background:{APL if on else CARD}; border:{3 if on else 1}px solid {APC if on else LINE}; border-radius:14px; padding:14px 22px">'
+                    f'<p style="font-size:24px; font-weight:700; color:{c_}">{DIAS_L[wd(d)]} {dd(d)}</p>'
+                    f'<p style="font-size:44px; font-weight:700; line-height:1.05; color:{TEXT}">{v["camiones"]} <span style="font-size:24px; font-weight:600">camiones</span></p>'
+                    f'<p style="font-size:22px; color:{BODY}">{v["cartas"]} viajes · <b style="color:{c_}">{str(round(v["cartas"] / v["camiones"], 1)).replace(".", ",")} por camión</b></p>'
+                    f'<p style="font-size:22px; color:{BODY}">hasta {rng[d][1]} en viaje a la vez</p></div>')
+        W, HT = 1664, 170; cw = W / len(HH); mxe = max(enm) or 1
+        yv = lambda n: 30 + HT - round(n / mxe * HT)
+        sv = f'<svg aria-label="camiones en marcha hora por hora" viewBox="0 0 {W} {HT + 66}" width="{W}" height="{HT + 66}" style="width:{W}px; height:{HT + 66}px">'
+        for i, (d, _) in enumerate(dlf):
+            x0 = round(i * 24 * cw)
+            if d == dmax: sv += f'<rect x="{x0}" y="0" width="{round(24 * cw)}" height="{HT + 30}" fill="{APL}"/>'
+            if i: sv += f'<line x1="{x0}" y1="0" x2="{x0}" y2="{HT + 30}" stroke="{LINE}" stroke-width="2"/>'
+            sv += f'<text x="{x0 + round(12 * cw)}" y="{HT + 60}" text-anchor="middle" font-size="22" font-weight="{700 if d == dmax else 600}" fill="{APC if d == dmax else TEXT}" {FTS}>{DIAS_L[wd(d)]} {dd(d)}</text>'
+            seg = enm[i * 24:(i + 1) * 24]; im = max(range(24), key=lambda k: seg[k])
+            sv += f'<text x="{round((i * 24 + im + .5) * cw)}" y="{yv(seg[im]) - 10}" text-anchor="middle" font-size="22" font-weight="700" fill="{APC}" {FTS}>{seg[im]}</text>'
+        pts = [(round((i + .5) * cw), yv(n)) for i, n in enumerate(enm)]
+        sv += f'<polygon fill="{APC}" fill-opacity="0.18" points="{pts[0][0]},{30 + HT} ' + ' '.join(f'{a},{b}' for a, b in pts) + f' {pts[-1][0]},{30 + HT}"/>'
+        sv += f'<polyline fill="none" stroke="{APC}" stroke-width="4" points="' + ' '.join(f'{a},{b}' for a, b in pts) + '"/>'
+        sv += f'<line x1="0" y1="{30 + HT}" x2="{W}" y2="{30 + HT}" stroke="{LINE}" stroke-width="2"/></svg>'
+        rows_d2 = ''.join(f'<div style="display:flex; flex-direction:row; align-items:center; gap:14px"><p style="width:190px; font-size:24px; font-weight:600; color:{TEXT}; white-space:nowrap">{l}</p>'
+                          f'<div style="width:{max(8, round(v / mxd * 380))}px; height:36px; background:{colc[l]}; border-radius:0px 8px 8px 0px"></div>'
+                          f'<p style="font-size:24px; font-weight:700; color:{TEXT}; white-space:nowrap">{v} {"camión" if v == 1 else "camiones"}</p></div>' for l, v in pc_.items())
+        def nchip(big_, txt, col):
+            return (f'<div style="flex:1; display:flex; flex-direction:column; gap:2px; background:{CARD}; border:1px solid {LINE}; border-left:8px solid {col}; border-radius:14px; padding:10px 18px">'
+                    f'<p style="font-size:36px; font-weight:600; line-height:1.05; color:{TEXT}">{big_}</p><p style="font-size:22px; line-height:1.3; color:{BODY}">{txt}</p></div>')
+        section('pel-op-flota', head(f'Anexo · operativo de {OPN}', f'{OPC}: {n12} de {len(cams)} camiones trabajaron más de 12 h seguidas sin descansar', APC, 48)
+            + f'<div style="display:flex; flex-direction:row; gap:16px">{"".join(fcard(d, v) for d, v in dlf)}</div>'
+            + f'<div style="display:flex; flex-direction:column; gap:4px"><p style="font-size:24px; font-weight:600; color:{TEXT}">Camiones en viaje, a la hora en punto <span style="font-weight:400; color:{BODY}">(entre que entran a Ricardone y salen del puerto)</span></p>{sv}</div>'
+            + '<div style="display:flex; flex-direction:row; gap:40px; align-items:center">'
+            + f'<div style="flex:1; display:flex; flex-direction:column; gap:10px"><p style="font-size:24px; font-weight:600; color:{TEXT}">Racha más larga de horas seguidas <span style="font-weight:400; color:{BODY}">(sin descanso de al menos {PZ} h después de descargar)</span></p>{rows_d2}</div>'
+            + '<div style="width:640px; display:flex; flex-direction:row; gap:14px">'
+            + nchip(f'{n24} de {len(cams)}', 'pasaron las 24 h seguidas: descargaban y volvían a la fila de Ricardone.', '#B83A26')
+            + nchip(f'{round(tc[0]["horas"])} h', f'la racha más larga: {tc[0]["patente"]}, {tc[0]["viajes"]} viajes.', '#D9792B')
+            + '</div></div>',
+            FL['nota'] + '. No se sabe si cambió el chofer: la cámara lee el camión. Flota por día (cartas de porte): ' + '; '.join(f'{d} {v["cartas"]} viajes, {v["camiones"]} camiones, en viaje a la vez entre {rng[d][0]} y {rng[d][1]}' for d, v in dlf)
+            + '. En viaje = camiones entre el ingreso a Ricardone y la salida del puerto a la hora en punto (línea de tiempo del operativo); por hora desde ' + dlf[0][0] + ': ' + ', '.join(map(str, enm))
+            + '. Camiones por cantidad de viajes (cartas): ' + ', '.join(f'{l} viajes {len(c)}' for l, c in gv)
+            + f'. Los más largos: {top5}. Tramos de más de 12 h por camión: '
+            + '; '.join(f'{x["patente"]} {x["horas"]} h ({x["viajes"]} viajes, {x["desde"]} a {x["hasta"]})' for x in tc if x['horas'] > 12) + '.', gap=20)
         ANEXO_IDS_FL = ['pel-op-flota']
+        # viajes por camión, día por día (pedido 06/11: el promedio «2,3 por camión» abierto en cuántos camiones hicieron 1, 2, 3… viajes)
+        _CT = json.load(open(os.path.join(CAL_DIR, 'cartas.json'), encoding='utf-8')) if os.path.exists(os.path.join(CAL_DIR, 'cartas.json')) else []
+        _rep = collections.defaultdict(collections.Counter)
+        for x in _CT:
+            if ((x.get('typeCode') == 284 and x.get('derivedProductCode') == 199) if OPN == 'pellet' else (x.get('typeCode') == 74 and x.get('grain') == 'Soja')) and x.get('originPlant') == '21832' and x.get('plant') == '25567' and x.get('stateCode') != 'AN' and x.get('departure'):
+                _d = (datetime.datetime.fromisoformat(x['departure'].replace('Z', '')) - datetime.timedelta(hours=1)).date().isoformat()   # día operativo 22 h (UTC−3 +2 h)
+                _p = x['plates'][0] if isinstance(x.get('plates'), list) and x['plates'] else str(x.get('plates'))
+                _rep[_d][_p] += 1
+        if _rep and all(d in _rep for d, _ in dlf):
+            dist = {d: collections.Counter(_rep[d].values()) for d, _ in dlf}
+            kmax = max(k for c in dist.values() for k in c)
+            th = lambda t_, al='center': f'<th style="font-size:24px; font-weight:600; color:{BODY}; text-align:{al}; padding:14px 18px; border-bottom:2px solid {LINE}">{t_}</th>'
+            def fila(d, v):
+                on = d == dmax; c_ = dist[d]; prom = sum(_rep[d].values()) / len(_rep[d])
+                bg = f'background:{APL};' if on else ''; fw = 700 if on else 400
+                td = lambda t_, al='center', col=TEXT: f'<td style="{bg} font-size:32px; font-weight:{fw}; color:{col}; text-align:{al}; padding:16px 18px; border-bottom:1px solid {LINE}">{t_}</td>'
+                return ('<tr>' + td(f'{DIAS_L[wd(d)]} {dd(d)}', 'left', APC if on else TEXT)
+                        + ''.join(td(c_.get(k) or '–', col=TEXT if c_.get(k) else BODY) for k in range(1, kmax + 1))
+                        + td(str(round(prom, 1)).replace('.', ','), col=APC if on else TEXT) + '</tr>')
+            tabla = (f'<table style="width:100%; border-collapse:collapse; font-family:\'IBM Plex Sans\', Arial, sans-serif"><thead><tr>' + th('Día', 'left')
+                     + ''.join(th(f'{k} viaje' + ('' if k == 1 else 's')) for k in range(1, kmax + 1)) + th('Promedio') + '</tr></thead><tbody>'
+                     + ''.join(fila(d, v) for d, v in dlf) + '</tbody></table>')
+            _DL = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo']
+            cM = dist[dmax]; n45 = sum(n for k, n in cM.items() if k >= 4); nM = sum(cM.values())
+            otros4 = sum(n for d, _ in dlf if d != dmax for k, n in dist[d].items() if k >= 4)
+            section('pel-op-reparto', head(f'Anexo · operativo de {OPN}', f'{cap(_DL[wd(dmax)])} {dd(dmax)}: {n45} de {nM} camiones hicieron 4 viajes o más', APC, 56)
+                + p('Camiones según cuántos viajes hicieron en el día. El promedio es viajes del día ÷ camiones que trabajaron ese día.', 26, BODY)
+                + tabla
+                + key(f'Con la misma flota, el {_DL[wd(dmax)]} cada camión dio más vueltas: {n45} de {nM} hicieron 4 o más viajes; los otros días, {otros4} en total.', 26),
+                f'Viajes = cartas de porte de {OPDESC} Ricardone → puerto, por día operativo (22 a 22 h) de la salida de la carta; camión = patente del chasis de la carta. '
+                + '; '.join(f'{d}: ' + ', '.join(f'{k} viajes {n}' for k, n in sorted(dist[d].items())) for d, _ in dlf) + '.', gap=28)
+            ANEXO_IDS_FL.append('pel-op-reparto')
     else:
         ANEXO_IDS_FL = []
-    TRK = [('ric', 'En Ricardone', PEL), ('ida', 'Ida', '#B7C3BB'), ('puerto', 'En el puerto', VIO), ('vuelta', 'Vuelta', '#B7C3BB')]
-    tot = lambda t: sum((t[k] or {}).get('mediana') or 0 for k, _, _ in TRK)
+    TRK = [('ric', 'En Ricardone', APC), ('ida', 'Ida', '#B7C3BB'), ('puerto', 'En el puerto', VIO)]   # promedios y sin la vuelta, igual que el ciclo (pedido 06/11)
+    tot = lambda t: round(sum((t.get(k) or {}).get('media') or 0 for k, _, _ in TRK))
     mxt = max(tot(v['tramos']) for _, v in pd_) or 1
     def barra(t):
         s = ''
         for k, l, c in TRK:
-            m = (t.get(k) or {}).get('mediana')
+            m = (t.get(k) or {}).get('media')
             if not m: continue
+            m = round(m)
             w = max(4, round(m / mxt * 1080))
-            s += f'<div style="width:{w}px; height:50px; background:{c}; border-right:3px solid {BG}; display:flex; flex-direction:column; justify-content:center">' + (f'<p style="font-size:22px; font-weight:600; text-align:center; color:{"#F1F6F2" if c in (PEL, VIO) else TEXT}">{m}</p>' if w >= 56 else '') + '</div>'
+            s += f'<div style="width:{w}px; height:50px; background:{c}; border-right:3px solid {BG}; display:flex; flex-direction:column; justify-content:center">' + (f'<p style="font-size:22px; font-weight:600; text-align:center; color:{"#F1F6F2" if c in (APC, VIO) else TEXT}">{m}</p>' if w >= 56 else '') + '</div>'
         return s
     trows = ''.join(f'<div style="display:flex; flex-direction:row; align-items:center; gap:16px"><p style="width:150px; font-size:28px; font-weight:600; color:{TEXT}">{DIAS_L[wd(d)]} {dd(d)}</p>'
                     f'<div style="display:flex; flex-direction:row; border-radius:8px; overflow:hidden">{barra(v["tramos"])}</div><p style="font-size:26px; font-weight:700; color:{TEXT}">{tot(v["tramos"])} min</p></div>' for d, v in pd_)
     def cuello(d, v):
-        t = v['tramos']; r = (t.get('ric') or {}).get('mediana') or 0; p = (t.get('puerto') or {}).get('mediana') or 0
-        if r >= p: return f'el {DIAS_L[wd(d)].lower()} {dd(d)} en Ricardone (Playa 3 → carga {((t.get("playa3") or {}).get("mediana") or "—")} min)'
-        return f'el {DIAS_L[wd(d)].lower()} {dd(d)} en el puerto (Playa OSL {((t.get("playaOsl") or {}).get("mediana") or "—")} min)'
+        t = v['tramos']; r = (t.get('ric') or {}).get('media') or 0; p = (t.get('puerto') or {}).get('media') or 0
+        if r >= p: return f'el {DIAS_L[wd(d)].lower()} {dd(d)} en Ricardone (Playa 3 → carga {round((t.get("playa3") or {}).get("media") or 0) or "—"} min)'
+        return f'el {DIAS_L[wd(d)].lower()} {dd(d)} en el puerto (Playa OSL {round((t.get("playaOsl") or {}).get("media") or 0) or "—"} min)'
     peor = max(pd_, key=lambda x: tot(x[1]['tramos']))
-    section('pel-op-tramos', head('Anexo · operativo de pellet', f'Pellet: ciclo de {CIC} min; la espera cambió de planta según el día', PEL, 56)
-        + legend([(l, c) for _, l, c in TRK], f'<div style="width:24px"></div><p style="font-size:24px; color:{BODY}">Minutos por viaje (mediana), por día</p>')
+    # tramos completos del operativo (como la soja): Ricardone → interplanta → puerto, medias por cámaras vinculadas (pedido 05/11)
+    _m = lambda k: (T.get(k) or {}).get('media')
+    if OPN == 'soja' and all(_m(k) for k in ('ingreso', 'playa3', 'calada', 'salidaRic', 'ida', 'playaOsl', 'descarga', 'puerto')):
+        # soja de silos: carga en Ricardone, vuelve a entrar a calar y sale por Salida 2 (pedido 11/11)
+        tv_ = [round(x) for x in (_m('ingreso'), _m('playa3'), _m('calada'), _m('salidaRic'), _m('ida'), _m('playaOsl'), _m('descarga'), max(0, _m('puerto') - _m('playaOsl') - _m('descarga')))]
+        imx_ = tv_.index(max(tv_))
+        section('pel-op-tramos-total', head(f'Anexo · operativo de {OPN}', f'{OPC}: tiempos medios por tramo de todo el recorrido', APC, 56)
+            + tramos([('Ingreso', 'Ingreso → Playa 3'), ('Carga', 'Playa 3 → carga → balanza egreso'), ('Calada', 'Balanza egreso → calada'), ('Egreso', 'Calada → Salida 2'), ('Interplanta', 'Ricardone → puerto'), ('Playa OSL', 'Ingreso → balanza ingreso'), ('Descarga', 'Balanza → volcable'), ('Salida', 'Volcable → egreso')],
+                     tv_, [APX, APC, APM, APL, GREY, VIO, VMID, VXLT], [APC if i == imx_ else TEXT for i in range(8)],
+                     [('b', 0, 4, f'Ricardone · {sum(tv_[:4])} min', APC, APC), ('gap', 4, 5, '', GREY, TEXT), ('b', 5, 8, f'San Lorenzo · {sum(tv_[5:])} min', VIO, VIO)])
+            + '<div style="display:flex; flex-direction:row; gap:24px">'
+            + kcard(f'Ciclo por viaje · {hm(CIC)}', f'{CIC} min', APC, APC)
+            + kcard('Viajes', fmtn(PO['cartas']), APM, TEXT)
+            + kcard('Flota utilizada', f'{PO["camiones"]} camiones', GMID, GDK) + '</div>',
+            f'Medias por cámaras con el reconocedor por capas (lecturas y pasos recuperados de cada carta). Ricardone {sum(tv_[:4])}: ingreso {tv_[0]}, Playa 3 → carga → balanza egreso {tv_[1]}, '
+            f'vuelve a entrar a calar {tv_[2]}, calada → Salida 2 {tv_[3]}. Interplanta {tv_[4]} (Salida 2 → ingreso San Lorenzo). Puerto {round(_m("puerto"))}. Ciclo = Ricardone + interplanta + puerto = {CIC} min.', gap=32)
+        ANEXO_IDS_TT = ['pel-op-tramos-total']
+    elif all(_m(k) for k in ('ric', 'playa3', 'ida', 'playaOsl', 'descarga', 'puerto')):
+        tv_ = [max(0, _m('ric') - _m('playa3')), _m('playa3'), _m('ida'), _m('playaOsl'), _m('descarga'), max(0, _m('puerto') - _m('playaOsl') - _m('descarga'))]
+        tv_ = [round(x) for x in tv_]; imx_ = tv_.index(max(tv_))
+        section('pel-op-tramos-total', head(f'Anexo · operativo de {OPN}', f'{OPC}: tiempos medios por tramo de todo el recorrido', APC, 56)
+            + tramos([('Ingreso', 'Ingreso → Playa 3'), ('Carga', 'Playa 3 → carga → balanza egreso'), ('Interplanta', 'Ricardone → puerto'), ('Playa OSL', 'Ingreso → balanza ingreso'), ('Descarga', 'Balanza → volcable'), ('Salida', 'Volcable → egreso')],
+                     tv_, [APX, APC, GREY, VIO, VMID, VXLT], [APC if i == imx_ else TEXT for i in range(6)],
+                     [('b', 0, 2, f'Ricardone · {tv_[0] + tv_[1]} min', APC, APC), ('gap', 2, 3, '', GREY, TEXT), ('b', 3, 6, f'San Lorenzo · {tv_[3] + tv_[4] + tv_[5]} min', VIO, VIO)])
+            + '<div style="display:flex; flex-direction:row; gap:24px">'
+            + kcard(f'Ciclo por viaje · {hm(CIC)}', f'{CIC} min', APC, APC)
+            + kcard('Viajes', fmtn(PO['cartas']), APM, TEXT)
+            + kcard('Flota utilizada', f'{PO["camiones"]} camiones', GMID, GDK) + '</div>',
+            'Medias por cámaras con el algoritmo de vínculo (lecturas asignadas a cada carta): Ricardone ' + f'{round(_m("ric"))} (Playa 3 → balanza egreso {round(_m("playa3"))}), ida {round(_m("ida"))}, '
+            f'puerto {round(_m("puerto"))} (Playa OSL {round(_m("playaOsl"))}, descarga {round(_m("descarga"))}). Ciclo = Ricardone + ida + puerto = {CIC} min, el mismo criterio de los operativos anteriores.', gap=32)
+        ANEXO_IDS_TT = ['pel-op-tramos-total']
+    else:
+        ANEXO_IDS_TT = []
+    section('pel-op-tramos', head(f'Anexo · operativo de {OPN}', f'{OPC}: ciclo de {CIC} min; la espera cambió de planta según el día', APC, 56)
+        + legend([(l, c) for _, l, c in TRK], f'<div style="width:24px"></div><p style="font-size:24px; color:{BODY}">Minutos por viaje (promedio), por día</p>')
         + f'<div style="display:flex; flex-direction:column; gap:18px">{trows}</div>'
         + key(f'El día más lento fue {cuello(*peor)}. Entre plantas se tardó {T["ida"]["mediana"]} min de ida y {T["vuelta"]["mediana"]} de vuelta todos los días.' if T.get('ida') and T.get('vuelta') else ''),
         'Tiempos por cámaras con el algoritmo de vínculo (lecturas asignadas a cada carta, viajes cortados por patente). Por día y tramo (mediana / media / viajes): '
         + '; '.join(f'{d}: ' + ', '.join(f'{k} {x["mediana"]}/{x["media"]}/{x["n"]}' for k, x in v['tramos'].items() if x) for d, v in pd_) + '.', gap=22)
-    ANEXO_IDS += ['div-pel-op', 'pel-op-viajes'] + ANEXO_IDS_FL + ['pel-op-tramos']
+    ANEXO_IDS += ['div-pel-op', 'pel-op-viajes'] + ANEXO_IDS_FL + ANEXO_IDS_TT + ['pel-op-tramos']
     _pf = os.path.join(ANT.get('carpeta') or '', 'publicado.json')
     PHo = [o for o in (json.load(open(_pf, encoding='utf-8')).get('pelletHistorico', []) if os.path.exists(_pf) else []) if o.get('ciclo') and o.get('comite') != 'Actual']
-    if PHo:
+    if PHo and OPN == 'pellet':   # el histórico de operativos es solo de pellet
         cic_hoy = CIC
         ops2 = [dict(desde=o['desde'], hasta=o['hasta'], comite=o.get('comite'), viajes=o['viajes'], camiones=o.get('camiones'), ciclo=o['ciclo']) for o in PHo]
         ops2.append(dict(desde=pd_[0][0], hasta=pd_[-1][0], comite='este', viajes=PO['cartas'], camiones=PO['camiones'], ciclo=cic_hoy))
-        mv = max(o['viajes'] for o in ops2); RH, T0 = 76, 60
-        sv = f'<svg aria-label="Operativos de pellet desde agosto: viajes y ciclo" viewBox="0 0 1664 {T0 + RH * len(ops2) + 30}" width="1664" height="{T0 + RH * len(ops2) + 30}" style="width:1664px; height:{T0 + RH * len(ops2) + 30}px">'
-        sv += f'<text x="0" y="30" font-size="24" font-weight="600" fill="{BODY}" {FTS}>Operativo</text><text x="300" y="30" font-size="24" font-weight="600" fill="{BODY}" {FTS}>Viajes · camiones</text><text x="1150" y="30" font-size="24" font-weight="600" fill="{BODY}" {FTS}>Ciclo (min)</text>'
-        cx = lambda m: 1150 + round(m / 450 * 480)
-        for m in range(0, 451, 100):
-            sv += f'<line x1="{cx(m)}" y1="{T0 - 8}" x2="{cx(m)}" y2="{T0 + RH * len(ops2)}" stroke="{LINE}" stroke-width="2"/><text x="{cx(m)}" y="{T0 + RH * len(ops2) + 24}" text-anchor="middle" font-size="20" fill="{BODY}" {FTS}>{m}</text>'
+        # gráfico vertical (pedido 05/11): una columna de viajes por operativo y el ciclo como línea arriba
+        mv = max(o['viajes'] for o in ops2); n_o = len(ops2); W, H0, HB, HL = 1664, 640, 290, 130
+        cw = W / n_o; bw_ = min(120, round(cw * 0.55)); mc = max(o['ciclo'] for o in ops2); lc = min(o['ciclo'] for o in ops2)
+        yb = H0 - 70; yl = lambda c: 86 + round((mc - c) / max(1, mc - lc) * HL)
+        sv = f'<svg aria-label="Operativos de pellet: viajes y ciclo" viewBox="0 0 {W} {H0}" width="{W}" height="{H0}" style="width:{W}px; height:{H0}px">'
+        sv += f'<text x="0" y="24" font-size="22" font-weight="600" fill="{APM}" {FTS}>Ciclo por viaje (min)</text><text x="0" y="{yb - HB - 14}" font-size="22" font-weight="600" fill="{BODY}" {FTS}>Viajes del operativo</text>'
         pts = []
         for r, o in enumerate(ops2):
-            yc = T0 + r * RH + RH // 2; last = o['comite'] == 'este'
-            col = PEL if last else mix(PEL, 0.35 + 0.45 * r / max(1, len(ops2) - 1))
-            sv += f'<text x="0" y="{yc + 8}" font-size="26" font-weight="700" fill="{PEL if last else TEXT}" {FTS}>{dd(o["desde"])}/{int(o["desde"][5:7])}–{dd(o["hasta"])}/{int(o["hasta"][5:7])}</text>'
-            bw = max(8, round(o['viajes'] / mv * 560))
-            sv += f'<rect x="300" y="{yc - 20}" width="{bw}" height="40" rx="6" fill="{col}"/><text x="{312 + bw}" y="{yc + 8}" font-size="24" font-weight="700" fill="{TEXT}" {FTS}>{fmtn(o["viajes"])}{" · " + str(o["camiones"]) + " cam." if o.get("camiones") else ""}</text>'
-            pts.append((cx(o['ciclo']), yc))
-        sv += f'<polyline fill="none" stroke="{PELM}" stroke-width="3" points="' + ' '.join(f'{x},{y}' for x, y in pts) + '"/>'
-        sv += ''.join(f'<circle cx="{x}" cy="{y}" r="10" fill="{PEL}"/><text x="{x + 18}" y="{y + 9}" font-size="24" font-weight="700" fill="{PEL}" {FTS}>{round(o["ciclo"])}</text>' for (x, y), o in zip(pts, ops2))
+            xc = round(cw * r + cw / 2); last = o['comite'] == 'este'
+            col = APC if last else mix(APC, 0.35 + 0.45 * r / max(1, n_o - 1))
+            h = max(6, round(o['viajes'] / mv * HB))
+            sv += f'<rect x="{xc - bw_ // 2}" y="{yb - h}" width="{bw_}" height="{h}" rx="6" fill="{col}"/>'
+            sv += f'<text x="{xc}" y="{yb - h - 10}" text-anchor="middle" font-size="24" font-weight="700" fill="{TEXT}" {FTS}>{fmtn(o["viajes"])}</text>'
+            sv += f'<text x="{xc}" y="{yb + 30}" text-anchor="middle" font-size="22" font-weight="{700 if last else 600}" fill="{APC if last else TEXT}" {FTS}>{dd(o["desde"])}/{int(o["desde"][5:7])}–{dd(o["hasta"])}/{int(o["hasta"][5:7])}</text>'
+            if o.get('camiones'): sv += f'<text x="{xc}" y="{yb + 56}" text-anchor="middle" font-size="20" fill="{BODY}" {FTS}>{o["camiones"]} camiones</text>'
+            pts.append((xc, yl(o['ciclo'])))
+        sv += f'<polyline fill="none" stroke="{APM}" stroke-width="4" points="' + ' '.join(f'{x},{y}' for x, y in pts) + '"/>'
+        sv += ''.join(f'<circle cx="{x}" cy="{y}" r="10" fill="{APC}"/><text x="{x}" y="{y - 18}" text-anchor="middle" font-size="24" font-weight="700" fill="{APC}" {FTS}>{round(o["ciclo"])}</text>' for (x, y), o in zip(pts, ops2))
         sv += '</svg>'
         rk = sorted(ops2, key=lambda o: -o['viajes']).index(ops2[-1]) + 1
-        section('pel-op-hist', head('Anexo · operativo de pellet', f'Pellet: {"el operativo más grande" if rk == 1 else f"{rk}.º operativo más grande"} desde agosto; ciclo de {cic_hoy} min', PEL, 56)
+        section('pel-op-hist', head(f'Anexo · operativo de {OPN}', f'Pellet: {"el operativo más grande" if rk == 1 else f"{rk}.º operativo más grande"} desde agosto; ciclo de {cic_hoy} min', APC, 56)
             + sv,
             'Operativos publicados en cada comité (pelletHistorico: viajes de la planilla, ciclo = Ricardone + interplanta + puerto) y este operativo (viajes por cartas de porte; ciclo con el mismo criterio: '
             + f'Ricardone {T["ric"]["media"]} + ida {T["ida"]["media"]} + puerto {T["puerto"]["media"]} min, medias por cámaras con el algoritmo de vínculo).', gap=22)
@@ -1484,22 +1668,91 @@ if PO and PO['cartas']:
             (a3, t3), (ao, to) = mh(R3), mh(SO)
             dl = ' y '.join(f'{DIAS_L[wd(d)].lower()} {dd(d)}' for d in par)
             sid = f'pel-op-playas-{k_}'
-            section(sid, head('Anexo · operativo de pellet', f'Pellet, {dl}: hasta {R3[it] + SO[it]} camiones esperando a la vez', PEL, 56)
+            section(sid, head(f'Anexo · operativo de {OPN}', f'{OPC}, {dl}: hasta {R3[it] + SO[it]} camiones esperando a la vez', APC, 56)
                 + legend([('Ricardone · Playa 3 (hasta la carga)', GMID), ('San Lorenzo · Playa OSL (hasta la balanza)', VMID)], f'<div style="width:24px"></div><p style="font-size:24px; color:{BODY}">Camiones esperando por hora · en rojo, el máximo</p>')
                 + sv + key(f'San Lorenzo llegó a {ao} camiones {hh(to)}; Ricardone, a {a3} {hh(t3)}. El máximo entre las dos fue {hh(hs[it])} ({R3[it]} en Ricardone y {SO[it]} en San Lorenzo).'),
                 E['nota'] + f'. Días {", ".join(par)} (operativo pleno: 50 cartas o más por día). Una hora cuenta a cada camión que estuvo esperando en algún momento de esa hora. '
                 + 'Por hora (Ricardone/San Lorenzo): ' + ', '.join(f'{h[8:10]}/{h[5:7]} {int(h[11:13])} h {a}/{b}' for h, a, b in zip(hs, R3, SO) if a or b) + '.', gap=18)
             ANEXO_IDS.append(sid)
+    # ritmo de carga en Ricardone y de descarga en el puerto, choferes y volcables (operativo-ritmo.py, pedido 12/11)
+    _rn = ('soja-silos' if OPN == 'soja' else 'pellet') + '-ritmo.json'
+    RT = JC(_rn) if os.path.exists(os.path.join(CAL_DIR, _rn)) else None
+    if RT and RT['carga']['total']['camiones']:
+        dc = lambda v: str(v).replace('.', ',')
+        CA, DE = RT['carga'], RT['descarga']; hs = RT['horas']; n_ = len(hs)
+        W, Hh, L = 1664, 300, 92; vm = max(4, -(-max(CA['serie'] + DE['serie']) // 4) * 4)
+        bw = (W - L - 10) / n_; Y = lambda v: 24 + round((1 - v / vm) * Hh)
+        sv = f'<svg aria-label="Camiones por hora: cargados en Ricardone y descargados en el puerto" viewBox="0 0 {W} {Hh + 112}" width="{W}" height="{Hh + 112}" style="width:{W}px; height:{Hh + 112}px">'
+        for v in range(0, vm + 1, 4):
+            sv += f'<line x1="{L}" y1="{Y(v)}" x2="{W - 10}" y2="{Y(v)}" stroke="{LINE}" stroke-width="2"/><text x="{L - 12}" y="{Y(v) + 7}" text-anchor="end" font-size="20" fill="{BODY}" {FTS}>{v}</text>'
+        sv += f'<text x="20" y="{24 + Hh // 2}" text-anchor="middle" font-size="20" fill="{BODY}" transform="rotate(-90 20 {24 + Hh // 2})" {FTS}>camiones por hora</text>'
+        for i, h in enumerate(hs):
+            x0 = L + i * bw; w = max(2, (bw - 6) / 2); hr = int(h[11:13])
+            for j, (v, c) in enumerate(((CA['serie'][i], GMID), (DE['serie'][i], VMID))):
+                if v: sv += f'<rect x="{x0 + 3 + j * w:.1f}" y="{Y(v)}" width="{w:.1f}" height="{Y(0) - Y(v)}" rx="2" fill="{c}"/>'
+            if hr % 6 == 0: sv += f'<text x="{x0 + bw / 2:.0f}" y="{Hh + 50}" text-anchor="middle" font-size="18" font-weight="700" fill="{TEXT}" {FTS}>{hr}</text>'
+            if h.endswith('T00:00'):
+                if i: sv += f'<line x1="{x0:.0f}" y1="24" x2="{x0:.0f}" y2="{Hh + 60}" stroke="{GREY}" stroke-width="3"/>'
+                cxd = round(x0 + bw * 12)
+                sv += (f'<rect x="{cxd - 90}" y="{Hh + 66}" width="180" height="40" rx="20" fill="{GXLT}"/>'
+                       f'<text x="{cxd}" y="{Hh + 95}" text-anchor="middle" font-size="26" font-weight="700" fill="{GDK}" {FTS}>{DIAS_L[wd(h[:10])]} {dd(h[:10])}</text>')
+        sv += '</svg>'
+        ct, dt_ = CA['total'], DE['total']
+        VO = RT['volcables']; usadas = sorted(VO['porVolcable']); faltan = [f'V{k}' for k in range(1, 6) if f'V{k}' not in VO['porVolcable']]
+        CHO = RT['choferes']; mv = CHO['camionesVariosChoferes']
+        section('pel-op-ritmo', head(f'Anexo · operativo de {OPN}', f'{OPC}: Ricardone carga {dc(ct["camionesHora"])} camiones por hora y el puerto descarga {dc(dt_["camionesHora"])}', APC, 52)
+            + legend([('Cargados en Ricardone', GMID), ('Descargados en el puerto', VMID)], f'<div style="width:24px"></div><p style="font-size:24px; color:{BODY}">camiones por hora, por salida de balanza</p>')
+            + sv
+            + '<div style="display:flex; flex-direction:row; gap:20px">'
+            + note(f'{ct["tHora"]} t/h', f'carga Ricardone en las horas en que carga ({ct["horasActivas"]} de {ct["horas"]}); máximo {ct["maxHora"]} camiones en una hora.', GMID)
+            + note(f'{dt_["tHora"]} t/h', f'descarga el puerto en sus horas activas ({dt_["horasActivas"]} de {dt_["horas"]}); máximo {dt_["maxHora"]} en una hora.', VMID)
+            + note(', '.join(usadas), (f'volcables usadas; la {", ".join(faltan)} no se usó' if faltan else 'volcables usadas') + f' (calle identificada en {VO["ubicados"]} viajes).', GDK)
+            + '</div>'
+            + key(f'Las dos plantas van a la par: ninguna frena a la otra. {CHO["camionesUnChofer"]} de {CHO["camiones"]} camiones hicieron todos sus viajes con el mismo chofer'
+                  + (f'; solo {", ".join(x["patente"] for x in mv)} tuvo dos choferes' if mv else '') + '.', 24),
+            RT['criterio'].replace('\n', ' ') + ' Por día (camiones · t · horas activas · camiones/h · t/h · máximo): carga '
+            + '; '.join(f'{k} {v["camiones"]} · {v["toneladas"]} · {v["horasActivas"]} · {v["camionesHora"]} · {v["tHora"]} · {v["maxHora"]}' for k, v in CA['dias'].items())
+            + '. Descarga ' + '; '.join(f'{k} {v["camiones"]} · {v["toneladas"]} · {v["horasActivas"]} · {v["camionesHora"]} · {v["tHora"]} · {v["maxHora"]}' for k, v in DE['dias'].items())
+            + f'. Estadía mediana: Ricardone {CA["estadiaMediana"]} min, puerto {DE["estadiaMediana"]} min. Carga por hora del día (0–23): {CA["porHoraDelDia"]}; descarga: {DE["porHoraDelDia"]}.'
+            + f' Volcables por día: {VO["porDia"]}; leídos por cámara {VO["leidosPorCamara"]}: {VO["porVolcableCamara"]}. Turno por camión (noche = salida 22–6 h): {CHO["turnoPorCamion"]}.', gap=18)
+        ANEXO_IDS.append('pel-op-ritmo')
+    # velocidad (t/h) contra los operativos de transile anteriores (operativos-transile.py, cartas desde abril)
+    OT = JC('operativos-transile.json') if os.path.exists(os.path.join(CAL_DIR, 'operativos-transile.json')) else None
+    if OT and OT['operativos']:
+        ops = [o for o in OT['operativos'] if not o['producto'].startswith('Girasol')]
+        hoy = max((o for o in ops if o['producto'].lower().startswith(OPN)), key=lambda o: o['desde'], default=None)
+        mxo = max(o['tHora'] for o in ops) or 1
+        fr = lambda o: f'{fdm(o["desde"][:10])}–{fdm(o["hasta"][:10])}' if o['desde'][:10] != o['hasta'][:10] else fdm(o['desde'][:10])
+        colo = lambda o: '#B83A26' if o is hoy else (GDK if o['producto'].startswith('Soja') else PEL)
+        rows = ''.join(
+            f'<div style="display:flex; flex-direction:row; align-items:center; gap:14px; height:34px">'
+            f'<p style="width:150px; font-size:20px; font-weight:{700 if o is hoy else 600}; color:{TEXT}; white-space:nowrap">{"Soja de silos" if o["producto"].startswith("Soja") else "Pellet"}</p>'
+            f'<p style="width:170px; font-size:20px; color:{BODY}; white-space:nowrap">{fr(o)}</p>'
+            f'<p style="width:270px; font-size:20px; color:{BODY}; white-space:nowrap">{fmtn(o["cartas"])} viajes · {o["camiones"]} camiones</p>'
+            f'<div style="width:{max(8, round(o["tHora"] / mxo * 740))}px; height:24px; border-radius:0px 6px 6px 0px; background:{colo(o)}"></div>'
+            f'<p style="font-size:22px; font-weight:700; color:{"#B83A26" if o is hoy else TEXT}; white-space:nowrap">{o["tHora"]} t/h</p></div>' for o in ops)
+        rk = sorted(ops, key=lambda o: -o['tHora']).index(hoy) + 1 if hoy else None
+        best = max(ops, key=lambda o: o['tHora'])
+        gir = [o for o in OT['operativos'] if o['producto'].startswith('Girasol')]
+        section('pel-op-velocidad', head(f'Anexo · operativo de {OPN}', (f'{OPC}: {hoy["tHora"]} t/h, el {rk}.º de {len(ops)} operativos de transile desde {fdm(OT["rango"][0])}' if hoy else 'Velocidad de los operativos de transile'), APC, 52)
+            + legend([('Pellet', PEL), ('Soja de silos', GDK), ('Este operativo', '#B83A26')], f'<div style="width:24px"></div><p style="font-size:24px; color:{BODY}">toneladas por hora entre la primera y la última salida</p>')
+            + f'<div style="display:flex; flex-direction:column; gap:2px">{rows}</div>'
+            + key(f'El más rápido fue el {"pellet" if best["producto"] == "Pellet" else "de soja"} del {fr(best)}: {best["tHora"]} t/h con {best["camiones"]} camiones.'
+                  + (f' Este operativo tuvo {hoy["camiones"]} camiones: con las dos plantas a la par, lo que limita es la flota.' if hoy else ''), 24),
+            OT['criterio'].replace('\n', ' ') + ' Detalle (cartas · camiones · t · horas · t/h · t/h del día pico): '
+            + '; '.join(f'{o["producto"]} {o["desde"][:10]}–{o["hasta"][:10]} {o["cartas"]} · {o["camiones"]} · {o["toneladas"]} · {o["horas"]} · {o["tHora"]} · {o["tHoraDiaPico"]}' for o in OT['operativos']) + '.'
+            + (' Girasol del puerto a Ricardone: ' + '; '.join(f'{fr(o)} {o["cartas"]} cartas a {o["tHora"]} t/h' for o in gir) + '.' if gir else ''), gap=12)
+        ANEXO_IDS.append('pel-op-velocidad')
 
 # ---- sectores: camiones calados por producto y por día (pedido del sector de calado)
 CP = JC('calada-producto.json') if os.path.exists(os.path.join(CAL_DIR, 'calada-producto.json')) else None
 if CP and sum(CP['totalPorProducto'].get('sólida', {}).values()):
-    PRC = {'Soja': GDK, 'Girasol': '#C98A12', 'Cártamo': '#B83A26', 'Maíz': '#E0A526'}
+    PRC = {'Soja': GDK, 'Girasol': '#C98A12', 'Girasol (despacho)': '#7A5608', 'Cártamo': '#B83A26', 'Maíz': '#E0A526', 'Camelina': '#3F7FB5'}
     allp = collections.Counter()
     for k in CP['calles']:
         for d in CP['calles'][k].values(): allp.update(d)
     prods = [p for p, _ in allp.most_common()]
-    colp = {p: PRC.get(p.split(' (')[0], ['#3A8F63', '#6B55A3', '#9A7650', '#9AA8A0', '#3F7FB5'][i % 5]) for i, p in enumerate(prods)}
+    colp = {p: PRC.get(p, PRC.get(p.split(' (')[0], ['#3A8F63', '#6B55A3', '#9A7650', '#9AA8A0', '#3F7FB5'][i % 5])) for i, p in enumerate(prods)}
     dias_ = list(CP['calles']['sólida'])
     vday = lambda d, p: sum(CP['calles'][k][d].get(p, 0) for k in CP['calles'])
     tot_d = {d: sum(vday(d, p) for p in prods) for d in dias_}
@@ -1540,12 +1793,480 @@ if DC and DC['grupos'] and DC['grupos'][0]['viajes'] >= 10:
         DC['criterio'] + ' Otros grupos: ' + '; '.join(f'{g["grano"]} → {g["plantaDestino"]} ({g["cuitDestino"]}) {g["viajes"]}' for g in DC['grupos'][1:]) + '.', gap=24)
     ANEXO_IDS.append('despachos')
 
+# ---- láminas de la base desde los cálculos nuevos (tramos-circuitos, liquidos-puntos, calles-volcables-sgc, otros-productos)
+NUEVAS = []   # (id, después de qué lámina va, reemplaza a)
+def _cj(f): return JC(f) if os.path.exists(os.path.join(CAL_DIR, f)) else None
+TCR, LQP, CVS, OTP = _cj('tramos-circuitos.json'), _cj('liquidos-puntos.json'), (_cj('calles-volcables-cartas.json') or _cj('calles-volcables-sgc.json')), _cj('otros-productos.json')
+GIRC = '#7A5608'
+if TCR and TCR.get('R12', {}).get('viajes', 0) >= 10:
+    R12 = TCR['R12']; tm = {x['tramo']: x for x in R12['tramos']}
+    defs = [('Ingreso', 'Ingreso → Calada', 'Ingreso → Calada'), ('Playa 3', 'Calada → Playa 3', 'Calada → Playa 3'), ('Espera', 'Playa 3 → Carga silo Chief', 'Playa 3 → Tolva silo Chief'),
+            ('Carga', 'Carga silo Chief → Balanza egreso', 'Tolva → Balanza egreso'), ('Calada', 'Balanza egreso → Calada de salida', 'Balanza egreso → Calada'), ('Salida', 'Calada de salida → Salida', 'Calada → Salida 2')]
+    defs = [d for d in defs if d[1] in tm]
+    gv = [round(tm[d[1]]['media']) for d in defs]; gsum = sum(gv); imx = gv.index(max(gv))
+    g0 = (DC['grupos'][0] if DC and DC['grupos'] else None)
+    dest = DEST.get(g0['cuitDestino'], f'planta {g0["plantaDestino"]}') if g0 and g0['grano'].lower().startswith('girasol') else None
+    tot = round(R12['totalPlanillaMedia'])
+    section('girasol-r12', head('Girasol · R12 Despacho silo Chief', 'Tiempos medios por tramo', GIRC)
+        + tramos([(a, c) for a, _, c in defs], gv, [GLT, GMID, GIRC, '#E0A526', GDK, GREY][:len(gv)], [GIRC if i == imx else TEXT for i in range(len(gv))],
+                 [('b', 0, len(gv), f'Ricardone · {gsum} min por tramos ({hm(gsum)}), {gv[imx]} de {defs[imx][0].lower()} ({defs[imx][2]})', GIRC, GIRC)])
+        + '<div style="display:flex; flex-direction:row; gap:24px">'
+        + kcard(f'Tiempo total en planta · {hm(tot)}', f'{tot} min', GIRC, GIRC)
+        + (kcard(f'Despachos con carta · {fmtn(g0["toneladas"])} t', fmtn(g0['viajes']), '#E0A526', TEXT) if dest else kcard(f'Despachos · {fmtn(R12["t"])} t', fmtn(R12['viajes']), '#E0A526', TEXT))
+        + (kcard('Destino según cartas de porte', dest, GMID, GDK) if dest else '') + '</div>',
+        f'Circuito R12 (Despacho): Ingreso → Pre ingreso → Playa 1 → Calada → Balanza ingreso → Playa 3 → Tolva de carga silo Chief → Balanza egreso → Calada → Salida 2. '
+        f'Viajes: girasol de Ricardone en la planilla SGC, día operativo del ingreso, {LBL}: {R12["viajes"]} ({fmtn(R12["t"])} t), {R12["sentidoInferidoPorHistorial"]} marcados como ingreso por historial en el SGC. '
+        'Tramos por cámaras de la patente o el acoplado (cada punto = primera lectura posterior al anterior; hora operativa = occurredAt + 206 min), media / mediana en min (viajes): '
+        + '; '.join(f'{x["tramo"]} {round(x["media"])} / {round(x["mediana"])} ({x["n"]})' for x in R12['tramos'])
+        + f'. Planilla salida − ingreso: {tot} min (mediana {round(R12["totalPlanillaMediana"])}).' + (f' Cartas de porte: {g0["viajes"]} despachos a {dest}.' if dest else '') + ' Script: tramos-circuitos.py.', gap=36)
+    NUEVAS.append(('girasol-r12', 'div-girasol', ('girasol',)))
+if LQP:
+    LQC_ = [(k, v) for k, v in sorted(LQP.items(), key=lambda kv: (kv[0].split(' · ')[0] != 'Carga', -kv[1]['viajes'])) if v['viajes'] >= 3]
+    TRN = ['Ingreso → balanza ingreso', 'Balanza ingreso → punto', 'En el punto', 'Punto → balanza egreso', 'Balanza egreso → salida']
+    TCOL = ['#A9C8E6', BMID, BLU, '#6B8FB5', '#CFE0F0']
+    PLB = {'OSL': 'plataforma OSL', 'PTO': 'plataforma PTO', 'Renova': 'Renova'}
+    mxs = max(sum(round(v['tramos'][t]['media']) for t in TRN if t in v['tramos']) for _, v in LQC_) or 1
+    def lqrow(k, v):
+        se, pt = k.split(' · '); segs = ''
+        for t, c in zip(TRN, TCOL):
+            if t not in v['tramos']: continue
+            m = round(v['tramos'][t]['media']); w = max(4, round(m / mxs * 1000))
+            segs += f'<div style="width:{w}px; height:48px; background:{c}; border-right:3px solid {BG}; display:flex; flex-direction:column; justify-content:center">' + (f'<p style="font-size:22px; font-weight:600; text-align:center; color:{TEXT if c in ("#A9C8E6", "#CFE0F0") else "#F1F6F2"}">{m}</p>' if w >= 44 else '') + '</div>'
+        s_ = sum(round(v['tramos'][t]['media']) for t in TRN if t in v['tramos'])
+        return (f'<div style="display:flex; flex-direction:row; align-items:center; gap:16px"><div style="width:330px; display:flex; flex-direction:column"><p style="font-size:28px; font-weight:600; color:{TEXT}">{se} {PLB.get(pt, pt)}</p><p style="font-size:22px; color:{BODY}">{v["viajes"]} viajes · {fmtn(v["t"])} t</p></div>'
+                f'<div style="display:flex; flex-direction:row; border-radius:8px; overflow:hidden">{segs}</div><p style="font-size:28px; font-weight:700; color:{BLU}; white-space:nowrap">{s_} min</p></div>')
+    big_ = max(LQC_, key=lambda kv: kv[1]['viajes'])
+    section('liq-puntos', head('Líquidos · puerto', f'Tiempos por punto de carga y descarga: {big_[0].split(" · ")[0].lower()} en {PLB.get(big_[0].split(" · ")[1], big_[0].split(" · ")[1])}, {big_[1]["viajes"]} viajes', BLU, 56)
+        + legend([(t, c) for t, c in zip(TRN, TCOL)])
+        + '<div style="display:flex; flex-direction:column; gap:18px">' + ''.join(lqrow(k, v) for k, v in LQC_) + '</div>'
+        + key('Minutos medios por tramo en cada viaje del puerto, según su punto de carga o descarga.'),
+        'Viajes de líquidos del puerto en la planilla SGC (sin los que entran calados por Ricardone ni los que no tienen plataforma), día operativo del ingreso. '
+        'Punto por cámara: RenCargFte/RenDescFte = plataforma OSL; SLZBalLiq* = plataforma PTO; SLZTK400 = Renova. Por grupo: '
+        + '; '.join(f'{k}: {v["viajes"]} viajes, {fmtn(v["t"])} t, planilla {round(v["totalMedia"])} min (mediana {round(v["totalMediana"])}); plataforma SGC {v["plataformaSGC"]}; tramos ' + ', '.join(f'{t} {round(x["media"])} ({x["n"]})' for t, x in v['tramos'].items()) for k, v in LQP.items())
+        + '. Script: liquidos-puntos.py.', gap=24)
+    NUEVAS.append(('liq-puntos', 'liq-semana', ('liq-tramos',)))
+if CVS and CVS.get('trips'):
+    TV = [t for t in CVS['trips'] if t.get('calle')]; NT = len(CVS['trips'])
+    nrec = sum(1 for t in CVS['trips'] if t.get('metodo') == 'repartido')
+    cal = sorted({t['calle'] for t in TV} | {'V1', 'V2', 'V3', 'V4', 'V5'}, key=lambda k: -sum(1 for t in TV if t['calle'] == k))
+    porc = {k: collections.Counter(t['dia'] for t in TV if t['calle'] == k) for k in cal}
+    tk = {k: sum(porc[k].values()) for k in cal}; mxk = max(tk.values()) or 1
+    def celda(n, col):
+        if not n: return f'<p style="width:60px; padding:6px 0; font-size:24px; text-align:center; color:#9AA8A0; border:3px dashed {LINE}; border-radius:10px">0</p>'
+        if n >= 20: return f'<p style="width:60px; padding:9px 0; font-size:24px; font-weight:600; text-align:center; color:#F1F6F2; background:{col}; border-radius:10px">{n}</p>'
+        return f'<p style="width:60px; padding:6px 0; font-size:24px; font-weight:600; text-align:center; color:{TEXT}; background:{GXLT}; border:3px solid {GLT}; border-radius:10px">{n}</p>'
+    hdr = (f'<div style="display:flex; flex-direction:row; gap:12px; align-items:center"><p style="width:200px"></p><p style="width:460px; font-size:24px; font-weight:600; color:{BODY}">Descargas en las volcables</p>'
+           + ''.join(f'<p style="width:60px; font-size:24px; font-weight:600; text-align:center; color:{BODY}">{DIAS_L[wd(d)][:2]}</p>' for d in DAYS) + '</div>')
+    filas = ''
+    for i, k in enumerate(cal):
+        col = VIO if i == 0 else GMID
+        filas += (f'<div style="display:flex; flex-direction:row; gap:12px; align-items:center"><p style="width:200px; font-size:32px; font-weight:600; color:{TEXT}">{k}</p>'
+                  f'<div style="width:460px; display:flex; flex-direction:row; gap:16px; align-items:center"><div style="width:{max(4, round(tk[k] / mxk * 304))}px; height:40px; background:{col}; border-radius:0 8px 8px 0"></div>'
+                  f'<p style="font-size:28px; font-weight:600; white-space:nowrap; color:{TEXT}">{tk[k]} · {round(tk[k] / NT * 100)} %</p></div>' + ''.join(celda(porc[k][d], col) for d in DAYS) + '</div>')
+    tdia = collections.Counter(t['dia'] for t in CVS['trips'])
+    filas += (f'<div style="display:flex; flex-direction:row; gap:12px; align-items:center; padding:6px 0 0; border-top:2px solid {LINE}"><p style="width:200px; font-size:28px; font-weight:700; color:{TEXT}">Total</p>'
+              f'<p style="width:460px; font-size:28px; font-weight:700; color:{TEXT}">{fmtn(NT)} descargas</p>' + ''.join(f'<p style="width:60px; font-size:24px; font-weight:700; text-align:center; color:{TEXT}">{tdia[d]}</p>' for d in DAYS) + '</div>')
+    k0 = cal[0]; v4 = tk.get('V4', 0)
+    pelc = collections.Counter(t['calle'] for t in CVS['trips'] if t.get('producto') == 'Pellet')   # en qué volcables descargó el pellet (cartas)
+    pelv = [k for k, n in pelc.most_common() if n >= 10]
+    tit = f'La {k0} recibió {round(tk[k0] / NT * 10)} de cada 10 descargas' + (f'; el pellet descargó en la {y_(pelv)}' if pelv else f'; el pellet fue a la V4' if v4 and PEL_OP else '')
+    met = collections.Counter((t.get('metodo') or 'sin').split(' ')[0] for t in CVS['trips'])
+    section('volcables', head('Sectores · volcables puerto', tit, VIO, 56)
+        + f'<div style="display:flex; flex-direction:column; gap:8px">{hdr}{filas}</div>',
+        ((CVS['criterio'] + f' Viajes {fmtn(NT)} ({", ".join(f"{k} {v}" for k, v in CVS["productos"].items())}); calle por lectura de cámara {CVS["metodos"].get("lectura", 0)}, por actividad de la volcable {CVS["metodos"].get("actividad", 0)}, por la lectura más cercana {CVS["metodos"].get("cercana", 0)}. ') if CVS.get('fuente') == 'cartas' else
+         (f'Descargas en las volcables del puerto: filas TERMINAL_EMBARQUE · INGRESO · plataforma VOLCABLE_PTO (SGC), día operativo del ingreso, {LBL}: {fmtn(NT)}. '
+          f'Calle: cámara SLZVolcableC1–C5 que leyó la patente o el acoplado (exacta {met["exacta"]}, parecida {met["parecida"]}), horario de salida ({met["horario"]}; acierta {round(CVS["validacion"]["aciertos"] / max(1, CVS["validacion"]["casos"]) * 100)} % sobre los identificados) y no reconocidos repartidos ({nrec}). '))
+        + 'Por día: ' + '; '.join(f'{k} ' + '/'.join(str(porc[k][d]) for d in DAYS) for k in cal if tk[k]) + '.', gap=20)
+    slides = [x for x in slides if x[0] != 'volcables' or x is slides[-1]]   # la versión por calle reemplaza a la de lecturas de cámara
+SRS = _cj('soja-ric-sl.json')
+if SRS and SRS['porVia'].get('Ricardone', 0) >= 20:
+    T_ = SRS['tramos']; nR = SRS['porVia']['Ricardone']; nD = SRS['porVia'].get('directo al puerto', 0)
+    defs = [('playa1', 'Playa 1', 'Pre ingreso → Calada'), ('ricardone', 'Ricardone', 'Calada → Salida 2'), ('interplanta', 'Interplanta', 'Salida 2 → Ingreso SL'),
+            ('playaOsl', 'Espera puerto', 'Ingreso SL → Balanza'), ('descarga', 'Descarga', 'Balanza → Volcable'), ('salida', 'Salida', 'Volcable → Egreso SL')]
+    defs = [d for d in defs if T_.get(d[0])]
+    sv = [T_[d[0]]['media'] for d in defs]; imx = sv.index(max(sv))
+    PD = SRS['porDia']; dl = list(PD)
+    mxs = max(PD[d]['viaRicardone'] + PD[d]['directo'] for d in dl) or 1
+    barras = ''.join(f'<div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:end; gap:6px"><p style="font-size:24px; font-weight:600; color:{TEXT}">{PD[d]["viaRicardone"]}</p>'
+                     f'<div style="width:52px; display:flex; flex-direction:column; border-radius:8px 8px 0 0; overflow:hidden"><div style="height:{round(PD[d]["directo"] / mxs * 230)}px; background:{GLT}"></div><div style="height:{max(4, round(PD[d]["viaRicardone"] / mxs * 230))}px; background:{GDK}"></div></div>'
+                     f'<p style="font-size:22px; font-weight:600; color:{TEXT}; white-space:nowrap">{DIAS_L[wd(d)]} {dd(d)}</p></div>' for d in dl)
+    tR = SRS['toneladas'].get('Ricardone', 0); tot = T_['total']['media']
+    section('soja-ric-sl', head('Soja · Ricardone → San Lorenzo', f'{fmtn(nR)} camiones de soja calaron en Ricardone y descargaron en el puerto: {fmtn(tR)} t', GDK, 56)
+        + '<div style="display:flex; flex-direction:row; gap:48px">'
+        + f'<div style="width:880px; display:flex; flex-direction:column; gap:10px">' + legend([('Calados en Ricardone', GDK), ('Directo al puerto', GLT)]) + f'<div style="height:300px; display:flex; flex-direction:row; gap:6px; align-items:end">{barras}</div></div>'
+        + '<div style="flex:1; display:flex; flex-direction:column; gap:14px">'
+        + note(f'{round(nR / max(1, nR + nD) * 100)} %', f'de las cartas de soja al puerto pasó por la calada de Ricardone ({fmtn(nR)} de {fmtn(nR + nD)}).', GDK)
+        + note(f'{tot} min', f'de Ricardone al egreso del puerto ({hm(tot)}), media de {T_["total"]["n"]} viajes.', GMID) + '</div></div>'
+        + tramos([(b, c) for _, b, c in defs], sv, [GLT, GMID, GREY, VIO, VMID, VXLT][:len(sv)], [GDK if i == imx else TEXT for i in range(len(sv))],
+                 [('b', 0, 2, 'Ricardone', GDK, GDK), ('gap', 2, 3, '', GREY, TEXT), ('b', 3, len(sv), 'San Lorenzo', VIO, VIO)]),
+        SRS['criterio'] + f' Cartas: {SRS["cartas"]} ({SRS["porVia"]}); toneladas {SRS["toneladas"]}; {SRS["camiones"]} camiones distintos. Tramos media / mediana (viajes): '
+        + '; '.join(f'{k} {v["media"]} / {v["mediana"]} ({v["n"]})' for k, v in T_.items() if v) + '. Por día (vía Ricardone / directo): '
+        + '; '.join(f'{d} {PD[d]["viaRicardone"]}/{PD[d]["directo"]}' for d in dl) + '. Script: soja-ric-sl.py.', gap=24)
+    NUEVAS.append(('soja-ric-sl', ('resumen-soja', 'tramos-r7', 'div-soja'), ()))
+if CP and CP.get('esperaPlaya1'):   # un cuadrante por producto: camiones por día (cartas), por hora y espera en Playa 1 (pedido 05/11)
+    EP = CP['esperaPlaya1']
+    tp1 = collections.Counter()
+    for k in CP['calles']:
+        for d in CP['calles'][k]: tp1.update(CP['calles'][k][d])
+    dq = list(CP['calles']['sólida'])
+    pd1 = lambda p: [sum(CP['calles'][k].get(d, {}).get(p, 0) for k in CP['calles']) for d in dq]
+    hA1 = [sum(1 for h in range(24) if sum(CP.get('porHora', {}).get(d, {}).get(str(h), {}).values())) or 24 for d in dq]
+    QC = {'Soja': GDK, 'Cártamo': '#8A3B12', 'Camelina': BLU, 'Girasol (derivado)': '#7A5608', 'Girasol (despacho)': '#7A5608'}
+    def cuadrante(p):
+        col = QC.get(p, GDK); vs = pd1(p); e = EP.get(p)
+        cel = ''.join(f'<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:0px; background:{col + "1F" if n else BG2}; border-radius:8px; padding:6px 0">'
+                      f'<p style="font-size:20px; color:{BODY}">{DIAS_L[wd(d)][:2]} {dd(d)}</p><p style="font-size:32px; font-weight:700; line-height:1.1; color:{col if n else "#9AA8A0"}">{n}</p>'
+                      f'<p style="font-size:20px; font-weight:600; color:{col}">{f"{round(n / h)}/h" if n and n / h >= 1 else "&nbsp;"}</p></div>' for d, n, h in zip(dq, vs, hA1))
+        return (f'<div style="display:flex; flex-direction:column; gap:12px; background:{CARD}; border:1px solid {LINE}; border-top:8px solid {col}; border-radius:14px; padding:16px 20px">'
+                f'<div style="display:flex; flex-direction:row; align-items:baseline; gap:16px"><p style="font-size:30px; font-weight:700; color:{col}">{p}</p><p style="font-size:26px; color:{TEXT}"><b>{sum(vs)}</b> calados</p><div style="flex:1"></div>'
+                + (f'<p style="font-size:24px; color:{BODY}">Espera en Playa 1</p><p style="font-size:36px; font-weight:700; color:{col}">{e["media"]} min</p>' if e and e['n'] >= 3 else '') + '</div>'
+                f'<div style="display:flex; flex-direction:row; gap:4px">{cel}</div></div>')
+    pq1 = [p for p, _ in tp1.most_common(4)]
+    section('calada-playa1', head('Sectores · calada', 'Calada por producto: camiones por día, por hora y espera en Playa 1', GDK, 52)
+        + '<div style="display:grid; grid-template-columns:1fr 1fr; gap:20px">' + ''.join(cuadrante(p) for p in pq1) + '</div>',
+        CP['criterio'] + ' Por hora = camiones del día ÷ horas en que la calada estuvo calando ese día (' + ', '.join(f'{d} {h} h' for d, h in zip(dq, hA1)) + '); sin dato si da menos de 1. '
+        + CP['notaEspera'] + '. Espera media / mediana (camiones): ' + '; '.join(f'{p} {v["media"]} / {v["mediana"]} ({v["n"]})' for p, v in EP.items()) + '. Otros productos fuera de los cuatro cuadrantes: '
+        + ', '.join(f'{p} {n}' for p, n in tp1.most_common()[4:]) + '.', gap=20)
+    NUEVAS.append(('calada-playa1', ('calada-producto', 'calada'), ()))
+# resumen de planta por cartas de porte (viajes = cartas, desde 2/11): reemplaza al de cámaras cuando hay cartas y vínculo
+if SRS and PO and PO.get('cartas'):
+    PD_ = SRS['porDia']; DCg = DC['grupos'][0] if DC and DC['grupos'] and DC['grupos'][0]['grano'].lower().startswith('girasol') else None
+    pt_ = PO['tramos']; cic = sum(pt_[k]['media'] for k in ('ric', 'ida', 'puerto') if pt_.get(k))
+    sdia = [PD_.get(d, {}).get('viaRicardone', 0) for d in DAYS]; gdia = [DCg['porDia'].get(d, 0) for d in DAYS] if DCg else [0] * N
+    if SOJA_DIA: sdia = SOJA_DIA   # misma cifra que la calada (cartas de soja caladas en Ricardone)
+    odia = [sum(_CP0['calles'][k].get(d, {}).get(p, 0) for k in _CP0['calles'] for p in ('Cártamo', 'Camelina')) for d in DAYS] if _CP0 else [0] * N
+    pdia = [PO['porDia'].get(d, {}).get('cartas', 0) for d in DAYS]
+    g12 = TCR.get('R12') if TCR else None
+    nCal = sum(sum(v.values()) for k in CP['totalPorProducto'] for v in [CP['totalPorProducto'][k]]) if CP else None
+    slides = [x for x in slides if x[0] != 'resumen-planta']
+    section('resumen-planta', head('Planta', 'Qué entró a la planta, cuándo y cuánto tardó', VIO)
+        + '<div style="display:flex; flex-direction:row; gap:24px">'
+        + pcard('Soja · R7', GDK, GMID, fmtn(sum(sdia)), 'camiones', f'<b>{R7["total"]} min</b> puerta a puerta', sdia, GDK, GMID, f'{full[max(range(N), key=lambda i: sdia[i])]}: el día con más camiones.')
+        + pcard('Otros granos', '#8A3B12', '#B83A26', fmtn(sum(odia)), 'camiones', 'Cártamo y camelina', odia, '#8A3B12', '#B83A26', 'Descarga en los silos')
+        + (pcard('Líquidos', BLU, BMID, fmtn(LCW['total']['n']), 'movimientos', f'Terminal {sum(v["n"] for k, v in LCW["porPlantaSentido"].items() if k.startswith("TERMINAL"))} · Ricardone {sum(v["n"] for k, v in LCW["porPlantaSentido"].items() if k.startswith("RICARDONE"))}',
+                 [sum(n for pl in LCW['porDia'][d].values() for n in pl.values()) for d in DAYS], BLU, BMID, 'Aceites, glicerina, borras e insumos.') if LCW else '')
+        + (pcard('Pellet', PEL, PELM, fmtn(PO['cartas']), 'viajes', f'<b>{cic} min</b> de ciclo', pdia, PEL, PELM, f'{PO["camiones"]} camiones, {fmtn(PO["toneladas"])} t (anexo).') if OPN == 'pellet' else '')
+        + '</div><div style="display:flex; flex-direction:row; gap:32px">'
+        + (strip('Calada Ricardone', f'{fmtn(nCal)} camiones calados · soja {CP["totalPorProducto"]["sólida"].get("Soja", 0)}') if CP else '')
+        + (strip('Volcables puerto', f'{fmtn(len(CVS["trips"]))} descargas · ' + ' y '.join(f'{k} {round(sum(1 for t in CVS["trips"] if t.get("calle") == k) / len(CVS["trips"]) * 100)} %' for k in [c for c, _ in collections.Counter(t.get("calle") for t in CVS["trips"]).most_common(2)])) if CVS and CVS.get('trips') else '')
+        + strip('Silos Ricardone', f'{fmtn(sum(odia))} descargas de otros granos en silos')
+        + '</div>',
+        f'Semana {LBL} ({N} días). Viajes por cartas de porte ARCA; tiempos por cámaras vinculadas a cada carta (algoritmo de vínculo). '
+        f'Soja: cartas de soja al puerto (planta 25567) que pasaron por la calada de Ricardone, por día de calada ({", ".join(map(str, sdia))}); puerta a puerta = ingreso a Ricardone → egreso del puerto, media de {SRS["tramos"]["total"]["n"]} viajes. '
+        + (f'Girasol: cartas de despacho del silo Chief a {DEST.get(DCg["cuitDestino"], DCg["plantaDestino"])} ({", ".join(map(str, gdia))}); tiempo en planta = planilla SGC del R12 ({g12["viajes"] if g12 else 0} viajes). ' if DCg else '')
+        + (f'Líquidos: movimientos del sistema de camiones (no tienen carta de porte). ' if LCW else '')
+        + f'Pellet: cartas del transile Ricardone → puerto ({", ".join(map(str, pdia))}); ciclo = Ricardone + ida + puerto (medias), igual que el anexo.', gap=28)
+    # cierre con las mismas cifras
+    EP_ = CP.get('esperaPlaya1', {}) if CP else {}
+    epm = max((p for p in EP_ if EP_[p]['n'] >= 5), key=lambda p: EP_[p]['media'], default=None)
+    vk = collections.Counter(t.get('calle') for t in CVS['trips']) if CVS and CVS.get('trips') else None
+    F_ = PO.get('flota', {})
+    # cierre (pedido 06/11): el operativo y sus horas seguidas, soja, calada de grano, soja de noche y otros granos; sin volcables ni líquidos
+    _soja = CP['totalPorProducto']['sólida'].get('Soja', 0) if CP else 0
+    _fl = FL if PO and PO.get('cartas') and isinstance(globals().get('FL'), dict) else None
+    _mx = {}
+    for x in (_fl or {}).get('tramosCorridos', []): _mx[x['patente']] = max(_mx.get(x['patente'], 0), x['horas'])
+    _n24 = sum(1 for h in _mx.values() if h > 24)
+    _top = max((_fl or {}).get('tramosCorridos', []), key=lambda x: x['horas'], default=None)
+    _ord = {1: 'el más bajo', 2: 'el 2.º más bajo', 3: 'el 3.º más bajo'}.get(rk_tot, f'el {rk_tot}.º')
+    cards = ((cierre_card(f'{fmtn(PO["cartas"])} viajes', f'Operativo de {OPN}', f'{PO["camiones"]} camiones y {fmtn(PO["toneladas"])} t; ciclo de {cic} min.', APX) if PO and PO.get('cartas') else '')
+             + (cierre_card(f'{_n24} de {PO["camiones"]}', 'Horas seguidas sin descansar', f'camiones del operativo pasaron 24 h seguidas sin parar 6 h; la racha más larga, {_top["patente"]} con {round(_top["horas"])} h.', APX) if _top else '')
+             + cierre_card(f'{R7["total"]} min', 'Soja de Ricardone al puerto', f'{fmtn(sum(sdia))} camiones, {fmtn(round(sum(sdia) / N))} por día; {abs(d_tot)} min {"menos" if d_tot < 0 else "más"} que la semana anterior y {_ord} desde junio.', GLT)
+             + (cierre_card(fmtn(nCal), 'Calada de grano', f'{round(_soja / nCal * 100)} % soja; espera en Playa 1 de {R7["p1"]} min, contra {avg(P1)} de promedio desde junio.', GLT) if CP and nCal else '')
+             + cierre_card(f'{CUART_PQ["Q1"]} %', 'Soja de noche', 'La noche (22 a 4 h) fue el cuarto más cargado de ingresos a Ricardone.' if CUART_MAX == 'Q1' else f'De noche (22 a 4 h) ingresó el {CUART_PQ["Q1"]} %; el cuarto más cargado fue {CUART_LBL[CUART_MAX]}.', GLT)
+             + (cierre_card(fmtn(sum(odia)), 'Otros granos', 'Descarga en silos: ' + y_([f'{p.lower()} {sum(_CP0["calles"][k].get(d, {}).get(p, 0) for k in _CP0["calles"] for d in DAYS)}' for p in ('Cártamo', 'Camelina')]) + '.', GLT) if _CP0 and sum(odia) else ''))
+    old = next(h for i, h in slides if i == 'cruces')
+    a_, b_ = old.index('<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px">'), old.index('<div style="flex:1"></div>')
+    new = old[:a_] + '<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px">' + cards + '</div>' + old[b_:]
+    new = re.sub(r'<aside>.*?</aside>', f'<aside>Lecturas para discutir en comité. Semana {LBL}: viajes por cartas de porte ARCA, tiempos por cámaras vinculadas a cada carta; líquidos, del sistema de camiones. Cifras de las láminas de soja Ricardone → puerto, calada por producto, girasol, volcables, anexo de pellet y líquidos.</aside>', new, flags=re.S)
+    slides = [(i, new if i == 'cruces' else h) for i, h in slides]
+# pellet: apertura de la V3 y espera en Playa OSL (pedido 05/11: «cuándo se abrió la V3 y cómo afectó la espera en Playa OSL»)
+PV = _cj('pellet-volcables-osl.json')
+if PV and PV.get('antesV3') and PV.get('despuesV3'):
+    A_, B_ = PV['antesV3'], PV['despuesV3']; ap = PV['apertura']['V3']
+    apd = datetime.datetime.fromisoformat(ap)
+    ph = [{'hora': x['hora'], 'esperaMedia': x['camiones']} for x in PV['esperandoPorHora']]   # camiones esperando en Playa OSL por hora (sábado a lunes)
+    n_ = len(ph); W, Hc = 1664, 330
+    mx = max((x['esperaMedia'] or 0) for x in ph) or 1; bw = W / n_
+    ia = next((i for i, x in enumerate(ph) if x['hora'] >= apd.strftime('%Y-%m-%d %H:00')), n_ - 1)
+    sv = f'<svg aria-label="Camiones de pellet esperando en Playa OSL por hora" viewBox="0 0 {W} {Hc + 70}" width="{W}" height="{Hc + 70}" style="width:{W}px; height:{Hc + 70}px">'
+    for i, x in enumerate(ph):
+        e = x['esperaMedia']
+        if e is not None:
+            h = max(2, round(e / mx * Hc))
+            sv += f'<rect x="{round(i * bw) + 1}" y="{Hc - h + 20}" width="{max(2, round(bw) - 2)}" height="{h}" fill="{"#B83A26" if i < ia else GMID}"/>'
+            if e >= 5 and (i == 0 or e >= (ph[i - 1]['esperaMedia'] or 0)) and (i == n_ - 1 or e >= (ph[i + 1]['esperaMedia'] or 0)):   # rótulo en los picos
+                sv += f'<text x="{round(i * bw + bw / 2)}" y="{Hc - h + 12}" text-anchor="middle" font-size="18" font-weight="700" fill="{TEXT}" {FTS}>{e}</text>'
+        if i == 0 or x['hora'][:10] != ph[i - 1]['hora'][:10]:
+            d_ = x['hora'][:10]
+            sv += f'<text x="{round(i * bw)}" y="{Hc + 50}" font-size="22" font-weight="600" fill="{TEXT}" {FTS}>{DIAS_L[wd(d_)]} {dd(d_)}</text><line x1="{round(i * bw)}" y1="{Hc + 20}" x2="{round(i * bw)}" y2="{Hc + 28}" stroke="{BODY}" stroke-width="2"/>'
+    xa = round(ia * bw)
+    sv += f'<line x1="{xa}" y1="0" x2="{xa}" y2="{Hc + 20}" stroke="{VIO}" stroke-width="4" stroke-dasharray="10 6"/><text x="{xa + 10}" y="22" font-size="24" font-weight="700" fill="{VIO}" {FTS}>Abre la V3 · {DIAS_L[apd.weekday()].lower()} {apd.day}, {apd.hour} h</text>'
+    if PV.get('cierre', {}).get('V3'):   # cierre de la V3: última descarga de pellet
+        cd = datetime.datetime.fromisoformat(PV['cierre']['V3'])
+        ic = next((i for i, x in enumerate(ph) if x['hora'] >= cd.strftime('%Y-%m-%d %H:00')), n_ - 1); xc = round(ic * bw)
+        sv += f'<line x1="{xc}" y1="0" x2="{xc}" y2="{Hc + 20}" stroke="{VIO}" stroke-width="4" stroke-dasharray="10 6"/><text x="{xc - 10}" y="22" text-anchor="end" font-size="24" font-weight="700" fill="{VIO}" {FTS}>Cierra la V3 · {DIAS_L[cd.weekday()].lower()} {cd.day}, {cd.hour} h</text>'
+    for pa, pb in PV.get('pausasV3', []):   # pausas de la V3 (5 h o más sin pellet): líneas más suaves y franja clara
+        ia_ = next((i for i, x in enumerate(ph) if x['hora'] >= pa[:13] + ':00'), n_ - 1); ib_ = next((i for i, x in enumerate(ph) if x['hora'] >= pb[:13] + ':00'), n_ - 1)
+        x1, x2 = round(ia_ * bw), round(ib_ * bw)
+        sv += (f'<rect x="{x1}" y="40" width="{max(2, x2 - x1)}" height="{Hc - 20}" fill="{VIO}" fill-opacity="0.06"/>'
+               f'<line x1="{x1}" y1="40" x2="{x1}" y2="{Hc + 20}" stroke="{VMID}" stroke-opacity="0.55" stroke-width="2" stroke-dasharray="6 6"/>'
+               f'<line x1="{x2}" y1="40" x2="{x2}" y2="{Hc + 20}" stroke="{VMID}" stroke-opacity="0.55" stroke-width="2" stroke-dasharray="6 6"/>'
+               f'<text x="{(x1 + x2) // 2}" y="60" text-anchor="middle" font-size="18" font-weight="600" fill="{VMID}" {FTS}>pausa V3</text>')
+    for m in (10, 20, 30, 40):   # escala en camiones esperando
+        if m <= mx:
+            y_m = Hc + 20 - round(m / mx * Hc)
+            sv += f'<line x1="0" y1="{y_m}" x2="{W}" y2="{y_m}" stroke="{LINE}" stroke-width="1"/>'
+    sv += '</svg>'
+    def caja(lab, a, b, mejor):   # una tarjeta por indicador: sábado antes de la V3 → con la V3 descargando (rediseño pedido 06/11)
+        return (f'<div style="flex:1; display:flex; flex-direction:column; gap:10px; background:{CARD}; border:1px solid {LINE}; border-top:8px solid {GMID if mejor else VMID}; border-radius:14px; padding:16px 24px">'
+                f'<p style="font-size:24px; font-weight:700; color:{TEXT}">{lab}</p>'
+                f'<div style="display:flex; flex-direction:row; align-items:end; gap:16px">'
+                f'<div style="display:flex; flex-direction:column; gap:2px"><p style="font-size:36px; font-weight:600; line-height:1; color:#B83A26; white-space:nowrap">{a}</p><p style="font-size:20px; color:{BODY}">sábado</p></div>'
+                f'<p style="font-size:40px; line-height:1.2; color:{BODY}">→</p>'
+                f'<div style="display:flex; flex-direction:column; gap:2px"><p style="font-size:56px; font-weight:700; line-height:1; color:{GMID if mejor else VIO}; white-space:nowrap">{b}</p><p style="font-size:20px; color:{BODY}">con la V3</p></div></div></div>')
+    fz = lambda x: str(x).replace('.', ',')
+    vol_ = lambda b: ' y '.join(sorted(b['porVolcable'])) if b['porVolcable'] else '—'
+    cajas = ('<div style="display:flex; flex-direction:column; gap:10px">'
+             f'<p style="font-size:22px; color:{BODY}"><b style="color:#B83A26">Sábado antes de abrir la V3</b> ({hm(round(A_["horas"] * 60))}) contra <b style="color:{GMID}">las horas con la V3 descargando</b> ({hm(round(B_["horas"] * 60))}, sin las pausas)</p>'
+             '<div style="display:flex; flex-direction:row; gap:18px">'
+             + caja('Espera en Playa OSL', f'{A_["esperaMedia"]} min', f'{B_["esperaMedia"]} min', True)
+             + caja('Ingresan a SL por hora', fz(A_['llegadasPorHora']), fz(B_['llegadasPorHora']), True)
+             + caja('Egresan de SL por hora', fz(A_['salidasPorHora']), fz(B_['salidasPorHora']), True)
+             + caja('Volcables descargando', vol_(A_), vol_(B_), False) + '</div></div>')
+    section('pel-op-v3', head(f'Anexo · operativo de {OPN}', f'Con la V3 abierta, la espera en Playa OSL bajó de {A_["esperaMedia"]} a {B_["esperaMedia"]} min', APC, 56)
+        + sv   # sin subtítulo (el usuario lo sacó)
+        + cajas,
+        PV['criterio'] + f' Apertura de la V3: {ap}; cierre {PV["cierre"]["V3"]}; pausas {PV["pausasV3"]}. Sábado antes de abrir la V3 ({A_["desde"]} → {A_["hasta"]}, {A_["horas"]} h): {A_["viajes"]} viajes, espera media {A_["esperaMedia"]} / mediana {A_["esperaMediana"]} min ({A_["n"]} medidos), '
+        f'ingresaban a SL {A_["llegadasPorHora"]} y egresaban {A_["salidasPorHora"]} camiones por hora, por volcable {A_["porVolcable"]}. Con la V3 descargando, sin las pausas ({B_["intervalos"]}, {B_["horas"]} h): {B_["viajes"]} viajes, espera media {B_["esperaMedia"]} / mediana {B_["esperaMediana"]} min ({B_["n"]} medidos), '
+        f'ingresaban a SL {B_["llegadasPorHora"]} y egresaban {B_["salidasPorHora"]} camiones por hora, por volcable {B_["porVolcable"]}. Viajes por volcable en el operativo: {PV["porVolcable"]}. Script: pellet-volcables-osl.py.', gap=18)
+    NUEVAS.append(('pel-op-v3', ('pel-op-tramos',), ()))
+# pellet: el mejor día del operativo (más viajes y ciclo más corto), pedido 05/11: «lámina especial con todo sobre el lunes»
+if PV and PV.get('porDiaPuerto') and PO and PO.get('porDia'):
+    def _cic(t): return round(sum(((t.get(k) or {}).get('media') or 0) for k in ('ric', 'ida', 'puerto'))) if all(t.get(k) for k in ('ric', 'ida', 'puerto')) else None
+    dl_ = [(d, v) for d, v in PO['porDia'].items() if v['cartas'] >= 50]          # días completos del operativo
+    dbest, vbest = max(dl_, key=lambda kv: kv[1]['cartas'])
+    cics = {d: _cic(v['tramos']) for d, v in dl_}
+    otros_c = [c for d, c in cics.items() if d != dbest and c]
+    RP = PV.get('recordPrevio'); P_ = PV['porDiaPuerto'].get(dbest, {})
+    es_record = RP and vbest['cartas'] > RP['viajes']; es_min = cics[dbest] and otros_c and cics[dbest] < min(otros_c)
+    tb = vbest['tramos']; fb = lambda d: f'{DIAS_L[wd(d)].lower()} {dd(d)}'
+    def kp(big_, lab, sub, col):
+        return (f'<div style="flex:1; display:flex; flex-direction:column; gap:6px; background:{CARD}; border:1px solid {LINE}; border-top:8px solid {col}; border-radius:14px; padding:20px 24px">'
+                f'<p style="font-size:56px; font-weight:700; line-height:1; color:{col}">{big_}</p><p style="font-size:26px; font-weight:600; color:{TEXT}">{lab}</p><p style="font-size:22px; line-height:1.3; color:{BODY}">{sub}</p></div>')
+    mxv = max(v['cartas'] for _, v in dl_)
+    barras = ''.join(f'<div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:end; gap:6px">'
+                     f'<p style="font-size:28px; font-weight:700; color:{APC if d == dbest else TEXT}">{v["cartas"]}</p>'
+                     f'<div style="width:96px; height:{round(v["cartas"] / mxv * 190)}px; background:{APC if d == dbest else "#C9B79F"}; border-radius:8px 8px 0 0"></div>'
+                     f'<p style="font-size:24px; font-weight:{700 if d == dbest else 600}; color:{TEXT}">{DIAS_L[wd(d)]} {dd(d)}</p>'
+                     f'<p style="font-size:22px; font-weight:{700 if d == dbest else 400}; color:{APC if d == dbest else BODY}">{cics[d] or "—"} min de ciclo</p></div>' for d, v in dl_)
+    vols = P_.get('volcables', {})
+    section('pel-op-lunes', head(f'Anexo · operativo de {OPN}', f'{cap(full[iD[dbest]]) if dbest in iD else cap(fb(dbest))}: ' + ('el día con más viajes de pellet desde junio' if es_record else f'{vbest["cartas"]} viajes') + (' y el ciclo más corto del operativo' if es_min else ''), APC, 52)
+        + '<div style="display:flex; flex-direction:row; gap:20px">'
+        + kp(str(vbest['cartas']), 'viajes en el día', (f'El récord anterior desde junio era {RP["viajes"]}, el {fb(RP["dia"])}/{int(RP["dia"][5:7])}.' if es_record else '') + f' {vbest["camiones"]} camiones, {str(round(vbest["cartas"] / vbest["camiones"], 1)).replace(".", ",")} viajes cada uno.', APC)
+        + kp(f'{cics[dbest]} min', 'de ciclo por viaje', f'Los otros días completos, entre {min(otros_c)} y {max(otros_c)} min. Ricardone {tb["ric"]["media"]}, ida {tb["ida"]["media"]}, puerto {tb["puerto"]["media"]}.', GMID)
+        + kp(str(P_.get('egresos', 0)), 'egresos del puerto', f'Hasta {P_.get("maxEgresosHora", 0)} en una hora; espera media en Playa OSL {P_.get("esperaOsl")} min.', VIO)
+        + kp(' y '.join(sorted(vols)), 'descargando todo el día', ' · '.join(f'{k} {n}' for k, n in sorted(vols.items())) + ' descargas.', VMID)
+        + '</div>'
+        + f'<p style="font-size:24px; color:{BODY}">Viajes por día y ciclo por viaje, días completos del operativo</p>'
+        + f'<div style="height:300px; display:flex; flex-direction:row; gap:12px; align-items:end">{barras}</div>',
+        f'Mejor día del operativo de pellet ({dbest}): {vbest["cartas"]} viajes con carta de porte, {vbest["camiones"]} camiones; ciclo = Ricardone + ida + puerto (medias por cámaras vinculadas): {cics[dbest]} min; '
+        f'ciclo de los otros días completos: ' + ', '.join(f'{d} {c}' for d, c in cics.items() if d != dbest) + '. '
+        + (f'Récord anterior desde junio (egresos de pellet de Ricardone por día): {RP["viajes"]} el {RP["dia"]}. ' if RP else '')
+        + f'Puerto ese día: {P_.get("ingresos")} ingresos, {P_.get("egresos")} egresos, hasta {P_.get("maxEgresosHora")} egresos en una hora, espera media en Playa OSL {P_.get("esperaOsl")} min, volcables {vols}. '
+        f'Playa 3 en Ricardone {tb["playa3"]["media"]} min, Playa OSL {tb["playaOsl"]["media"]}, descarga {tb["descarga"]["media"]}.', gap=22)
+    NUEVAS.append(('pel-op-lunes', ('pel-op-v3',), ()))
+    # el mejor día, hora por hora: descargas por volcable (actividad) y camiones esperando en Playa 3 y Playa OSL (pedido 05/11)
+    EH = PO.get('esperaPorHora'); DH = {x['hora']: x for x in PV.get('descargasPorHora', [])}
+    if EH and DH:
+        d0_ = (datetime.date.fromisoformat(dbest) - datetime.timedelta(days=1)).isoformat()
+        hrs = [h.replace('T', ' ') for h in EH['horas'] if f'{d0_} 22' <= h.replace('T', ' ') < f'{dbest} 22']
+        ix = {h.replace('T', ' '): i for i, h in enumerate(EH['horas'])}
+        vls = sorted({k for x in DH.values() for k in x if k.startswith('V')})
+        VC = {'V4': APC, 'V3': VMID, 'V2': GMID, 'V5': GDK, 'V1': GREY}
+        des = [[DH.get(h, {}).get(k, 0) for k in vls] for h in hrs]
+        p3 = [EH['playa3'][ix[h]] for h in hrs]; osl = [EH['playaOsl'][ix[h]] for h in hrs]
+        W, cw = 1664, 1664 / len(hrs); HT, HB = 200, 210; Y0 = 30; Y1 = Y0 + HT + 60
+        mxd = max(sum(x) for x in des) or 1; mxe = max(max(p3), max(osl)) or 1
+        sv = f'<svg aria-label="{fb(dbest)} hora por hora: descargas por volcable y camiones esperando" viewBox="0 0 {W} {Y1 + HB + 50}" width="{W}" height="{Y1 + HB + 50}" style="width:{W}px; height:{Y1 + HB + 50}px">'
+        sv += f'<text x="0" y="18" font-size="22" font-weight="700" fill="{TEXT}" {FTS}>Descargas por hora en las volcables</text>'
+        sv += f'<text x="0" y="{Y1 - 14}" font-size="22" font-weight="700" fill="{TEXT}" {FTS}>Camiones esperando</text>'
+        sv += f'<rect x="250" y="{Y1 - 32}" width="22" height="22" rx="4" fill="{GMID}"/><text x="280" y="{Y1 - 14}" font-size="22" fill="{TEXT}" {FTS}>Playa 3 · Ricardone</text>'
+        sv += f'<rect x="520" y="{Y1 - 32}" width="22" height="22" rx="4" fill="{VIO}"/><text x="550" y="{Y1 - 14}" font-size="22" fill="{TEXT}" {FTS}>Playa OSL · puerto</text>'
+        xl = 520
+        for k in vls:
+            sv += f'<rect x="{xl}" y="0" width="22" height="22" rx="4" fill="{VC.get(k, GREY)}"/><text x="{xl + 30}" y="18" font-size="22" fill="{TEXT}" {FTS}>{k}</text>'; xl += 100
+        for i, (h, xs) in enumerate(zip(hrs, des)):
+            x = round(i * cw + cw * 0.15); w = round(cw * 0.7); y = Y0 + HT
+            for k, n in zip(vls, xs):
+                if not n: continue
+                hh = round(n / mxd * HT); y -= hh
+                sv += f'<rect x="{x}" y="{y}" width="{w}" height="{hh}" fill="{VC.get(k, GREY)}"/>'
+            if sum(xs): sv += f'<text x="{x + w // 2}" y="{y - 6}" text-anchor="middle" font-size="18" font-weight="700" fill="{TEXT}" {FTS}>{sum(xs)}</text>'
+            sv += f'<text x="{round(i * cw + cw / 2)}" y="{Y1 + HB + 34}" text-anchor="middle" font-size="18" fill="{BODY}" {FTS}>{int(h[11:13])}</text>'
+        yl = lambda v: Y1 + HB - round(v / mxe * (HB - 20))
+        for serie, col in ((p3, GMID), (osl, VIO)):
+            pts = [(round(i * cw + cw / 2), yl(v)) for i, v in enumerate(serie)]
+            sv += f'<polyline fill="none" stroke="{col}" stroke-width="4" points="' + ' '.join(f'{a},{b}' for a, b in pts) + '"/>'
+            ip = max(range(len(serie)), key=lambda i: serie[i])
+            sv += ''.join(f'<circle cx="{a}" cy="{b}" r="5" fill="{col}"/>' for a, b in pts) + f'<text x="{pts[ip][0]}" y="{pts[ip][1] - 12}" text-anchor="middle" font-size="22" font-weight="700" fill="{col}" {FTS}>{serie[ip]}</text>'
+        sv += f'<line x1="0" y1="{Y1 + HB}" x2="{W}" y2="{Y1 + HB}" stroke="{LINE}" stroke-width="2"/></svg>'
+        ipo, ip3 = max(range(len(osl)), key=lambda i: osl[i]), max(range(len(p3)), key=lambda i: p3[i])
+        ivac = next((i for i in range(ipo, len(osl)) if osl[i] <= 2), None)
+        pico = max(range(len(des)), key=lambda i: sum(des[i]))
+        v3_ = [x[vls.index('V3')] for x in des] if 'V3' in vls else [0] * len(des)
+        i3 = next((i for i in range(pico, 0, -1) if v3_[i] and not v3_[i - 1]), None)   # cuando volvió la V3 antes del pico
+        noche = [sum(des[i]) for i in range(i3 or 0) if not v3_[i]] if i3 else []
+        txt = ((f'De noche descargó solo la V4 ({min(noche)} a {max(noche)} por hora) y la fila crecía; ' if noche else '') + (f'a las {int(hrs[i3][11:13])} h volvió la V3 y ' if i3 is not None else '')
+               + f'entre las dos volcables llegaron a {sum(des[pico])} descargas por hora. '
+               + f'La fila del puerto, que tocó {osl[ipo]} camiones a las {int(hrs[ipo][11:13])} h, ' + (f'se vació a las {int(hrs[ivac][11:13])} h' if ivac is not None else 'bajó a la tarde')
+               + f'; a esa hora la espera pasó a Playa 3 en Ricardone ({p3[ip3]} camiones a las {int(hrs[ip3][11:13])} h).')
+        section('pel-op-lunes-hora', head(f'Anexo · operativo de {OPN}', f'{cap(full[iD[dbest]]) if dbest in iD else cap(fb(dbest))}, hora por hora: con dos volcables el puerto vació su fila', APC, 52)
+            + sv + key(txt, 24),
+            f'{dbest}, día operativo de 22 a 22 h. Descargas = primera lectura de volcable de cada viaje con carta, por hora y volcable: '
+            + '; '.join(f'{int(h[11:13])} h ' + ', '.join(f'{k} {n}' for k, n in zip(vls, xs) if n) for h, xs in zip(hrs, des) if sum(xs))
+            + '. Camiones esperando (con la espera abierta en esa hora): Playa 3 = Playa 3 → Balanza Egreso de Ricardone; Playa OSL = Ingreso → Balanza Ingreso del puerto. Playa 3 por hora: '
+            + ', '.join(map(str, p3)) + '; Playa OSL: ' + ', '.join(map(str, osl)) + '.', gap=16)
+        NUEVAS.append(('pel-op-lunes-hora', ('pel-op-lunes',), ()))
+# calada por producto como indicador: total, promedio por día y una tarjeta por producto (cifra, %, días, calle, espera Playa 1)
+if CP and CP.get('calleProducto'):
+    CPR, EP = CP['calleProducto'], CP.get('esperaPlaya1', {})
+    tp = collections.Counter()
+    for k in CP['calles']:
+        for d in CP['calles'][k]: tp.update(CP['calles'][k][d])
+    tot = sum(tp.values()); diasCP = list(CP['calles']['sólida'])
+    pdia = lambda p: [sum(CP['calles'][k].get(d, {}).get(p, 0) for k in CP['calles']) for d in diasCP]
+    tdia = [sum(pdia(p)[i] for p in tp) for i in range(len(diasCP))]; imx = max(range(len(diasCP)), key=lambda i: tdia[i])
+    nomc = lambda k: 'calle de líquidos' if k == 'RicCalLiq' else f'calle {int(k[-2:])}'
+    PCOL = {'Soja': (GDK, GMID), 'Cártamo': ('#8A3B12', '#B83A26'), 'Camelina': (BLU, BMID), 'Girasol (despacho)': ('#7A5608', '#C98A12'), 'Girasol (derivado)': ('#7A5608', '#E0A526')}
+    def tabla_calor(filas, cols, tot_col, cw, lw, fs=28, cab=True):
+        """Tabla con color por cantidad: filas (rótulo, valores, color), columnas y fila de totales opcional; total por fila a la derecha."""
+        mx = max((v for _, vs, _ in filas for v in vs), default=1) or 1
+        cell = lambda v, col: (f'<div style="width:{cw}px; height:{fs + 22}px; display:flex; align-items:center; justify-content:center; background:{col}{max(18, round(v / mx * 255)):02X}; border-radius:6px">'
+                               f'<p style="font-size:{fs}px; font-weight:600; color:{"#FFFFFF" if v / mx > .5 else TEXT}">{v}</p></div>') if v else f'<div style="width:{cw}px; height:{fs + 22}px; background:{BG2}; border-radius:6px"></div>'
+        h = ''
+        if cab: h += (f'<div style="display:flex; flex-direction:row; gap:4px; align-items:end"><p style="width:{lw}px"></p>' + ''.join(f'<p style="width:{cw}px; font-size:{fs - 6}px; font-weight:600; text-align:center; color:{BODY}">{c}</p>' for c in cols)
+                      + f'<p style="width:90px; font-size:{fs - 6}px; font-weight:600; text-align:right; color:{BODY}">Total</p></div>')
+        for lab, vs, col in filas:
+            h += (f'<div style="display:flex; flex-direction:row; gap:4px; align-items:center"><p style="width:{lw}px; font-size:{fs - 2}px; font-weight:600; color:{TEXT}; white-space:nowrap">{lab}</p>'
+                  + ''.join(cell(v, col) for v in vs) + f'<p style="width:90px; font-size:{fs}px; font-weight:700; text-align:right; color:{TEXT}">{sum(vs)}</p></div>')
+        if tot_col: h += (f'<div style="display:flex; flex-direction:row; gap:4px; align-items:center; border-top:2px solid {LINE}; padding:4px 0 0"><p style="width:{lw}px; font-size:{fs - 2}px; font-weight:700; color:{TEXT}">Total</p>'
+                          + ''.join(f'<p style="width:{cw}px; font-size:{fs - 4}px; font-weight:700; text-align:center; color:{TEXT}">{v}</p>' for v in tot_col) + f'<p style="width:90px; font-size:{fs}px; font-weight:700; text-align:right; color:{TEXT}">{sum(tot_col)}</p></div>')
+        return f'<div style="display:flex; flex-direction:column; gap:4px">{h}</div>'
+    def pc(p, big=False):
+        cs = sorted(((k, CPR[k].get(p, 0)) for k in CPR if CPR[k].get(p)), key=lambda kv: -kv[1])
+        calle = ' y '.join(f'{nomc(k)} {round(n / tp[p] * 100)} %' for k, n in cs[:2]) if len(cs) > 1 else nomc(cs[0][0]) if cs else ''
+        dk, lt = PCOL.get(p, (GDK, GMID)); e = EP.get(p)
+        return (f'<div style="{"width:520px" if big else "flex:1"}; display:flex; flex-direction:column; gap:{10 if big else 4}px; background:{CARD}; border:1px solid {LINE}; border-left:8px solid {dk}; border-radius:16px; padding:{"24px 28px" if big else "14px 22px"}">'
+                f'<p style="font-size:26px; font-weight:600; color:{dk}">{p}</p>'
+                f'<div style="display:flex; flex-direction:row; align-items:baseline; gap:12px"><p style="font-size:{80 if big else 48}px; font-weight:600; line-height:1; color:{dk}">{tp[p]}</p><p style="font-size:26px; color:{BODY}">{round(tp[p] / tot * 100)} % de los calados</p></div>'
+                + (minibars(pdia(p), dk, lt) if big else '')
+                + f'<p style="font-size:22px; line-height:1.35; color:{TEXT}">{calle[:1].upper() + calle[1:]}</p>'
+                + (f'<p style="font-size:22px; color:{BODY}">Espera en Playa 1 <b style="color:{TEXT}">{e["media"]} min</b></p>' if e and e['n'] >= 3 else '') + '</div>')
+    prods = [p for p, _ in tp.most_common()]
+    hA = [sum(1 for h in range(24) if sum(CP.get('porHora', {}).get(d, {}).get(str(h), {}).values())) or 24 for d in diasCP]   # horas calando
+    def ritmo(n, h): r = n / h if h else 0; return '' if not n or r < 1 else f'{round(r)} por hora'   # menos de 1 por hora: solo la cantidad
+    def tabla_ritmo(prods, pdia, hA, cw=150, lw=290):
+        """Producto × día: camiones calados y camiones por hora (sobre las horas en que la calada estuvo calando ese día)."""
+        mx = max((v for p in prods for v in pdia(p)), default=1) or 1
+        h = (f'<div style="display:flex; flex-direction:row; gap:6px; align-items:end"><p style="width:{lw}px"></p>' + ''.join(f'<p style="width:{cw}px; font-size:24px; font-weight:600; text-align:center; color:{BODY}">{DIAS_L[wd(d)]} {dd(d)}</p>' for d in diasCP)
+             + f'<p style="width:110px; font-size:24px; font-weight:600; text-align:right; color:{BODY}">Semana</p></div>')
+        for p in prods:
+            col = PCOL.get(p, (GDK, GMID))[0]; vs = pdia(p)
+            c = ''
+            for v, hh in zip(vs, hA):
+                if not v: c += f'<div style="width:{cw}px; height:70px; background:{BG2}; border-radius:8px"></div>'; continue
+                a = max(24, round(v / mx * 255)); dark = v / mx > .5
+                c += (f'<div style="width:{cw}px; height:70px; display:flex; flex-direction:column; align-items:center; justify-content:center; background:{col}{a:02X}; border-radius:8px">'
+                      f'<p style="font-size:30px; font-weight:700; line-height:1.05; color:{"#FFFFFF" if dark else TEXT}">{v}</p>' + (f'<p style="font-size:24px; font-weight:700; color:{"#FFFFFF" if dark else col}">{ritmo(v, hh)}</p>' if ritmo(v, hh) else '') + '</div>')
+            h += (f'<div style="display:flex; flex-direction:row; gap:6px; align-items:center"><p style="width:{lw}px; font-size:28px; font-weight:600; color:{col}">{p}</p>{c}'
+                  f'<p style="width:110px; font-size:30px; font-weight:700; text-align:right; color:{TEXT}">{sum(vs)}</p></div>')
+        t = [sum(pdia(p)[i] for p in prods) for i in range(len(diasCP))]
+        h += (f'<div style="display:flex; flex-direction:row; gap:6px; align-items:center; border-top:2px solid {LINE}; padding:6px 0 0"><p style="width:{lw}px; font-size:28px; font-weight:700; color:{TEXT}">Total</p>'
+              + ''.join(f'<div style="width:{cw}px; display:flex; flex-direction:column; align-items:center"><p style="font-size:30px; font-weight:700; color:{TEXT}">{v}</p><p style="font-size:24px; font-weight:700; color:{GDK}">{ritmo(v, hh)}</p><p style="font-size:22px; color:{BODY}">{hh} h calando</p></div>' for v, hh in zip(t, hA))
+              + f'<p style="width:110px; font-size:30px; font-weight:700; text-align:right; color:{TEXT}">{sum(t)}</p></div>')
+        return f'<div style="display:flex; flex-direction:column; gap:6px">{h}</div>'
+    kpi_ = lambda big_, lab, col: f'<div style="display:flex; flex-direction:column; gap:2px"><p style="font-size:64px; font-weight:600; line-height:1; color:{col}">{big_}</p><p style="font-size:24px; color:{BODY}">{lab}</p></div>'
+    slides = [x for x in slides if x[0] != 'calada-producto']
+    section('calada-producto', head('Sectores · calada', f'Calada: {fmtn(tot)} camiones calados en la semana; {round(tp[prods[0]] / tot * 100)} % {prods[0].lower()}', GDK, 56)
+        + '<div style="display:flex; flex-direction:row; gap:72px; align-items:end">'
+        + kpi_(fmtn(tot), 'camiones calados', GDK) + kpi_(round(tot / len(diasCP)), 'por día en promedio', GMID)
+        + kpi_(tdia[imx], f'el {full[iD[diasCP[imx]]]}, el día con más', GMID)
+        + f'<p style="flex:1; font-size:22px; line-height:1.35; color:{BODY}"><b style="color:{TEXT}">Por hora</b> = camiones del día ÷ horas en que la calada estuvo calando ese día (horas activas, en el total). Sin dato: menos de 1 por hora.</p></div>'
+        + tabla_ritmo(prods, pdia, hA),
+        CP['criterio'] + ' Por producto: ' + ', '.join(f'{p} {tp[p]}' for p in prods) + '. Por día (total): ' + ', '.join(f'{d} {n}' for d, n in zip(diasCP, tdia))
+        + '. Por hora = camiones calados del producto ese día / horas en que la calada estuvo calando ese día (horas con al menos un calado, por la primera lectura en la cámara de calada): '
+        + ', '.join(f'{d} {h} h' for d, h in zip(diasCP, hA)) + '. Por calle: ' + '; '.join(f'{nomc(k)} {dict(CPR[k])}' for k in CPR) + '. Espera en Playa 1 (media / mediana / camiones): ' + '; '.join(f'{p} {v["media"]} / {v["mediana"]} / {v["n"]}' for p, v in EP.items()) + '.', gap=28)
+    if False:   # calados por día y hora (total) y por producto y hora (semana): no es lo que se pide; queda el ritmo por día en calada-producto
+        HO = [22, 23] + list(range(22))
+        PH_ = CP['porHora']
+        cel = lambda d, h: sum(PH_.get(d, {}).get(str(h), {}).values())
+        filas_d = [(f'{DIAS_L[wd(d)]} {dd(d)}', [cel(d, h) for h in HO], GDK) for d in diasCP]
+        ph = lambda p: [sum(PH_.get(d, {}).get(str(h), {}).get(p, 0) for d in diasCP) for h in HO]
+        tot_h = [sum(cel(d, h) for d in diasCP) for h in HO]
+        hpk = HO[max(range(24), key=lambda i: tot_h[i])]
+        mx_c = max(max(v) for _, v, _ in filas_d); dpk, hpk2 = max(((d, h) for d in diasCP for h in HO), key=lambda x: cel(*x))
+        vacias = sum(1 for d in diasCP for h in HO if not cel(d, h))
+        section('calada-hora', head('Sectores · calada', f'Calados por día y hora: tandas de hasta {mx_c} camiones en una hora', GDK, 56)
+            + tabla_calor(filas_d, [f'{h}' for h in HO], tot_h, 54, 150, 28)
+            + key(f'El pico fue el {full[iD[dpk]]} a las {hpk2} h ({mx_c} camiones); {vacias} de las {24 * len(diasCP)} horas no tuvieron calados. Columnas: hora del día, desde las 22 h.', 24),
+            CP['criterio'] + ' ' + CP['notaHora'] + '. Total por hora en la semana: ' + ', '.join(f'{h} h {n}' for h, n in zip(HO, tot_h)) + f'. Hora con más calados en la semana: {hpk} h.', gap=20)
+        section('calada-hora-producto', head('Sectores · calada', f'Calados por producto y hora, toda la semana: la soja se concentra a las {y_([f"{HO[i]} h" for i in sorted(sorted(range(24), key=lambda i: -ph(prods[0])[i])[:3])])}', GDK, 56)
+            + tabla_calor([(p, ph(p), PCOL.get(p, (GDK, GMID))[0]) for p in prods], [f'{h}' for h in HO], tot_h, 54, 260, 28)
+            + key('Cada celda suma los camiones calados de ese producto en esa hora, en los ocho días. Columnas: hora del día, desde las 22 h.', 24),
+            CP['criterio'] + ' ' + CP['notaHora'] + '. Por producto y hora (22 a 21 h): ' + '; '.join(f'{p} ' + '/'.join(map(str, ph(p))) for p in prods) + '.', gap=20)
+        NUEVAS.append(('calada-hora', ('calada-producto', 'calada'), ()))
+        NUEVAS.append(('calada-hora-producto', ('calada-producto', 'calada'), ()))
+# días sin registros en el sistema de camiones (la vista de 24 h se perdió): aclararlo en las láminas que salen de él
+SINPL = X['planilla'].get('diasSinMovimientos') or []
+if False:   # sin aclaraciones de fuentes ni de días faltantes en las láminas (pedido del usuario)
+    aviso = nota(f'El sistema de camiones no tiene registros del {y_([full[iD[d]] for d in SINPL if d in iD])}: ese día figura en 0 en esta lámina.')
+    def _avisa(h):
+        h = h.replace(tagcam(), '') if tagcam() else h
+        return h.replace('<img src=', aviso + '<img src=', 1)
+    slides = [(i, _avisa(h) if i in ('liq-semana', 'volcables') else h) for i, h in slides]
+OTC = '#8A3B12'
+# otros granos en una sola lámina (pedido 05/11): cantidades por día de la calada (cartas, igual que las láminas de calada),
+# tramos solo del producto principal (calada → Playa 3 → descarga → balanza de egreso) y puerta a puerta de cada uno
+OQ = [q for q in (OTP or {}).get('productos', []) if q['viajes'] >= 3 and q['circuito']]
+if OQ:
+    q0 = OQ[0]
+    _cpd = lambda nom: [sum(CP['calles'][k].get(d, {}).get(nom, 0) for k in CP['calles']) for d in DAYS] if CP else [q['porDia'].get(d, 0) for q in OQ if q['nombre'] == nom for d in DAYS]
+    OCOL = {'Cártamo': ('#8A3B12', '#B83A26'), 'Camelina': (BLU, BMID)}
+    tr_ = q0['tramos']; tv = [round(x['media']) for x in tr_]
+    LBT = {'Calada → Playa 3': ('Calada y balanza', 'Calada → balanza → Playa 3'), 'Playa 3 → Descarga': ('Playa 3', 'Playa 3 → descarga'), 'Descarga → Balanza egreso': ('Descarga y salida', 'Descarga → balanza de egreso')}
+    imx = tv.index(max(tv)) if tv else 0
+    def ofila(q):
+        dk, lt = OCOL.get(q['nombre'], (OTC, '#B83A26')); vs = _cpd(q['nombre']); tot = round(q['totalMedia'])
+        cel = ''.join(f'<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:2px"><p style="font-size:34px; font-weight:700; color:{dk if n else "#9AA8A0"}">{n}</p><p style="font-size:20px; color:{BODY}">{DIAS_L[wd(d)]} {dd(d)}</p></div>' for d, n in zip(DAYS, vs))
+        return (f'<div style="display:flex; flex-direction:row; gap:20px; align-items:center; background:{CARD}; border:1px solid {LINE}; border-left:10px solid {dk}; border-radius:14px; padding:16px 24px">'
+                f'<div style="width:250px; display:flex; flex-direction:column; gap:2px"><p style="font-size:30px; font-weight:700; color:{dk}">{q["nombre"]}</p><p style="font-size:24px; color:{BODY}">{sum(vs)} camiones · {fmtn(round(q["kg"] / 1000))} t</p></div>'
+                f'<div style="flex:1; display:flex; flex-direction:row">{cel}</div>'
+                f'<div style="width:220px; display:flex; flex-direction:column; align-items:end"><p style="font-size:44px; font-weight:700; line-height:1; color:{TEXT}">{tot} min</p><p style="font-size:22px; color:{BODY}">puerta a puerta · {hm(tot)}</p></div></div>')
+    section('otros-granos', head('Otros productos · descarga en silos', f'Otros granos: {y_([q["nombre"].lower() for q in OQ])}, {sum(sum(_cpd(q["nombre"])) for q in OQ)} camiones en la semana', OTC, 56)
+        + '<div style="display:flex; flex-direction:column; gap:14px">' + ''.join(ofila(q) for q in OQ) + '</div>'
+        + (f'<p style="font-size:26px; font-weight:600; color:{TEXT}">{q0["nombre"]}: minutos medios por tramo</p>'
+           + tramos([LBT.get(x['tramo'], (x['tramo'], x['tramo'])) for x in tr_], tv, [OTC, GMID, GDK, GREY][:len(tv)], [OTC if i == imx else TEXT for i in range(len(tv))],
+                    [('b', 0, len(tv), f'Ricardone · {sum(tv)} min de la calada a la balanza de egreso', OTC, OTC)]) if len(tv) >= 2 else ''),
+        OTP['criterio'] + ' Camiones por día = calados con carta de porte (las mismas cifras de las láminas de calada). '
+        + ' '.join(f'{q["nombre"]} ({q["producto"]}), depósito {q["deposito"]}, circuito {q["circuito"]}: {q["viajes"]} descargas en el registro de la balanza, {fmtn(round(q["kg"]))} kg; puerta a puerta {round(q["totalMedia"])} min (mediana {round(q["totalMediana"])}); tramos media / mediana (viajes): '
+                   + '; '.join(f'{x["tramo"]} {round(x["media"])} / {round(x["mediana"])} ({x["n"]})' for x in q['tramos']) + '.' for q in OQ)
+        + ' La cámara de la balanza de ingreso casi no lee estos camiones: calada → Playa 3 incluye la pesada. Script: otros-productos.py.', gap=24)
+    NUEVAS.append(('otros-granos', ('liq-ritmo', 'liq-oleico', 'liq-puntos', 'liq-semana', 'liq-tramos'), ()))
+
 ORDER = ['portada', 'resumen-planta', 'dia-a-dia', 'div-soja', 'tramos-r7', 'resumen-soja', 'hallazgo', 'plantas', 'cuartos', 'historico',
          'div-pellet', 'pel-periodo', 'pel-tramos', 'pel-dias', 'pel-jornadas', 'pel-numeros', 'pellet-operativo', 'pellet-tramos', 'pellet-hist', 'div-girasol', 'girasol', 'girasol-hist',
          'div-liquidos', 'liq-criterio', 'liq-productos', 'liq-tramos', 'liq-semana', 'liq-oleico', 'liq-ritmo', 'div-sectores', 'calada', 'volcables', 'volcables-mes', 'silos', 'silos-camiones', 'silos-ritmo', 'cruces']
 if LCW: slides = [x for x in slides if x[0] not in ('liq-criterio', 'div-liquidos', 'liq-productos', 'liq-ritmo')]   # líquidos: la semana y el oleico
 if not PEL_OP: slides = [x for x in slides if x[0] != 'div-pellet']
 if PO and PO['cartas']: slides = [x for x in slides if x[0] not in ('div-pellet', 'pel-periodo', 'pel-tramos', 'pel-dias', 'pel-jornadas', 'pel-numeros', 'pellet-operativo', 'pellet-tramos')]   # el anexo reemplaza al pellet de la semana
+for nid, tras, reemplaza in NUEVAS:   # láminas de los cálculos nuevos, en su lugar dentro de la base
+    ORDER = [x for x in ORDER if x not in reemplaza and x != nid]
+    hay = {i for i, _ in slides}
+    ancla = next((x for x in ((tras,) if isinstance(tras, str) else tras) if x in ORDER and x in hay), ORDER[ORDER.index('div-sectores') - 1])
+    i_ = ORDER.index(ancla) + 1
+    while i_ < len(ORDER) and ORDER[i_] in [n for n, _, _ in NUEVAS]: i_ += 1
+    ORDER.insert(i_, nid)
 TOP_IDS = [x for x in BASE_IDS if x == 'permanencia']
 ORDER = ORDER[:1] + TOP_IDS + SEP_IDS + [x for x in ORDER[1:] if x not in SEP_IDS and x not in TOP_IDS]
 if 'calada-producto' in BASE_IDS and 'calada' in ORDER: ORDER.insert(ORDER.index('calada') + 1, 'calada-producto')
@@ -1555,6 +2276,16 @@ if ANEXO_IDS:   # anexos antes del cierre; el histórico de operativos de pellet
     ORDER = [x for x in ORDER if x not in hist]
     i_ = ORDER.index('cruces'); ORDER = ORDER[:i_] + ANEXO_IDS + hist + ORDER[i_:]
 ORDER = [o for o in ORDER if o in {i for i, _ in slides}]
+QUITAR = {'div-girasol', 'girasol-r12', 'girasol', 'girasol-hist', 'liq-oleico', 'soja-ric-sl', 'despachos', 'otros-semilla-de-camelina'}   # pedidos del usuario 05/11: sin girasol (no hubo movimiento), sin oleico, sin transile de soja (no hubo), otros granos en una sola lámina
+ORDER = [o for o in ORDER if o not in QUITAR]
+ORDER = [o for o in ORDER if o not in ('dia-a-dia', 'hallazgo', 'silos', 'liq-semana', 'liq-puntos')]   # líquidos: los sacó el usuario el 06/11   # sacadas por el usuario 05/11 y 06/11
+# el operativo de pellet va primero, después de la portada, en el orden que dejó el usuario (06/11)
+PEL_ORD = ['div-pel-op', 'pel-op-hist', 'pel-op-viajes', 'pel-op-tramos-total', 'pel-op-tramos', 'pel-op-playas-1', 'pel-op-playas-2', 'pel-op-v3', 'pel-op-lunes', 'pel-op-lunes-hora', 'pel-op-flota', 'pel-op-reparto', 'pel-op-ritmo', 'pel-op-velocidad']   # orden del usuario 06/11; ritmo y velocidad 12/11
+PELO = sorted([o for o in ORDER if o == 'div-pel-op' or o.startswith('pel-op-')], key=lambda o: PEL_ORD.index(o) if o in PEL_ORD else 99)
+if PELO:
+    divider('div-actividad', '', 'Actividad de la semana', f'Soja, líquidos, otros granos y sectores de Ricardone y el puerto, del {fdm(DAYS[0])} al {fdm(DAYS[-1])}.', GDK, '#9CCBAE')
+    resto = [o for o in ORDER[1:] if o not in PELO]
+    ORDER = ORDER[:1] + PELO + ['div-actividad'] + resto
 slides = sorted([x for x in slides if x[0] in ORDER], key=lambda x: ORDER.index(x[0]))   # las láminas fuera del orden (p. ej. silos-old) no se escriben
 for f in os.listdir(SL):
     if f.endswith('.html') and f[:-5] not in ORDER: os.remove(os.path.join(SL, f))
