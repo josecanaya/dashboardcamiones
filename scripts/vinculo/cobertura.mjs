@@ -21,6 +21,7 @@ import { getEventLiveInstantMs } from '../../server/plantState/liveEventTime.mjs
 import { alertReadEvents } from '../../server/plantState/alertReads.mjs'
 import { normalizeNote } from '../../server/live/padron/cartasSource.mjs'
 import { NODO_SUR_LOCALITY, NODO_SUR_PLANTS, VICENTIN_CUIT } from '../../server/live/padron/padron.mjs'
+import { emparejar } from './asignacion.mjs'
 
 const [FROM = '2026-10-19', TO = '2026-10-25'] = process.argv.slice(2)
 const root = process.cwd()
@@ -129,7 +130,15 @@ for (const [src, list] of [['feed', feed], ['alerta', alertReadEvents(alerts, fe
     const plate = tfPlate || a?.plate || ''
     // La marca que traen las alertas no se usa: medido 19–25/10, baja los aciertos de la prueba de 95,5 % a 91,7 %
     // con DSS y no recupera nada más sin DSS.
-    caps.push({ src, node, rear: !frontNode.has(dev), device: e.deviceCode, t, plate, journey: e.journeyUid ?? null, attrs: a })
+    // Liviano según la alerta del DSS (tamaño Light-duty o auto/camioneta): nunca es el paso de un camión con carta.
+    // 05/11 09:03 Salida 2: un sedán («GG404») quedaba como egreso de AE879OO.
+    // Solo frontales y solo la categoría de auto: el tamaño «Light-duty» lo da a muchos camiones (traseras, de noche);
+    // medido 07/11: con el tamaño se perdían 6 de cada 10 asignaciones correctas. Y solo si la patente leída no se
+    // parece al camión: de noche el DSS llama «Sedan» a camiones (AC088TB leído AC087E era el camión). El piso de
+    // puntaje (VINCULO_MIN_SCORE) queda apagado: sacaba camiones de noche con la patente ilegible.
+    const liviano = frontNode.has(dev) && ['Sedan', 'SaloonCar', 'PassengerCar'].includes(e.attributes?.category)
+    // alertAttrs: marca, color y tamaño que trae la alerta (el feed no los trae); los usa la segunda pasada de noche.
+    caps.push({ src, node, rear: !frontNode.has(dev), device: e.deviceCode, t, plate, journey: e.journeyUid ?? null, attrs: a, liviano, alertAttrs: e.attributes ?? null })
   }
 }
 const dssMatched = caps.filter((c) => c.attrs).length
@@ -298,6 +307,13 @@ const circuits = model.circuits.map((c) => {
   }
   return { id: c.id, exp, liquid: c.seq.some((s) => LIQUID_NODES.has(s)) }
 }).filter((c) => c.exp.length) // las cartas de porte son de granos: nunca un circuito de líquidos (ver abajo)
+// Excepción: cartas de derivado granario líquido (tipo 284, derivado 101 = aceite de girasol). Calan en la calada de
+// líquidos de Ricardone y descargan en Carga/descarga del puerto, no en volcables (AF763AJ, 06/11: leído en
+// SLZBalLiq2a entre las dos balanzas; el R7 le daba volcables «deducido»; con esto elige R35 y queda completo).
+// Medido 01–10/11: 42 viajes con derivado 101, todos con lectura en cámaras de líquidos.
+// VINCULO_DERIVADOS_LIQUIDOS amplía la lista (códigos con coma).
+const DERIVADOS_LIQUIDOS = new Set((process.env.VINCULO_DERIVADOS_LIQUIDOS ?? '101').split(',').map(Number))
+const esLiquido = (n) => DERIVADOS_LIQUIDOS.has(Number(n.derivedProductCode))
 // Rechazado en la calada de Ricardone (no está en el modelo): sale por donde entró y nunca va a balanza.
 // Solo con evidencia: leído en Ingreso más de 5 min después de la Calada y en ninguna balanza.
 const BALANZAS = ['ricardone:Balanza Ingreso', 'ricardone:Balanza Egreso', 'san_lorenzo:Balanza Ingreso', 'san_lorenzo:Balanza Egreso']
@@ -308,19 +324,25 @@ const rechazado = (mine) => {
 }
 const capsByVehicle = new Map()
 for (const c of caps) if (c.vehicle) capsByVehicle.set(c.vehicle, [...(capsByVehicle.get(c.vehicle) ?? []), c])
+// VINCULO_SOLO_DIA=1: como antes (solo capturas y viajes del rango), para comparar.
+const SOLO_DIA = process.env.VINCULO_SOLO_DIA === '1'
 const trucks = []
 for (const n of cartas) {
   const mine = n.plates.flatMap((p) => capsByVehicle.get(p) ?? []).filter((c) => c.t >= n.from && c.t <= n.to)
-  if (!mine.length || !inWeek(Math.min(...mine.map((c) => c.t)))) continue
+  if (!mine.length) continue
+  // Viajes de los días vecinos también compiten por las capturas (ver `free` más abajo); al final solo se informan
+  // los que empiezan en el rango (enSemana).
+  const enSemana = inWeek(Math.min(...mine.map((c) => c.t)))
+  if (SOLO_DIA && !enSemana) continue
   const seen = new Set(mine.map((c) => c.node))
   // Puntaje: nodos esperados vistos − esperados que faltan − nodos vistos que el circuito no explica
   // (sin este último, SL3 le ganaba a R7 a un camión leído en la Calada y la Salida 2 de Ricardone).
   const score = (c) => c.hit - c.miss.length - c.extra
   const isRech = rechazado(mine)
   // Los viajes sin carta (base sin carta, SGC) sí pueden ser de líquidos (aceites, glicerina, químicos).
-  const best = circuits.filter((c) => (!c.rechazo || isRech) && (!c.liquid || n.origen)).map((c) => ({ ...c, hit: c.exp.filter((x) => seen.has(x)).length, miss: c.exp.filter((x) => !seen.has(x)), extra: [...seen].filter((x) => !c.exp.includes(x)).length }))
+  const best = circuits.filter((c) => (!c.rechazo || isRech) && (!c.liquid || n.origen || esLiquido(n))).map((c) => ({ ...c, hit: c.exp.filter((x) => seen.has(x)).length, miss: c.exp.filter((x) => !seen.has(x)), extra: [...seen].filter((x) => !c.exp.includes(x)).length }))
     .sort((a, b) => score(b) - score(a) || a.exp.length - b.exp.length)[0]
-  trucks.push({ ctg: n.ctg, plate: n.plates[0], origen: n.origen ?? 'carta', circuit: best.id, expected: best.exp.length, missing: best.miss, byClass: Object.fromEntries([...new Set(mine.map((c) => c.cls))].map((k) => [k, mine.filter((c) => c.cls === k).length])) })
+  trucks.push({ enSemana, ctg: n.ctg, plate: n.plates[0], origen: n.origen ?? 'carta', circuit: best.id, expected: best.exp.length, missing: best.miss, byClass: Object.fromEntries([...new Set(mine.map((c) => c.cls))].map((k) => [k, mine.filter((c) => c.cls === k).length])) })
 }
 // ── Pasos de cada camión con carta y capturas sin dueño ──
 // Hueco = paso del circuito sin lectura propia, con su ventana (entre el paso anterior y el siguiente) y la hora
@@ -451,11 +473,21 @@ const timeFit = (c, s) => s.est.length ? Math.max(...s.est.map((e) => Math.exp(-
 // probabilidad. Un camión pasa una vez: ya asignado un paso, las capturas de ese punto 60 s después pesan ×0,1.
 // Solo una patente válida que no se parece a ningún candidato (≥ 3 cambios) queda como otro vehículo.
 const PASS_MS = 5 * 60_000
+// Puntaje mínimo (patente × marca × horario): la probabilidad se reparte entre los candidatos, así que con uno solo
+// cualquier captura daba 100 %. GG404 contra AE879OO puntuaba 0,0005 (patente 0,05 × horario 0,01).
+const MIN_SCORE = Number(process.env.VINCULO_MIN_SCORE ?? 0)
 // Pasadas leídas: lecturas del camión en un punto a menos de 5 min entre sí; cada una es candidata solo a ±5 min.
+// En los puntos con calles (volcables del puerto, calada de Ricardone) una pasada leída solo se queda con capturas de
+// su misma calle: el camión descarga en una sola. EWH682, 06/11 05:20: «IAGQ17» en volcables calle 2 (el camión,
+// visto en la foto) se la llevaba AC732KC, leído 3 min antes en la calle 3, y EWH682 terminaba con un Scania.
+const CON_CALLES = new Set(['san_lorenzo:Plataformas Volcables', 'ricardone:Calada'])
+const carril = (dev) => String(dev ?? '').replace(/(Frente|Trasera|Traser|Fte|Tras|Fr|Tr)$/i, '').toLowerCase()
 for (const tr of trucks) for (const node of new Set(tr.mine.filter((c) => !c.testOf).map((c) => c.node))) {
-  const ts = tr.mine.filter((c) => c.node === node && !c.testOf).map((c) => c.t).sort((a, b) => a - b)
+  const reads = tr.mine.filter((c) => c.node === node && !c.testOf).sort((a, b) => a.t - b.t)
+  const ts = reads.map((c) => c.t)
   let pass = [ts[0]]
-  const push = () => slots.push({ truck: tr, node, from: pass[0] - PASS_MS, to: pass.at(-1) + PASS_MS, est: pass.map((t) => ({ at: t, scale: 60_000 })), read: true })
+  const calles = (p) => (CON_CALLES.has(node) ? new Set(reads.filter((c) => p.includes(c.t)).map((c) => carril(c.device))) : null)
+  const push = () => slots.push({ truck: tr, node, from: pass[0] - PASS_MS, to: pass.at(-1) + PASS_MS, est: pass.map((t) => ({ at: t, scale: 60_000 })), read: true, calles: calles(pass) })
   for (const t of ts.slice(1)) { if (t - pass.at(-1) > PASS_MS) { push(); pass = [t] } else pass.push(t) }
   push()
 }
@@ -463,10 +495,15 @@ const slotsByNode = new Map()
 for (const s of slots) slotsByNode.set(s.node, [...(slotsByNode.get(s.node) ?? []), s])
 const decisions = new Map() // captura → { s, P, rank: [{ s, score }] }
 const taken = new Set()
-const free = caps.filter((c) => !c.vehicle && inWeek(c.t))
+// Todas las capturas cargadas (día anterior, el rango y el siguiente), no solo las del rango: un viaje que empieza a
+// la noche hace la descarga y el egreso pasada la medianoche, y sus capturas de esa madrugada nunca entraban
+// (EWH682, 05→06/11: volcables, balanzas y egreso del puerto quedaban «deducido» con capturas libres a horario).
+// Medido 05, 06 y 09/11: 264 de los 575 pasos sin captura caían el día siguiente. Para que la competencia sea pareja,
+// los viajes de los días vecinos también están en `trucks` (enSemana = false) y se descartan al informar.
+const free = caps.filter((c) => !c.vehicle && (!SOLO_DIA || inWeek(c.t)))
 const ranked = new Map()
 for (const c of free) {
-  const rank = (slotsByNode.get(c.node) ?? []).filter((s) => c.t > s.from && c.t < s.to).map((s) => ({ s, score: affinity(c, s) * timeFit(c, s), h: timeFit(c, s) })).filter((x) => x.h >= 0.01).sort((x, y) => y.score - x.score)
+  const rank = (slotsByNode.get(c.node) ?? []).filter((s) => c.t > s.from && c.t < s.to && (!s.calles || s.calles.has(carril(c.device)))).map((s) => ({ s, score: affinity(c, s) * timeFit(c, s), h: timeFit(c, s) })).filter((x) => x.h >= 0.01 && x.score >= MIN_SCORE && !(c.liviano && x.s.truck.origen === 'carta' && (!c.plate || Math.min(...x.s.truck.plates.map((p) => readDist(c.plate, p))) >= 3))).sort((x, y) => y.score - x.score)
   // Patente válida que no se parece a ningún candidato: es otro vehículo, no se asigna.
   if (!rank.length || (isValidPlate(c.plate) && Math.min(...rank[0].s.truck.plates.map((p) => readDist(c.plate, p))) >= 3)) continue
   ranked.set(c, rank)
@@ -474,7 +511,56 @@ for (const c of free) {
 // Cada captura a su camión más probable; si un paso pendiente recibe capturas de momentos distintos (> 60 s),
 // se queda con la mejor y las demás pasan a su siguiente candidato. Se repite hasta que no cambia nada.
 const banned = new Map() // captura → pasos que ya la rechazaron
-for (let round = 0, changed = true; changed && round < 8; round++) {
+// Reparto conjunto (VINCULO_CONJUNTA=1): en vez de que cada captura elija su mejor camión, se reparten todas las
+// pasadas de cámara entre todos los pasos pendientes a la vez, buscando el mayor producto de puntajes. Un paso que
+// tenía una sola captura posible ya no se queda sin ella porque se la llevó un camión que tenía otra.
+//  · pasada = capturas libres del mismo carril (frontal y trasera) a menos de 60 s: son un mismo vehículo.
+//  · una pasada puede quedarse con un paso ya leído de otro camión (lectura doble) si eso puntúa más.
+//  · VINCULO_PISO: puntaje de «el paso no tuvo captura»; por debajo de eso no se asigna.
+const CONJUNTA = process.env.VINCULO_CONJUNTA === '1'
+const PISO = Number(process.env.VINCULO_PISO ?? 0.002)
+if (CONJUNTA) {
+  const pasadas = []
+  const abierta = new Map() // nodo|carril → pasada en curso
+  for (const c of [...ranked.keys()].sort((a, b) => a.t - b.t)) {
+    const k = `${c.node}|${carril(c.device)}`
+    let p = abierta.get(k)
+    if (!p || c.t - p.t0 > SAME_PASS_MS) { p = { t0: c.t, caps: [] }; abierta.set(k, p); pasadas.push(p) }
+    p.caps.push(c)
+  }
+  const edges = []
+  for (const p of pasadas) {
+    const mejor = new Map() // paso → mejor puntaje de la pasada
+    for (const c of p.caps) for (const x of ranked.get(c)) if (x.score > (mejor.get(x.s) ?? 0)) mejor.set(x.s, x.score)
+    let leido = 0
+    for (const [s, score] of mejor) {
+      if (s.read) { if (score > leido) leido = score; continue }
+      if (score > PISO) edges.push({ a: s, b: p, w: Math.log(score / PISO) })
+    }
+    // Quedarse con un paso ya leído no le saca lugar a nadie: paso propio de la pasada.
+    if (leido > PISO) edges.push({ a: { soloDe: p }, b: p, w: Math.log(leido / PISO) })
+  }
+  const reparto = emparejar(edges)
+  const pasoDe = new Map() // pasada → paso pendiente que le tocó (o null = se queda con un paso leído)
+  const ocupado = new Set()
+  for (const [s, { b: p }] of reparto) { pasoDe.set(p, s.soloDe ? null : s); if (!s.soloDe) ocupado.add(s) }
+  for (const p of pasadas) {
+    if (!pasoDe.has(p)) continue
+    const s = pasoDe.get(p)
+    for (const c of p.caps) {
+      const rank = ranked.get(c)
+      const mio = s ? rank.find((x) => x.s === s) : rank.find((x) => x.s.read)
+      if (!mio) continue
+      // Rivales que siguen en carrera: los pasos leídos y los pendientes que no se llevó otra pasada.
+      const vivos = rank.filter((x) => x === mio || x.s.read || !ocupado.has(x.s))
+      const total = vivos.reduce((t, x) => t + x.score, 0)
+      const orden = [mio, ...vivos.filter((x) => x !== mio)].slice(0, 5).map((x) => ({ ...x, P: x.score / total }))
+      decisions.set(c, { s: mio.s, P: mio.score / total, rank: orden })
+    }
+  }
+}
+function resolver() {
+for (let round = 0, changed = !CONJUNTA; changed && round < 8; round++) {
   changed = false
   decisions.clear()
   const bySlotNow = new Map()
@@ -489,6 +575,51 @@ for (let round = 0, changed = true; changed && round < 8; round++) {
     const best = list.reduce((m, x) => (x.score > m.score ? x : m))
     for (const x of list) if (Math.abs(x.c.t - best.c.t) > SAME_PASS_MS) { banned.set(x.c, new Set([...(banned.get(x.c) ?? []), s])); changed = true }
   }
+}
+}
+resolver()
+// ── Segunda pasada con marca, color y tamaño en las cámaras que de noche casi no leen patente ──
+// Volcables del puerto de noche: la patente sale ilegible y el horario solo no separa camiones de la misma fila
+// (EWH682, 06/11 05:20 vs 05:29: horario 0,91 contra 0,98; ganaba un Scania y el camión era un Mercedes, «Benz» en
+// la alerta). Perfil del camión = atributos de las alertas frontales de sus lecturas y de las capturas que la primera
+// pasada le asignó con ≥ 60 %. Se aplica solo a ATRIB_CAMS de 18 a 7 h. VINCULO_ATRIB_NOCHE=0 lo apaga.
+const ATRIB_CAMS = new Set((process.env.VINCULO_ATRIB_CAMS ?? 'SLZVolcableC1,SLZVolcableC2,SLZVolcableC3,SLZVolcableC4,SLZVolcableC5').split(',').map((d) => d.toLowerCase()))
+const deNoche = (t) => { const h = new Date(t - 3 * H).getUTCHours(); return h >= 18 || h < 7 }
+const marcaNorm = (m) => { const s = String(m ?? '').toLowerCase(); if (!s || /unknown|unrecognized|null/.test(s)) return null; return /benz|mercedes/.test(s) ? 'mercedes' : s.replace(/[^a-z]/g, '') }
+const tamNorm = (z) => (/light/i.test(z ?? '') ? 'liviano' : /oversize|large|mid|truck/i.test(z ?? '') ? 'camion' : null)
+if (process.env.VINCULO_ATRIB_NOCHE !== '0') {
+  const perfil = new Map() // camión → { marca: {}, color: {} }
+  const sumar = (tr, a) => {
+    if (!a) return
+    const p = perfil.get(tr) ?? { marca: {}, color: {} }
+    const m = marcaNorm(a.brand), col = String(a.color ?? '').toLowerCase() || null
+    if (m) p.marca[m] = (p.marca[m] ?? 0) + 1
+    if (col) p.color[col] = (p.color[col] ?? 0) + 1
+    perfil.set(tr, p)
+  }
+  for (const tr of trucks) for (const c of tr.mine) if (!c.rear && !c.testOf) sumar(tr, c.alertAttrs)
+  for (const [c, d] of decisions) if (!c.rear && d.P >= 0.6 && !ATRIB_CAMS.has(c.device.toLowerCase())) sumar(d.s.truck, c.alertAttrs)
+  const moda = (o) => Object.entries(o ?? {}).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null
+  const factor = (c, tr) => {
+    const a = c.alertAttrs, p = perfil.get(tr)
+    if (!a) return 1
+    let f = 1
+    const mc = marcaNorm(a.brand), mt = moda(p?.marca)
+    if (mc && mt) f *= mc === mt ? 4 : 0.2
+    const cc = String(a.color ?? '').toLowerCase(), ct = moda(p?.color)
+    if (cc && ct) f *= cc === ct ? 1.5 : 0.6
+    if (tamNorm(a.size) === 'liviano' && tr.origen === 'carta') f *= 0.3
+    return f
+  }
+  let tocadas = 0
+  for (const [c, rank] of ranked) {
+    if (!ATRIB_CAMS.has(c.device.toLowerCase()) || !deNoche(c.t) || !c.alertAttrs) continue
+    for (const x of rank) { x.score *= factor(c, x.s.truck) }
+    rank.sort((a, b) => b.score - a.score)
+    tocadas++
+  }
+  if (tocadas) { banned.clear(); resolver() }
+  console.log(`  atributos de noche: ${tocadas} capturas de volcables repuntuadas con marca/color/tamaño (${perfil.size} camiones con perfil)`)
 }
 for (const [c, d] of decisions) {
   taken.add(c)
@@ -534,6 +665,9 @@ for (const s of slots) {
   }
   s.truck.status[s.node] = s.filled ? 'reconstruido' : s.anchor ? 'por_carta' : s.bounded ? 'deducido' : s.pending ? 'en_curso' : 'falta'
 }
+// Se informan solo los viajes que empiezan en el rango; los de los días vecinos solo compitieron por capturas.
+trucks.splice(0, trucks.length, ...trucks.filter((t) => t.enSemana))
+for (const [c, d] of [...decisions]) if (!d.s.truck.enSemana) decisions.delete(c)
 const tally = {}
 for (const tr of trucks) for (const v of Object.values(tr.status)) tally[v] = (tally[v] ?? 0) + 1
 const nSteps = Object.values(tally).reduce((a, b) => a + b, 0)

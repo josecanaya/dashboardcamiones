@@ -171,6 +171,8 @@ if (process.env.VINCULO !== '0') {
     fs.writeFileSync(path.join(tmp, 'extra.json'), JSON.stringify(process.env.LOTE_UNIVERSO === '0' ? [] : viajesSinCarta))
     // Igual que en vivo: lo conocido (bases del back office, no camiones) no se toma como lectura mala de una carta.
     fs.writeFileSync(path.join(tmp, 'conocidas.json'), JSON.stringify([...backoffice.todas().map((e) => e.plate), ...noCamBy.keys(), ...realSet]))
+    // VINCULO_DEBUG_DIR: guarda las entradas del lote del día para repetir cobertura.mjs a mano (p. ej. con --prueba).
+    if (process.env.VINCULO_DEBUG_DIR) fs.cpSync(tmp, path.join(process.env.VINCULO_DEBUG_DIR, day), { recursive: true })
     execFileSync(process.execPath, ['--max-old-space-size=8192', path.join(root, 'scripts', 'vinculo', 'cobertura.mjs'), day, day], {
       cwd: root, stdio: 'ignore', env: { ...process.env, VINCULO_CARTAS: path.join(tmp, 'cartas.json'), VINCULO_EXTRA: path.join(tmp, 'extra.json'), VINCULO_CONOCIDAS: path.join(tmp, 'conocidas.json'), VINCULO_OUT: path.join(tmp, 'out'), VINCULO_SIN_DSS: '1' },
     })
