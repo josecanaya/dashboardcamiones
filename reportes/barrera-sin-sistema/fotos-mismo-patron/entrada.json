@@ -1,0 +1,656 @@
+[
+ {
+  "dia": "2026-05-29",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-05-29T11:52:29.008Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-05-29T12:20:32.082Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-06-04",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-06-04T13:16:16.826Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-06-04T13:58:10.362Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-07-28",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-07-28T12:06:12.814Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-07-28T12:43:12.939Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-07-30",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-07-30T12:04:25.121Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-07-30T12:38:52.664Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-04",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-08-04T11:54:03.858Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-08-04T12:47:21.072Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-13",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-08-13T12:23:14.668Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-08-13T13:16:17.790Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-25",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-08-25T11:55:08.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-08-25T12:18:52.794Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-27",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-08-27T12:06:58.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-08-27T12:42:52.000Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-04",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-09-04T12:23:03.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-09-04T13:48:51.056Z",
+    "device": "RicB2Egreso"
+   },
+   {
+    "at": "2026-09-04T15:25:31.000Z",
+    "device": "RicB3Ingreso"
+   },
+   {
+    "at": "2026-09-04T16:28:46.603Z",
+    "device": "RicB3Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-08",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-09-08T13:33:20.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-09-08T14:11:19.091Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-06-02",
+  "plate": "FQI716",
+  "pasos": [
+   {
+    "at": "2026-06-02T13:13:01.221Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-06-02T13:38:56.233Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-06-09",
+  "plate": "FQI716",
+  "pasos": [
+   {
+    "at": "2026-06-09T12:52:21.953Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-06-09T13:17:54.000Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-07-28",
+  "plate": "FQI716",
+  "pasos": [
+   {
+    "at": "2026-07-28T13:47:18.580Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-07-28T14:54:41.241Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-04",
+  "plate": "FQI716",
+  "pasos": [
+   {
+    "at": "2026-08-04T11:51:21.371Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-08-04T12:30:40.133Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-13",
+  "plate": "FQI716",
+  "pasos": [
+   {
+    "at": "2026-08-13T12:33:26.618Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-08-13T13:27:49.992Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-25",
+  "plate": "FQI716",
+  "pasos": [
+   {
+    "at": "2026-08-25T11:11:58.394Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-08-25T11:53:57.506Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-08",
+  "plate": "FQI716",
+  "pasos": [
+   {
+    "at": "2026-09-08T13:06:32.761Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-09-08T13:32:56.719Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-10-01",
+  "plate": "FQI716",
+  "pasos": [
+   {
+    "at": "2026-10-01T14:26:49.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-10-01T14:54:02.894Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-05-22",
+  "plate": "LPZ703",
+  "pasos": [
+   {
+    "at": "2026-05-22T14:48:01.137Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-05-22T15:15:30.649Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-06-03",
+  "plate": "LPZ703",
+  "pasos": [
+   {
+    "at": "2026-06-03T12:40:26.443Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-06-03T13:48:24.645Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-14",
+  "plate": "LPZ703",
+  "pasos": [
+   {
+    "at": "2026-08-14T11:30:55.206Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-08-14T15:27:25.950Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-08",
+  "plate": "LPZ703",
+  "pasos": [
+   {
+    "at": "2026-09-08T10:46:55.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-09-08T12:13:38.863Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-14",
+  "plate": "LPZ703",
+  "pasos": [
+   {
+    "at": "2026-09-14T12:04:52.692Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-09-14T16:11:05.401Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-29",
+  "plate": "LPZ703",
+  "pasos": [
+   {
+    "at": "2026-09-29T11:42:30.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-09-29T16:07:40.809Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-07-20",
+  "plate": "AF831ID",
+  "pasos": [
+   {
+    "at": "2026-07-20T12:10:45.693Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-07-20T12:47:05.000Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-12",
+  "plate": "AF831ID",
+  "pasos": [
+   {
+    "at": "2026-08-12T15:03:33.254Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-08-12T15:29:48.063Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-28",
+  "plate": "AF831ID",
+  "pasos": [
+   {
+    "at": "2026-08-28T10:38:56.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-08-28T11:23:26.000Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-17",
+  "plate": "AF831ID",
+  "pasos": [
+   {
+    "at": "2026-09-17T14:12:47.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-09-17T14:41:05.544Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-27",
+  "plate": "RSW086",
+  "pasos": [
+   {
+    "at": "2026-08-27T15:24:53.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-08-27T18:31:18.000Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-04",
+  "plate": "RSW086",
+  "pasos": [
+   {
+    "at": "2026-09-04T12:53:33.876Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-09-04T17:41:02.427Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-11",
+  "plate": "RSW086",
+  "pasos": [
+   {
+    "at": "2026-09-11T10:30:36.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-09-11T11:49:16.355Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-07-15",
+  "plate": "CXV575",
+  "pasos": [
+   {
+    "at": "2026-07-15T15:16:41.997Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-07-15T15:47:32.000Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-07-16",
+  "plate": "CXV575",
+  "pasos": [
+   {
+    "at": "2026-07-16T12:01:47.711Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-07-16T12:21:26.000Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-11-02",
+  "plate": "CXV575",
+  "pasos": [
+   {
+    "at": "2026-11-02T13:22:49.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-11-02T14:39:42.701Z",
+    "device": "RicB2Egreso"
+   },
+   {
+    "at": "2026-11-02T14:44:20.597Z",
+    "device": "RicIngCamFrente"
+   },
+   {
+    "at": "2026-11-02T15:00:58.126Z",
+    "device": "RicEgrCamFrente"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-26",
+  "plate": "AF241DX",
+  "pasos": [
+   {
+    "at": "2026-08-26T13:07:52.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-08-26T15:16:36.596Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-04",
+  "plate": "AF241DX",
+  "pasos": [
+   {
+    "at": "2026-09-04T13:30:07.831Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-09-04T15:30:41.413Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-11",
+  "plate": "AF241DX",
+  "pasos": [
+   {
+    "at": "2026-09-11T10:41:07.593Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-09-11T11:50:20.437Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-06-04",
+  "plate": "NAD656",
+  "pasos": [
+   {
+    "at": "2026-06-04T16:47:35.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-06-04T17:44:51.156Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-14",
+  "plate": "NAD656",
+  "pasos": [
+   {
+    "at": "2026-08-14T14:50:22.481Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-08-14T15:13:25.259Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-05-18",
+  "plate": "AE131JP",
+  "pasos": [
+   {
+    "at": "2026-05-18T08:19:24.584Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-05-18T09:11:40.869Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-05-27",
+  "plate": "AE131JP",
+  "pasos": [
+   {
+    "at": "2026-05-27T08:17:52.316Z",
+    "device": "RicIngCamFrente"
+   },
+   {
+    "at": "2026-05-27T08:20:11.098Z",
+    "device": "RicPreIngInFr"
+   },
+   {
+    "at": "2026-05-27T09:01:01.660Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-05-27T12:52:13.746Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-06-19",
+  "plate": "AH498JW",
+  "pasos": [
+   {
+    "at": "2026-06-19T17:09:12.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-06-19T18:32:55.000Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-24",
+  "plate": "AH498JW",
+  "pasos": [
+   {
+    "at": "2026-09-24T14:37:00.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-09-24T15:52:56.179Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-07-06",
+  "plate": "OAA734",
+  "pasos": [
+   {
+    "at": "2026-07-06T12:57:04.925Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-07-06T13:25:13.000Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-07-20",
+  "plate": "OAA734",
+  "pasos": [
+   {
+    "at": "2026-07-20T17:05:52.950Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-07-20T18:04:05.000Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ }
+]

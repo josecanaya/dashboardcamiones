@@ -252,6 +252,20 @@
       "reason": "Auto particular / camioneta",
       "operator": null,
       "updatedAt": "2026-10-13T13:28:27.509Z"
+    },
+    "ION372": {
+      "action": "remove",
+      "journeyUid": "9cb47d08-2fca-43fc-b280-87d40bbc40d9",
+      "reason": "Ya salió de planta",
+      "operator": null,
+      "updatedAt": "2026-11-04T18:32:45.980Z"
+    },
+    "HSF011": {
+      "action": "remove",
+      "journeyUid": "e602466f-1924-48c9-a50c-06eec2325786",
+      "reason": "Lectura duplicada o fantasma",
+      "operator": null,
+      "updatedAt": "2026-11-04T18:33:14.807Z"
     }
   }
 }

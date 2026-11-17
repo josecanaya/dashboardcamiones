@@ -1890,6 +1890,147 @@
       "operator": null,
       "learning": null,
       "updatedAt": "2026-10-29T17:36:13.229Z"
+    },
+    "277e145f-c1c6-4a51-8d8a-a0a73e5917ca": {
+      "action": "reject",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-11-03T17:46:47.957Z"
+    },
+    "fcccecbe-9e9e-47d8-b1cb-489853632850": {
+      "action": "reject",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-11-03T17:47:00.714Z"
+    },
+    "fa4f5013-af00-475a-9b1e-d6382cb25943": {
+      "action": "reject",
+      "reason": "Auto particular / camioneta",
+      "operator": null,
+      "updatedAt": "2026-11-03T17:47:43.940Z"
+    },
+    "29668885-1874-474d-9198-1d981ff79989": {
+      "action": "confirm",
+      "plate": "AC569LT",
+      "journeyUid": null,
+      "reason": "alerta: la cámara leyó bien",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-11-03T17:48:13.270Z"
+    },
+    "b50c5f6a-d278-483b-aadb-bf2c9ee68b64": {
+      "action": "confirm",
+      "plate": "CIH184",
+      "journeyUid": null,
+      "reason": "alerta: corregida a CIH184",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-11-03T17:49:41.328Z"
+    },
+    "234bf388-3141-4cff-b0b1-b746825daae1": {
+      "action": "confirm",
+      "plate": "LIF292",
+      "journeyUid": null,
+      "reason": "alerta: la cámara leyó bien",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-11-04T13:44:35.958Z"
+    },
+    "49153ec3-ebce-4a77-98d5-0c67c89b6ac0": {
+      "action": "confirm",
+      "plate": "AF155ST",
+      "journeyUid": null,
+      "reason": "alerta: la cámara leyó bien",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-11-04T13:44:58.512Z"
+    },
+    "927d635b-4eed-4939-b197-93750d241c3f": {
+      "action": "confirm",
+      "plate": "NLK555",
+      "journeyUid": null,
+      "reason": "alerta: corregida a NLK555",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-11-04T13:45:50.739Z"
+    },
+    "08b7e0a7-8cf4-49e2-8e4b-81c7d1d22b28": {
+      "action": "confirm",
+      "plate": "PEA114",
+      "journeyUid": null,
+      "reason": "alerta: la cámara leyó bien",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-11-04T13:46:03.438Z"
+    },
+    "e59d92f6-fc0d-4783-9572-3e20f59a4039": {
+      "action": "reject",
+      "reason": "Tractor o maquinaria",
+      "operator": null,
+      "updatedAt": "2026-11-04T13:47:49.689Z"
+    },
+    "97aa3ce6-4347-4771-a4a7-2c04dfc298ce": {
+      "action": "confirm",
+      "plate": "AD013ZQ",
+      "journeyUid": null,
+      "reason": "alerta: corregida a AD013ZQ",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-11-04T13:48:32.313Z"
+    },
+    "07567bcf-bbcc-4191-ac55-79bc80e381a7": {
+      "action": "confirm",
+      "plate": "EVO342",
+      "journeyUid": null,
+      "reason": "alerta: corregida a EVO342",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-11-04T13:48:57.864Z"
+    },
+    "7e772c6f-6e5b-4be1-8dc7-e0983a3b6dfb": {
+      "action": "confirm",
+      "plate": "SUC749",
+      "journeyUid": null,
+      "reason": "alerta: corregida a SUC749",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-11-04T13:49:38.619Z"
+    },
+    "e77e18fb-cb29-413e-94a8-0398d3f7f7cb": {
+      "action": "confirm",
+      "plate": "AB220SG",
+      "journeyUid": null,
+      "reason": "alerta: corregida a AB220SG",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-11-04T13:49:53.887Z"
+    },
+    "f28d7c94-55c0-4d78-8020-636c5ca52d25": {
+      "action": "confirm",
+      "plate": "GXN483",
+      "journeyUid": null,
+      "reason": "alerta: corregida a GXN483",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-11-04T13:50:09.104Z"
+    },
+    "1a1c5f98-803d-4758-91ed-6dfe38403a8f": {
+      "action": "confirm",
+      "plate": "EDO805",
+      "journeyUid": null,
+      "reason": "alerta: corregida a EDO805",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-11-04T13:50:32.717Z"
+    },
+    "0ac10871-83af-4a0a-9309-bc6715117cbc": {
+      "action": "confirm",
+      "plate": "AH671DB",
+      "journeyUid": null,
+      "reason": "alerta: corregida a AH671DB",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-11-04T13:52:15.013Z"
     }
   },
   "san_lorenzo": {
@@ -15353,6 +15494,306 @@
         },
         "historyAvailable": true,
         "checkedAt": "2026-10-30T15:53:34.846Z"
+      }
+    },
+    "ed25edeb-3b66-4b03-a47f-6ceaee44a874": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-11-02T12:53:34.735Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF778YL",
+          "at": "2026-10-29T22:13:20.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 29
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-11-02T12:53:34.734Z"
+      }
+    },
+    "bf25617f-635e-4beb-9ce3-93c3f76753d7": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-11-02T12:53:56.594Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF778YL",
+          "at": "2026-10-30T09:36:02.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Volkswagen",
+          "vehicleColor": "White",
+          "diffMs": 559
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-11-02T12:53:56.594Z"
+      }
+    },
+    "f18b69a0-2d70-4d22-b953-028e9b8347ff": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-11-02T12:54:14.917Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF778YL",
+          "at": "2026-10-30T09:36:25.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 1876
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-11-02T12:54:14.917Z"
+      }
+    },
+    "d6e6dc46-e3dd-482a-8156-a782cb2a31e0": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-11-02T12:54:23.373Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF778YL",
+          "at": "2026-10-30T10:11:13.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 52
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-11-02T12:54:23.373Z"
+      }
+    },
+    "76f132fb-b575-43d1-98e7-147abe07e4ee": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-11-02T12:55:57.122Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AF778YL",
+          "at": "2026-10-30T10:11:34.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Golden Dragon",
+          "vehicleColor": "White",
+          "diffMs": 1218
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-11-02T12:55:57.121Z"
+      }
+    },
+    "5a0fb1d0-13a5-462e-9035-9b0803b3ed23": {
+      "action": "reject",
+      "reason": "Vehículo no camión (MPV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-11-02T12:56:15.835Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH933LO",
+          "at": "2026-10-30T12:56:29.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "MPV",
+          "vehicleBrand": "BMW",
+          "vehicleColor": "White",
+          "diffMs": 1879
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-11-02T12:56:15.835Z"
+      }
+    },
+    "d9f8093d-9bae-475b-b13f-7cf5074bbd55": {
+      "action": "reject",
+      "reason": "Vehículo no camión (SUV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-11-02T13:24:22.046Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH933LO",
+          "at": "2026-10-30T14:06:18.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "SUV",
+          "vehicleBrand": "BMW",
+          "vehicleColor": "White",
+          "diffMs": 1762
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-11-02T13:24:22.046Z"
+      }
+    },
+    "01897f55-474e-4c37-b245-a70a7b47d938": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-11-02T13:26:21.340Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG696QV",
+          "at": "2026-10-30T15:41:02.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": "Ford",
+          "vehicleColor": "Black",
+          "diffMs": 2300
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-11-02T13:26:21.340Z"
+      }
+    },
+    "32170a1b-1517-4b45-94a2-c03b14dd765a": {
+      "action": "confirm",
+      "plate": "OIG256",
+      "journeyUid": null,
+      "reason": "alerta: corregida a OIG256",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-11-04T13:53:03.897Z"
+    },
+    "2f7e29c7-bb8d-4234-af8f-3d0da18789b1": {
+      "action": "confirm",
+      "plate": "NYT101",
+      "journeyUid": null,
+      "reason": "alerta: corregida a NYT101",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-11-04T13:54:28.089Z"
+    },
+    "07567bcf-bbcc-4191-ac55-79bc80e381a7": {
+      "action": "confirm",
+      "plate": "EVO342",
+      "journeyUid": null,
+      "reason": "alerta: corregida a EVO342",
+      "operator": null,
+      "learning": null,
+      "updatedAt": "2026-11-04T13:54:55.022Z"
+    },
+    "b6ddba30-60e0-430d-a9bc-f322e38d0e76": {
+      "action": "reject",
+      "reason": "Vehículo no camión (SUV) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-11-04T14:55:44.051Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "LB28000",
+          "at": "2026-10-30T16:46:18.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "SUV",
+          "vehicleBrand": "Toyota",
+          "vehicleColor": "White",
+          "diffMs": 1838
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-11-04T14:55:44.050Z"
+      }
+    },
+    "70b7e7c3-f334-485d-887f-8bbba15ebb05": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Pickup) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-11-04T14:59:45.276Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AG696QV",
+          "at": "2026-10-30T17:00:17.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Pickup",
+          "vehicleBrand": "Ford",
+          "vehicleColor": "White",
+          "diffMs": 80
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-11-04T14:59:45.276Z"
+      }
+    },
+    "ffd4209a-78c9-4743-b593-042c85139f5e": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-11-05T13:17:53.056Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH090IH",
+          "at": "2026-10-21T09:29:16.000Z",
+          "deviceCode": "SLZSalidaC1Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": "Citroën",
+          "vehicleColor": "White",
+          "diffMs": 2025
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-11-05T13:17:53.056Z"
+      }
+    },
+    "81ef48a0-6595-41df-b302-cef4cd8fb2dd": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Bus) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-11-05T13:27:07.385Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH090IH",
+          "at": "2026-10-23T09:30:54.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Bus",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 649
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-11-05T13:27:07.385Z"
+      }
+    },
+    "f652ffc4-4a7c-4c4f-978b-3ce495395910": {
+      "action": "reject",
+      "reason": "Vehículo no camión (Sedan) en acceso compartido, sin recorrido operativo conocido",
+      "operator": "Sistema · relevancia",
+      "updatedAt": "2026-11-05T13:27:36.933Z",
+      "source": "automatic_relevance",
+      "relevance": {
+        "ruleVersion": "sl-shared-gates-nontruck-v3",
+        "capture": {
+          "plate": "AH090IH",
+          "at": "2026-10-23T10:23:21.000Z",
+          "deviceCode": "SLZSalidaC2Fte",
+          "vehicleCategory": "Sedan",
+          "vehicleBrand": null,
+          "vehicleColor": "White",
+          "diffMs": 32
+        },
+        "historyAvailable": true,
+        "checkedAt": "2026-11-05T13:27:36.933Z"
       }
     }
   }

@@ -1,0 +1,47 @@
+{
+ "mes": "2026-11",
+ "diasConCamaras": 5,
+ "lecturasRicardone": 8757,
+ "egresosGrano": {
+  "total": 22,
+  "porEstado": {
+   "no_visto": 2,
+   "visto_ok": 20
+  },
+  "conCtg": 0,
+  "sinCtgPorProducto": {
+   "SOJA": 8,
+   "GIRASOL": 1,
+   "PELLETS GIRASOL": 12,
+   "CASCARA DE GIRASOL": 1
+  },
+  "kgSinCtgSinFicticias": 39480,
+  "ingresoIgualSalida": 0
+ },
+ "visitasSinSistema": {
+  "total": 449,
+  "nuncaEnSistema": 350,
+  "enSistemaOtroDia": 99,
+  "posibleMalaLectura": 84,
+  "porPrioridad": {
+   "1": 5,
+   "2": 2,
+   "3": 9,
+   "4": 60,
+   "5": 289,
+   "9": 84
+  },
+  "malaLecturaEnCargaOBalanza": 10,
+  "prioridad1PorEstado": {
+   "en_sistema_otro_dia": 1,
+   "nunca_en_sistema": 4
+  },
+  "prioridad1Patentes": 5
+ },
+ "ficticiasRicardone": {
+  "total": 0,
+  "porProducto": {},
+  "ingresoIgualSalida": 0,
+  "conCandidatos": 0
+ }
+}

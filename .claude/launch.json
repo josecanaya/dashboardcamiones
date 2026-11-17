@@ -15,7 +15,10 @@
     {
       "name": "truckflow-server-8797",
       "runtimeExecutable": "cmd",
-      "runtimeArgs": ["/c", "set TRUCKFLOW_LOCAL_SERVER_PORT=8797&& node server/truckflow-local-server.mjs"],
+      "runtimeArgs": [
+        "/c",
+        "set TRUCKFLOW_LOCAL_SERVER_PORT=8797&& node server/truckflow-local-server.mjs"
+      ],
       "port": 8797
     },
     {
@@ -172,6 +175,18 @@
         "8820"
       ],
       "port": 8820
+    },
+    {
+      "name": "reportes-barrera-8799",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8799",
+        "--directory",
+        "reportes/barrera-sin-sistema"
+      ],
+      "port": 8799
     }
   ]
 }

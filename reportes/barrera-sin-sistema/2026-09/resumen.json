@@ -22,18 +22,18 @@
  },
  "visitasSinSistema": {
   "total": 5221,
-  "nuncaEnSistema": 4679,
-  "enSistemaOtroDia": 542,
-  "posibleMalaLectura": 2270,
+  "nuncaEnSistema": 4667,
+  "enSistemaOtroDia": 554,
+  "posibleMalaLectura": 2329,
   "porPrioridad": {
    "1": 68,
-   "2": 88,
+   "2": 86,
    "3": 22,
-   "4": 520,
-   "5": 2253,
-   "9": 2270
+   "4": 505,
+   "5": 2211,
+   "9": 2329
   },
-  "malaLecturaEnCargaOBalanza": 367,
+  "malaLecturaEnCargaOBalanza": 375,
   "prioridad1PorEstado": {
    "en_sistema_otro_dia": 24,
    "nunca_en_sistema": 44

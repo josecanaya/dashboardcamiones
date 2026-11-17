@@ -22,23 +22,23 @@
  },
  "visitasSinSistema": {
   "total": 6245,
-  "nuncaEnSistema": 5569,
-  "enSistemaOtroDia": 676,
-  "posibleMalaLectura": 2962,
+  "nuncaEnSistema": 5562,
+  "enSistemaOtroDia": 683,
+  "posibleMalaLectura": 3026,
   "porPrioridad": {
-   "1": 54,
+   "1": 53,
    "2": 9,
    "3": 27,
-   "4": 661,
-   "5": 2532,
-   "9": 2962
+   "4": 645,
+   "5": 2485,
+   "9": 3026
   },
-  "malaLecturaEnCargaOBalanza": 354,
+  "malaLecturaEnCargaOBalanza": 358,
   "prioridad1PorEstado": {
    "en_sistema_otro_dia": 27,
-   "nunca_en_sistema": 27
+   "nunca_en_sistema": 26
   },
-  "prioridad1Patentes": 38
+  "prioridad1Patentes": 37
  },
  "ficticiasRicardone": {
   "total": 69,

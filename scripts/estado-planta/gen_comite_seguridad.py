@@ -345,7 +345,7 @@ def tarjeta_calle(c):
             f'<div style="display:flex; flex-direction:row; gap:12px">{imgs}</div>'
             f'<div style="display:flex; flex-direction:row; align-items:baseline; justify-content:space-between"><p style="font-family:{SERIF}; font-size:38px; font-weight:700; color:{INK}">{c["patente"]}</p><p style="font-size:22px; color:{MUTE}">{c["dia"]}</p></div>'
             + badge('PARA REVISAR' if c['revisar'] else 'EXPLICADO', col, '#FBE9E4' if c['revisar'] else '#E3F1EA')
-            + f'<p style="font-size:22px; line-height:1.35; color:{INK}"><b>Excel:</b> {c.get("excel") or "sin operación"}</p>'
+            + f'<p style="font-size:22px; line-height:1.35; color:{INK}"><b>Sistema:</b> {c.get("excel") or "sin operación"}</p>'
             + f'<p style="font-size:22px; line-height:1.35; color:{INK}"><b>Cámara:</b> {cam_txt(c)}</p>'
             + f'<p style="font-size:22px; line-height:1.35; color:{col}; font-weight:{700 if c["revisar"] else 400}">{c["motivo"]}</p></div>')
 if CALLES:
@@ -365,21 +365,45 @@ else:
 # ---------- 03 interplanta
 divider('div-interplanta', '03', 'Demoras entre plantas sin calado en el puerto',
         f'Más de {UI} minutos entre la salida de Ricardone y la entrada al puerto (el viaje normal es de {D["viajeNormalRicSLmin"]}), sin pasar después por la calada de San Lorenzo.')
+# Lámina: solo los de más de MOSTRAR min (pedido 2/11: 30); los de más de FOTOS_MIN (45) van con foto de egreso e ingreso.
+MOSTRAR = int(os.environ.get('COMITE_INTERPLANTA_MOSTRAR_MIN', UI)); FOTOS_MIN = int(os.environ.get('COMITE_INTERPLANTA_FOTOS_MIN', 45))
+INTER_V = [r for r in INTER if r['min'] > MOSTRAR]
 if INTER:
     # todos los casos, sin fotos: día, salida, patente, demora (pedido 26/10). Los que salieron de Ricardone con ≤15 min
     # de diferencia el mismo día se marcan como tanda: llegan juntos y esperan juntos en el ingreso del puerto.
-    _ts = sorted(INTER, key=lambda r: (r['dia'][3:5], r['dia'][:2], r['salida']))
+    _ts = sorted(INTER_V, key=lambda r: (r['dia'][3:5], r['dia'][:2], r['salida']))
     _mins = lambda r: int(r['salida'][:2]) * 60 + int(r['salida'][3:])
     tanda = {}
     for a, b in zip(_ts, _ts[1:]):
         if a['dia'] == b['dia'] and _mins(b) - _mins(a) <= 15: tanda[id(a)] = tanda[id(b)] = True
-    def celda(r): return (f'<div style="display:flex; flex-direction:row; align-items:baseline; gap:14px; background:{"#FDEEDD" if tanda.get(id(r)) else "#FFFFFF"}; border:2px solid {"#F2C9A0" if tanda.get(id(r)) else "#D3DAD6"}; border-radius:12px; padding:8px 16px">'
-                          f'<p style="font-size:22px; color:{MUTE}; width:150px; white-space:nowrap">{r["dia"]} {r["salida"]}</p><p style="flex:1; font-size:24px; font-weight:700; color:{INK}">{r["patente"]}</p><p style="font-size:24px; font-weight:700; color:{RED}">{r["min"]} min</p></div>')
-    n = len(INTER); nt = sum(1 for r in INTER if tanda.get(id(r)))
-    section('interplanta', eyebrow('INTERPLANTA · RICARDONE → SAN LORENZO') + h2(f'{num(n, True)} {"camión tardó" if n == 1 else "camiones tardaron"} más de {UI} minutos y no {"pasó" if n == 1 else "pasaron"} por la calada del puerto', 52)
-        + f'<div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px 20px">' + ''.join(celda(r) for r in _ts) + '</div>'
+    def celda(r): return (f'<div style="display:flex; flex-direction:row; align-items:baseline; gap:14px; background:{"#FDEEDD" if tanda.get(id(r)) else "#FFFFFF"}; border:2px solid {"#F2C9A0" if tanda.get(id(r)) else "#D3DAD6"}; border-radius:12px; padding:{"4px 12px" if len(INTER_V) > 27 else "8px 16px"}">'
+                          f'<p style="font-size:{20 if len(INTER_V) > 27 else 22}px; color:{MUTE}; width:{132 if len(INTER_V) > 27 else 150}px; white-space:nowrap">{r["dia"]} {r["salida"]}</p><p style="flex:1; font-size:{21 if len(INTER_V) > 27 else 24}px; font-weight:700; color:{INK}">{r["patente"]}</p><p style="font-size:{21 if len(INTER_V) > 27 else 24}px; font-weight:700; color:{RED}">{r["min"]} min</p></div>')
+    n = len(INTER_V); nt = sum(1 for r in INTER_V if tanda.get(id(r)))
+    section('interplanta', eyebrow('INTERPLANTA · RICARDONE → SAN LORENZO') + h2(f'{num(n, True)} {"camión tardó" if n == 1 else "camiones tardaron"} más de {MOSTRAR} minutos y no {"pasó" if n == 1 else "pasaron"} por la calada del puerto', 52)
+        + (f'<p style="font-size:26px; color:{MUTE}">De los {len(INTER)} que pasaron la norma de {UI} minutos, se muestran los de más de {MOSTRAR}.</p>' if MOSTRAR > UI else '') + f'<div style="display:grid; grid-template-columns:repeat({4 if len(INTER_V) > 27 else 3}, 1fr); gap:{8 if len(INTER_V) > 27 else 12}px {14 if len(INTER_V) > 27 else 20}px">' + ''.join(celda(r) for r in _ts) + '</div>'
         + (f'<p style="font-size:26px; line-height:1.4; color:{INK}"><span style="display:inline-block; width:30px; height:20px; background:#FDEEDD; border:2px solid #F2C9A0; border-radius:5px"></span> <b>{nt} salieron en tanda</b> (con menos de 15 min entre uno y otro): llegaron juntos al puerto; hay que ver si la demora fue espera en el ingreso.</p>' if nt else ''),
         f'Regla: último egreso de Ricardone → cámara de ingreso de San Lorenzo, más de {UI} min (norma) y hasta 2 h, sin lectura en la calada del puerto hasta la salida. Solo grano: caló en Ricardone o transile (Playa 3 / carga); fuera líquidos y camiones sin calada ni carga (residuos, servicios). Si después del egreso hay Playa 3 o carga, la salida real no se leyó y el viaje no se mide. Viaje normal = mediana de la semana ({D["viajeNormalRicSLmin"]} min).')
+    # Demoras largas con foto: egreso de Ricardone e ingreso al puerto de cada camión (fotos/interplanta/blobs.json, clave PAT_ddmm_hhmm_device)
+    _bi = os.path.join(CARPETA, 'fotos', 'interplanta', 'blobs.json')
+    BLOBS_INT = json.load(open(_bi, encoding='utf-8')) if os.path.exists(_bi) else {}
+    LARGAS = sorted([r for r in INTER if r['min'] > FOTOS_MIN], key=lambda r: (r['dia'][3:5], r['dia'][:2], r['salida']))
+    def foto_paso(r, planta, hora):
+        it = next((i for v in r.get('visitas', []) if v['planta'] == planta for i in v['items'] if i['hora'] == hora), None)
+        if not it: return None, ''
+        k = f'{r["patente"]}_{r["dia"].replace("/", "")}_{hora.replace(":", "")}_{it.get("device", "")}'
+        return BLOBS_INT.get(k), it['punto']
+    def tarjeta(r):
+        fe, pe = foto_paso(r, 'ric', r['salida']); fi, _ = foto_paso(r, 'sl', r['ingresoSL'])
+        img = lambda src, lbl: (f'<div style="flex:1; display:flex; flex-direction:column; gap:4px"><img src="{src}" alt="{r["patente"]} · {lbl}" style="width:100%; height:112px; object-fit:cover; border-radius:8px">' if src else '<div style="flex:1; display:flex; flex-direction:column; gap:4px"><div style="height:112px; border:2px dashed #D3DAD6; border-radius:8px"></div>') + f'<p style="font-size:17px; line-height:1.2; color:{MUTE}">{lbl}</p></div>'
+        return (f'<div style="display:flex; flex-direction:column; gap:8px; background:#FFFFFF; border:2px solid #D3DAD6; border-top:6px solid {RED}; border-radius:14px; padding:12px 14px">'
+                f'<div style="display:flex; flex-direction:row; align-items:baseline; justify-content:space-between"><p style="font-family:Arial, sans-serif; font-size:30px; font-weight:700; color:{INK}">{r["patente"]}</p><p style="font-size:26px; font-weight:700; color:{RED}">{r["min"]} min</p></div>'
+                f'<p style="font-size:18px; color:{MUTE}">{r["dia"]} · {"Balanza egreso" if pe == "Balanza egreso" else "Egreso"} Ricardone {r["salida"]} → Ingreso puerto {r["ingresoSL"]}</p>'
+                f'<div style="display:flex; flex-direction:row; gap:8px">{img(fe, "Egreso Ric. " + r["salida"])}{img(fi, "Ingreso SL " + r["ingresoSL"])}</div></div>')
+    if LARGAS:
+        dias_ = sorted({r['dia'] for r in LARGAS}, key=lambda d: (d[3:5], d[:2]))
+        section('interplanta-fotos', eyebrow('INTERPLANTA · LAS DEMORAS MÁS LARGAS') + h2(f'{num(len(LARGAS), True)} {"camión tardó" if len(LARGAS) == 1 else "camiones tardaron"} más de {FOTOS_MIN} minutos entre Ricardone y el puerto', 48)
+            + f'<div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:16px">' + ''.join(tarjeta(r) for r in LARGAS) + '</div>',
+            f'Foto de la cámara al salir de Ricardone y al entrar al puerto (DSS), días {", ".join(dias_)}. Casos: ' + '; '.join(f'{r["dia"]} {r["patente"]} {r["salida"]}→{r["ingresoSL"]} {r["min"]} min' for r in LARGAS) + '.', gap=24)
 else:
     cr = ''.join(f'<tr style="background:{"#FDEEDD" if i % 2 == 0 else BG}"><td>{r["dia"]}</td><td>{r["salida"]}</td><td style="font-weight:700">{r["patente"]}</td><td style="text-align:right">{r["min"]} min</td><td>{r["motivo"].capitalize()}</td></tr>' for i, r in enumerate(CERCA))
     section('interplanta', eyebrow('INTERPLANTA · RICARDONE → SAN LORENZO') + h2(f'Del {D0} al {D1}, ningún camión de grano tardó más de {UI} minutos sin pasar por la calada del puerto', 52)
@@ -672,7 +696,7 @@ if _dc:
 # camiones no les aplica). Un ejemplo con foto y los puntos donde lo leyeron; los campos los completa cada sector en la
 # reunión (luego, en línea). Pedido 26/10.
 FICHA_PERMITIDO = []
-_cl = {c['patente']: c for c in CL if c.get('visitas')}
+_cl = {c['patente']: c for c in CL}   # el ejemplo puede no tener recorrido armado (la detección lo arma para los 5 primeros)
 PUNTO_SECTOR = {'RicIngCamFrente': ('ric', 'Ingreso / egreso'), 'RicEgrCamFrente': ('ric', 'Ingreso / egreso'), 'RicPreIngInFr': ('ric', 'Pre-ingreso y playas'),
                 'RicCal03': ('ric', 'Calada'), 'RicCal04': ('ric', 'Calada'), 'SLZSalidaC1Fte': ('sl', 'Portería'), 'SLZSalidaC2Fte': ('sl', 'Portería'), 'SLZIngCamFrente': ('sl', 'Ingreso camiones'),
                 'SLZTK400': ('sl', 'Tanques y líquidos'), 'SLZBalLiq2b': ('sl', 'Tanques y líquidos'), 'SLZBalIngFte': ('sl', 'Balanzas'), 'SLZBalSC1Fte': ('sl', 'Balanzas'), 'SLZBalSC2Fte': ('sl', 'Balanzas')}
@@ -684,10 +708,14 @@ def sector_de(it):
     if d.startswith('SLZVolcable'): return ('sl', 'Volcables')
     return None
 if _cl:
-    x = _cl.get(os.environ.get('FICHA_PERMITIDO', 'AE264XY')) or next(iter(_cl.values()))
-    pat = x['patente']; vis = [v for v in x['visitas'] if v['items']]
-    visto = collections.Counter(s for v in vis for it in v['items'] if (s := sector_de(it)))
-    fotos_ = [(BLOBS_REC[k], it['hora'], (sector_de(it) or ('', it['punto']))[1], v['planta']) for v in vis for it in v['items'] if (k := f'{pat}_{it["hora"].replace(":", "")}_{it.get("device", "")}') in BLOBS_REC][:2]
+    x = _cl.get(os.environ.get('FICHA_PERMITIDO', 'AE264XY')) or next((c for c in CL if c.get('visitas')), CL[0])
+    pat = x['patente']; vis = [v for v in x.get('visitas', []) if v['items']]
+    # sectores donde lo leyeron en todo el período (porCamara), o en su día de ejemplo si no está
+    visto = collections.Counter()
+    for dev, n_ in (x.get('porCamara') or {}).items():
+        if (s_ := sector_de({'device': dev})): visto[s_] += n_
+    if not visto: visto = collections.Counter(s for v in vis for it in v['items'] if (s := sector_de(it)))
+    fotos_ = [(BLOBS_REC[k], it['hora'], (sector_de(it) or ('', it['punto']))[1], v['planta']) for v in vis for it in v['items'] if (k := f'{pat}_{it["hora"].replace(":", "")}_{it.get("device", "")}') in BLOBS_REC][:2] or [(u,f'{k.split("_")[1][:2]}:{k.split("_")[1][2:]}', (sector_de({'device': k.split('_', 2)[2]}) or ('', ''))[1], (sector_de({'device': k.split('_', 2)[2]}) or ('ric', ''))[0]) for k, u in BLOBS_REC.items() if k.startswith(pat + '_')][:2]
     ph = ''.join(f'<div style="position:relative; width:560px; height:300px"><img src="{s}" alt="{pat} · {pt} {h}" style="width:560px; height:300px; object-fit:cover; border-radius:14px">'
                  f'<p style="position:absolute; left:12px; bottom:12px; font-size:20px; font-weight:700; color:#FFFFFF; background:rgba(27,36,32,0.78); padding:4px 12px; border-radius:8px">{h} · {"Ricardone" if pl_ == "ric" else "Puerto"} · {pt}</p></div>' for s, h, pt, pl_ in fotos_)
     def casilla(planta, s):
@@ -713,19 +741,19 @@ if _cl:
           f'<div style="display:flex; flex-direction:row; gap:16px">{campo("Titular / empresa", 3)}{campo("Tipo de vehículo", 2)}</div>'
           f'<div style="display:flex; flex-direction:row; gap:16px">{campo("Motivo del ingreso", 3)}{campo("Contacto", 2)}</div>'
           f'<div style="display:flex; flex-direction:column; gap:10px; background:#FFFFFF; border:2px solid #D3DAD6; border-top:6px solid {VIO}; border-radius:12px; padding:14px 18px">'
-          f'<p style="font-size:20px; font-weight:700; letter-spacing:1px; color:{VIO}">SECTORES PERMITIDOS <span style="font-weight:400; color:{MUTE}">· en violeta, donde lo leyeron las cámaras el {x.get("diaEjemplo", "")}</span></p>'
+          f'<p style="font-size:20px; font-weight:700; letter-spacing:1px; color:{VIO}">SECTORES PERMITIDOS <span style="font-weight:400; color:{MUTE}">· en violeta, donde lo leyeron las cámaras en la semana (lecturas)</span></p>'
           f'<div style="display:flex; flex-direction:row; gap:20px">{planta_box("ric", "RICARDONE", GDK)}{planta_box("sl", "PUERTO SAN LORENZO", ORG)}</div></div>'
           f'<div style="display:flex; flex-direction:row; gap:16px">{campo("Horario permitido", 2)}{campo("Vigencia hasta", 2)}{campo("Autoriza (nombre y sector)", 3)}</div>'
           f'<div style="display:flex; flex-direction:row; gap:20px; align-items:center; background:#EEE8F7; border-radius:16px; padding:16px 24px"><x-icon name="ShieldCheck" style="color:{VIO}; width:40px; height:40px"></x-icon>'
           f'<p style="flex:1; font-size:24px; line-height:1.4; color:{INK}"><b>Vehículos Permitidos:</b> cada sector carga los suyos en la ficha en línea. Con eso el sistema deja de marcarlos y avisa solo cuando uno pasa por un sector que no tiene permitido.</p></div>'
           f'</div></div>',
-        f'{pat}: utilitario con {x["viajes"]} viajes de cámara en {x["dias"]} días del {D0} al {D1}, sin movimientos en el sistema de camiones (no es camión: la regla del sistema no le aplica). Sectores donde lo leyeron el {x.get("diaEjemplo", "")}: '
+        f'{pat}: utilitario con {x["viajes"]} viajes de cámara en {x["dias"]} días del {D0} al {D1}, sin movimientos en el sistema de camiones (no es camión: la regla del sistema no le aplica). Sectores donde lo leyeron en el período (lecturas): '
         + ', '.join(f'{"Ricardone" if p == "ric" else "Puerto"} {s} ({n_})' for (p, s), n_ in visto.most_common()) + '. Los campos en blanco los completa el sector responsable; la versión en línea alimenta el registro de vehículos permitidos.', gap=22)
     FICHA_PERMITIDO.append('ficha-permitido')
 
 # ---------- escribir
 CALLES_VAN = bool(REVISAR)   # todas explicadas: la sección de calles no va (pedido 23/10)
-ORDER = ['cover'] + FICHAS + ['div-vuelta', 'pasados-kg'] + [s[0] for s in slides if s[0].startswith('v-')] + (['div-calles', 'calles'] if CALLES_VAN else []) + ['div-interplanta', 'interplanta', 'camionetas'] + FICHA_PERMITIDO + [s_[0] for s_ in slides if s_[0].startswith('camionetas-fotos-')] + ['div-balanza', 'sin-pesar', 'etl-raros', 'servicio']   # sin 'pesados': los kilos son del sistema de camiones (pedido 23/10)   # el anexo de antigüedad del parque se presentó una sola vez (24/09–04/10)   # sin la lámina del histórico de anomalías (pedido 13/10)
+ORDER = ['cover'] + FICHAS + ['div-vuelta', 'pasados-kg'] + [s[0] for s in slides if s[0].startswith('v-')] + (['div-calles', 'calles'] if CALLES_VAN else []) + ['div-interplanta', 'interplanta', 'interplanta-fotos', 'camionetas'] + FICHA_PERMITIDO + [s_[0] for s_ in slides if s_[0].startswith('camionetas-fotos-')] + ['div-balanza', 'sin-pesar', 'etl-raros', 'servicio']   # sin 'pesados': los kilos son del sistema de camiones (pedido 23/10)   # el anexo de antigüedad del parque se presentó una sola vez (24/09–04/10)   # sin la lámina del histórico de anomalías (pedido 13/10)
 slides = sorted([x for x in slides if x[0] in ORDER], key=lambda x: ORDER.index(x[0]))
 if not CALLES_VAN:   # sin la sección 02 de calles, las siguientes se corren un número
     slides = [(i, h.replace('>03</p>', '>02</p>', 1) if i == 'div-interplanta' else h.replace('>04</p>', '>03</p>', 1) if i == 'div-balanza' else h) for i, h in slides]

@@ -1,0 +1,1515 @@
+[
+ {
+  "patente": "MTM450",
+  "huellas": [
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-07-28",
+    "primera": "09:06",
+    "ultima": "09:43",
+    "minB1B2": 37,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-07-30",
+    "primera": "09:04",
+    "ultima": "09:38",
+    "minB1B2": 34,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-08-04",
+    "primera": "08:54",
+    "ultima": "09:47",
+    "minB1B2": 53,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-08-13",
+    "primera": "09:23",
+    "ultima": "10:16",
+    "minB1B2": 53,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-08-25",
+    "primera": "08:55",
+    "ultima": "12:46",
+    "minB1B2": 231,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-08-27",
+    "primera": "09:06",
+    "ultima": "12:15",
+    "minB1B2": 188,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-09-04",
+    "primera": "09:23",
+    "ultima": "13:28",
+    "minB1B2": 86,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso",
+     "RicB3Ingreso",
+     "RicB3Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-09-08",
+    "primera": "10:33",
+    "ultima": "11:11",
+    "minB1B2": 38,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   }
+  ],
+  "visitas": [
+   "2026-07-07",
+   "2026-07-10",
+   "2026-07-14",
+   "2026-07-16",
+   "2026-07-21",
+   "2026-07-23",
+   "2026-07-28",
+   "2026-07-30",
+   "2026-08-04",
+   "2026-08-06",
+   "2026-08-13",
+   "2026-08-14",
+   "2026-08-19",
+   "2026-08-21",
+   "2026-08-25",
+   "2026-08-27",
+   "2026-09-04",
+   "2026-09-08",
+   "2026-09-10",
+   "2026-09-25",
+   "2026-10-01",
+   "2026-10-06",
+   "2026-10-08",
+   "2026-10-20",
+   "2026-10-29",
+   "2026-11-03"
+  ],
+  "balanza": [
+   {
+    "dia": "2026-09-28",
+    "empresa": "VICENTIN S.A.I.C.",
+    "ingreso": "10:08",
+    "mov": "EGRESO",
+    "obs": "MOV ALMACENES",
+    "planta": "RICARDONE",
+    "producto": "PRODUCTOS VARIOS",
+    "salida": "12:56"
+   },
+   {
+    "dia": "2026-09-28",
+    "empresa": "VICENTIN S.A.I.C.",
+    "ingreso": "14:25",
+    "mov": "EGRESO",
+    "obs": "MOVIMIENTO ALMACENES MERCADERIA VARIAS",
+    "planta": "RICARDONE",
+    "producto": "PRODUCTOS VARIOS",
+    "salida": "15:11"
+   }
+  ],
+  "fotos": [
+   {
+    "dia": "2026-07-28",
+    "device": "RicB1Ingreso",
+    "at": "2026-07-28T12:06:12.814Z",
+    "foto": "2026-07-28_MTM450_0.jpg"
+   },
+   {
+    "dia": "2026-07-28",
+    "device": "RicB2Egreso",
+    "at": "2026-07-28T12:43:12.939Z",
+    "foto": "2026-07-28_MTM450_1.jpg"
+   },
+   {
+    "dia": "2026-07-30",
+    "device": "RicB1Ingreso",
+    "at": "2026-07-30T12:04:25.121Z",
+    "foto": "2026-07-30_MTM450_0.jpg"
+   },
+   {
+    "dia": "2026-07-30",
+    "device": "RicB2Egreso",
+    "at": "2026-07-30T12:38:52.664Z",
+    "foto": "2026-07-30_MTM450_1.jpg"
+   },
+   {
+    "dia": "2026-08-04",
+    "device": "RicB1Ingreso",
+    "at": "2026-08-04T11:54:03.858Z",
+    "foto": "2026-08-04_MTM450_0.jpg"
+   },
+   {
+    "dia": "2026-08-04",
+    "device": "RicB2Egreso",
+    "at": "2026-08-04T12:47:21.072Z",
+    "foto": "2026-08-04_MTM450_1.jpg"
+   },
+   {
+    "dia": "2026-08-13",
+    "device": "RicB1Ingreso",
+    "at": "2026-08-13T12:23:14.668Z",
+    "foto": "2026-08-13_MTM450_0.jpg"
+   },
+   {
+    "dia": "2026-08-13",
+    "device": "RicB2Egreso",
+    "at": "2026-08-13T13:16:17.790Z",
+    "foto": "2026-08-13_MTM450_1.jpg"
+   },
+   {
+    "dia": "2026-08-25",
+    "device": "RicB1Ingreso",
+    "at": "2026-08-25T11:55:08.000Z",
+    "foto": "2026-08-25_MTM450_0.jpg"
+   },
+   {
+    "dia": "2026-08-25",
+    "device": "RicB2Egreso",
+    "at": "2026-08-25T12:18:52.794Z",
+    "foto": "2026-08-25_MTM450_1.jpg"
+   },
+   {
+    "dia": "2026-09-04",
+    "device": "RicB1Ingreso",
+    "at": "2026-09-04T12:23:03.000Z",
+    "foto": "2026-09-04_MTM450_0.jpg"
+   },
+   {
+    "dia": "2026-09-04",
+    "device": "RicB2Egreso",
+    "at": "2026-09-04T13:48:51.056Z",
+    "foto": "2026-09-04_MTM450_1.jpg"
+   },
+   {
+    "dia": "2026-09-04",
+    "device": "RicB3Ingreso",
+    "at": "2026-09-04T15:25:31.000Z",
+    "foto": "2026-09-04_MTM450_2.jpg"
+   },
+   {
+    "dia": "2026-09-04",
+    "device": "RicB3Egreso",
+    "at": "2026-09-04T16:28:46.603Z",
+    "foto": "2026-09-04_MTM450_3.jpg"
+   },
+   {
+    "dia": "2026-09-08",
+    "device": "RicB1Ingreso",
+    "at": "2026-09-08T13:33:20.000Z",
+    "foto": "2026-09-08_MTM450_0.jpg"
+   },
+   {
+    "dia": "2026-09-08",
+    "device": "RicB2Egreso",
+    "at": "2026-09-08T14:11:19.091Z",
+    "foto": "2026-09-08_MTM450_1.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "FQI716",
+  "huellas": [
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-07-28",
+    "primera": "10:47",
+    "ultima": "11:54",
+    "minB1B2": 67,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-08-04",
+    "primera": "08:51",
+    "ultima": "09:30",
+    "minB1B2": 39,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-08-13",
+    "primera": "09:33",
+    "ultima": "10:27",
+    "minB1B2": 54,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-08-25",
+    "primera": "08:11",
+    "ultima": "08:53",
+    "minB1B2": 42,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-09-08",
+    "primera": "10:06",
+    "ultima": "10:32",
+    "minB1B2": 26,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-10-01",
+    "primera": "11:26",
+    "ultima": "11:54",
+    "minB1B2": 27,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   }
+  ],
+  "visitas": [
+   "2026-07-02",
+   "2026-07-06",
+   "2026-07-14",
+   "2026-07-16",
+   "2026-07-21",
+   "2026-07-28",
+   "2026-08-04",
+   "2026-08-06",
+   "2026-08-11",
+   "2026-08-13",
+   "2026-08-20",
+   "2026-08-25",
+   "2026-08-27",
+   "2026-09-01",
+   "2026-09-02",
+   "2026-09-04",
+   "2026-09-08",
+   "2026-09-09",
+   "2026-09-14",
+   "2026-09-17",
+   "2026-09-21",
+   "2026-09-23",
+   "2026-09-24",
+   "2026-09-25",
+   "2026-09-29",
+   "2026-10-01",
+   "2026-10-02",
+   "2026-10-06",
+   "2026-10-07",
+   "2026-10-09",
+   "2026-10-13",
+   "2026-10-16",
+   "2026-10-20",
+   "2026-10-23",
+   "2026-10-26",
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30"
+  ],
+  "balanza": [
+   {
+    "dia": "2026-09-17",
+    "empresa": "CLIENTES VARIOS",
+    "ingreso": "11:04",
+    "mov": "INGRESO",
+    "obs": "TRABAJO VARIOS",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "PRODUCTOS VARIOS",
+    "salida": "11:50"
+   }
+  ],
+  "fotos": [
+   {
+    "dia": "2026-07-28",
+    "device": "RicB1Ingreso",
+    "at": "2026-07-28T13:47:18.580Z",
+    "foto": "2026-07-28_FQI716_0.jpg"
+   },
+   {
+    "dia": "2026-07-28",
+    "device": "RicB2Egreso",
+    "at": "2026-07-28T14:54:41.241Z",
+    "foto": "2026-07-28_FQI716_1.jpg"
+   },
+   {
+    "dia": "2026-08-04",
+    "device": "RicB1Ingreso",
+    "at": "2026-08-04T11:51:21.371Z",
+    "foto": "2026-08-04_FQI716_0.jpg"
+   },
+   {
+    "dia": "2026-08-04",
+    "device": "RicB2Egreso",
+    "at": "2026-08-04T12:30:40.133Z",
+    "foto": "2026-08-04_FQI716_1.jpg"
+   },
+   {
+    "dia": "2026-08-13",
+    "device": "RicB1Ingreso",
+    "at": "2026-08-13T12:33:26.618Z",
+    "foto": "2026-08-13_FQI716_0.jpg"
+   },
+   {
+    "dia": "2026-08-13",
+    "device": "RicB2Egreso",
+    "at": "2026-08-13T13:27:49.992Z",
+    "foto": "2026-08-13_FQI716_1.jpg"
+   },
+   {
+    "dia": "2026-08-25",
+    "device": "RicB1Ingreso",
+    "at": "2026-08-25T11:11:58.394Z",
+    "foto": "2026-08-25_FQI716_0.jpg"
+   },
+   {
+    "dia": "2026-08-25",
+    "device": "RicB2Egreso",
+    "at": "2026-08-25T11:53:57.506Z",
+    "foto": "2026-08-25_FQI716_1.jpg"
+   },
+   {
+    "dia": "2026-09-08",
+    "device": "RicB1Ingreso",
+    "at": "2026-09-08T13:06:32.761Z",
+    "foto": "2026-09-08_FQI716_0.jpg"
+   },
+   {
+    "dia": "2026-09-08",
+    "device": "RicB2Egreso",
+    "at": "2026-09-08T13:32:56.719Z",
+    "foto": "2026-09-08_FQI716_1.jpg"
+   },
+   {
+    "dia": "2026-10-01",
+    "device": "RicB1Ingreso",
+    "at": "2026-10-01T14:26:49.000Z",
+    "foto": "2026-10-01_FQI716_0.jpg"
+   },
+   {
+    "dia": "2026-10-01",
+    "device": "RicB2Egreso",
+    "at": "2026-10-01T14:54:02.894Z",
+    "foto": "2026-10-01_FQI716_1.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "LPZ703",
+  "huellas": [
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-08-14",
+    "primera": "08:30",
+    "ultima": "12:27",
+    "minB1B2": 237,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-09-08",
+    "primera": "07:46",
+    "ultima": "09:13",
+    "minB1B2": 87,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-09-14",
+    "primera": "09:04",
+    "ultima": "13:11",
+    "minB1B2": 246,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-09-29",
+    "primera": "08:42",
+    "ultima": "13:07",
+    "minB1B2": 265,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   }
+  ],
+  "visitas": [
+   "2026-08-11",
+   "2026-08-14",
+   "2026-09-08",
+   "2026-09-14",
+   "2026-09-24",
+   "2026-09-29",
+   "2026-10-30",
+   "2026-11-02"
+  ],
+  "balanza": [
+   {
+    "dia": "2026-09-15",
+    "empresa": "VICENTIN S.A.I.C.",
+    "ingreso": "08:01",
+    "mov": "EGRESO",
+    "obs": "CARGAS UN CONTEDOR OBRADOR",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "PRODUCTOS VARIOS",
+    "salida": "10:02"
+   }
+  ],
+  "fotos": [
+   {
+    "dia": "2026-08-14",
+    "device": "RicB1Ingreso",
+    "at": "2026-08-14T11:30:55.206Z",
+    "foto": "2026-08-14_LPZ703_0.jpg"
+   },
+   {
+    "dia": "2026-08-14",
+    "device": "RicB2Egreso",
+    "at": "2026-08-14T15:27:25.950Z",
+    "foto": "2026-08-14_LPZ703_1.jpg"
+   },
+   {
+    "dia": "2026-09-08",
+    "device": "RicB1Ingreso",
+    "at": "2026-09-08T10:46:55.000Z",
+    "foto": "2026-09-08_LPZ703_0.jpg"
+   },
+   {
+    "dia": "2026-09-08",
+    "device": "RicB2Egreso",
+    "at": "2026-09-08T12:13:38.863Z",
+    "foto": "2026-09-08_LPZ703_1.jpg"
+   },
+   {
+    "dia": "2026-09-14",
+    "device": "RicB1Ingreso",
+    "at": "2026-09-14T12:04:52.692Z",
+    "foto": "2026-09-14_LPZ703_0.jpg"
+   },
+   {
+    "dia": "2026-09-14",
+    "device": "RicB2Egreso",
+    "at": "2026-09-14T16:11:05.401Z",
+    "foto": "2026-09-14_LPZ703_1.jpg"
+   },
+   {
+    "dia": "2026-09-29",
+    "device": "RicB1Ingreso",
+    "at": "2026-09-29T11:42:30.000Z",
+    "foto": "2026-09-29_LPZ703_0.jpg"
+   },
+   {
+    "dia": "2026-09-29",
+    "device": "RicB2Egreso",
+    "at": "2026-09-29T16:07:40.809Z",
+    "foto": "2026-09-29_LPZ703_1.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AF831ID",
+  "huellas": [
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-07-20",
+    "primera": "09:10",
+    "ultima": "09:47",
+    "minB1B2": 36,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-08-12",
+    "primera": "12:03",
+    "ultima": "12:29",
+    "minB1B2": 26,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-08-28",
+    "primera": "07:38",
+    "ultima": "08:23",
+    "minB1B2": 45,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-09-17",
+    "primera": "11:12",
+    "ultima": "11:41",
+    "minB1B2": 28,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   }
+  ],
+  "visitas": [
+   "2026-07-20",
+   "2026-08-12",
+   "2026-08-28",
+   "2026-09-17",
+   "2026-09-28",
+   "2026-10-14"
+  ],
+  "balanza": [],
+  "fotos": [
+   {
+    "dia": "2026-07-20",
+    "device": "RicB1Ingreso",
+    "at": "2026-07-20T12:10:45.693Z",
+    "foto": "2026-07-20_AF831ID_0.jpg"
+   },
+   {
+    "dia": "2026-07-20",
+    "device": "RicB2Egreso",
+    "at": "2026-07-20T12:47:05.000Z",
+    "foto": "2026-07-20_AF831ID_1.jpg"
+   },
+   {
+    "dia": "2026-08-12",
+    "device": "RicB1Ingreso",
+    "at": "2026-08-12T15:03:33.254Z",
+    "foto": "2026-08-12_AF831ID_0.jpg"
+   },
+   {
+    "dia": "2026-08-12",
+    "device": "RicB2Egreso",
+    "at": "2026-08-12T15:29:48.063Z",
+    "foto": "2026-08-12_AF831ID_1.jpg"
+   },
+   {
+    "dia": "2026-09-17",
+    "device": "RicB1Ingreso",
+    "at": "2026-09-17T14:12:47.000Z",
+    "foto": "2026-09-17_AF831ID_0.jpg"
+   },
+   {
+    "dia": "2026-09-17",
+    "device": "RicB2Egreso",
+    "at": "2026-09-17T14:41:05.544Z",
+    "foto": "2026-09-17_AF831ID_1.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AF241DX",
+  "huellas": [
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-08-26",
+    "primera": "10:07",
+    "ultima": "12:16",
+    "minB1B2": 129,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-09-04",
+    "primera": "10:30",
+    "ultima": "12:30",
+    "minB1B2": 121,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-09-11",
+    "primera": "07:41",
+    "ultima": "08:50",
+    "minB1B2": 69,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   }
+  ],
+  "visitas": [
+   "2026-08-19",
+   "2026-08-26",
+   "2026-09-04",
+   "2026-09-11"
+  ],
+  "balanza": [
+   {
+    "dia": "2026-07-17",
+    "empresa": "DHSH SRL",
+    "ingreso": "08:34",
+    "mov": "EGRESO",
+    "obs": "RETIRO DE OBRADOR PROPIEDAD DE DH SH SRL",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "PRODUCTOS VARIOS",
+    "salida": "10:32"
+   },
+   {
+    "dia": "2026-07-24",
+    "empresa": "DHSH SRL",
+    "ingreso": "08:14",
+    "mov": "EGRESO",
+    "obs": "RETIRO DE IBC CON LECITINA ORDEN MARCOS KRUPA",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "RESIDUOS ORG",
+    "salida": "10:01"
+   },
+   {
+    "dia": "2026-08-19",
+    "empresa": "",
+    "fuente": "sgc",
+    "ingreso": "11:49",
+    "mov": "INGRESO",
+    "obs": "Productos varios (dado de baja)",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "PRODUCTOS VARIOS",
+    "salida": "15:36"
+   }
+  ],
+  "fotos": [
+   {
+    "dia": "2026-08-26",
+    "device": "RicB1Ingreso",
+    "at": "2026-08-26T13:07:52.000Z",
+    "foto": "2026-08-26_AF241DX_0.jpg"
+   },
+   {
+    "dia": "2026-08-26",
+    "device": "RicB2Egreso",
+    "at": "2026-08-26T15:16:36.596Z",
+    "foto": "2026-08-26_AF241DX_1.jpg"
+   },
+   {
+    "dia": "2026-09-04",
+    "device": "RicB1Ingreso",
+    "at": "2026-09-04T13:30:07.831Z",
+    "foto": "2026-09-04_AF241DX_0.jpg"
+   },
+   {
+    "dia": "2026-09-04",
+    "device": "RicB2Egreso",
+    "at": "2026-09-04T15:30:41.413Z",
+    "foto": "2026-09-04_AF241DX_1.jpg"
+   },
+   {
+    "dia": "2026-09-11",
+    "device": "RicB1Ingreso",
+    "at": "2026-09-11T10:41:07.593Z",
+    "foto": "2026-09-11_AF241DX_0.jpg"
+   },
+   {
+    "dia": "2026-09-11",
+    "device": "RicB2Egreso",
+    "at": "2026-09-11T11:50:20.437Z",
+    "foto": "2026-09-11_AF241DX_1.jpg"
+   },
+   {
+    "dia": "2026-08-19",
+    "device": "SLZIngCamFrente",
+    "at": "2026-08-19T14:44:39.786Z",
+    "foto": "2026-08-19_AF241DX_0.jpg"
+   },
+   {
+    "dia": "2026-08-19",
+    "device": "SLZBalIngFte",
+    "at": "2026-08-19T15:27:42.916Z",
+    "foto": "2026-08-19_AF241DX_1.jpg"
+   },
+   {
+    "dia": "2026-08-19",
+    "device": "SLZTK400",
+    "at": "2026-08-19T18:19:36.243Z",
+    "foto": "2026-08-19_AF241DX_2.jpg"
+   },
+   {
+    "dia": "2026-08-19",
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-08-19T18:37:55.896Z",
+    "foto": "2026-08-19_AF241DX_3.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "RSW086",
+  "huellas": [
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-08-27",
+    "primera": "12:24",
+    "ultima": "15:31",
+    "minB1B2": 186,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-09-04",
+    "primera": "09:53",
+    "ultima": "14:41",
+    "minB1B2": 287,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-09-11",
+    "primera": "07:30",
+    "ultima": "14:25",
+    "minB1B2": 415,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   }
+  ],
+  "visitas": [
+   "2026-08-03",
+   "2026-08-04",
+   "2026-08-05",
+   "2026-08-13",
+   "2026-08-20",
+   "2026-08-22",
+   "2026-08-26",
+   "2026-08-27",
+   "2026-09-04",
+   "2026-09-08",
+   "2026-09-09",
+   "2026-09-11",
+   "2026-10-05",
+   "2026-10-07",
+   "2026-10-15",
+   "2026-10-16",
+   "2026-10-19",
+   "2026-10-20",
+   "2026-10-26",
+   "2026-10-27",
+   "2026-10-28",
+   "2026-11-04"
+  ],
+  "balanza": [
+   {
+    "dia": "2026-09-10",
+    "empresa": "VICENTIN S.A.I.C.",
+    "ingreso": "12:28",
+    "mov": "INGRESO",
+    "obs": "TRABAJO VARIOS",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "PRODUCTOS VARIOS",
+    "salida": "15:36"
+   },
+   {
+    "dia": "2026-10-16",
+    "empresa": "CLIENTES VARIOS",
+    "ingreso": "08:41",
+    "mov": "INGRESO",
+    "obs": "TRABAJO VARIOS",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "PRODUCTOS VARIOS",
+    "salida": "10:29"
+   }
+  ],
+  "fotos": [
+   {
+    "dia": "2026-09-04",
+    "device": "RicB1Ingreso",
+    "at": "2026-09-04T12:53:33.876Z",
+    "foto": "2026-09-04_RSW086_0.jpg"
+   },
+   {
+    "dia": "2026-09-04",
+    "device": "RicB2Egreso",
+    "at": "2026-09-04T17:41:02.427Z",
+    "foto": "2026-09-04_RSW086_1.jpg"
+   },
+   {
+    "dia": "2026-09-11",
+    "device": "RicB1Ingreso",
+    "at": "2026-09-11T10:30:36.000Z",
+    "foto": "2026-09-11_RSW086_0.jpg"
+   },
+   {
+    "dia": "2026-09-11",
+    "device": "RicB2Egreso",
+    "at": "2026-09-11T11:49:16.355Z",
+    "foto": "2026-09-11_RSW086_1.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "CXV575",
+  "huellas": [
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-07-15",
+    "primera": "12:16",
+    "ultima": "12:47",
+    "minB1B2": 31,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-07-16",
+    "primera": "09:01",
+    "ultima": "11:24",
+    "minB1B2": 143,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-11-02",
+    "primera": "10:22",
+    "ultima": "15:08",
+    "minB1B2": 286,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso",
+     "RicIngCamFrente",
+     "RicEgrCamFrente"
+    ]
+   }
+  ],
+  "visitas": [
+   "2026-07-13",
+   "2026-07-15",
+   "2026-07-16",
+   "2026-11-02"
+  ],
+  "balanza": [
+   {
+    "dia": "2026-09-11",
+    "empresa": "PLANTA SAN LORENZO",
+    "ingreso": "10:37",
+    "mov": "INGRESO",
+    "obs": "TIERRA PARA MASTRODICASA",
+    "planta": "RICARDONE",
+    "producto": "PRODUCTOS VARIOS",
+    "salida": "11:48"
+   }
+  ],
+  "fotos": [
+   {
+    "dia": "2026-07-15",
+    "device": "RicB1Ingreso",
+    "at": "2026-07-15T15:16:41.997Z",
+    "foto": "2026-07-15_CXV575_0.jpg"
+   },
+   {
+    "dia": "2026-07-15",
+    "device": "RicB2Egreso",
+    "at": "2026-07-15T15:47:32.000Z",
+    "foto": "2026-07-15_CXV575_1.jpg"
+   },
+   {
+    "dia": "2026-07-16",
+    "device": "RicB1Ingreso",
+    "at": "2026-07-16T12:01:47.711Z",
+    "foto": "2026-07-16_CXV575_0.jpg"
+   },
+   {
+    "dia": "2026-07-16",
+    "device": "RicB2Egreso",
+    "at": "2026-07-16T12:21:26.000Z",
+    "foto": "2026-07-16_CXV575_1.jpg"
+   },
+   {
+    "dia": "2026-11-02",
+    "device": "RicB1Ingreso",
+    "at": "2026-11-02T13:22:49.000Z",
+    "foto": "2026-11-02_CXV575_0.jpg"
+   },
+   {
+    "dia": "2026-11-02",
+    "device": "RicB2Egreso",
+    "at": "2026-11-02T14:39:42.701Z",
+    "foto": "2026-11-02_CXV575_1.jpg"
+   },
+   {
+    "dia": "2026-11-02",
+    "device": "RicIngCamFrente",
+    "at": "2026-11-02T14:44:20.597Z",
+    "foto": "2026-11-02_CXV575_2.jpg"
+   },
+   {
+    "dia": "2026-11-02",
+    "device": "RicEgrCamFrente",
+    "at": "2026-11-02T15:00:58.126Z",
+    "foto": "2026-11-02_CXV575_3.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AB531CT",
+  "huellas": [
+   {
+    "planta": "sl",
+    "salida": "balanza 12:33",
+    "dia": "2026-10-19",
+    "primera": "09:23",
+    "ultima": "12:35",
+    "minB1B2": 185,
+    "camaras": [
+     "SLZIngCamFrente",
+     "SLZBalIngFte",
+     "SLZTK400",
+     "SLZBalSC1Fte",
+     "SLZBalSC2Fte",
+     "SLZSalidaC2Fte",
+     "SLZSalidaC1Fte"
+    ]
+   },
+   {
+    "planta": "sl",
+    "salida": "balanza 12:14",
+    "dia": "2026-10-23",
+    "primera": "08:29",
+    "ultima": "12:16",
+    "minB1B2": 222,
+    "camaras": [
+     "SLZIngCamFrente",
+     "SLZBalIngFte",
+     "SLZTK400",
+     "SLZBalSC1Fte",
+     "SLZBalSC2Fte",
+     "SLZSalidaC1Fte"
+    ]
+   },
+   {
+    "planta": "sl",
+    "salida": "balanza 09:43",
+    "dia": "2026-11-03",
+    "primera": "08:44",
+    "ultima": "09:45",
+    "minB1B2": 26,
+    "camaras": [
+     "SLZIngCamFrente",
+     "SLZBalIngFte",
+     "SLZTK400",
+     "SLZBalSC1Fte",
+     "SLZBalSC2Fte",
+     "SLZSalidaC1Fte"
+    ]
+   }
+  ],
+  "visitas": [
+   "2026-08-12",
+   "2026-10-19",
+   "2026-10-23",
+   "2026-11-03"
+  ],
+  "balanza": [
+   {
+    "dia": "2026-10-05",
+    "empresa": "CLIENTES VARIOS",
+    "ingreso": "09:59",
+    "mov": "INGRESO",
+    "obs": "DEJO UN CONTRENEDOR",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "PRODUCTOS VARIOS",
+    "salida": "13:46"
+   }
+  ],
+  "fotos": [
+   {
+    "dia": "2026-10-19",
+    "device": "SLZIngCamFrente",
+    "at": "2026-10-19T12:23:24.994Z",
+    "foto": "2026-10-19_AB531CT_0.jpg"
+   },
+   {
+    "dia": "2026-10-19",
+    "device": "SLZBalIngFte",
+    "at": "2026-10-19T12:28:05.000Z",
+    "foto": "2026-10-19_AB531CT_1.jpg"
+   },
+   {
+    "dia": "2026-10-19",
+    "device": "SLZTK400",
+    "at": "2026-10-19T12:31:42.529Z",
+    "foto": "2026-10-19_AB531CT_2.jpg"
+   },
+   {
+    "dia": "2026-10-19",
+    "device": "SLZBalSC1Fte",
+    "at": "2026-10-19T15:32:41.756Z",
+    "foto": "2026-10-19_AB531CT_3.jpg"
+   },
+   {
+    "dia": "2026-10-19",
+    "device": "SLZBalSC2Fte",
+    "at": "2026-10-19T15:33:30.239Z",
+    "foto": "2026-10-19_AB531CT_4.jpg"
+   },
+   {
+    "dia": "2026-10-19",
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-10-19T15:35:34.226Z",
+    "foto": "2026-10-19_AB531CT_5.jpg"
+   },
+   {
+    "dia": "2026-10-23",
+    "device": "SLZIngCamFrente",
+    "at": "2026-10-23T11:29:01.857Z",
+    "foto": "2026-10-23_AB531CT_0.jpg"
+   },
+   {
+    "dia": "2026-10-23",
+    "device": "SLZBalIngFte",
+    "at": "2026-10-23T11:33:02.000Z",
+    "foto": "2026-10-23_AB531CT_1.jpg"
+   },
+   {
+    "dia": "2026-10-23",
+    "device": "SLZTK400",
+    "at": "2026-10-23T11:36:34.449Z",
+    "foto": "2026-10-23_AB531CT_2.jpg"
+   },
+   {
+    "dia": "2026-10-23",
+    "device": "SLZBalSC1Fte",
+    "at": "2026-10-23T15:13:52.801Z",
+    "foto": "2026-10-23_AB531CT_3.jpg"
+   },
+   {
+    "dia": "2026-10-23",
+    "device": "SLZBalSC2Fte",
+    "at": "2026-10-23T15:14:32.661Z",
+    "foto": "2026-10-23_AB531CT_4.jpg"
+   },
+   {
+    "dia": "2026-11-03",
+    "device": "SLZIngCamFrente",
+    "at": "2026-11-03T11:44:25.664Z",
+    "foto": "2026-11-03_AB531CT_0.jpg"
+   },
+   {
+    "dia": "2026-11-03",
+    "device": "SLZBalIngFte",
+    "at": "2026-11-03T12:17:36.000Z",
+    "foto": "2026-11-03_AB531CT_1.jpg"
+   },
+   {
+    "dia": "2026-11-03",
+    "device": "SLZTK400",
+    "at": "2026-11-03T12:19:51.990Z",
+    "foto": "2026-11-03_AB531CT_2.jpg"
+   },
+   {
+    "dia": "2026-11-03",
+    "device": "SLZBalSC1Fte",
+    "at": "2026-11-03T12:41:29.360Z",
+    "foto": "2026-11-03_AB531CT_3.jpg"
+   },
+   {
+    "dia": "2026-11-03",
+    "device": "SLZBalSC2Fte",
+    "at": "2026-11-03T12:43:13.890Z",
+    "foto": "2026-11-03_AB531CT_4.jpg"
+   },
+   {
+    "dia": "2026-11-03",
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-11-03T12:45:06.314Z",
+    "foto": "2026-11-03_AB531CT_5.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "NAD656",
+  "huellas": [
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-08-14",
+    "primera": "11:50",
+    "ultima": "13:47",
+    "minB1B2": 117,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "sl",
+    "salida": "balanza 15:16",
+    "dia": "2026-10-23",
+    "primera": "13:51",
+    "ultima": "15:20",
+    "minB1B2": 67,
+    "camaras": [
+     "SLZIngCamFrente",
+     "SLZBalIngFte",
+     "SLZTK400",
+     "SLZBalSC1Fte",
+     "SLZBalSC2Fte",
+     "SLZSalidaC1Fte"
+    ]
+   },
+   {
+    "planta": "sl",
+    "salida": "balanza 11:11",
+    "dia": "2026-11-04",
+    "primera": "08:50",
+    "ultima": "11:15",
+    "minB1B2": 28,
+    "camaras": [
+     "SLZIngCamFrente",
+     "SLZBalIngFte",
+     "SLZBalSC2Fte",
+     "SLZSalidaC1Fte"
+    ]
+   }
+  ],
+  "visitas": [
+   "2026-08-14",
+   "2026-09-15",
+   "2026-09-23",
+   "2026-10-01",
+   "2026-10-23",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-11-03",
+   "2026-11-04"
+  ],
+  "balanza": [
+   {
+    "dia": "2026-09-07",
+    "empresa": "CLIENTES VARIOS",
+    "ingreso": "07:30",
+    "mov": "INGRESO",
+    "obs": "TRABAJO VARIOS",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "PRODUCTOS VARIOS",
+    "salida": "08:20"
+   }
+  ],
+  "fotos": [
+   {
+    "dia": "2026-08-14",
+    "device": "RicB1Ingreso",
+    "at": "2026-08-14T14:50:22.481Z",
+    "foto": "2026-08-14_NAD656_0.jpg"
+   },
+   {
+    "dia": "2026-08-14",
+    "device": "RicB2Egreso",
+    "at": "2026-08-14T15:13:25.259Z",
+    "foto": "2026-08-14_NAD656_1.jpg"
+   },
+   {
+    "dia": "2026-10-23",
+    "device": "SLZIngCamFrente",
+    "at": "2026-10-23T16:51:17.192Z",
+    "foto": "2026-10-23_NAD656_0.jpg"
+   },
+   {
+    "dia": "2026-10-23",
+    "device": "SLZBalIngFte",
+    "at": "2026-10-23T17:09:41.184Z",
+    "foto": "2026-10-23_NAD656_1.jpg"
+   },
+   {
+    "dia": "2026-10-23",
+    "device": "SLZTK400",
+    "at": "2026-10-23T17:11:40.191Z",
+    "foto": "2026-10-23_NAD656_2.jpg"
+   },
+   {
+    "dia": "2026-10-23",
+    "device": "SLZBalSC2Fte",
+    "at": "2026-10-23T18:16:30.942Z",
+    "foto": "2026-10-23_NAD656_4.jpg"
+   },
+   {
+    "dia": "2026-11-04",
+    "device": "SLZIngCamFrente",
+    "at": "2026-11-04T11:50:05.118Z",
+    "foto": "2026-11-04_NAD656_0.jpg"
+   },
+   {
+    "dia": "2026-11-04",
+    "device": "SLZBalIngFte",
+    "at": "2026-11-04T13:43:04.829Z",
+    "foto": "2026-11-04_NAD656_1.jpg"
+   },
+   {
+    "dia": "2026-11-04",
+    "device": "SLZBalSC2Fte",
+    "at": "2026-11-04T14:11:27.295Z",
+    "foto": "2026-11-04_NAD656_2.jpg"
+   },
+   {
+    "dia": "2026-11-04",
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-11-04T14:15:00.362Z",
+    "foto": "2026-11-04_NAD656_3.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "OAA734",
+  "huellas": [
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-07-06",
+    "primera": "09:57",
+    "ultima": "10:25",
+    "minB1B2": 28,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-07-20",
+    "primera": "14:05",
+    "ultima": "15:04",
+    "minB1B2": 58,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   }
+  ],
+  "visitas": [
+   "2026-07-06",
+   "2026-07-20"
+  ],
+  "balanza": [
+   {
+    "dia": "2026-09-22",
+    "empresa": "LA CASA DE LA CONSTRUCCION S.R.L.",
+    "ingreso": "09:51",
+    "mov": "INGRESO",
+    "obs": "TRABAJO VARIOS",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "PRODUCTOS VARIOS",
+    "salida": "10:29"
+   }
+  ],
+  "fotos": [
+   {
+    "dia": "2026-07-06",
+    "device": "RicB1Ingreso",
+    "at": "2026-07-06T12:57:04.925Z",
+    "foto": "2026-07-06_OAA734_0.jpg"
+   },
+   {
+    "dia": "2026-07-06",
+    "device": "RicB2Egreso",
+    "at": "2026-07-06T13:25:13.000Z",
+    "foto": "2026-07-06_OAA734_1.jpg"
+   },
+   {
+    "dia": "2026-07-20",
+    "device": "RicB1Ingreso",
+    "at": "2026-07-20T17:05:52.950Z",
+    "foto": "2026-07-20_OAA734_0.jpg"
+   },
+   {
+    "dia": "2026-07-20",
+    "device": "RicB2Egreso",
+    "at": "2026-07-20T18:04:05.000Z",
+    "foto": "2026-07-20_OAA734_1.jpg"
+   }
+  ]
+ },
+ {
+  "patente": "AB127BY",
+  "huellas": [
+   {
+    "planta": "ric",
+    "salida": "",
+    "dia": "2026-07-08",
+    "primera": "09:56",
+    "ultima": "10:30",
+    "minB1B2": 34,
+    "camaras": [
+     "RicB1Ingreso",
+     "RicB2Egreso"
+    ]
+   },
+   {
+    "planta": "sl",
+    "salida": "egreso 09:12",
+    "dia": "2026-10-21",
+    "primera": "08:14",
+    "ultima": "09:12",
+    "minB1B2": 51,
+    "camaras": [
+     "SLZIngCamFrente",
+     "SLZBalIngFte",
+     "SLZTK400",
+     "SLZSalidaC1Fte",
+     "SLZSalidaC2Fte"
+    ]
+   }
+  ],
+  "visitas": [
+   "2026-07-08",
+   "2026-07-29",
+   "2026-10-21",
+   "2026-10-29"
+  ],
+  "balanza": [
+   {
+    "dia": "2026-10-13",
+    "empresa": "ARGENT EXPORT S.A.",
+    "ingreso": "14:20",
+    "mov": "INGRESO",
+    "obs": "DESCARGA 3 IBC DE 1000 KGS CADA UNO DE XTENDRA BL200 EN RENOVA",
+    "planta": "TERMINAL_EMBARQUE",
+    "producto": "PRODUCTOS VARIOS",
+    "salida": "15:22"
+   }
+  ],
+  "fotos": [
+   {
+    "dia": "2026-07-08",
+    "device": "RicB1Ingreso",
+    "at": "2026-07-08T12:56:37.000Z",
+    "foto": "2026-07-08_AB127BY_0.jpg"
+   },
+   {
+    "dia": "2026-07-08",
+    "device": "RicB2Egreso",
+    "at": "2026-07-08T13:30:08.000Z",
+    "foto": "2026-07-08_AB127BY_1.jpg"
+   },
+   {
+    "dia": "2026-10-21",
+    "device": "SLZIngCamFrente",
+    "at": "2026-10-21T11:14:28.983Z",
+    "foto": "2026-10-21_AB127BY_0.jpg"
+   },
+   {
+    "dia": "2026-10-21",
+    "device": "SLZBalIngFte",
+    "at": "2026-10-21T11:21:49.000Z",
+    "foto": "2026-10-21_AB127BY_1.jpg"
+   },
+   {
+    "dia": "2026-10-21",
+    "device": "SLZSalidaC1Fte",
+    "at": "2026-10-21T12:12:47.000Z",
+    "foto": "2026-10-21_AB127BY_3.jpg"
+   },
+   {
+    "dia": "2026-10-21",
+    "device": "SLZSalidaC2Fte",
+    "at": "2026-10-21T12:12:48.187Z",
+    "foto": "2026-10-21_AB127BY_4.jpg"
+   }
+  ]
+ }
+]

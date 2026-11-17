@@ -151,9 +151,12 @@ Vista previa de cómo deben verse: `reportes/logistica/2026-10-30_2026-11-05/pel
 
 1. **ETL manual del usuario** para las ventanas 26/10–1/11 y 2/11–… (soja R7 y base); después correr
    `comite_semana.py … --sin-etl --pellet-desde 2026-10-29`.
-2. Que el generador use `tramos-circuitos.json` (girasol R12, líquidos por circuito), `liquidos-puntos.json` y
-   `calles-volcables-sgc.json` en vez de las versiones viejas.
-3. Otros productos (cártamo): generalizar `cartamo.py`.
+2. ~~Que el generador use `tramos-circuitos.json`, `liquidos-puntos.json` y `calles-volcables-sgc.json`~~ hecho 05/11:
+   bloque `NUEVAS` antes de `ORDER` en `gen_comite_logistica_semana.py` arma `girasol-r12` (reemplaza `girasol`),
+   `liq-puntos` (reemplaza `liq-tramos`) y `volcables` por calle SGC. `calles-volcables-sgc.py` ahora reparte los no
+   reconocidos (paso 4, `metodo: repartido`) y la lámina aclara el %. Probado sobre 23–29/10 (810 descargas, 95 repartidas sin DSS).
+3. ~~Otros productos (cártamo)~~ hecho 05/11: `otros-productos.py` (lo corre `comite_semana.py`) → una lámina
+   `otros-<producto>` por grano de Ricardone que no es soja ni girasol, con ≥ 5 viajes, después de líquidos.
 4. Anexo de transile interno con el algoritmo (hoy usa `silos-internos.py`).
 5. Corregir el período del pie y revisar todas las láminas renderizadas; cruzar cifras repetidas entre láminas.
 6. Publicar (versión única en Drive con `sync-informe-slides.mjs`, o el visor HTML propio): **no se pidió todavía**.

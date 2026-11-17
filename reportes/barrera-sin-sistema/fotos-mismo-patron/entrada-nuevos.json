@@ -1,0 +1,210 @@
+[
+ {
+  "dia": "2026-08-19",
+  "plate": "AF241DX",
+  "pasos": [
+   {
+    "at": "2026-08-19T14:44:39.786Z",
+    "device": "SLZIngCamFrente"
+   },
+   {
+    "at": "2026-08-19T15:27:42.916Z",
+    "device": "SLZBalIngFte"
+   },
+   {
+    "at": "2026-08-19T18:19:36.243Z",
+    "device": "SLZTK400"
+   },
+   {
+    "at": "2026-08-19T18:37:55.896Z",
+    "device": "SLZSalidaC1Fte"
+   }
+  ]
+ },
+ {
+  "dia": "2026-10-19",
+  "plate": "AB531CT",
+  "pasos": [
+   {
+    "at": "2026-10-19T12:23:24.994Z",
+    "device": "SLZIngCamFrente"
+   },
+   {
+    "at": "2026-10-19T12:28:05.000Z",
+    "device": "SLZBalIngFte"
+   },
+   {
+    "at": "2026-10-19T12:31:42.529Z",
+    "device": "SLZTK400"
+   },
+   {
+    "at": "2026-10-19T15:32:41.756Z",
+    "device": "SLZBalSC1Fte"
+   },
+   {
+    "at": "2026-10-19T15:33:30.239Z",
+    "device": "SLZBalSC2Fte"
+   },
+   {
+    "at": "2026-10-19T15:35:34.226Z",
+    "device": "SLZSalidaC2Fte"
+   },
+   {
+    "at": "2026-10-19T15:35:54.000Z",
+    "device": "SLZSalidaC1Fte"
+   }
+  ]
+ },
+ {
+  "dia": "2026-10-23",
+  "plate": "AB531CT",
+  "pasos": [
+   {
+    "at": "2026-10-23T11:29:01.857Z",
+    "device": "SLZIngCamFrente"
+   },
+   {
+    "at": "2026-10-23T11:33:02.000Z",
+    "device": "SLZBalIngFte"
+   },
+   {
+    "at": "2026-10-23T11:36:34.449Z",
+    "device": "SLZTK400"
+   },
+   {
+    "at": "2026-10-23T15:13:52.801Z",
+    "device": "SLZBalSC1Fte"
+   },
+   {
+    "at": "2026-10-23T15:14:32.661Z",
+    "device": "SLZBalSC2Fte"
+   },
+   {
+    "at": "2026-10-23T15:16:31.849Z",
+    "device": "SLZSalidaC1Fte"
+   }
+  ]
+ },
+ {
+  "dia": "2026-11-03",
+  "plate": "AB531CT",
+  "pasos": [
+   {
+    "at": "2026-11-03T11:44:25.664Z",
+    "device": "SLZIngCamFrente"
+   },
+   {
+    "at": "2026-11-03T12:17:36.000Z",
+    "device": "SLZBalIngFte"
+   },
+   {
+    "at": "2026-11-03T12:19:51.990Z",
+    "device": "SLZTK400"
+   },
+   {
+    "at": "2026-11-03T12:41:29.360Z",
+    "device": "SLZBalSC1Fte"
+   },
+   {
+    "at": "2026-11-03T12:43:13.890Z",
+    "device": "SLZBalSC2Fte"
+   },
+   {
+    "at": "2026-11-03T12:45:06.314Z",
+    "device": "SLZSalidaC1Fte"
+   }
+  ]
+ },
+ {
+  "dia": "2026-10-23",
+  "plate": "NAD656",
+  "pasos": [
+   {
+    "at": "2026-10-23T16:51:17.192Z",
+    "device": "SLZIngCamFrente"
+   },
+   {
+    "at": "2026-10-23T17:09:41.184Z",
+    "device": "SLZBalIngFte"
+   },
+   {
+    "at": "2026-10-23T17:11:40.191Z",
+    "device": "SLZTK400"
+   },
+   {
+    "at": "2026-10-23T18:14:36.236Z",
+    "device": "SLZBalSC1Fte"
+   },
+   {
+    "at": "2026-10-23T18:16:30.942Z",
+    "device": "SLZBalSC2Fte"
+   },
+   {
+    "at": "2026-10-23T18:20:54.869Z",
+    "device": "SLZSalidaC1Fte"
+   }
+  ]
+ },
+ {
+  "dia": "2026-11-04",
+  "plate": "NAD656",
+  "pasos": [
+   {
+    "at": "2026-11-04T11:50:05.118Z",
+    "device": "SLZIngCamFrente"
+   },
+   {
+    "at": "2026-11-04T13:43:04.829Z",
+    "device": "SLZBalIngFte"
+   },
+   {
+    "at": "2026-11-04T14:11:27.295Z",
+    "device": "SLZBalSC2Fte"
+   },
+   {
+    "at": "2026-11-04T14:15:00.362Z",
+    "device": "SLZSalidaC1Fte"
+   }
+  ]
+ },
+ {
+  "dia": "2026-07-08",
+  "plate": "AB127BY",
+  "pasos": [
+   {
+    "at": "2026-07-08T12:56:37.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-07-08T13:30:08.000Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-10-21",
+  "plate": "AB127BY",
+  "pasos": [
+   {
+    "at": "2026-10-21T11:14:28.983Z",
+    "device": "SLZIngCamFrente"
+   },
+   {
+    "at": "2026-10-21T11:21:49.000Z",
+    "device": "SLZBalIngFte"
+   },
+   {
+    "at": "2026-10-21T11:24:57.608Z",
+    "device": "SLZTK400"
+   },
+   {
+    "at": "2026-10-21T12:12:47.000Z",
+    "device": "SLZSalidaC1Fte"
+   },
+   {
+    "at": "2026-10-21T12:12:48.187Z",
+    "device": "SLZSalidaC2Fte"
+   }
+  ]
+ }
+]

@@ -11,6 +11,13 @@ const out = path.join(dir, 'fotos', 'recorridos')
 const indexFile = path.join(out, 'fotos.json')
 const index = fs.existsSync(indexFile) ? JSON.parse(fs.readFileSync(indexFile, 'utf8')) : {}
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
+// Windows bloquea de a ratos el índice (antivirus/indexador al reescribirlo tras cada foto): reintentar en vez de cortar.
+async function guardarIndice() {
+  for (let i = 0; i < 6; i++) {
+    try { fs.writeFileSync(indexFile, JSON.stringify(index, null, 1)); return } catch { await sleep(500 * (i + 1)) }
+  }
+  console.log('no se pudo guardar', indexFile, '(se reintenta en la próxima foto)')
+}
 async function pedir(it) {
   for (let i = 0; i < 5; i++) {
     try {
@@ -42,9 +49,9 @@ async function pedir(it) {
       fs.writeFileSync(path.join(out, archivo), r.buf)
       index[key] = { archivo, patente: x.patente, punto: it.punto, hora: it.hora, leyoDss: r.plate || '' }
       ok++
-      fs.writeFileSync(indexFile, JSON.stringify(index, null, 1))
+      await guardarIndice()
     }
   }
-  fs.writeFileSync(indexFile, JSON.stringify(index, null, 1))
+  await guardarIndice()
   console.log(`fotos: ${ok} · sin foto: ${falta} · ${indexFile}`)
 })()

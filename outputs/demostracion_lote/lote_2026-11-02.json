@@ -1,0 +1,21 @@
+{
+  "dia": "2026-11-02",
+  "umbral": 0.4,
+  "porPunto": {},
+  "porCamion": [],
+  "prueba": {
+    "n": 0,
+    "bien": 0,
+    "otro": 0
+  },
+  "erroresPrueba": [],
+  "eliminacion": {
+    "pasos": 0,
+    "prueba": {
+      "n": 0,
+      "bien": 0,
+      "otro": 0,
+      "nada": 0
+    }
+  }
+}

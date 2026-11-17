@@ -127,6 +127,16 @@ for t in trips:
     k, share, n = vota(t)
     if k and share >= UMBRAL: t['calle'], t['metodo'] = k, f'horario {share:.0%} de {n}'; asig += 1
 print('asignados por horario', asig)
+# 4) los que quedan (no reconocidos) se reparten a la volcable con más lecturas entre salida −45 y −5 min (criterio del comité)
+rep = 0
+for t in trips:
+    if t.get('calle'): continue
+    c = collections.Counter(x[1] for x in U if t['s'] - dt.timedelta(minutes=45) <= x[0] <= t['s'] - dt.timedelta(minutes=5))
+    if not c:   # sin lecturas en esa ventana: la volcable de la lectura más cercana a la salida (hasta 3 h)
+        x = min((x for x in U if abs((x[0] - t['s']).total_seconds()) <= 3 * 3600), key=lambda x: abs((x[0] - t['s']).total_seconds()), default=None)
+        c = collections.Counter([x[1]] if x else [])
+    if c: t['calle'], t['metodo'] = c.most_common(1)[0][0], 'repartido'; rep += 1
+print('repartidos (no reconocidos)', rep)
 tab = collections.defaultdict(collections.Counter); met = collections.Counter()
 for t in trips:
     tab[t.get('calle', 'SIN')][t['dia']] += 1; met[t.get('metodo', 'sin').split(' ')[0]] += 1

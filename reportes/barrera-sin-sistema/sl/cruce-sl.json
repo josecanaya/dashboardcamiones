@@ -1,0 +1,4345 @@
+[
+ {
+  "patente": "BTS626",
+  "visitasHuella": 15,
+  "visitas": 16,
+  "diasHuella": [
+   "2026-07-10",
+   "2026-08-27",
+   "2026-09-14",
+   "2026-10-02",
+   "2026-10-05",
+   "2026-10-19",
+   "2026-10-20",
+   "2026-10-21",
+   "2026-10-22",
+   "2026-10-26",
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02"
+  ],
+  "primera": "2026-07-10",
+  "ultima": "2026-11-03",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:agua",
+  "cartas": [],
+  "balanza": {
+   "cat": "agua",
+   "movs": 79,
+   "desde": "2026-05-19",
+   "hasta": "2026-10-16",
+   "productos": [
+    "0802 AGUA POTABLE"
+   ]
+  }
+ },
+ {
+  "patente": "UAJ766",
+  "visitasHuella": 12,
+  "visitas": 12,
+  "diasHuella": [
+   "2026-10-19",
+   "2026-10-20",
+   "2026-10-21",
+   "2026-10-22",
+   "2026-10-23",
+   "2026-10-26",
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-11-04",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:particular",
+  "cartas": [],
+  "balanza": {
+   "cat": "varios",
+   "movs": 498,
+   "desde": "2026-05-19",
+   "hasta": "2026-10-16",
+   "productos": [
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "AA703FC",
+  "visitasHuella": 8,
+  "visitas": 11,
+  "diasHuella": [
+   "2026-10-26",
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04"
+  ],
+  "primera": "2026-08-11",
+  "ultima": "2026-11-04",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:residuos",
+  "cartas": [],
+  "balanza": {
+   "cat": "residuos",
+   "movs": 436,
+   "desde": "2026-05-18",
+   "hasta": "2026-10-10",
+   "productos": [
+    "0947 SAL GLICERINOSA",
+    "0946 TIERRA DESC FILTROS",
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "EPH797",
+  "visitasHuella": 8,
+  "visitas": 8,
+  "diasHuella": [
+   "2026-10-26",
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04"
+  ],
+  "primera": "2026-10-26",
+  "ultima": "2026-11-04",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:residuos",
+  "cartas": [],
+  "balanza": {
+   "cat": "residuos",
+   "movs": 18,
+   "desde": "2026-09-28",
+   "hasta": "2026-10-05",
+   "productos": [
+    "0946 TIERRA DESC FILTROS",
+    "0947 SAL GLICERINOSA"
+   ]
+  }
+ },
+ {
+  "patente": "HWU967",
+  "visitasHuella": 8,
+  "visitas": 8,
+  "diasHuella": [
+   "2026-10-19",
+   "2026-10-21",
+   "2026-10-23",
+   "2026-10-26",
+   "2026-10-28",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-04"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-11-04",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:residuos",
+  "cartas": [],
+  "balanza": {
+   "cat": "residuos",
+   "movs": 195,
+   "desde": "2026-05-20",
+   "hasta": "2026-10-16",
+   "productos": [
+    "0873 RESIDUOS ASIMILABLES A DOMICILIARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "JIA232",
+  "visitasHuella": 6,
+  "visitas": 7,
+  "diasHuella": [
+   "2026-10-19",
+   "2026-10-20",
+   "2026-10-21",
+   "2026-10-22",
+   "2026-10-23",
+   "2026-10-24"
+  ],
+  "primera": "2026-10-14",
+  "ultima": "2026-10-24",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:residuos",
+  "cartas": [],
+  "balanza": {
+   "cat": "residuos",
+   "movs": 70,
+   "desde": "2026-05-21",
+   "hasta": "2026-10-15",
+   "productos": [
+    "0946 TIERRA DESC FILTROS",
+    "0947 SAL GLICERINOSA",
+    "0868 CARBON ACTIVADO"
+   ]
+  }
+ },
+ {
+  "patente": "AE374FK",
+  "visitasHuella": 5,
+  "visitas": 7,
+  "diasHuella": [
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-04"
+  ],
+  "primera": "2026-10-27",
+  "ultima": "2026-11-04",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:interno",
+  "cartas": [],
+  "balanza": {
+   "cat": "varios",
+   "movs": 4,
+   "desde": "2026-07-17",
+   "hasta": "2026-09-08",
+   "productos": [
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "AE052QO",
+  "visitasHuella": 5,
+  "visitas": 5,
+  "diasHuella": [
+   "2026-10-03",
+   "2026-10-12",
+   "2026-10-19",
+   "2026-10-21",
+   "2026-10-28"
+  ],
+  "primera": "2026-10-03",
+  "ultima": "2026-10-28",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:interno",
+  "cartas": [],
+  "balanza": {
+   "cat": "varios",
+   "movs": 8,
+   "desde": "2026-09-19",
+   "hasta": "2026-10-09",
+   "productos": [
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "AB544UW",
+  "visitasHuella": 4,
+  "visitas": 16,
+  "diasHuella": [
+   "2026-10-13",
+   "2026-10-24",
+   "2026-10-27",
+   "2026-10-30"
+  ],
+  "primera": "2026-09-18",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:interno",
+  "cartas": [],
+  "balanza": {
+   "cat": "varios",
+   "movs": 5,
+   "desde": "2026-06-04",
+   "hasta": "2026-09-09",
+   "productos": [
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "CMF111",
+  "visitasHuella": 4,
+  "visitas": 5,
+  "diasHuella": [
+   "2026-10-19",
+   "2026-10-20",
+   "2026-10-30",
+   "2026-11-01"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-11-01",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:agua",
+  "cartas": [],
+  "balanza": {
+   "cat": "agua",
+   "movs": 327,
+   "desde": "2026-05-19",
+   "hasta": "2026-11-05",
+   "productos": [
+    "0780 AGUA INDUSTRIAL",
+    "0802 AGUA POTABLE"
+   ]
+  }
+ },
+ {
+  "patente": "AC132NO",
+  "visitasHuella": 3,
+  "visitas": 5,
+  "diasHuella": [
+   "2026-10-19",
+   "2026-10-23",
+   "2026-11-04"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-11-04",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:residuos",
+  "cartas": [],
+  "balanza": {
+   "cat": "residuos",
+   "movs": 60,
+   "desde": "2026-06-11",
+   "hasta": "2026-10-16",
+   "productos": [
+    "0777 RESIDUOS DE CAHUCHO",
+    "0873 RESIDUOS ASIMILABLES A DOMICILIARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "AB531CT",
+  "visitasHuella": 3,
+  "visitas": 4,
+  "diasHuella": [
+   "2026-10-19",
+   "2026-10-23",
+   "2026-11-03"
+  ],
+  "primera": "2026-08-12",
+  "ultima": "2026-11-03",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": {
+   "cat": "varios",
+   "movs": 1,
+   "desde": "2026-10-05",
+   "hasta": "2026-10-05",
+   "productos": [
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "AF829YZ",
+  "visitasHuella": 3,
+  "visitas": 3,
+  "diasHuella": [
+   "2026-10-20",
+   "2026-10-21",
+   "2026-10-27"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-27",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:residuos",
+  "cartas": [],
+  "balanza": {
+   "cat": "residuos",
+   "movs": 25,
+   "desde": "2026-07-08",
+   "hasta": "2026-10-09",
+   "productos": [
+    "0870 CARTON-PAPEL",
+    "0700 CHATARRA"
+   ]
+  }
+ },
+ {
+  "patente": "AB472AR",
+  "visitasHuella": 2,
+  "visitas": 5,
+  "diasHuella": [
+   "2026-10-19",
+   "2026-10-26"
+  ],
+  "primera": "2026-08-28",
+  "ultima": "2026-10-26",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:interno",
+  "cartas": [],
+  "balanza": {
+   "cat": "varios",
+   "movs": 5,
+   "desde": "2026-09-07",
+   "hasta": "2026-09-23",
+   "productos": [
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "CXA592",
+  "visitasHuella": 2,
+  "visitas": 5,
+  "diasHuella": [
+   "2026-08-14",
+   "2026-09-11"
+  ],
+  "primera": "2026-08-14",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "sin_carta:carga",
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "VNA879",
+  "visitasHuella": 2,
+  "visitas": 4,
+  "diasHuella": [
+   "2026-10-16",
+   "2026-10-27"
+  ],
+  "primera": "2026-10-16",
+  "ultima": "2026-11-03",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:residuos",
+  "cartas": [],
+  "balanza": {
+   "cat": "residuos",
+   "movs": 29,
+   "desde": "2026-05-20",
+   "hasta": "2026-10-15",
+   "productos": [
+    "0877 TARIMAS MADERA",
+    "0870 CARTON-PAPEL",
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "AE260HD",
+  "visitasHuella": 2,
+  "visitas": 3,
+  "diasHuella": [
+   "2026-11-02",
+   "2026-11-04"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-11-04",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:interno",
+  "cartas": [],
+  "balanza": {
+   "cat": "varios",
+   "movs": 4,
+   "desde": "2026-10-03",
+   "hasta": "2026-10-16",
+   "productos": [
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "AF013EZ",
+  "visitasHuella": 2,
+  "visitas": 3,
+  "diasHuella": [
+   "2026-10-19",
+   "2026-10-22"
+  ],
+  "primera": "2026-09-23",
+  "ultima": "2026-10-22",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:residuos",
+  "cartas": [],
+  "balanza": {
+   "cat": "residuos",
+   "movs": 22,
+   "desde": "2026-08-03",
+   "hasta": "2026-10-15",
+   "productos": [
+    "9999 PRODUCTOS VARIOS",
+    "0873 RESIDUOS ASIMILABLES A DOMICILIARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "KTH930",
+  "visitasHuella": 2,
+  "visitas": 3,
+  "diasHuella": [
+   "2026-10-27",
+   "2026-11-03"
+  ],
+  "primera": "2026-10-27",
+  "ultima": "2026-11-03",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:residuos",
+  "cartas": [],
+  "balanza": {
+   "cat": "residuos",
+   "movs": 8,
+   "desde": "2026-07-23",
+   "hasta": "2026-10-02",
+   "productos": [
+    "0873 RESIDUOS ASIMILABLES A DOMICILIARIOS",
+    "0877 TARIMAS MADERA",
+    "0777 RESIDUOS DE CAHUCHO"
+   ]
+  }
+ },
+ {
+  "patente": "VCK738",
+  "visitasHuella": 2,
+  "visitas": 3,
+  "diasHuella": [
+   "2026-09-26",
+   "2026-10-06"
+  ],
+  "primera": "2026-09-26",
+  "ultima": "2026-10-24",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "sin_carta:descarga",
+  "cartas": [],
+  "balanza": {
+   "cat": "glicerina",
+   "movs": 149,
+   "desde": "2026-05-18",
+   "hasta": "2026-11-05",
+   "productos": [
+    "0883 GLICERINA"
+   ]
+  }
+ },
+ {
+  "patente": "EVL273",
+  "visitasHuella": 2,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-07-25",
+   "2026-10-30"
+  ],
+  "primera": "2026-07-25",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "GYC220",
+  "visitasHuella": 2,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-10-26",
+   "2026-11-04"
+  ],
+  "primera": "2026-10-26",
+  "ultima": "2026-11-04",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:interno",
+  "cartas": [],
+  "balanza": {
+   "cat": "varios",
+   "movs": 7,
+   "desde": "2026-06-01",
+   "hasta": "2026-09-10",
+   "productos": [
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "MSE565",
+  "visitasHuella": 2,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-10-20",
+   "2026-10-30"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:interno",
+  "cartas": [],
+  "balanza": {
+   "cat": "varios",
+   "movs": 19,
+   "desde": "2026-05-20",
+   "hasta": "2026-10-15",
+   "productos": [
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "NAD656",
+  "visitasHuella": 2,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-10-23",
+   "2026-11-04"
+  ],
+  "primera": "2026-10-23",
+  "ultima": "2026-11-04",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": {
+   "cat": "varios",
+   "movs": 1,
+   "desde": "2026-09-07",
+   "hasta": "2026-09-07",
+   "productos": [
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "AF411UI",
+  "visitasHuella": 1,
+  "visitas": 18,
+  "diasHuella": [
+   "2026-07-27"
+  ],
+  "primera": "2026-07-27",
+  "ultima": "2026-11-04",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "sin_carta:carga",
+  "cartas": [],
+  "balanza": {
+   "cat": "residuos",
+   "movs": 23,
+   "desde": "2026-05-21",
+   "hasta": "2026-10-06",
+   "productos": [
+    "0744 SEMILLA CON AGUA/BARRO",
+    "0872 RESIDUOS ORG.",
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "AF804QL",
+  "visitasHuella": 1,
+  "visitas": 10,
+  "diasHuella": [
+   "2026-08-04"
+  ],
+  "primera": "2026-08-04",
+  "ultima": "2026-10-26",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "sin_carta:carga",
+  "cartas": [],
+  "balanza": {
+   "cat": "residuos",
+   "movs": 18,
+   "desde": "2026-05-22",
+   "hasta": "2026-10-16",
+   "productos": [
+    "0920 FONDO TANQUE",
+    "0744 SEMILLA CON AGUA/BARRO",
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "KQG451",
+  "visitasHuella": 1,
+  "visitas": 9,
+  "diasHuella": [
+   "2026-10-10"
+  ],
+  "primera": "2026-10-08",
+  "ultima": "2026-10-14",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:interno",
+  "cartas": [],
+  "balanza": {
+   "cat": "varios",
+   "movs": 4,
+   "desde": "2026-10-01",
+   "hasta": "2026-11-02",
+   "productos": [
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "EMU873",
+  "visitasHuella": 1,
+  "visitas": 7,
+  "diasHuella": [
+   "2026-09-10"
+  ],
+  "primera": "2026-08-12",
+  "ultima": "2026-10-01",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "sin_carta:carga",
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "AE808WD",
+  "visitasHuella": 1,
+  "visitas": 6,
+  "diasHuella": [
+   "2026-07-17"
+  ],
+  "primera": "2026-07-17",
+  "ultima": "2026-08-12",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:residuos",
+  "cartas": [],
+  "balanza": {
+   "cat": "residuos",
+   "movs": 15,
+   "desde": "2026-05-19",
+   "hasta": "2026-08-21",
+   "productos": [
+    "0872 RESIDUOS ORG.",
+    "9999 PRODUCTOS VARIOS",
+    "0744 SEMILLA CON AGUA/BARRO"
+   ]
+  }
+ },
+ {
+  "patente": "AF708IV",
+  "visitasHuella": 1,
+  "visitas": 5,
+  "diasHuella": [
+   "2026-09-04"
+  ],
+  "primera": "2026-08-13",
+  "ultima": "2026-09-12",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "AH346LP",
+  "visitasHuella": 1,
+  "visitas": 5,
+  "diasHuella": [
+   "2026-09-11"
+  ],
+  "primera": "2026-09-11",
+  "ultima": "2026-10-29",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:camion",
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "HOD107",
+  "visitasHuella": 1,
+  "visitas": 4,
+  "diasHuella": [
+   "2026-07-02"
+  ],
+  "primera": "2026-07-02",
+  "ultima": "2026-09-22",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "sin_carta:carga",
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "LKJ248",
+  "visitasHuella": 1,
+  "visitas": 4,
+  "diasHuella": [
+   "2026-08-14"
+  ],
+  "primera": "2026-08-05",
+  "ultima": "2026-08-24",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "sin_carta:carga",
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "NWZ336",
+  "visitasHuella": 1,
+  "visitas": 4,
+  "diasHuella": [
+   "2026-08-16"
+  ],
+  "primera": "2026-08-16",
+  "ultima": "2026-11-01",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "sin_carta:carga",
+  "cartas": [],
+  "balanza": {
+   "cat": "insumos",
+   "movs": 21,
+   "desde": "2026-08-24",
+   "hasta": "2026-10-27",
+   "productos": [
+    "0938 BORRA DE AC.SOJA REFINADO"
+   ]
+  }
+ },
+ {
+  "patente": "AB127BY",
+  "visitasHuella": 1,
+  "visitas": 3,
+  "diasHuella": [
+   "2026-10-21"
+  ],
+  "primera": "2026-07-29",
+  "ultima": "2026-10-29",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": {
+   "cat": "varios",
+   "movs": 1,
+   "desde": "2026-10-13",
+   "hasta": "2026-10-13",
+   "productos": [
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "AC612CX",
+  "visitasHuella": 1,
+  "visitas": 3,
+  "diasHuella": [
+   "2026-10-21"
+  ],
+  "primera": "2026-09-11",
+  "ultima": "2026-10-29",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:interno",
+  "cartas": [],
+  "balanza": {
+   "cat": "varios",
+   "movs": 4,
+   "desde": "2026-05-19",
+   "hasta": "2026-09-30",
+   "productos": [
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "AF443TR",
+  "visitasHuella": 1,
+  "visitas": 3,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-27",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:interno",
+  "cartas": [],
+  "balanza": {
+   "cat": "varios",
+   "movs": 5,
+   "desde": "2026-07-15",
+   "hasta": "2026-10-01",
+   "productos": [
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "AF798IV",
+  "visitasHuella": 1,
+  "visitas": 3,
+  "diasHuella": [
+   "2026-09-23"
+  ],
+  "primera": "2026-09-12",
+  "ultima": "2026-10-02",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "FQX760",
+  "visitasHuella": 1,
+  "visitas": 3,
+  "diasHuella": [
+   "2026-09-02"
+  ],
+  "primera": "2026-09-02",
+  "ultima": "2026-09-16",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:interno",
+  "cartas": [],
+  "balanza": {
+   "cat": "varios",
+   "movs": 4,
+   "desde": "2026-06-01",
+   "hasta": "2026-09-24",
+   "productos": [
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "INK312",
+  "visitasHuella": 1,
+  "visitas": 3,
+  "diasHuella": [
+   "2026-10-25"
+  ],
+  "primera": "2026-10-25",
+  "ultima": "2026-11-04",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": "camion",
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "JOZ724",
+  "visitasHuella": 1,
+  "visitas": 3,
+  "diasHuella": [
+   "2026-07-04"
+  ],
+  "primera": "2026-07-04",
+  "ultima": "2026-11-01",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "SZG666",
+  "visitasHuella": 1,
+  "visitas": 3,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:agua",
+  "cartas": [],
+  "balanza": {
+   "cat": "agua",
+   "movs": 323,
+   "desde": "2026-05-20",
+   "hasta": "2026-11-05",
+   "productos": [
+    "0780 AGUA INDUSTRIAL"
+   ]
+  }
+ },
+ {
+  "patente": "WRM886",
+  "visitasHuella": 1,
+  "visitas": 3,
+  "diasHuella": [
+   "2026-08-14"
+  ],
+  "primera": "2026-08-05",
+  "ultima": "2026-08-24",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "sin_carta:carga",
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "AA745QE",
+  "visitasHuella": 1,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-07",
+  "ultima": "2026-10-20",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "AD177MG",
+  "visitasHuella": 1,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-08-24",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "sin_carta:carga",
+  "cartas": [
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AE427TV",
+  "visitasHuella": 1,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-20",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": {
+   "cat": "insumos",
+   "movs": 1,
+   "desde": "2026-10-19",
+   "hasta": "2026-10-19",
+   "productos": [
+    "0711 METANOL"
+   ]
+  }
+ },
+ {
+  "patente": "AE784ON",
+  "visitasHuella": 1,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-23",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:particular",
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "AG253AC",
+  "visitasHuella": 1,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-10-21"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-21",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": {
+   "cat": "insumos",
+   "movs": 2,
+   "desde": "2026-10-03",
+   "hasta": "2026-11-03",
+   "productos": [
+    "0711 METANOL"
+   ]
+  }
+ },
+ {
+  "patente": "AG410EU",
+  "visitasHuella": 1,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-20",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": {
+   "cat": "insumos",
+   "movs": 1,
+   "desde": "2026-10-19",
+   "hasta": "2026-10-19",
+   "productos": [
+    "0711 METANOL"
+   ]
+  }
+ },
+ {
+  "patente": "AG535AH",
+  "visitasHuella": 1,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-10-28"
+  ],
+  "primera": "2026-10-28",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": {
+   "cat": "varios",
+   "movs": 2,
+   "desde": "2026-06-03",
+   "hasta": "2026-06-12",
+   "productos": [
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "CRJ139",
+  "visitasHuella": 1,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-11-01"
+  ],
+  "primera": "2026-07-02",
+  "ultima": "2026-11-01",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "GNZ601",
+  "visitasHuella": 1,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-10-09"
+  ],
+  "primera": "2026-10-09",
+  "ultima": "2026-10-09",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "sin_carta:carga",
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "GTZ627",
+  "visitasHuella": 1,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-09-11"
+  ],
+  "primera": "2026-09-11",
+  "ultima": "2026-09-11",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "sin_carta:carga",
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "HQX124",
+  "visitasHuella": 1,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-08-30"
+  ],
+  "primera": "2026-08-29",
+  "ultima": "2026-08-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "JFB793",
+  "visitasHuella": 1,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-10-10"
+  ],
+  "primera": "2026-10-10",
+  "ultima": "2026-10-22",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:residuos",
+  "cartas": [],
+  "balanza": {
+   "cat": "residuos",
+   "movs": 23,
+   "desde": "2026-06-05",
+   "hasta": "2026-10-17",
+   "productos": [
+    "0877 TARIMAS MADERA",
+    "0873 RESIDUOS ASIMILABLES A DOMICILIARIOS",
+    "0777 RESIDUOS DE CAHUCHO"
+   ]
+  }
+ },
+ {
+  "patente": "JWJ493",
+  "visitasHuella": 1,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-08-28",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "KFF095",
+  "visitasHuella": 1,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-08-13"
+  ],
+  "primera": "2026-07-22",
+  "ultima": "2026-08-13",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:interno",
+  "cartas": [],
+  "balanza": {
+   "cat": "varios",
+   "movs": 10,
+   "desde": "2026-06-13",
+   "hasta": "2026-09-21",
+   "productos": [
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "MJZ053",
+  "visitasHuella": 1,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-09-01"
+  ],
+  "primera": "2026-09-01",
+  "ultima": "2026-09-01",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "UER485",
+  "visitasHuella": 1,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-11-01"
+  ],
+  "primera": "2026-07-13",
+  "ultima": "2026-11-01",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "UUL425",
+  "visitasHuella": 1,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-07-03"
+  ],
+  "primera": "2026-07-02",
+  "ultima": "2026-07-03",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "VHL423",
+  "visitasHuella": 1,
+  "visitas": 2,
+  "diasHuella": [
+   "2026-07-10"
+  ],
+  "primera": "2026-07-04",
+  "ultima": "2026-07-10",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AA180BA",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AA217ZM",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-11-01"
+  ],
+  "primera": "2026-11-01",
+  "ultima": "2026-11-01",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AA234MW",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AA348BR",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AA583WK",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AA771EY",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AB404XJ",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-15"
+  ],
+  "primera": "2026-08-15",
+  "ultima": "2026-08-15",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "AB472CS",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "sin_carta:descarga",
+  "cartas": [],
+  "balanza": {
+   "cat": "insumos",
+   "movs": 10,
+   "desde": "2026-07-02",
+   "hasta": "2026-11-04",
+   "productos": [
+    "0706 SOLVENTE HEXANO"
+   ]
+  }
+ },
+ {
+  "patente": "AB608AT",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AB874VE",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-26"
+  ],
+  "primera": "2026-08-26",
+  "ultima": "2026-08-26",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "AB892HX",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AB899GJ",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AC577ZN",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-11-01"
+  ],
+  "primera": "2026-11-01",
+  "ultima": "2026-11-01",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AC746XK",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AC773EK",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-07-30"
+  ],
+  "primera": "2026-07-30",
+  "ultima": "2026-07-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "AC798PO",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-07-11"
+  ],
+  "primera": "2026-07-11",
+  "ultima": "2026-07-11",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AC942YJ",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AD074NH",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-11-01"
+  ],
+  "primera": "2026-11-01",
+  "ultima": "2026-11-01",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AD106UL",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-05"
+  ],
+  "primera": "2026-08-05",
+  "ultima": "2026-08-05",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "AD119RP",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-13"
+  ],
+  "primera": "2026-08-13",
+  "ultima": "2026-08-13",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "AD503LE",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AD591DC",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-11-01"
+  ],
+  "primera": "2026-11-01",
+  "ultima": "2026-11-01",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AD725FV",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-20"
+  ],
+  "primera": "2026-08-20",
+  "ultima": "2026-08-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "AD902BN",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AD906GO",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AE171GF",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "sin_carta:descarga",
+  "cartas": [],
+  "balanza": {
+   "cat": "insumos",
+   "movs": 3,
+   "desde": "2026-06-08",
+   "hasta": "2026-10-19",
+   "productos": [
+    "0711 METANOL"
+   ]
+  }
+ },
+ {
+  "patente": "AE256JI",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AE285RY",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AE332ZK",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AE582XW",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": {
+   "cat": "insumos",
+   "movs": 1,
+   "desde": "2026-10-19",
+   "hasta": "2026-10-19",
+   "productos": [
+    "0711 METANOL"
+   ]
+  }
+ },
+ {
+  "patente": "AE613UK",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AE635SK",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-28"
+  ],
+  "primera": "2026-10-28",
+  "ultima": "2026-10-28",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AE706US",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AE757JD",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-14"
+  ],
+  "primera": "2026-08-14",
+  "ultima": "2026-08-14",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "AE821PH",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AE887CB",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AE904ZZ",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-03"
+  ],
+  "primera": "2026-08-03",
+  "ultima": "2026-08-03",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "AE981NA",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "AF161HM",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AF241DX",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-19"
+  ],
+  "primera": "2026-08-19",
+  "ultima": "2026-08-19",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": {
+   "cat": "varios",
+   "movs": 2,
+   "desde": "2026-07-17",
+   "hasta": "2026-07-24",
+   "productos": [
+    "9999 PRODUCTOS VARIOS",
+    "0872 RESIDUOS ORG."
+   ]
+  }
+ },
+ {
+  "patente": "AG724QO",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": {
+   "cat": "insumos",
+   "movs": 1,
+   "desde": "2026-10-19",
+   "hasta": "2026-10-19",
+   "productos": [
+    "0711 METANOL"
+   ]
+  }
+ },
+ {
+  "patente": "AG902CK",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-21"
+  ],
+  "primera": "2026-08-21",
+  "ultima": "2026-08-21",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "AH252QW",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AH322GZ",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-07-04"
+  ],
+  "primera": "2026-07-04",
+  "ultima": "2026-07-04",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "AH389TD",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-11-01"
+  ],
+  "primera": "2026-11-01",
+  "ultima": "2026-11-01",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AH426HM",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-09-21"
+  ],
+  "primera": "2026-09-21",
+  "ultima": "2026-09-21",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:particular",
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "AH491LP",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "AH690HC",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AH872OE",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AH876XT",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": {
+   "cat": "insumos",
+   "movs": 1,
+   "desde": "2026-10-19",
+   "hasta": "2026-10-19",
+   "productos": [
+    "0711 METANOL"
+   ]
+  }
+ },
+ {
+  "patente": "AH942OD",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-09-23"
+  ],
+  "primera": "2026-09-23",
+  "ultima": "2026-09-23",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": {
+   "cat": "insumos",
+   "movs": 1,
+   "desde": "2026-10-04",
+   "hasta": "2026-10-04",
+   "productos": [
+    "0711 METANOL"
+   ]
+  }
+ },
+ {
+  "patente": "AI030CJ",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AI035XE",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-05"
+  ],
+  "primera": "2026-08-05",
+  "ultima": "2026-08-05",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "AI190UN",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AI195ZN",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-28"
+  ],
+  "primera": "2026-08-28",
+  "ultima": "2026-08-28",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AI411IK",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-11-01"
+  ],
+  "primera": "2026-11-01",
+  "ultima": "2026-11-01",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AI427WD",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-28"
+  ],
+  "primera": "2026-10-28",
+  "ultima": "2026-10-28",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AI514NE",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "ARC984",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-07-18"
+  ],
+  "primera": "2026-07-18",
+  "ultima": "2026-07-18",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "ASK024",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-11-01"
+  ],
+  "primera": "2026-11-01",
+  "ultima": "2026-11-01",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AUG999",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "AUH393",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "BIH121",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "BIM121",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "BMN766",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-28"
+  ],
+  "primera": "2026-10-28",
+  "ultima": "2026-10-28",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "CET235",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-14"
+  ],
+  "primera": "2026-08-14",
+  "ultima": "2026-08-14",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "CRP386",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "DIH255",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-07-13"
+  ],
+  "primera": "2026-07-13",
+  "ultima": "2026-07-13",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "DJO870",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-09-18"
+  ],
+  "primera": "2026-09-18",
+  "ultima": "2026-09-18",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "DQK402",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "EDO876",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "EDW282",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "EOD033",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "ERZ277",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-11-01"
+  ],
+  "primera": "2026-11-01",
+  "ultima": "2026-11-01",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "EXX146",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-11-01"
+  ],
+  "primera": "2026-11-01",
+  "ultima": "2026-11-01",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "EYK348",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "EZF425",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "FUO473",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-07-01"
+  ],
+  "primera": "2026-07-01",
+  "ultima": "2026-07-01",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "GCV707",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "GDF719",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "GEQ816",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-07-08"
+  ],
+  "primera": "2026-07-08",
+  "ultima": "2026-07-08",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "GFF309",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "GKV260",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-11-02"
+  ],
+  "primera": "2026-11-02",
+  "ultima": "2026-11-02",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "GYV434",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "GZD887",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-28"
+  ],
+  "primera": "2026-10-28",
+  "ultima": "2026-10-28",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "HAR002",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "HFJ834",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "HIH946",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "HNE318",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-11-01"
+  ],
+  "primera": "2026-11-01",
+  "ultima": "2026-11-01",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "HZA628",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "IEO269",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "IRF326",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "ISI989",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-13"
+  ],
+  "primera": "2026-08-13",
+  "ultima": "2026-08-13",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "IUO116",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "JFW941",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-15"
+  ],
+  "primera": "2026-08-15",
+  "ultima": "2026-08-15",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "JJG729",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-03"
+  ],
+  "primera": "2026-08-03",
+  "ultima": "2026-08-03",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "JLK868",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "KBE568",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-09-09"
+  ],
+  "primera": "2026-09-09",
+  "ultima": "2026-09-09",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "KIS577",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "KOG289",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "KWV557",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-14"
+  ],
+  "primera": "2026-08-14",
+  "ultima": "2026-08-14",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "KYR313",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "LCQ140",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "LIC342",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "LTI990",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-21"
+  ],
+  "primera": "2026-10-21",
+  "ultima": "2026-10-21",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "LVV530",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "LZB017",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-07-04"
+  ],
+  "primera": "2026-07-04",
+  "ultima": "2026-07-04",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "MLX5B10",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-09-22"
+  ],
+  "primera": "2026-09-22",
+  "ultima": "2026-09-22",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "MOB625",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "MVI501",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "MWK218",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "MYY702",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-28"
+  ],
+  "primera": "2026-10-28",
+  "ultima": "2026-10-28",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:particular",
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "NAC484",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-20"
+  ],
+  "primera": "2026-08-20",
+  "ultima": "2026-08-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "NKU970",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-07-30"
+  ],
+  "primera": "2026-07-30",
+  "ultima": "2026-07-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "NMI753",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-07-04"
+  ],
+  "primera": "2026-07-04",
+  "ultima": "2026-07-04",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "OFG251",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "OHF420",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-23"
+  ],
+  "primera": "2026-08-23",
+  "ultima": "2026-08-23",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "OIG256",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "sin_carta:carga",
+  "cartas": [],
+  "balanza": {
+   "cat": "insumos",
+   "movs": 26,
+   "desde": "2026-05-20",
+   "hasta": "2026-10-29",
+   "productos": [
+    "0938 BORRA DE AC.SOJA REFINADO"
+   ]
+  }
+ },
+ {
+  "patente": "OKH237",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "OPF049",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "OWS238",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-21"
+  ],
+  "primera": "2026-08-21",
+  "ultima": "2026-08-21",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "particulares:interno",
+  "cartas": [],
+  "balanza": {
+   "cat": "varios",
+   "movs": 9,
+   "desde": "2026-07-21",
+   "hasta": "2026-09-08",
+   "productos": [
+    "9999 PRODUCTOS VARIOS"
+   ]
+  }
+ },
+ {
+  "patente": "OXL776",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "OZW520",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "PMV179",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-06"
+  ],
+  "primera": "2026-08-06",
+  "ultima": "2026-08-06",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": "sin_carta:descarga",
+  "cartas": [],
+  "balanza": {
+   "cat": "insumos",
+   "movs": 12,
+   "desde": "2026-07-28",
+   "hasta": "2026-10-20",
+   "productos": [
+    "0712 METILATO DE SODIO"
+   ]
+  }
+ },
+ {
+  "patente": "RDB900",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "RQY744",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-11-01"
+  ],
+  "primera": "2026-11-01",
+  "ultima": "2026-11-01",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "RWJ030",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "SQD975",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-09"
+  ],
+  "primera": "2026-08-09",
+  "ultima": "2026-08-09",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "TBJ174",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "TBQ844",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "TEL240",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-07-01"
+  ],
+  "primera": "2026-07-01",
+  "ultima": "2026-07-01",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "TGH631",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "THL109",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-14"
+  ],
+  "primera": "2026-08-14",
+  "ultima": "2026-08-14",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "TMH577",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-09-12"
+  ],
+  "primera": "2026-09-12",
+  "ultima": "2026-09-12",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "TMP681",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-07-31"
+  ],
+  "primera": "2026-07-31",
+  "ultima": "2026-07-31",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "TXV335",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-30"
+  ],
+  "primera": "2026-10-30",
+  "ultima": "2026-10-30",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "UKI150",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-02"
+  ],
+  "primera": "2026-08-02",
+  "ultima": "2026-08-02",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "UOW596",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-06"
+  ],
+  "primera": "2026-08-06",
+  "ultima": "2026-08-06",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "UQW596",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-08-07"
+  ],
+  "primera": "2026-08-07",
+  "ultima": "2026-08-07",
+  "estado": "en_sistema_otro_dia",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [],
+  "balanza": null
+ },
+ {
+  "patente": "WQH250",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-20"
+  ],
+  "primera": "2026-10-20",
+  "ultima": "2026-10-20",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "2026-10-30",
+   "arca"
+  ],
+  "balanza": null
+ },
+ {
+  "patente": "WVG868",
+  "visitasHuella": 1,
+  "visitas": 1,
+  "diasHuella": [
+   "2026-10-19"
+  ],
+  "primera": "2026-10-19",
+  "ultima": "2026-10-19",
+  "estado": "nunca_en_sistema",
+  "noCamion": null,
+  "manual": null,
+  "backoffice": null,
+  "cartas": [
+   "2026-10-27",
+   "2026-10-28",
+   "2026-10-29",
+   "arca"
+  ],
+  "balanza": null
+ }
+]

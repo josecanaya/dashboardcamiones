@@ -1,0 +1,58 @@
+{
+ "mes": "2026-05",
+ "diasConCamaras": 20,
+ "lecturasRicardone": 103117,
+ "egresosGrano": {
+  "total": 25,
+  "porEstado": {
+   "no_visto": 3,
+   "patente_ficticia": 4,
+   "visto_ok": 18
+  },
+  "conCtg": 0,
+  "sinCtgPorProducto": {
+   "PELLETS GIRASOL AVERIADO": 18,
+   "GIRASOL": 1,
+   "PELLETS GIRASOL": 3,
+   "CASCARA DE GIRASOL": 2,
+   "SEMILLA CON AGUA/BARRO": 1
+  },
+  "kgSinCtgSinFicticias": 499480,
+  "ingresoIgualSalida": 4
+ },
+ "visitasSinSistema": {
+  "total": 10709,
+  "nuncaEnSistema": 5921,
+  "enSistemaOtroDia": 4788,
+  "posibleMalaLectura": 1259,
+  "porPrioridad": {
+   "1": 635,
+   "2": 13,
+   "3": 294,
+   "4": 3811,
+   "5": 4697,
+   "9": 1259
+  },
+  "malaLecturaEnCargaOBalanza": 284,
+  "prioridad1PorEstado": {
+   "en_sistema_otro_dia": 412,
+   "nunca_en_sistema": 223
+  },
+  "prioridad1Patentes": 589
+ },
+ "ficticiasRicardone": {
+  "total": 14,
+  "porProducto": {
+   "INGRESO GIRASOL": 1,
+   "EGRESO GIRASOL": 1,
+   "EGRESO ACEITE GIRASOL CRUDO": 3,
+   "EGRESO ACEITE CAMELINA NEUTRO": 1,
+   "DEA ACEITE CAMELINA NEUTRO": 1,
+   "INGRESO PELLETS GIRASOL": 3,
+   "EGRESO PELLETS GIRASOL": 3,
+   "EGRESO ACEITE GIRASOL PARA REFINAR": 1
+  },
+  "ingresoIgualSalida": 14,
+  "conCandidatos": 14
+ }
+}

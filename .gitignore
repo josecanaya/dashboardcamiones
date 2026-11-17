@@ -94,3 +94,6 @@ reportes/cruce-sistema-truckflow/_*
 __pycache__/
 *.pyc
 /scripts/output/
+
+# Archivo de identificaciones: lo escribe el servidor y supera 100 MB (límite de GitHub)
+data/plate-identification-archive.json

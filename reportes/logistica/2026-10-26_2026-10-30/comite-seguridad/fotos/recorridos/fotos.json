@@ -272,3 +272,1523 @@
   "hora": "01:11",
   "leyoDss": "NJQ966"
  },
+ "NJQ966|SLZIngCamFrente|2026-10-27T04:32:58.823Z": {
+  "archivo": "NJQ966\\0132_SLZIngCamFrente.jpg",
+  "patente": "NJQ966",
+  "punto": "Ingreso puerto",
+  "hora": "01:32",
+  "leyoDss": "NJQ966"
+ },
+ "NJQ966|SLZBalIngFte|2026-10-27T05:25:10.623Z": {
+  "archivo": "NJQ966\\0225_SLZBalIngFte.jpg",
+  "patente": "NJQ966",
+  "punto": "Balanza puerto",
+  "hora": "02:25",
+  "leyoDss": "NJQ966"
+ },
+ "NJQ966|SLZVolcableC2|2026-10-27T06:43:35.486Z": {
+  "archivo": "NJQ966\\0343_SLZVolcableC2.jpg",
+  "patente": "NJQ966",
+  "punto": "Volcable 2",
+  "hora": "03:43",
+  "leyoDss": "MJQ966"
+ },
+ "NJQ966|SLZBalSC2Fte|2026-10-27T06:56:18.110Z": {
+  "archivo": "NJQ966\\0356_SLZBalSC2Fte.jpg",
+  "patente": "NJQ966",
+  "punto": "Balanza salida puerto",
+  "hora": "03:56",
+  "leyoDss": "NJQ966"
+ },
+ "NJQ966|SLZSalidaC1Fte|2026-10-27T06:58:26.103Z": {
+  "archivo": "NJQ966\\0358_SLZSalidaC1Fte.jpg",
+  "patente": "NJQ966",
+  "punto": "Salida puerto",
+  "hora": "03:58",
+  "leyoDss": "NJQ966"
+ },
+ "NAY557|RicIngCamFrente|2026-10-28T04:28:09.544Z": {
+  "archivo": "NAY557\\0128_RicIngCamFrente.jpg",
+  "patente": "NAY557",
+  "punto": "Ingreso",
+  "hora": "01:28",
+  "leyoDss": "NAY557"
+ },
+ "NAY557|RicPreIngInFr|2026-10-28T04:30:36.111Z": {
+  "archivo": "NAY557\\0130_RicPreIngInFr.jpg",
+  "patente": "NAY557",
+  "punto": "Pre-ingreso",
+  "hora": "01:30",
+  "leyoDss": "NAY557"
+ },
+ "NAY557|RicCal02|2026-10-28T08:20:39.899Z": {
+  "archivo": "NAY557\\0520_RicCal02.jpg",
+  "patente": "NAY557",
+  "punto": "Calada",
+  "hora": "05:20",
+  "leyoDss": "NAY557"
+ },
+ "NAY557|RicEgrCamFrente|2026-10-28T08:26:48.787Z": {
+  "archivo": "NAY557\\0526_RicEgrCamFrente.jpg",
+  "patente": "NAY557",
+  "punto": "Egreso",
+  "hora": "05:26",
+  "leyoDss": "NAY557"
+ },
+ "NAY557|SLZIngCamFrente|2026-10-28T09:01:35.525Z": {
+  "archivo": "NAY557\\0601_SLZIngCamFrente.jpg",
+  "patente": "NAY557",
+  "punto": "Ingreso puerto",
+  "hora": "06:01",
+  "leyoDss": "NAY557"
+ },
+ "NAY557|SLZBalIngFte|2026-10-28T09:04:02.990Z": {
+  "archivo": "NAY557\\0604_SLZBalIngFte.jpg",
+  "patente": "NAY557",
+  "punto": "Balanza puerto",
+  "hora": "06:04",
+  "leyoDss": "NAY557"
+ },
+ "NAY557|SLZVolcableC2|2026-10-28T09:15:48.041Z": {
+  "archivo": "NAY557\\0615_SLZVolcableC2.jpg",
+  "patente": "NAY557",
+  "punto": "Volcable 2",
+  "hora": "06:15",
+  "leyoDss": "NAY557"
+ },
+ "NAY557|SLZBalSC2Fte|2026-10-28T09:22:23.113Z": {
+  "archivo": "NAY557\\0622_SLZBalSC2Fte.jpg",
+  "patente": "NAY557",
+  "punto": "Balanza salida puerto",
+  "hora": "06:22",
+  "leyoDss": "NAY557"
+ },
+ "NAY557|SLZSalidaC1Fte|2026-10-28T09:24:06.786Z": {
+  "archivo": "NAY557\\0624_SLZSalidaC1Fte.jpg",
+  "patente": "NAY557",
+  "punto": "Salida puerto",
+  "hora": "06:24",
+  "leyoDss": "NAY557"
+ },
+ "GPT153|RicPreIngInFr|2026-10-28T04:55:08.517Z": {
+  "archivo": "GPT153\\0155_RicPreIngInFr.jpg",
+  "patente": "GPT153",
+  "punto": "Pre-ingreso",
+  "hora": "01:55",
+  "leyoDss": "GPT153"
+ },
+ "GPT153|RicCal01|2026-10-28T08:22:43.241Z": {
+  "archivo": "GPT153\\0522_RicCal01.jpg",
+  "patente": "GPT153",
+  "punto": "Calada",
+  "hora": "05:22",
+  "leyoDss": "GPT153"
+ },
+ "GPT153|RicEgrCamFrente|2026-10-28T08:31:41.441Z": {
+  "archivo": "GPT153\\0531_RicEgrCamFrente.jpg",
+  "patente": "GPT153",
+  "punto": "Egreso",
+  "hora": "05:31",
+  "leyoDss": "GPT153"
+ },
+ "GPT153|SLZIngCamFrente|2026-10-28T09:04:55.058Z": {
+  "archivo": "GPT153\\0604_SLZIngCamFrente.jpg",
+  "patente": "GPT153",
+  "punto": "Ingreso puerto",
+  "hora": "06:04",
+  "leyoDss": "GPT153"
+ },
+ "GPT153|SLZBalIngFte|2026-10-28T09:18:20.210Z": {
+  "archivo": "GPT153\\0618_SLZBalIngFte.jpg",
+  "patente": "GPT153",
+  "punto": "Balanza puerto",
+  "hora": "06:18",
+  "leyoDss": "GPT153"
+ },
+ "GPT153|SLZVolcableC5|2026-10-28T10:31:49.068Z": {
+  "archivo": "GPT153\\0731_SLZVolcableC5.jpg",
+  "patente": "GPT153",
+  "punto": "Volcable 5",
+  "hora": "07:31",
+  "leyoDss": "GPT153"
+ },
+ "GPT153|SLZBalSC2Fte|2026-10-28T10:44:08.379Z": {
+  "archivo": "GPT153\\0744_SLZBalSC2Fte.jpg",
+  "patente": "GPT153",
+  "punto": "Balanza salida puerto",
+  "hora": "07:44",
+  "leyoDss": "GPT153"
+ },
+ "GPT153|SLZSalidaC1Fte|2026-10-28T10:45:54.891Z": {
+  "archivo": "GPT153\\0745_SLZSalidaC1Fte.jpg",
+  "patente": "GPT153",
+  "punto": "Salida puerto",
+  "hora": "07:45",
+  "leyoDss": "GPT153"
+ },
+ "AE900AT|RicCal02|2026-10-28T08:14:47.489Z": {
+  "archivo": "AE900AT\\0514_RicCal02.jpg",
+  "patente": "AE900AT",
+  "punto": "Calada",
+  "hora": "05:14",
+  "leyoDss": "AE900AT"
+ },
+ "AE900AT|RicEgrCamFrente|2026-10-28T08:34:20.572Z": {
+  "archivo": "AE900AT\\0534_RicEgrCamFrente.jpg",
+  "patente": "AE900AT",
+  "punto": "Egreso",
+  "hora": "05:34",
+  "leyoDss": "AE900AT"
+ },
+ "AE900AT|SLZIngCamFrente|2026-10-28T09:06:27.222Z": {
+  "archivo": "AE900AT\\0606_SLZIngCamFrente.jpg",
+  "patente": "AE900AT",
+  "punto": "Ingreso puerto",
+  "hora": "06:06",
+  "leyoDss": "AE900AT"
+ },
+ "AE900AT|SLZBalIngFte|2026-10-28T10:49:54.824Z": {
+  "archivo": "AE900AT\\0749_SLZBalIngFte.jpg",
+  "patente": "AE900AT",
+  "punto": "Balanza puerto",
+  "hora": "07:49",
+  "leyoDss": "AE900AT"
+ },
+ "AE900AT|SLZVolcableC5|2026-10-28T10:54:37.106Z": {
+  "archivo": "AE900AT\\0754_SLZVolcableC5.jpg",
+  "patente": "AE900AT",
+  "punto": "Volcable 5",
+  "hora": "07:54",
+  "leyoDss": "AE900AT"
+ },
+ "AE900AT|SLZBalSC2Fte|2026-10-28T11:06:08.294Z": {
+  "archivo": "AE900AT\\0806_SLZBalSC2Fte.jpg",
+  "patente": "AE900AT",
+  "punto": "Balanza salida puerto",
+  "hora": "08:06",
+  "leyoDss": "AE900AT"
+ },
+ "AE900AT|SLZSalidaC1Fte|2026-10-28T11:09:30.506Z": {
+  "archivo": "AE900AT\\0809_SLZSalidaC1Fte.jpg",
+  "patente": "AE900AT",
+  "punto": "Salida puerto",
+  "hora": "08:09",
+  "leyoDss": "AE900AT"
+ },
+ "AE074NW|RicIngCamFrente|2026-10-28T04:58:59.812Z": {
+  "archivo": "AE074NW\\0158_RicIngCamFrente.jpg",
+  "patente": "AE074NW",
+  "punto": "Ingreso",
+  "hora": "01:58",
+  "leyoDss": "AE074NW"
+ },
+ "AE074NW|RicPreIngInFr|2026-10-28T05:01:40.062Z": {
+  "archivo": "AE074NW\\0201_RicPreIngInFr.jpg",
+  "patente": "AE074NW",
+  "punto": "Pre-ingreso",
+  "hora": "02:01",
+  "leyoDss": "AE074NW"
+ },
+ "AE074NW|RicCal02|2026-10-28T08:24:24.542Z": {
+  "archivo": "AE074NW\\0524_RicCal02.jpg",
+  "patente": "AE074NW",
+  "punto": "Calada",
+  "hora": "05:24",
+  "leyoDss": "AE074NW"
+ },
+ "AE074NW|RicEgrCamFrente|2026-10-28T08:38:05.306Z": {
+  "archivo": "AE074NW\\0538_RicEgrCamFrente.jpg",
+  "patente": "AE074NW",
+  "punto": "Egreso",
+  "hora": "05:38",
+  "leyoDss": "AE074NW"
+ },
+ "AE074NW|SLZIngCamFrente|2026-10-28T09:08:54.513Z": {
+  "archivo": "AE074NW\\0608_SLZIngCamFrente.jpg",
+  "patente": "AE074NW",
+  "punto": "Ingreso puerto",
+  "hora": "06:08",
+  "leyoDss": "AE074NW"
+ },
+ "AE074NW|SLZBalIngFte|2026-10-28T09:12:23.965Z": {
+  "archivo": "AE074NW\\0612_SLZBalIngFte.jpg",
+  "patente": "AE074NW",
+  "punto": "Balanza puerto",
+  "hora": "06:12",
+  "leyoDss": "AE074NW"
+ },
+ "AE074NW|SLZVolcableC5|2026-10-28T10:13:47.846Z": {
+  "archivo": "AE074NW\\0713_SLZVolcableC5.jpg",
+  "patente": "AE074NW",
+  "punto": "Volcable 5",
+  "hora": "07:13",
+  "leyoDss": "AE074NW"
+ },
+ "AE074NW|SLZBalSC2Fte|2026-10-28T10:24:51.089Z": {
+  "archivo": "AE074NW\\0724_SLZBalSC2Fte.jpg",
+  "patente": "AE074NW",
+  "punto": "Balanza salida puerto",
+  "hora": "07:24",
+  "leyoDss": "AE074NW"
+ },
+ "AE074NW|SLZSalidaC1Fte|2026-10-28T10:27:50.967Z": {
+  "archivo": "AE074NW\\0727_SLZSalidaC1Fte.jpg",
+  "patente": "AE074NW",
+  "punto": "Salida puerto",
+  "hora": "07:27",
+  "leyoDss": "AE074NW"
+ },
+ "EQE865|RicIngCamFrente|2026-10-28T05:22:10.133Z": {
+  "archivo": "EQE865\\0222_RicIngCamFrente.jpg",
+  "patente": "EQE865",
+  "punto": "Ingreso",
+  "hora": "02:22",
+  "leyoDss": "EQE865"
+ },
+ "EQE865|RicPreIngInFr|2026-10-28T05:24:42.783Z": {
+  "archivo": "EQE865\\0224_RicPreIngInFr.jpg",
+  "patente": "EQE865",
+  "punto": "Pre-ingreso",
+  "hora": "02:24",
+  "leyoDss": "EQE865"
+ },
+ "EQE865|RicCal01|2026-10-28T08:25:58.096Z": {
+  "archivo": "EQE865\\0525_RicCal01.jpg",
+  "patente": "EQE865",
+  "punto": "Calada",
+  "hora": "05:25",
+  "leyoDss": "EQE865"
+ },
+ "EQE865|RicEgrCamFrente|2026-10-28T08:38:45.709Z": {
+  "archivo": "EQE865\\0538_RicEgrCamFrente.jpg",
+  "patente": "EQE865",
+  "punto": "Egreso",
+  "hora": "05:38",
+  "leyoDss": "EQE865"
+ },
+ "EQE865|SLZIngCamFrente|2026-10-28T09:10:40.998Z": {
+  "archivo": "EQE865\\0610_SLZIngCamFrente.jpg",
+  "patente": "EQE865",
+  "punto": "Ingreso puerto",
+  "hora": "06:10",
+  "leyoDss": "EQE865"
+ },
+ "EQE865|SLZBalIngFte|2026-10-28T10:52:59.069Z": {
+  "archivo": "EQE865\\0752_SLZBalIngFte.jpg",
+  "patente": "EQE865",
+  "punto": "Balanza puerto",
+  "hora": "07:52",
+  "leyoDss": "EQE865"
+ },
+ "EQE865|SLZVolcableC5|2026-10-28T11:01:05.465Z": {
+  "archivo": "EQE865\\0801_SLZVolcableC5.jpg",
+  "patente": "EQE865",
+  "punto": "Volcable 5",
+  "hora": "08:01",
+  "leyoDss": "EQE865"
+ },
+ "EQE865|SLZBalSC2Fte|2026-10-28T11:10:14.152Z": {
+  "archivo": "EQE865\\0810_SLZBalSC2Fte.jpg",
+  "patente": "EQE865",
+  "punto": "Balanza salida puerto",
+  "hora": "08:10",
+  "leyoDss": "EQE865"
+ },
+ "EQE865|SLZSalidaC1Fte|2026-10-28T11:12:59.950Z": {
+  "archivo": "EQE865\\0812_SLZSalidaC1Fte.jpg",
+  "patente": "EQE865",
+  "punto": "Salida puerto",
+  "hora": "08:12",
+  "leyoDss": "EQE865"
+ },
+ "GUV884|RicPreIngInFr|2026-10-28T07:52:32.681Z": {
+  "archivo": "GUV884\\0452_RicPreIngInFr.jpg",
+  "patente": "GUV884",
+  "punto": "Pre-ingreso",
+  "hora": "04:52",
+  "leyoDss": "GUV884"
+ },
+ "GUV884|RicCal02|2026-10-28T08:31:47.945Z": {
+  "archivo": "GUV884\\0531_RicCal02.jpg",
+  "patente": "GUV884",
+  "punto": "Calada",
+  "hora": "05:31",
+  "leyoDss": "GUV884"
+ },
+ "GUV884|RicEgrCamFrente|2026-10-28T08:44:55.330Z": {
+  "archivo": "GUV884\\0544_RicEgrCamFrente.jpg",
+  "patente": "GUV884",
+  "punto": "Egreso",
+  "hora": "05:44",
+  "leyoDss": "GUV884"
+ },
+ "GUV884|SLZIngCamFrente|2026-10-28T09:12:19.562Z": {
+  "archivo": "GUV884\\0612_SLZIngCamFrente.jpg",
+  "patente": "GUV884",
+  "punto": "Ingreso puerto",
+  "hora": "06:12",
+  "leyoDss": "GUV884"
+ },
+ "GUV884|SLZBalIngFte|2026-10-28T09:16:06.104Z": {
+  "archivo": "GUV884\\0616_SLZBalIngFte.jpg",
+  "patente": "GUV884",
+  "punto": "Balanza puerto",
+  "hora": "06:16",
+  "leyoDss": "GUV884"
+ },
+ "GUV884|SLZVolcableC5|2026-10-28T10:24:53.125Z": {
+  "archivo": "GUV884\\0724_SLZVolcableC5.jpg",
+  "patente": "GUV884",
+  "punto": "Volcable 5",
+  "hora": "07:24",
+  "leyoDss": "GUV884"
+ },
+ "GUV884|SLZBalSC2Fte|2026-10-28T10:34:43.797Z": {
+  "archivo": "GUV884\\0734_SLZBalSC2Fte.jpg",
+  "patente": "GUV884",
+  "punto": "Balanza salida puerto",
+  "hora": "07:34",
+  "leyoDss": "GUV884"
+ },
+ "GUV884|SLZSalidaC1Fte|2026-10-28T10:36:53.984Z": {
+  "archivo": "GUV884\\0736_SLZSalidaC1Fte.jpg",
+  "patente": "GUV884",
+  "punto": "Salida puerto",
+  "hora": "07:36",
+  "leyoDss": "GUV884"
+ },
+ "LYH713|RicIngCamFrente|2026-10-28T08:08:53.834Z": {
+  "archivo": "LYH713\\0508_RicIngCamFrente.jpg",
+  "patente": "LYH713",
+  "punto": "Ingreso",
+  "hora": "05:08",
+  "leyoDss": "LYH713"
+ },
+ "LYH713|RicPreIngInFr|2026-10-28T08:11:33.467Z": {
+  "archivo": "LYH713\\0511_RicPreIngInFr.jpg",
+  "patente": "LYH713",
+  "punto": "Pre-ingreso",
+  "hora": "05:11",
+  "leyoDss": "LYH713"
+ },
+ "LYH713|RicCal01|2026-10-28T08:33:52.725Z": {
+  "archivo": "LYH713\\0533_RicCal01.jpg",
+  "patente": "LYH713",
+  "punto": "Calada",
+  "hora": "05:33",
+  "leyoDss": "LYH713"
+ },
+ "LYH713|RicEgrCamFrente|2026-10-28T08:48:49.743Z": {
+  "archivo": "LYH713\\0548_RicEgrCamFrente.jpg",
+  "patente": "LYH713",
+  "punto": "Egreso",
+  "hora": "05:48",
+  "leyoDss": "LYH713"
+ },
+ "LYH713|SLZIngCamFrente|2026-10-28T09:13:56.291Z": {
+  "archivo": "LYH713\\0613_SLZIngCamFrente.jpg",
+  "patente": "LYH713",
+  "punto": "Ingreso puerto",
+  "hora": "06:13",
+  "leyoDss": "LYH713"
+ },
+ "LYH713|SLZBalIngFte|2026-10-28T10:57:04.973Z": {
+  "archivo": "LYH713\\0757_SLZBalIngFte.jpg",
+  "patente": "LYH713",
+  "punto": "Balanza puerto",
+  "hora": "07:57",
+  "leyoDss": "LYH713"
+ },
+ "LYH713|SLZVolcableC5|2026-10-28T11:10:03.343Z": {
+  "archivo": "LYH713\\0810_SLZVolcableC5.jpg",
+  "patente": "LYH713",
+  "punto": "Volcable 5",
+  "hora": "08:10",
+  "leyoDss": "LYH713"
+ },
+ "LYH713|SLZBalSC2Fte|2026-10-28T11:25:16.661Z": {
+  "archivo": "LYH713\\0825_SLZBalSC2Fte.jpg",
+  "patente": "LYH713",
+  "punto": "Balanza salida puerto",
+  "hora": "08:25",
+  "leyoDss": "LYH713"
+ },
+ "LYH713|SLZSalidaC1Fte|2026-10-28T11:27:51.546Z": {
+  "archivo": "LYH713\\0827_SLZSalidaC1Fte.jpg",
+  "patente": "LYH713",
+  "punto": "Salida puerto",
+  "hora": "08:27",
+  "leyoDss": "LYH713"
+ },
+ "LZU585|RicPreIngInFr|2026-10-28T15:13:02.035Z": {
+  "archivo": "LZU585\\1213_RicPreIngInFr.jpg",
+  "patente": "LZU585",
+  "punto": "Pre-ingreso",
+  "hora": "12:13",
+  "leyoDss": "LZU585"
+ },
+ "LZU585|RicCal02|2026-10-28T15:45:28.879Z": {
+  "archivo": "LZU585\\1245_RicCal02.jpg",
+  "patente": "LZU585",
+  "punto": "Calada",
+  "hora": "12:45",
+  "leyoDss": "LZU585"
+ },
+ "LZU585|RicEgrCamFrente|2026-10-28T15:50:07.584Z": {
+  "archivo": "LZU585\\1250_RicEgrCamFrente.jpg",
+  "patente": "LZU585",
+  "punto": "Egreso",
+  "hora": "12:50",
+  "leyoDss": "LZU585"
+ },
+ "LZU585|SLZIngCamFrente|2026-10-28T16:18:29.343Z": {
+  "archivo": "LZU585\\1318_SLZIngCamFrente.jpg",
+  "patente": "LZU585",
+  "punto": "Ingreso puerto",
+  "hora": "13:18",
+  "leyoDss": "LZU585"
+ },
+ "LZU585|SLZBalIngFte|2026-10-28T16:31:34.113Z": {
+  "archivo": "LZU585\\1331_SLZBalIngFte.jpg",
+  "patente": "LZU585",
+  "punto": "Balanza puerto",
+  "hora": "13:31",
+  "leyoDss": "LZU585"
+ },
+ "LZU585|SLZVolcableC5|2026-10-28T18:58:54.498Z": {
+  "archivo": "LZU585\\1558_SLZVolcableC5.jpg",
+  "patente": "LZU585",
+  "punto": "Volcable 5",
+  "hora": "15:58",
+  "leyoDss": "LZU585"
+ },
+ "LZU585|SLZBalSC2Fte|2026-10-28T19:10:09.023Z": {
+  "archivo": "LZU585\\1610_SLZBalSC2Fte.jpg",
+  "patente": "LZU585",
+  "punto": "Balanza salida puerto",
+  "hora": "16:10",
+  "leyoDss": "LZU585"
+ },
+ "LZU585|SLZSalidaC1Fte|2026-10-28T19:14:30.090Z": {
+  "archivo": "LZU585\\1614_SLZSalidaC1Fte.jpg",
+  "patente": "LZU585",
+  "punto": "Salida puerto",
+  "hora": "16:14",
+  "leyoDss": "LZU585"
+ },
+ "UDH209|RicPreIngInFr|2026-10-28T15:11:53.069Z": {
+  "archivo": "UDH209\\1211_RicPreIngInFr.jpg",
+  "patente": "UDH209",
+  "punto": "Pre-ingreso",
+  "hora": "12:11",
+  "leyoDss": "UDH209"
+ },
+ "UDH209|RicCal01|2026-10-28T15:43:30.163Z": {
+  "archivo": "UDH209\\1243_RicCal01.jpg",
+  "patente": "UDH209",
+  "punto": "Calada",
+  "hora": "12:43",
+  "leyoDss": "UDH209"
+ },
+ "UDH209|RicEgrCamFrente|2026-10-28T16:04:25.076Z": {
+  "archivo": "UDH209\\1304_RicEgrCamFrente.jpg",
+  "patente": "UDH209",
+  "punto": "Egreso",
+  "hora": "13:04",
+  "leyoDss": "UDH209"
+ },
+ "UDH209|SLZIngCamFrente|2026-10-28T16:30:17.809Z": {
+  "archivo": "UDH209\\1330_SLZIngCamFrente.jpg",
+  "patente": "UDH209",
+  "punto": "Ingreso puerto",
+  "hora": "13:30",
+  "leyoDss": "UDH209"
+ },
+ "UDH209|SLZBalIngFte|2026-10-28T16:38:32.737Z": {
+  "archivo": "UDH209\\1338_SLZBalIngFte.jpg",
+  "patente": "UDH209",
+  "punto": "Balanza puerto",
+  "hora": "13:38",
+  "leyoDss": "UDH209"
+ },
+ "UDH209|SLZVolcableC5|2026-10-28T19:32:25.979Z": {
+  "archivo": "UDH209\\1632_SLZVolcableC5.jpg",
+  "patente": "UDH209",
+  "punto": "Volcable 5",
+  "hora": "16:32",
+  "leyoDss": "UDH209"
+ },
+ "UDH209|SLZBalSC2Fte|2026-10-28T19:48:13.596Z": {
+  "archivo": "UDH209\\1648_SLZBalSC2Fte.jpg",
+  "patente": "UDH209",
+  "punto": "Balanza salida puerto",
+  "hora": "16:48",
+  "leyoDss": "UDH209"
+ },
+ "UDH209|SLZSalidaC1Fte|2026-10-28T19:50:15.001Z": {
+  "archivo": "UDH209\\1650_SLZSalidaC1Fte.jpg",
+  "patente": "UDH209",
+  "punto": "Salida puerto",
+  "hora": "16:50",
+  "leyoDss": "UDH209"
+ },
+ "ECX249|RicPreIngInFr|2026-10-29T10:40:35.144Z": {
+  "archivo": "ECX249\\0740_RicPreIngInFr.jpg",
+  "patente": "ECX249",
+  "punto": "Pre-ingreso",
+  "hora": "07:40",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicCalLiq|2026-10-29T10:54:59.597Z": {
+  "archivo": "ECX249\\0754_RicCalLiq.jpg",
+  "patente": "ECX249",
+  "punto": "Calada líquidos",
+  "hora": "07:54",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicEgrCamFrente|2026-10-29T10:57:04.219Z": {
+  "archivo": "ECX249\\0757_RicEgrCamFrente.jpg",
+  "patente": "ECX249",
+  "punto": "Egreso",
+  "hora": "07:57",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|SLZBalIngFte|2026-10-29T10:58:10.000Z": {
+  "archivo": "ECX249\\0758_SLZBalIngFte.jpg",
+  "patente": "ECX249",
+  "punto": "Balanza puerto",
+  "hora": "07:58",
+  "leyoDss": "EYJ184"
+ },
+ "ECX249|RicS6Playa3|2026-10-29T11:24:18.224Z": {
+  "archivo": "ECX249\\0824_RicS6Playa3.jpg",
+  "patente": "ECX249",
+  "punto": "Playa 3",
+  "hora": "08:24",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicEgrCamFrente|2026-10-29T11:41:53.000Z": {
+  "archivo": "ECX249\\0841_RicEgrCamFrente.jpg",
+  "patente": "ECX249",
+  "punto": "Egreso",
+  "hora": "08:41",
+  "leyoDss": "DY42"
+ },
+ "ECX249|RicB2Egreso|2026-10-29T11:57:06.969Z": {
+  "archivo": "ECX249\\0857_RicB2Egreso.jpg",
+  "patente": "ECX249",
+  "punto": "Balanza egreso",
+  "hora": "08:57",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|SLZIngCamFrente|2026-10-29T12:13:00.218Z": {
+  "archivo": "ECX249\\0913_SLZIngCamFrente.jpg",
+  "patente": "ECX249",
+  "punto": "Ingreso puerto",
+  "hora": "09:13",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|SLZBalIngFte|2026-10-29T12:23:07.179Z": {
+  "archivo": "ECX249\\0923_SLZBalIngFte.jpg",
+  "patente": "ECX249",
+  "punto": "Balanza puerto",
+  "hora": "09:23",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|SLZVolcableC4|2026-10-29T12:41:28.427Z": {
+  "archivo": "ECX249\\0941_SLZVolcableC4.jpg",
+  "patente": "ECX249",
+  "punto": "Volcable 4",
+  "hora": "09:41",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|SLZBalSC2Fte|2026-10-29T13:41:10.355Z": {
+  "archivo": "ECX249\\1041_SLZBalSC2Fte.jpg",
+  "patente": "ECX249",
+  "punto": "Balanza salida puerto",
+  "hora": "10:41",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|SLZSalidaC1Fte|2026-10-29T13:47:38.458Z": {
+  "archivo": "ECX249\\1047_SLZSalidaC1Fte.jpg",
+  "patente": "ECX249",
+  "punto": "Salida puerto",
+  "hora": "10:47",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicIngCamFrente|2026-10-29T13:55:42.644Z": {
+  "archivo": "ECX249\\1055_RicIngCamFrente.jpg",
+  "patente": "ECX249",
+  "punto": "Ingreso",
+  "hora": "10:55",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicPreIngInFr|2026-10-29T13:57:30.493Z": {
+  "archivo": "ECX249\\1057_RicPreIngInFr.jpg",
+  "patente": "ECX249",
+  "punto": "Pre-ingreso",
+  "hora": "10:57",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicCalLiq|2026-10-29T14:08:55.593Z": {
+  "archivo": "ECX249\\1108_RicCalLiq.jpg",
+  "patente": "ECX249",
+  "punto": "Calada líquidos",
+  "hora": "11:08",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicEgrCamFrente|2026-10-29T14:10:52.146Z": {
+  "archivo": "ECX249\\1110_RicEgrCamFrente.jpg",
+  "patente": "ECX249",
+  "punto": "Egreso",
+  "hora": "11:10",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicS6Playa3|2026-10-29T14:18:46.155Z": {
+  "archivo": "ECX249\\1118_RicS6Playa3.jpg",
+  "patente": "ECX249",
+  "punto": "Playa 3",
+  "hora": "11:18",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicB2Egreso|2026-10-29T14:39:09.779Z": {
+  "archivo": "ECX249\\1139_RicB2Egreso.jpg",
+  "patente": "ECX249",
+  "punto": "Balanza egreso",
+  "hora": "11:39",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicPreIngInFr|2026-10-29T14:56:17.000Z": {
+  "archivo": "ECX249\\1156_RicPreIngInFr.jpg",
+  "patente": "ECX249",
+  "punto": "Pre-ingreso",
+  "hora": "11:56",
+  "leyoDss": "RDL445"
+ },
+ "ECX249|SLZIngCamFrente|2026-10-29T15:00:46.537Z": {
+  "archivo": "ECX249\\1200_SLZIngCamFrente.jpg",
+  "patente": "ECX249",
+  "punto": "Ingreso puerto",
+  "hora": "12:00",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|SLZBalIngFte|2026-10-29T15:03:07.482Z": {
+  "archivo": "ECX249\\1203_SLZBalIngFte.jpg",
+  "patente": "ECX249",
+  "punto": "Balanza puerto",
+  "hora": "12:03",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|SLZVolcableC4|2026-10-29T15:06:29.479Z": {
+  "archivo": "ECX249\\1206_SLZVolcableC4.jpg",
+  "patente": "ECX249",
+  "punto": "Volcable 4",
+  "hora": "12:06",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|SLZBalSC2Fte|2026-10-29T15:19:52.820Z": {
+  "archivo": "ECX249\\1219_SLZBalSC2Fte.jpg",
+  "patente": "ECX249",
+  "punto": "Balanza salida puerto",
+  "hora": "12:19",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|SLZSalidaC1Fte|2026-10-29T15:23:10.111Z": {
+  "archivo": "ECX249\\1223_SLZSalidaC1Fte.jpg",
+  "patente": "ECX249",
+  "punto": "Salida puerto",
+  "hora": "12:23",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicIngCamFrente|2026-10-29T15:36:30.916Z": {
+  "archivo": "ECX249\\1236_RicIngCamFrente.jpg",
+  "patente": "ECX249",
+  "punto": "Ingreso",
+  "hora": "12:36",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicPreIngInFr|2026-10-29T15:38:19.910Z": {
+  "archivo": "ECX249\\1238_RicPreIngInFr.jpg",
+  "patente": "ECX249",
+  "punto": "Pre-ingreso",
+  "hora": "12:38",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicCalLiq|2026-10-29T15:44:08.124Z": {
+  "archivo": "ECX249\\1244_RicCalLiq.jpg",
+  "patente": "ECX249",
+  "punto": "Calada líquidos",
+  "hora": "12:44",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicEgrCamFrente|2026-10-29T15:45:54.741Z": {
+  "archivo": "ECX249\\1245_RicEgrCamFrente.jpg",
+  "patente": "ECX249",
+  "punto": "Egreso",
+  "hora": "12:45",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicS6Playa3|2026-10-29T15:55:25.320Z": {
+  "archivo": "ECX249\\1255_RicS6Playa3.jpg",
+  "patente": "ECX249",
+  "punto": "Playa 3",
+  "hora": "12:55",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicB2Egreso|2026-10-29T16:32:24.915Z": {
+  "archivo": "ECX249\\1332_RicB2Egreso.jpg",
+  "patente": "ECX249",
+  "punto": "Balanza egreso",
+  "hora": "13:32",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicPreIngInFr|2026-10-29T16:51:01.000Z": {
+  "archivo": "ECX249\\1351_RicPreIngInFr.jpg",
+  "patente": "ECX249",
+  "punto": "Pre-ingreso",
+  "hora": "13:51",
+  "leyoDss": "AH677ID"
+ },
+ "ECX249|SLZIngCamFrente|2026-10-29T16:51:03.299Z": {
+  "archivo": "ECX249\\1351_SLZIngCamFrente.jpg",
+  "patente": "ECX249",
+  "punto": "Ingreso puerto",
+  "hora": "13:51",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|SLZBalIngFte|2026-10-29T16:52:58.310Z": {
+  "archivo": "ECX249\\1352_SLZBalIngFte.jpg",
+  "patente": "ECX249",
+  "punto": "Balanza puerto",
+  "hora": "13:52",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|SLZVolcableC4|2026-10-29T18:09:36.851Z": {
+  "archivo": "ECX249\\1509_SLZVolcableC4.jpg",
+  "patente": "ECX249",
+  "punto": "Volcable 4",
+  "hora": "15:09",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|SLZBalSC1Fte|2026-10-29T18:09:50.000Z": {
+  "archivo": "ECX249\\1509_SLZBalSC1Fte.jpg",
+  "patente": "ECX249",
+  "punto": "Balanza salida puerto",
+  "hora": "15:09",
+  "leyoDss": "JGAIO03"
+ },
+ "ECX249|SLZSalidaC1Fte|2026-10-29T18:24:34.138Z": {
+  "archivo": "ECX249\\1524_SLZSalidaC1Fte.jpg",
+  "patente": "ECX249",
+  "punto": "Salida puerto",
+  "hora": "15:24",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicIngCamFrente|2026-10-29T18:32:19.873Z": {
+  "archivo": "ECX249\\1532_RicIngCamFrente.jpg",
+  "patente": "ECX249",
+  "punto": "Ingreso",
+  "hora": "15:32",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicPreIngInFr|2026-10-29T18:34:05.265Z": {
+  "archivo": "ECX249\\1534_RicPreIngInFr.jpg",
+  "patente": "ECX249",
+  "punto": "Pre-ingreso",
+  "hora": "15:34",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicCalLiq|2026-10-29T18:38:46.558Z": {
+  "archivo": "ECX249\\1538_RicCalLiq.jpg",
+  "patente": "ECX249",
+  "punto": "Calada líquidos",
+  "hora": "15:38",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicEgrCamFrente|2026-10-29T18:40:29.779Z": {
+  "archivo": "ECX249\\1540_RicEgrCamFrente.jpg",
+  "patente": "ECX249",
+  "punto": "Egreso",
+  "hora": "15:40",
+  "leyoDss": "ECX249"
+ },
+ "ECX249|RicS6Playa3|2026-10-29T18:46:15.523Z": {
+  "archivo": "ECX249\\1546_RicS6Playa3.jpg",
+  "patente": "ECX249",
+  "punto": "Playa 3",
+  "hora": "15:46",
+  "leyoDss": "ECX249"
+ },
+ "CGS172|RicIngCamFrente|2026-10-29T10:57:51.277Z": {
+  "archivo": "CGS172\\0757_RicIngCamFrente.jpg",
+  "patente": "CGS172",
+  "punto": "Ingreso",
+  "hora": "07:57",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|RicPreIngInFr|2026-10-29T11:00:10.170Z": {
+  "archivo": "CGS172\\0800_RicPreIngInFr.jpg",
+  "patente": "CGS172",
+  "punto": "Pre-ingreso",
+  "hora": "08:00",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|RicCalLiq|2026-10-29T11:07:59.909Z": {
+  "archivo": "CGS172\\0807_RicCalLiq.jpg",
+  "patente": "CGS172",
+  "punto": "Calada líquidos",
+  "hora": "08:07",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|RicEgrCamFrente|2026-10-29T11:09:58.826Z": {
+  "archivo": "CGS172\\0809_RicEgrCamFrente.jpg",
+  "patente": "CGS172",
+  "punto": "Egreso",
+  "hora": "08:09",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|SLZBalIngFte|2026-10-29T11:10:07.000Z": {
+  "archivo": "CGS172\\0810_SLZBalIngFte.jpg",
+  "patente": "CGS172",
+  "punto": "Balanza puerto",
+  "hora": "08:10",
+  "leyoDss": "KWE568"
+ },
+ "CGS172|RicS6Playa3|2026-10-29T11:30:06.045Z": {
+  "archivo": "CGS172\\0830_RicS6Playa3.jpg",
+  "patente": "CGS172",
+  "punto": "Playa 3",
+  "hora": "08:30",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|RicB2Egreso|2026-10-29T12:04:37.796Z": {
+  "archivo": "CGS172\\0904_RicB2Egreso.jpg",
+  "patente": "CGS172",
+  "punto": "Balanza egreso",
+  "hora": "09:04",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|SLZIngCamFrente|2026-10-29T12:20:26.244Z": {
+  "archivo": "CGS172\\0920_SLZIngCamFrente.jpg",
+  "patente": "CGS172",
+  "punto": "Ingreso puerto",
+  "hora": "09:20",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|SLZBalIngFte|2026-10-29T12:24:07.308Z": {
+  "archivo": "CGS172\\0924_SLZBalIngFte.jpg",
+  "patente": "CGS172",
+  "punto": "Balanza puerto",
+  "hora": "09:24",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|SLZVolcableC4|2026-10-29T13:33:26.731Z": {
+  "archivo": "CGS172\\1033_SLZVolcableC4.jpg",
+  "patente": "CGS172",
+  "punto": "Volcable 4",
+  "hora": "10:33",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|SLZBalSC2Fte|2026-10-29T13:44:32.991Z": {
+  "archivo": "CGS172\\1044_SLZBalSC2Fte.jpg",
+  "patente": "CGS172",
+  "punto": "Balanza salida puerto",
+  "hora": "10:44",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|SLZSalidaC1Fte|2026-10-29T13:47:59.786Z": {
+  "archivo": "CGS172\\1047_SLZSalidaC1Fte.jpg",
+  "patente": "CGS172",
+  "punto": "Salida puerto",
+  "hora": "10:47",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|RicIngCamFrente|2026-10-29T13:56:05.365Z": {
+  "archivo": "CGS172\\1056_RicIngCamFrente.jpg",
+  "patente": "CGS172",
+  "punto": "Ingreso",
+  "hora": "10:56",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|RicPreIngInFr|2026-10-29T13:57:53.537Z": {
+  "archivo": "CGS172\\1057_RicPreIngInFr.jpg",
+  "patente": "CGS172",
+  "punto": "Pre-ingreso",
+  "hora": "10:57",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|RicCalLiq|2026-10-29T14:10:07.222Z": {
+  "archivo": "CGS172\\1110_RicCalLiq.jpg",
+  "patente": "CGS172",
+  "punto": "Calada líquidos",
+  "hora": "11:10",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|RicEgrCamFrente|2026-10-29T14:11:58.150Z": {
+  "archivo": "CGS172\\1111_RicEgrCamFrente.jpg",
+  "patente": "CGS172",
+  "punto": "Egreso",
+  "hora": "11:11",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|RicS6Playa3|2026-10-29T14:19:20.266Z": {
+  "archivo": "CGS172\\1119_RicS6Playa3.jpg",
+  "patente": "CGS172",
+  "punto": "Playa 3",
+  "hora": "11:19",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|RicB2Egreso|2026-10-29T14:47:55.010Z": {
+  "archivo": "CGS172\\1147_RicB2Egreso.jpg",
+  "patente": "CGS172",
+  "punto": "Balanza egreso",
+  "hora": "11:47",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|SLZIngCamFrente|2026-10-29T15:47:42.621Z": {
+  "archivo": "CGS172\\1247_SLZIngCamFrente.jpg",
+  "patente": "CGS172",
+  "punto": "Ingreso puerto",
+  "hora": "12:47",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|SLZBalIngFte|2026-10-29T15:49:42.798Z": {
+  "archivo": "CGS172\\1249_SLZBalIngFte.jpg",
+  "patente": "CGS172",
+  "punto": "Balanza puerto",
+  "hora": "12:49",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|SLZVolcableC4|2026-10-29T15:52:09.715Z": {
+  "archivo": "CGS172\\1252_SLZVolcableC4.jpg",
+  "patente": "CGS172",
+  "punto": "Volcable 4",
+  "hora": "12:52",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|SLZBalSC2Fte|2026-10-29T16:03:55.010Z": {
+  "archivo": "CGS172\\1303_SLZBalSC2Fte.jpg",
+  "patente": "CGS172",
+  "punto": "Balanza salida puerto",
+  "hora": "13:03",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|SLZSalidaC1Fte|2026-10-29T16:05:50.054Z": {
+  "archivo": "CGS172\\1305_SLZSalidaC1Fte.jpg",
+  "patente": "CGS172",
+  "punto": "Salida puerto",
+  "hora": "13:05",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|RicIngCamFrente|2026-10-29T16:14:43.530Z": {
+  "archivo": "CGS172\\1314_RicIngCamFrente.jpg",
+  "patente": "CGS172",
+  "punto": "Ingreso",
+  "hora": "13:14",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|RicPreIngInFr|2026-10-29T16:17:06.606Z": {
+  "archivo": "CGS172\\1317_RicPreIngInFr.jpg",
+  "patente": "CGS172",
+  "punto": "Pre-ingreso",
+  "hora": "13:17",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|RicCalLiq|2026-10-29T16:25:57.426Z": {
+  "archivo": "CGS172\\1325_RicCalLiq.jpg",
+  "patente": "CGS172",
+  "punto": "Calada líquidos",
+  "hora": "13:25",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|RicEgrCamFrente|2026-10-29T16:28:24.090Z": {
+  "archivo": "CGS172\\1328_RicEgrCamFrente.jpg",
+  "patente": "CGS172",
+  "punto": "Egreso",
+  "hora": "13:28",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|RicS6Playa3|2026-10-29T16:35:20.996Z": {
+  "archivo": "CGS172\\1335_RicS6Playa3.jpg",
+  "patente": "CGS172",
+  "punto": "Playa 3",
+  "hora": "13:35",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|RicB2Egreso|2026-10-29T19:23:51.836Z": {
+  "archivo": "CGS172\\1623_RicB2Egreso.jpg",
+  "patente": "CGS172",
+  "punto": "Balanza egreso",
+  "hora": "16:23",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|SLZIngCamFrente|2026-10-29T19:37:29.040Z": {
+  "archivo": "CGS172\\1637_SLZIngCamFrente.jpg",
+  "patente": "CGS172",
+  "punto": "Ingreso puerto",
+  "hora": "16:37",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|SLZBalIngFte|2026-10-29T19:48:45.142Z": {
+  "archivo": "CGS172\\1648_SLZBalIngFte.jpg",
+  "patente": "CGS172",
+  "punto": "Balanza puerto",
+  "hora": "16:48",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|SLZVolcableC4|2026-10-29T19:51:52.571Z": {
+  "archivo": "CGS172\\1651_SLZVolcableC4.jpg",
+  "patente": "CGS172",
+  "punto": "Volcable 4",
+  "hora": "16:51",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|SLZBalSC2Fte|2026-10-29T20:09:08.477Z": {
+  "archivo": "CGS172\\1709_SLZBalSC2Fte.jpg",
+  "patente": "CGS172",
+  "punto": "Balanza salida puerto",
+  "hora": "17:09",
+  "leyoDss": "CGS172"
+ },
+ "CGS172|SLZSalidaC1Fte|2026-10-29T20:11:33.852Z": {
+  "archivo": "CGS172\\1711_SLZSalidaC1Fte.jpg",
+  "patente": "CGS172",
+  "punto": "Salida puerto",
+  "hora": "17:11",
+  "leyoDss": "CGS172"
+ },
+ "UUO981|RicIngCamFrente|2026-10-29T11:01:03.771Z": {
+  "archivo": "UUO981\\0801_RicIngCamFrente.jpg",
+  "patente": "UUO981",
+  "punto": "Ingreso",
+  "hora": "08:01",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicPreIngInFr|2026-10-29T11:03:48.663Z": {
+  "archivo": "UUO981\\0803_RicPreIngInFr.jpg",
+  "patente": "UUO981",
+  "punto": "Pre-ingreso",
+  "hora": "08:03",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicCalLiq|2026-10-29T11:09:50.113Z": {
+  "archivo": "UUO981\\0809_RicCalLiq.jpg",
+  "patente": "UUO981",
+  "punto": "Calada líquidos",
+  "hora": "08:09",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicEgrCamFrente|2026-10-29T11:16:22.209Z": {
+  "archivo": "UUO981\\0816_RicEgrCamFrente.jpg",
+  "patente": "UUO981",
+  "punto": "Egreso",
+  "hora": "08:16",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicS6Playa3|2026-10-29T11:32:10.317Z": {
+  "archivo": "UUO981\\0832_RicS6Playa3.jpg",
+  "patente": "UUO981",
+  "punto": "Playa 3",
+  "hora": "08:32",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicB2Egreso|2026-10-29T12:10:36.538Z": {
+  "archivo": "UUO981\\0910_RicB2Egreso.jpg",
+  "patente": "UUO981",
+  "punto": "Balanza egreso",
+  "hora": "09:10",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|SLZIngCamFrente|2026-10-29T12:27:00.909Z": {
+  "archivo": "UUO981\\0927_SLZIngCamFrente.jpg",
+  "patente": "UUO981",
+  "punto": "Ingreso puerto",
+  "hora": "09:27",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|SLZBalIngFte|2026-10-29T12:29:01.949Z": {
+  "archivo": "UUO981\\0929_SLZBalIngFte.jpg",
+  "patente": "UUO981",
+  "punto": "Balanza puerto",
+  "hora": "09:29",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|SLZVolcableC4|2026-10-29T13:40:59.825Z": {
+  "archivo": "UUO981\\1040_SLZVolcableC4.jpg",
+  "patente": "UUO981",
+  "punto": "Volcable 4",
+  "hora": "10:40",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|SLZBalSC2Fte|2026-10-29T13:54:00.374Z": {
+  "archivo": "UUO981\\1054_SLZBalSC2Fte.jpg",
+  "patente": "UUO981",
+  "punto": "Balanza salida puerto",
+  "hora": "10:54",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|SLZSalidaC1Fte|2026-10-29T13:56:14.402Z": {
+  "archivo": "UUO981\\1056_SLZSalidaC1Fte.jpg",
+  "patente": "UUO981",
+  "punto": "Salida puerto",
+  "hora": "10:56",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicIngCamFrente|2026-10-29T14:09:43.492Z": {
+  "archivo": "UUO981\\1109_RicIngCamFrente.jpg",
+  "patente": "UUO981",
+  "punto": "Ingreso",
+  "hora": "11:09",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicPreIngInFr|2026-10-29T14:14:55.116Z": {
+  "archivo": "UUO981\\1114_RicPreIngInFr.jpg",
+  "patente": "UUO981",
+  "punto": "Pre-ingreso",
+  "hora": "11:14",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicCalLiq|2026-10-29T14:22:15.673Z": {
+  "archivo": "UUO981\\1122_RicCalLiq.jpg",
+  "patente": "UUO981",
+  "punto": "Calada líquidos",
+  "hora": "11:22",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicEgrCamFrente|2026-10-29T14:24:34.994Z": {
+  "archivo": "UUO981\\1124_RicEgrCamFrente.jpg",
+  "patente": "UUO981",
+  "punto": "Egreso",
+  "hora": "11:24",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicB2Egreso|2026-10-29T14:59:29.288Z": {
+  "archivo": "UUO981\\1159_RicB2Egreso.jpg",
+  "patente": "UUO981",
+  "punto": "Balanza egreso",
+  "hora": "11:59",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|SLZIngCamFrente|2026-10-29T15:50:17.911Z": {
+  "archivo": "UUO981\\1250_SLZIngCamFrente.jpg",
+  "patente": "UUO981",
+  "punto": "Ingreso puerto",
+  "hora": "12:50",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|SLZBalIngFte|2026-10-29T15:53:27.846Z": {
+  "archivo": "UUO981\\1253_SLZBalIngFte.jpg",
+  "patente": "UUO981",
+  "punto": "Balanza puerto",
+  "hora": "12:53",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|SLZVolcableC4|2026-10-29T16:00:22.375Z": {
+  "archivo": "UUO981\\1300_SLZVolcableC4.jpg",
+  "patente": "UUO981",
+  "punto": "Volcable 4",
+  "hora": "13:00",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|SLZBalSC2Fte|2026-10-29T16:10:35.169Z": {
+  "archivo": "UUO981\\1310_SLZBalSC2Fte.jpg",
+  "patente": "UUO981",
+  "punto": "Balanza salida puerto",
+  "hora": "13:10",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|SLZSalidaC1Fte|2026-10-29T16:15:27.365Z": {
+  "archivo": "UUO981\\1315_SLZSalidaC1Fte.jpg",
+  "patente": "UUO981",
+  "punto": "Salida puerto",
+  "hora": "13:15",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicIngCamFrente|2026-10-29T16:23:51.162Z": {
+  "archivo": "UUO981\\1323_RicIngCamFrente.jpg",
+  "patente": "UUO981",
+  "punto": "Ingreso",
+  "hora": "13:23",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicPreIngInFr|2026-10-29T16:25:32.076Z": {
+  "archivo": "UUO981\\1325_RicPreIngInFr.jpg",
+  "patente": "UUO981",
+  "punto": "Pre-ingreso",
+  "hora": "13:25",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicCalLiq|2026-10-29T16:29:50.679Z": {
+  "archivo": "UUO981\\1329_RicCalLiq.jpg",
+  "patente": "UUO981",
+  "punto": "Calada líquidos",
+  "hora": "13:29",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicEgrCamFrente|2026-10-29T16:36:46.841Z": {
+  "archivo": "UUO981\\1336_RicEgrCamFrente.jpg",
+  "patente": "UUO981",
+  "punto": "Egreso",
+  "hora": "13:36",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicS6Playa3|2026-10-29T16:43:34.309Z": {
+  "archivo": "UUO981\\1343_RicS6Playa3.jpg",
+  "patente": "UUO981",
+  "punto": "Playa 3",
+  "hora": "13:43",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicB2Egreso|2026-10-29T19:53:19.138Z": {
+  "archivo": "UUO981\\1653_RicB2Egreso.jpg",
+  "patente": "UUO981",
+  "punto": "Balanza egreso",
+  "hora": "16:53",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|SLZIngCamFrente|2026-10-29T20:12:45.481Z": {
+  "archivo": "UUO981\\1712_SLZIngCamFrente.jpg",
+  "patente": "UUO981",
+  "punto": "Ingreso puerto",
+  "hora": "17:12",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|SLZBalIngFte|2026-10-29T20:14:51.134Z": {
+  "archivo": "UUO981\\1714_SLZBalIngFte.jpg",
+  "patente": "UUO981",
+  "punto": "Balanza puerto",
+  "hora": "17:14",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|SLZVolcableC4|2026-10-29T20:17:16.552Z": {
+  "archivo": "UUO981\\1717_SLZVolcableC4.jpg",
+  "patente": "UUO981",
+  "punto": "Volcable 4",
+  "hora": "17:17",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|SLZBalSC2Fte|2026-10-29T20:28:34.292Z": {
+  "archivo": "UUO981\\1728_SLZBalSC2Fte.jpg",
+  "patente": "UUO981",
+  "punto": "Balanza salida puerto",
+  "hora": "17:28",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|SLZSalidaC1Fte|2026-10-29T20:31:24.448Z": {
+  "archivo": "UUO981\\1731_SLZSalidaC1Fte.jpg",
+  "patente": "UUO981",
+  "punto": "Salida puerto",
+  "hora": "17:31",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|SLZBalIngFte|2026-10-29T20:35:32.000Z": {
+  "archivo": "UUO981\\1735_SLZBalIngFte.jpg",
+  "patente": "UUO981",
+  "punto": "Balanza puerto",
+  "hora": "17:35",
+  "leyoDss": "KZE880"
+ },
+ "UUO981|RicIngCamFrente|2026-10-29T20:40:41.945Z": {
+  "archivo": "UUO981\\1740_RicIngCamFrente.jpg",
+  "patente": "UUO981",
+  "punto": "Ingreso",
+  "hora": "17:40",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicPreIngInFr|2026-10-29T20:42:34.782Z": {
+  "archivo": "UUO981\\1742_RicPreIngInFr.jpg",
+  "patente": "UUO981",
+  "punto": "Pre-ingreso",
+  "hora": "17:42",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicCalLiq|2026-10-29T20:46:20.717Z": {
+  "archivo": "UUO981\\1746_RicCalLiq.jpg",
+  "patente": "UUO981",
+  "punto": "Calada líquidos",
+  "hora": "17:46",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicEgrCamFrente|2026-10-29T20:49:25.373Z": {
+  "archivo": "UUO981\\1749_RicEgrCamFrente.jpg",
+  "patente": "UUO981",
+  "punto": "Egreso",
+  "hora": "17:49",
+  "leyoDss": "UUO981"
+ },
+ "UUO981|RicS6Playa3|2026-10-29T20:56:14.890Z": {
+  "archivo": "UUO981\\1756_RicS6Playa3.jpg",
+  "patente": "UUO981",
+  "punto": "Playa 3",
+  "hora": "17:56",
+  "leyoDss": "UUO981"
+ },
+ "CRJ139|RicB2Egreso|2026-10-29T21:12:28.058Z": {
+  "archivo": "CRJ139\\1812_RicB2Egreso.jpg",
+  "patente": "CRJ139",
+  "punto": "Balanza egreso",
+  "hora": "18:12",
+  "leyoDss": "CRJ139"
+ },
+ "CRJ139|RicPreIngInFr|2026-10-29T21:35:57.000Z": {
+  "archivo": "CRJ139\\1835_RicPreIngInFr.jpg",
+  "patente": "CRJ139",
+  "punto": "Pre-ingreso",
+  "hora": "18:35",
+  "leyoDss": "VRA989"
+ },
+ "CRJ139|SLZIngCamFrente|2026-10-29T21:37:23.060Z": {
+  "archivo": "CRJ139\\1837_SLZIngCamFrente.jpg",
+  "patente": "CRJ139",
+  "punto": "Ingreso puerto",
+  "hora": "18:37",
+  "leyoDss": "CRJ139"
+ },
+ "CRJ139|SLZBalIngFte|2026-10-29T21:39:44.218Z": {
+  "archivo": "CRJ139\\1839_SLZBalIngFte.jpg",
+  "patente": "CRJ139",
+  "punto": "Balanza puerto",
+  "hora": "18:39",
+  "leyoDss": "CRJ139"
+ },
+ "CRJ139|SLZVolcableC4|2026-10-29T22:17:41.525Z": {
+  "archivo": "CRJ139\\1917_SLZVolcableC4.jpg",
+  "patente": "CRJ139",
+  "punto": "Volcable 4",
+  "hora": "19:17",
+  "leyoDss": "CRJ139"
+ },
+ "CRJ139|SLZSalidaC1Fte|2026-10-29T22:37:13.896Z": {
+  "archivo": "CRJ139\\1937_SLZSalidaC1Fte.jpg",
+  "patente": "CRJ139",
+  "punto": "Salida puerto",
+  "hora": "19:37",
+  "leyoDss": "CRJ139"
+ },
+ "CRJ139|RicIngCamFrente|2026-10-29T22:47:03.430Z": {
+  "archivo": "CRJ139\\1947_RicIngCamFrente.jpg",
+  "patente": "CRJ139",
+  "punto": "Ingreso",
+  "hora": "19:47",
+  "leyoDss": "CRJ139"
+ },
+ "CRJ139|RicPreIngInFr|2026-10-29T22:49:16.288Z": {
+  "archivo": "CRJ139\\1949_RicPreIngInFr.jpg",
+  "patente": "CRJ139",
+  "punto": "Pre-ingreso",
+  "hora": "19:49",
+  "leyoDss": "CRJ139"
+ },
+ "CRJ139|RicCalLiq|2026-10-29T22:58:55.491Z": {
+  "archivo": "CRJ139\\1958_RicCalLiq.jpg",
+  "patente": "CRJ139",
+  "punto": "Calada líquidos",
+  "hora": "19:58",
+  "leyoDss": "CRJ139"
+ },
+ "CRJ139|RicEgrCamFrente|2026-10-29T23:01:26.235Z": {
+  "archivo": "CRJ139\\2001_RicEgrCamFrente.jpg",
+  "patente": "CRJ139",
+  "punto": "Egreso",
+  "hora": "20:01",
+  "leyoDss": "CRJ139"
+ },
+ "CRJ139|RicS6Playa3|2026-10-29T23:08:15.347Z": {
+  "archivo": "CRJ139\\2008_RicS6Playa3.jpg",
+  "patente": "CRJ139",
+  "punto": "Playa 3",
+  "hora": "20:08",
+  "leyoDss": "CRJ139"
+ },
+ "CRJ139|RicPreIngInFr|2026-10-30T02:02:11.000Z": {
+  "archivo": "CRJ139\\2302_RicPreIngInFr.jpg",
+  "patente": "CRJ139",
+  "punto": "Pre-ingreso",
+  "hora": "23:02",
+  "leyoDss": "000"
+ },
+ "CRJ139|RicCal03|2026-10-30T02:05:15.000Z": {
+  "archivo": "CRJ139\\2305_RicCal03.jpg",
+  "patente": "CRJ139",
+  "punto": "Calada",
+  "hora": "23:05",
+  "leyoDss": "SC550"
+ },
+ "CRJ139|RicB2Egreso|2026-10-30T02:14:59.298Z": {
+  "archivo": "CRJ139\\2314_RicB2Egreso.jpg",
+  "patente": "CRJ139",
+  "punto": "Balanza egreso",
+  "hora": "23:14",
+  "leyoDss": "CRJ139"
+ },
+ "CRJ139|RicEgrCamFrente|2026-10-30T02:15:47.000Z": {
+  "archivo": "CRJ139\\2315_RicEgrCamFrente.jpg",
+  "patente": "CRJ139",
+  "punto": "Egreso",
+  "hora": "23:15",
+  "leyoDss": "174"
+ },
+ "CRJ139|SLZIngCamFrente|2026-10-30T02:32:16.619Z": {
+  "archivo": "CRJ139\\2332_SLZIngCamFrente.jpg",
+  "patente": "CRJ139",
+  "punto": "Ingreso puerto",
+  "hora": "23:32",
+  "leyoDss": "CRJ139"
+ },
+ "CRJ139|SLZBalIngFte|2026-10-30T02:38:16.504Z": {
+  "archivo": "CRJ139\\2338_SLZBalIngFte.jpg",
+  "patente": "CRJ139",
+  "punto": "Balanza puerto",
+  "hora": "23:38",
+  "leyoDss": "CRJ139"
+ },
+ "CRJ139|SLZVolcableC4|2026-10-30T02:41:10.120Z": {
+  "archivo": "CRJ139\\2341_SLZVolcableC4.jpg",
+  "patente": "CRJ139",
+  "punto": "Volcable 4",
+  "hora": "23:41",
+  "leyoDss": "CRJ139"
+ },
+ "CRJ139|SLZBalSC2Fte|2026-10-30T03:11:28.353Z": {
+  "archivo": "CRJ139\\0011_SLZBalSC2Fte.jpg",
+  "patente": "CRJ139",
+  "punto": "Balanza salida puerto",
+  "hora": "00:11",
+  "leyoDss": "CRJ139"
+ },
+ "BVS300|SLZVolcableC4|2026-10-30T06:45:16.778Z": {
+  "archivo": "BVS300\\0345_SLZVolcableC4.jpg",
+  "patente": "BVS300",
+  "punto": "Volcable 4",
+  "hora": "03:45",
+  "leyoDss": "BVS300"
+ },
+ "BVS300|SLZBalSC2Fte|2026-10-30T06:57:46.480Z": {
+  "archivo": "BVS300\\0357_SLZBalSC2Fte.jpg",
+  "patente": "BVS300",
+  "punto": "Balanza salida puerto",
+  "hora": "03:57",
+  "leyoDss": "BVS4300"
+ },
+ "BVS300|SLZSalidaC1Fte|2026-10-30T06:59:51.840Z": {
+  "archivo": "BVS300\\0359_SLZSalidaC1Fte.jpg",
+  "patente": "BVS300",
+  "punto": "Salida puerto",
+  "hora": "03:59",
+  "leyoDss": "BVS300"
+ },
+ "BVS300|RicIngCamFrente|2026-10-30T07:08:20.192Z": {
+  "archivo": "BVS300\\0408_RicIngCamFrente.jpg",
+  "patente": "BVS300",
+  "punto": "Ingreso",
+  "hora": "04:08",
+  "leyoDss": "BVS300"
+ },
+ "BVS300|RicPreIngInFr|2026-10-30T07:10:17.845Z": {
+  "archivo": "BVS300\\0410_RicPreIngInFr.jpg",
+  "patente": "BVS300",
+  "punto": "Pre-ingreso",
+  "hora": "04:10",
+  "leyoDss": "BVS300"
+ }
+}

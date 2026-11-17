@@ -1,0 +1,1489 @@
+[
+ {
+  "dia": "2026-05-29",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-05-29T11:52:29.008Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-05-29_MTM450_0.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "Gray",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-05-29T12:20:32.082Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-05-29_MTM450_1.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "Black",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-06-04",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-06-04T13:16:16.826Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-06-04_MTM450_0.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "Silver",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-06-04T13:58:10.362Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-06-04_MTM450_1.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "Black",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-07-28",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-07-28T12:06:12.814Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-07-28_MTM450_0.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "Silver",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-07-28T12:43:12.939Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-07-28_MTM450_1.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "Black",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-07-30",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-07-30T12:04:25.121Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-07-30_MTM450_0.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "Black",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-07-30T12:38:52.664Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-07-30_MTM450_1.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-04",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-08-04T11:54:03.858Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-08-04_MTM450_0.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-08-04T12:47:21.072Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-08-04_MTM450_1.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "Black",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-13",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-08-13T12:23:14.668Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-08-13_MTM450_0.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-08-13T13:16:17.790Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-08-13_MTM450_1.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "Black",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-25",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-08-25T11:55:08.000Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-08-25_MTM450_0.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "Gray",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-08-25T12:18:52.794Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-08-25_MTM450_1.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "Gray",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-27",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-08-27T12:06:58.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-08-27T12:42:52.000Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-04",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-09-04T12:23:03.000Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-09-04_MTM450_0.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "at": "2026-09-04T13:48:51.056Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-09-04_MTM450_1.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-09-04T15:25:31.000Z",
+    "device": "RicB3Ingreso",
+    "foto": "2026-09-04_MTM450_2.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-09-04T16:28:46.603Z",
+    "device": "RicB3Egreso",
+    "foto": "2026-09-04_MTM450_3.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-08",
+  "plate": "MTM450",
+  "pasos": [
+   {
+    "at": "2026-09-08T13:33:20.000Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-09-08_MTM450_0.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-09-08T14:11:19.091Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-09-08_MTM450_1.jpg",
+    "leyoDss": "MTM450",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-06-02",
+  "plate": "FQI716",
+  "pasos": [
+   {
+    "at": "2026-06-02T13:13:01.221Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-06-02_FQI716_0.jpg",
+    "leyoDss": "FQI716",
+    "marca": null,
+    "color": "Brown",
+    "tipo": null
+   },
+   {
+    "at": "2026-06-02T13:38:56.233Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-06-02_FQI716_1.jpg",
+    "leyoDss": "FQI716",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-06-09",
+  "plate": "FQI716",
+  "pasos": [
+   {
+    "at": "2026-06-09T12:52:21.953Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-06-09_FQI716_0.jpg",
+    "leyoDss": "FQI716",
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-06-09T13:17:54.000Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-06-09_FQI716_1.jpg",
+    "leyoDss": "FQI716",
+    "marca": "Toyota",
+    "color": "Gray",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-07-28",
+  "plate": "FQI716",
+  "pasos": [
+   {
+    "at": "2026-07-28T13:47:18.580Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-07-28_FQI716_0.jpg",
+    "leyoDss": "FQI716",
+    "marca": "Volkswagen",
+    "color": "Gray",
+    "tipo": "Large Truck"
+   },
+   {
+    "at": "2026-07-28T14:54:41.241Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-07-28_FQI716_1.jpg",
+    "leyoDss": "FQI716",
+    "marca": null,
+    "color": "Gray",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-04",
+  "plate": "FQI716",
+  "pasos": [
+   {
+    "at": "2026-08-04T11:51:21.371Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-08-04_FQI716_0.jpg",
+    "leyoDss": "FQI716",
+    "marca": "Volkswagen",
+    "color": "Blue",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-08-04T12:30:40.133Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-08-04_FQI716_1.jpg",
+    "leyoDss": "FQI716",
+    "marca": "Toyota",
+    "color": "Black",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-13",
+  "plate": "FQI716",
+  "pasos": [
+   {
+    "at": "2026-08-13T12:33:26.618Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-08-13_FQI716_0.jpg",
+    "leyoDss": "FQI716",
+    "marca": "Volkswagen",
+    "color": "Blue",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-08-13T13:27:49.992Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-08-13_FQI716_1.jpg",
+    "leyoDss": "FQI716",
+    "marca": null,
+    "color": "Gray",
+    "tipo": null
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-25",
+  "plate": "FQI716",
+  "pasos": [
+   {
+    "at": "2026-08-25T11:11:58.394Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-08-25_FQI716_0.jpg",
+    "leyoDss": "FQI716",
+    "marca": "Volkswagen",
+    "color": "Gray",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-08-25T11:53:57.506Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-08-25_FQI716_1.jpg",
+    "leyoDss": "FQI716",
+    "marca": null,
+    "color": "Gray",
+    "tipo": null
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-08",
+  "plate": "FQI716",
+  "pasos": [
+   {
+    "at": "2026-09-08T13:06:32.761Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-09-08_FQI716_0.jpg",
+    "leyoDss": "FQI716",
+    "marca": "Volkswagen",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-09-08T13:32:56.719Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-09-08_FQI716_1.jpg",
+    "leyoDss": "FQI716",
+    "marca": "CMC",
+    "color": "Gray",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-10-01",
+  "plate": "FQI716",
+  "pasos": [
+   {
+    "at": "2026-10-01T14:26:49.000Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-10-01_FQI716_0.jpg",
+    "leyoDss": "FQI716",
+    "marca": "Volkswagen",
+    "color": "Gray",
+    "tipo": "Large Truck"
+   },
+   {
+    "at": "2026-10-01T14:54:02.894Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-10-01_FQI716_1.jpg",
+    "leyoDss": "FQI716",
+    "marca": "Toyota",
+    "color": "Gray",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-05-22",
+  "plate": "LPZ703",
+  "pasos": [
+   {
+    "at": "2026-05-22T14:48:01.137Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-05-22_LPZ703_0.jpg",
+    "leyoDss": "LPZ703",
+    "marca": null,
+    "color": "White",
+    "tipo": null
+   },
+   {
+    "at": "2026-05-22T15:15:30.649Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-05-22_LPZ703_1.jpg",
+    "leyoDss": "LPZ703",
+    "marca": null,
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-06-03",
+  "plate": "LPZ703",
+  "pasos": [
+   {
+    "at": "2026-06-03T12:40:26.443Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-06-03_LPZ703_0.jpg",
+    "leyoDss": "LPZ703",
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-06-03T13:48:24.645Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-06-03_LPZ703_1.jpg",
+    "leyoDss": "LPZ703",
+    "marca": "Mitsubishi",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-14",
+  "plate": "LPZ703",
+  "pasos": [
+   {
+    "at": "2026-08-14T11:30:55.206Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-08-14_LPZ703_0.jpg",
+    "leyoDss": "LPZ703",
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-08-14T15:27:25.950Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-08-14_LPZ703_1.jpg",
+    "leyoDss": "LPZ703",
+    "marca": null,
+    "color": "White",
+    "tipo": "Bus"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-08",
+  "plate": "LPZ703",
+  "pasos": [
+   {
+    "at": "2026-09-08T10:46:55.000Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-09-08_LPZ703_0.jpg",
+    "leyoDss": "LPZ703",
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Bus"
+   },
+   {
+    "at": "2026-09-08T12:13:38.863Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-09-08_LPZ703_1.jpg",
+    "leyoDss": "LPZ703",
+    "marca": null,
+    "color": "Blue",
+    "tipo": "Bus"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-14",
+  "plate": "LPZ703",
+  "pasos": [
+   {
+    "at": "2026-09-14T12:04:52.692Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-09-14_LPZ703_0.jpg",
+    "leyoDss": "LPZ703",
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-09-14T16:11:05.401Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-09-14_LPZ703_1.jpg",
+    "leyoDss": "LPZ703",
+    "marca": "Nissan",
+    "color": "Blue",
+    "tipo": "Bus"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-29",
+  "plate": "LPZ703",
+  "pasos": [
+   {
+    "at": "2026-09-29T11:42:30.000Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-09-29_LPZ703_0.jpg",
+    "leyoDss": "LPZ703",
+    "marca": "Ford",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "at": "2026-09-29T16:07:40.809Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-09-29_LPZ703_1.jpg",
+    "leyoDss": "LPZ703",
+    "marca": null,
+    "color": "White",
+    "tipo": "SUV"
+   }
+  ]
+ },
+ {
+  "dia": "2026-07-20",
+  "plate": "AF831ID",
+  "pasos": [
+   {
+    "at": "2026-07-20T12:10:45.693Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-07-20_AF831ID_0.jpg",
+    "leyoDss": "AF831ID",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-07-20T12:47:05.000Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-07-20_AF831ID_1.jpg",
+    "leyoDss": "AF831ID",
+    "marca": "Mercedes-Benz",
+    "color": "Black",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-12",
+  "plate": "AF831ID",
+  "pasos": [
+   {
+    "at": "2026-08-12T15:03:33.254Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-08-12_AF831ID_0.jpg",
+    "leyoDss": "AF831ID",
+    "marca": "Mercedes-Benz",
+    "color": "Gray",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-08-12T15:29:48.063Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-08-12_AF831ID_1.jpg",
+    "leyoDss": "AF831ID",
+    "marca": "Mercedes-Benz",
+    "color": "Blue",
+    "tipo": "Van"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-28",
+  "plate": "AF831ID",
+  "pasos": [
+   {
+    "at": "2026-08-28T10:38:56.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-08-28T11:23:26.000Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-17",
+  "plate": "AF831ID",
+  "pasos": [
+   {
+    "at": "2026-09-17T14:12:47.000Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-09-17_AF831ID_0.jpg",
+    "leyoDss": "AF831ID",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-09-17T14:41:05.544Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-09-17_AF831ID_1.jpg",
+    "leyoDss": "AF831ID",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Bus"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-27",
+  "plate": "RSW086",
+  "pasos": [
+   {
+    "at": "2026-08-27T15:24:53.000Z",
+    "device": "RicB1Ingreso"
+   },
+   {
+    "at": "2026-08-27T18:31:18.000Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-04",
+  "plate": "RSW086",
+  "pasos": [
+   {
+    "at": "2026-09-04T12:53:33.876Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-09-04_RSW086_0.jpg",
+    "leyoDss": "RSW086",
+    "marca": "Mercedes-Benz",
+    "color": "Yellow",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-09-04T17:41:02.427Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-09-04_RSW086_1.jpg",
+    "leyoDss": "RSW086",
+    "marca": null,
+    "color": "Yellow",
+    "tipo": null
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-11",
+  "plate": "RSW086",
+  "pasos": [
+   {
+    "at": "2026-09-11T10:30:36.000Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-09-11_RSW086_0.jpg",
+    "leyoDss": "RSW086",
+    "marca": "Mercedes-Benz",
+    "color": "Yellow",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-09-11T11:49:16.355Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-09-11_RSW086_1.jpg",
+    "leyoDss": "RSW086",
+    "marca": null,
+    "color": "Yellow",
+    "tipo": null
+   }
+  ]
+ },
+ {
+  "dia": "2026-07-15",
+  "plate": "CXV575",
+  "pasos": [
+   {
+    "at": "2026-07-15T15:16:41.997Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-07-15_CXV575_0.jpg",
+    "leyoDss": "CXV575",
+    "marca": null,
+    "color": "Black",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-07-15T15:47:32.000Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-07-15_CXV575_1.jpg",
+    "leyoDss": "CXV575",
+    "marca": null,
+    "color": "White",
+    "tipo": "SUV"
+   }
+  ]
+ },
+ {
+  "dia": "2026-07-16",
+  "plate": "CXV575",
+  "pasos": [
+   {
+    "at": "2026-07-16T12:01:47.711Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-07-16_CXV575_0.jpg",
+    "leyoDss": "CXV575",
+    "marca": "Volkswagen",
+    "color": "Silver",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-07-16T12:21:26.000Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-07-16_CXV575_1.jpg",
+    "leyoDss": "CXV575",
+    "marca": null,
+    "color": "Blue",
+    "tipo": "Sedan"
+   }
+  ]
+ },
+ {
+  "dia": "2026-11-02",
+  "plate": "CXV575",
+  "pasos": [
+   {
+    "at": "2026-11-02T13:22:49.000Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-11-02_CXV575_0.jpg",
+    "leyoDss": "CXV575",
+    "marca": null,
+    "color": "White",
+    "tipo": "Pickup"
+   },
+   {
+    "at": "2026-11-02T14:39:42.701Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-11-02_CXV575_1.jpg",
+    "leyoDss": "CXV575",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-11-02T14:44:20.597Z",
+    "device": "RicIngCamFrente",
+    "foto": "2026-11-02_CXV575_2.jpg",
+    "leyoDss": "CXV575",
+    "marca": null,
+    "color": "White",
+    "tipo": "Sedan"
+   },
+   {
+    "at": "2026-11-02T15:00:58.126Z",
+    "device": "RicEgrCamFrente",
+    "foto": "2026-11-02_CXV575_3.jpg",
+    "leyoDss": "CXV575",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-26",
+  "plate": "AF241DX",
+  "pasos": [
+   {
+    "at": "2026-08-26T13:07:52.000Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-08-26_AF241DX_0.jpg",
+    "leyoDss": "AF241DX",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-08-26T15:16:36.596Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-08-26_AF241DX_1.jpg",
+    "leyoDss": "AF241DX",
+    "marca": "Scania",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-04",
+  "plate": "AF241DX",
+  "pasos": [
+   {
+    "at": "2026-09-04T13:30:07.831Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-09-04_AF241DX_0.jpg",
+    "leyoDss": "AF241DX",
+    "marca": "Mercedes-Benz",
+    "color": "Silver",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-09-04T15:30:41.413Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-09-04_AF241DX_1.jpg",
+    "leyoDss": "AF241DX",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-11",
+  "plate": "AF241DX",
+  "pasos": [
+   {
+    "at": "2026-09-11T10:41:07.593Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-09-11_AF241DX_0.jpg",
+    "leyoDss": "AF241DX",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-09-11T11:50:20.437Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-09-11_AF241DX_1.jpg",
+    "leyoDss": "AF241DX",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-06-04",
+  "plate": "NAD656",
+  "pasos": [
+   {
+    "at": "2026-06-04T16:47:35.000Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-06-04_NAD656_0.jpg",
+    "leyoDss": "NAD656",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-06-04T17:44:51.156Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-06-04_NAD656_1.jpg",
+    "leyoDss": "NAD656",
+    "marca": "Nissan",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-14",
+  "plate": "NAD656",
+  "pasos": [
+   {
+    "at": "2026-08-14T14:50:22.481Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-08-14_NAD656_0.jpg",
+    "leyoDss": "NAD656",
+    "marca": "Mercedes-Benz",
+    "color": "Silver",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-08-14T15:13:25.259Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-08-14_NAD656_1.jpg",
+    "leyoDss": "NAD656",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-05-18",
+  "plate": "AE131JP",
+  "pasos": [
+   {
+    "at": "2026-05-18T08:19:24.584Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-05-18_AE131JP_0.jpg",
+    "leyoDss": "AE131JP",
+    "marca": null,
+    "color": "Gray",
+    "tipo": null
+   },
+   {
+    "at": "2026-05-18T09:11:40.869Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-05-18_AE131JP_1.jpg",
+    "leyoDss": "AE131JP",
+    "marca": null,
+    "color": "Black",
+    "tipo": "Bus"
+   }
+  ]
+ },
+ {
+  "dia": "2026-05-27",
+  "plate": "AE131JP",
+  "pasos": [
+   {
+    "at": "2026-05-27T08:17:52.316Z",
+    "device": "RicIngCamFrente",
+    "foto": "2026-05-27_AE131JP_0.jpg",
+    "leyoDss": "AE131JP",
+    "marca": null,
+    "color": "Black",
+    "tipo": null
+   },
+   {
+    "at": "2026-05-27T08:20:11.098Z",
+    "device": "RicPreIngInFr",
+    "foto": "2026-05-27_AE131JP_1.jpg",
+    "leyoDss": "AE131JP",
+    "marca": null,
+    "color": "Black",
+    "tipo": null
+   },
+   {
+    "at": "2026-05-27T09:01:01.660Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-05-27_AE131JP_2.jpg",
+    "leyoDss": "AE131JP",
+    "marca": null,
+    "color": "Black",
+    "tipo": null
+   },
+   {
+    "at": "2026-05-27T12:52:13.746Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-06-19",
+  "plate": "AH498JW",
+  "pasos": [
+   {
+    "at": "2026-06-19T17:09:12.000Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-06-19_AH498JW_0.jpg",
+    "leyoDss": "AH498JW",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-06-19T18:32:55.000Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-06-19_AH498JW_1.jpg",
+    "leyoDss": "AH498JW",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-09-24",
+  "plate": "AH498JW",
+  "pasos": [
+   {
+    "at": "2026-09-24T14:37:00.000Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-09-24_AH498JW_0.jpg",
+    "leyoDss": "AH498JW",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "at": "2026-09-24T15:52:56.179Z",
+    "device": "RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "dia": "2026-07-06",
+  "plate": "OAA734",
+  "pasos": [
+   {
+    "at": "2026-07-06T12:57:04.925Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-07-06_OAA734_0.jpg",
+    "leyoDss": "OAA734",
+    "marca": "Iveco",
+    "color": "Silver",
+    "tipo": "Large Truck"
+   },
+   {
+    "at": "2026-07-06T13:25:13.000Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-07-06_OAA734_1.jpg",
+    "leyoDss": "OAA734",
+    "marca": null,
+    "color": "Blue",
+    "tipo": "Sedan"
+   }
+  ]
+ },
+ {
+  "dia": "2026-07-20",
+  "plate": "OAA734",
+  "pasos": [
+   {
+    "at": "2026-07-20T17:05:52.950Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-07-20_OAA734_0.jpg",
+    "leyoDss": "OAA734",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-07-20T18:04:05.000Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-07-20_OAA734_1.jpg",
+    "leyoDss": "OAA734",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-08-19",
+  "plate": "AF241DX",
+  "pasos": [
+   {
+    "at": "2026-08-19T14:44:39.786Z",
+    "device": "SLZIngCamFrente",
+    "foto": "2026-08-19_AF241DX_0.jpg",
+    "leyoDss": "AF241DX",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-08-19T15:27:42.916Z",
+    "device": "SLZBalIngFte",
+    "foto": "2026-08-19_AF241DX_1.jpg",
+    "leyoDss": "AF241DX",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-08-19T18:19:36.243Z",
+    "device": "SLZTK400",
+    "foto": "2026-08-19_AF241DX_2.jpg",
+    "leyoDss": "AF241DX",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "at": "2026-08-19T18:37:55.896Z",
+    "device": "SLZSalidaC1Fte",
+    "foto": "2026-08-19_AF241DX_3.jpg",
+    "leyoDss": "AF241DX",
+    "marca": null,
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-10-19",
+  "plate": "AB531CT",
+  "pasos": [
+   {
+    "at": "2026-10-19T12:23:24.994Z",
+    "device": "SLZIngCamFrente",
+    "foto": "2026-10-19_AB531CT_0.jpg",
+    "leyoDss": "AB531CT",
+    "marca": "Iveco",
+    "color": "Black",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-10-19T12:28:05.000Z",
+    "device": "SLZBalIngFte",
+    "foto": "2026-10-19_AB531CT_1.jpg",
+    "leyoDss": "AB531CT",
+    "marca": null,
+    "color": "Silver",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-10-19T12:31:42.529Z",
+    "device": "SLZTK400",
+    "foto": "2026-10-19_AB531CT_2.jpg",
+    "leyoDss": "AB531CT",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "at": "2026-10-19T15:32:41.756Z",
+    "device": "SLZBalSC1Fte",
+    "foto": "2026-10-19_AB531CT_3.jpg",
+    "leyoDss": "AB531CT",
+    "marca": "Lexus",
+    "color": "Red",
+    "tipo": "Small Truck"
+   },
+   {
+    "at": "2026-10-19T15:33:30.239Z",
+    "device": "SLZBalSC2Fte",
+    "foto": "2026-10-19_AB531CT_4.jpg",
+    "leyoDss": "AB531CT",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "at": "2026-10-19T15:35:34.226Z",
+    "device": "SLZSalidaC2Fte",
+    "foto": "2026-10-19_AB531CT_5.jpg",
+    "leyoDss": "AB531CT",
+    "marca": "Chrysler",
+    "color": "Blue",
+    "tipo": "Sedan"
+   },
+   {
+    "at": "2026-10-19T15:35:54.000Z",
+    "device": "SLZSalidaC1Fte"
+   }
+  ]
+ },
+ {
+  "dia": "2026-10-23",
+  "plate": "AB531CT",
+  "pasos": [
+   {
+    "at": "2026-10-23T11:29:01.857Z",
+    "device": "SLZIngCamFrente",
+    "foto": "2026-10-23_AB531CT_0.jpg",
+    "leyoDss": "AB531CT",
+    "marca": "Iveco",
+    "color": "Black",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-10-23T11:33:02.000Z",
+    "device": "SLZBalIngFte",
+    "foto": "2026-10-23_AB531CT_1.jpg",
+    "leyoDss": "AB531CT",
+    "marca": "JMC",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-10-23T11:36:34.449Z",
+    "device": "SLZTK400",
+    "foto": "2026-10-23_AB531CT_2.jpg",
+    "leyoDss": "AB531CT",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "at": "2026-10-23T15:13:52.801Z",
+    "device": "SLZBalSC1Fte",
+    "foto": "2026-10-23_AB531CT_3.jpg",
+    "leyoDss": "AB531CT",
+    "marca": null,
+    "color": "Red",
+    "tipo": "Small Truck"
+   },
+   {
+    "at": "2026-10-23T15:14:32.661Z",
+    "device": "SLZBalSC2Fte",
+    "foto": "2026-10-23_AB531CT_4.jpg",
+    "leyoDss": "AB531CT",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "at": "2026-10-23T15:16:31.849Z",
+    "device": "SLZSalidaC1Fte"
+   }
+  ]
+ },
+ {
+  "dia": "2026-11-03",
+  "plate": "AB531CT",
+  "pasos": [
+   {
+    "at": "2026-11-03T11:44:25.664Z",
+    "device": "SLZIngCamFrente",
+    "foto": "2026-11-03_AB531CT_0.jpg",
+    "leyoDss": "AB531CT",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-11-03T12:17:36.000Z",
+    "device": "SLZBalIngFte",
+    "foto": "2026-11-03_AB531CT_1.jpg",
+    "leyoDss": "AB531CT",
+    "marca": "Iveco",
+    "color": "Black",
+    "tipo": "Bus"
+   },
+   {
+    "at": "2026-11-03T12:19:51.990Z",
+    "device": "SLZTK400",
+    "foto": "2026-11-03_AB531CT_2.jpg",
+    "leyoDss": "AB531CT",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "at": "2026-11-03T12:41:29.360Z",
+    "device": "SLZBalSC1Fte",
+    "foto": "2026-11-03_AB531CT_3.jpg",
+    "leyoDss": "AB531CT",
+    "marca": "Peugeot",
+    "color": "Red",
+    "tipo": "Small Truck"
+   },
+   {
+    "at": "2026-11-03T12:43:13.890Z",
+    "device": "SLZBalSC2Fte",
+    "foto": "2026-11-03_AB531CT_4.jpg",
+    "leyoDss": "AB531CT",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "at": "2026-11-03T12:45:06.314Z",
+    "device": "SLZSalidaC1Fte",
+    "foto": "2026-11-03_AB531CT_5.jpg",
+    "leyoDss": "AB531CT",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-10-23",
+  "plate": "NAD656",
+  "pasos": [
+   {
+    "at": "2026-10-23T16:51:17.192Z",
+    "device": "SLZIngCamFrente",
+    "foto": "2026-10-23_NAD656_0.jpg",
+    "leyoDss": "NAD656",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-10-23T17:09:41.184Z",
+    "device": "SLZBalIngFte",
+    "foto": "2026-10-23_NAD656_1.jpg",
+    "leyoDss": "NAD656",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-10-23T17:11:40.191Z",
+    "device": "SLZTK400",
+    "foto": "2026-10-23_NAD656_2.jpg",
+    "leyoDss": "NAD656",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-10-23T18:14:36.236Z",
+    "device": "SLZBalSC1Fte",
+    "foto": "2026-10-23_NAD656_3.jpg",
+    "leyoDss": "NAD656",
+    "marca": null,
+    "color": "White",
+    "tipo": "Small Truck"
+   },
+   {
+    "at": "2026-10-23T18:16:30.942Z",
+    "device": "SLZBalSC2Fte",
+    "foto": "2026-10-23_NAD656_4.jpg",
+    "leyoDss": "NAD656",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-10-23T18:20:54.869Z",
+    "device": "SLZSalidaC1Fte"
+   }
+  ]
+ },
+ {
+  "dia": "2026-11-04",
+  "plate": "NAD656",
+  "pasos": [
+   {
+    "at": "2026-11-04T11:50:05.118Z",
+    "device": "SLZIngCamFrente",
+    "foto": "2026-11-04_NAD656_0.jpg",
+    "leyoDss": "NAD656",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-11-04T13:43:04.829Z",
+    "device": "SLZBalIngFte",
+    "foto": "2026-11-04_NAD656_1.jpg",
+    "leyoDss": "NAD656",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-11-04T14:11:27.295Z",
+    "device": "SLZBalSC2Fte",
+    "foto": "2026-11-04_NAD656_2.jpg",
+    "leyoDss": "NAD656",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-11-04T14:15:00.362Z",
+    "device": "SLZSalidaC1Fte",
+    "foto": "2026-11-04_NAD656_3.jpg",
+    "leyoDss": "NAD656",
+    "marca": "Mercedes-Benz",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-07-08",
+  "plate": "AB127BY",
+  "pasos": [
+   {
+    "at": "2026-07-08T12:56:37.000Z",
+    "device": "RicB1Ingreso",
+    "foto": "2026-07-08_AB127BY_0.jpg",
+    "leyoDss": "AB127BY",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-07-08T13:30:08.000Z",
+    "device": "RicB2Egreso",
+    "foto": "2026-07-08_AB127BY_1.jpg",
+    "leyoDss": "AB127BY",
+    "marca": "Chevrolet",
+    "color": "White",
+    "tipo": "Medium Truck"
+   }
+  ]
+ },
+ {
+  "dia": "2026-10-21",
+  "plate": "AB127BY",
+  "pasos": [
+   {
+    "at": "2026-10-21T11:14:28.983Z",
+    "device": "SLZIngCamFrente",
+    "foto": "2026-10-21_AB127BY_0.jpg",
+    "leyoDss": "AB127BY",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-10-21T11:21:49.000Z",
+    "device": "SLZBalIngFte",
+    "foto": "2026-10-21_AB127BY_1.jpg",
+    "leyoDss": "AB127BY",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Large Truck"
+   },
+   {
+    "at": "2026-10-21T11:24:57.608Z",
+    "device": "SLZTK400",
+    "foto": "2026-10-21_AB127BY_2.jpg",
+    "leyoDss": "AB127BY",
+    "marca": "Chevrolet",
+    "color": "Red",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-10-21T12:12:47.000Z",
+    "device": "SLZSalidaC1Fte",
+    "foto": "2026-10-21_AB127BY_3.jpg",
+    "leyoDss": "AB127BY",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Medium Truck"
+   },
+   {
+    "at": "2026-10-21T12:12:48.187Z",
+    "device": "SLZSalidaC2Fte",
+    "foto": "2026-10-21_AB127BY_4.jpg",
+    "leyoDss": "AB127BY",
+    "marca": "Iveco",
+    "color": "White",
+    "tipo": "Bus"
+   }
+  ]
+ }
+]

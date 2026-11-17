@@ -1,0 +1,703 @@
+[
+ {
+  "p": "MTM450",
+  "h": 8,
+  "cruce": {
+   "patente": "MTM450",
+   "visitasHuella": 10,
+   "visitas": 35,
+   "diasHuella": [
+    "2026-05-29",
+    "2026-06-04",
+    "2026-07-28",
+    "2026-07-30",
+    "2026-08-04",
+    "2026-08-13",
+    "2026-08-25",
+    "2026-08-27",
+    "2026-09-04",
+    "2026-09-08"
+   ],
+   "primera": "2026-05-12",
+   "ultima": "2026-11-03",
+   "estado": "en_sistema_otro_dia",
+   "noCamion": null,
+   "manual": null,
+   "backoffice": null,
+   "cartas": [],
+   "balanza": {
+    "cat": "varios",
+    "movs": 2,
+    "desde": "2026-09-28",
+    "hasta": "2026-09-28",
+    "productos": [
+     "9999 PRODUCTOS VARIOS"
+    ]
+   }
+  },
+  "huellas": [
+   {
+    "planta": "ric",
+    "dia": "2026-07-28",
+    "primera": "09:06",
+    "ultima": "09:43",
+    "min_b1_b2": "37",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-07-30",
+    "primera": "09:04",
+    "ultima": "09:38",
+    "min_b1_b2": "34",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-08-04",
+    "primera": "08:54",
+    "ultima": "09:47",
+    "min_b1_b2": "53",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-08-13",
+    "primera": "09:23",
+    "ultima": "10:16",
+    "min_b1_b2": "53",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-08-25",
+    "primera": "08:55",
+    "ultima": "12:46",
+    "min_b1_b2": "231",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-08-27",
+    "primera": "09:06",
+    "ultima": "12:15",
+    "min_b1_b2": "188",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-09-04",
+    "primera": "09:23",
+    "ultima": "13:28",
+    "min_b1_b2": "86",
+    "camaras": "RicB1Ingreso RicB2Egreso RicB3Ingreso RicB3Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-09-08",
+    "primera": "10:33",
+    "ultima": "11:11",
+    "min_b1_b2": "38",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "p": "FQI716",
+  "h": 6,
+  "cruce": {
+   "patente": "FQI716",
+   "visitasHuella": 9,
+   "visitas": 48,
+   "diasHuella": [
+    "2026-05-14",
+    "2026-06-02",
+    "2026-06-09",
+    "2026-07-28",
+    "2026-08-04",
+    "2026-08-13",
+    "2026-08-25",
+    "2026-09-08",
+    "2026-10-01"
+   ],
+   "primera": "2026-05-12",
+   "ultima": "2026-10-30",
+   "estado": "en_sistema_otro_dia",
+   "noCamion": null,
+   "manual": null,
+   "backoffice": null,
+   "cartas": [],
+   "balanza": {
+    "cat": "varios",
+    "movs": 1,
+    "desde": "2026-09-17",
+    "hasta": "2026-09-17",
+    "productos": [
+     "9999 PRODUCTOS VARIOS"
+    ]
+   }
+  },
+  "huellas": [
+   {
+    "planta": "ric",
+    "dia": "2026-07-28",
+    "primera": "10:47",
+    "ultima": "11:54",
+    "min_b1_b2": "67",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-08-04",
+    "primera": "08:51",
+    "ultima": "09:30",
+    "min_b1_b2": "39",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-08-13",
+    "primera": "09:33",
+    "ultima": "10:27",
+    "min_b1_b2": "54",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-08-25",
+    "primera": "08:11",
+    "ultima": "08:53",
+    "min_b1_b2": "42",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-09-08",
+    "primera": "10:06",
+    "ultima": "10:32",
+    "min_b1_b2": "26",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-10-01",
+    "primera": "11:26",
+    "ultima": "11:54",
+    "min_b1_b2": "27",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "p": "LPZ703",
+  "h": 4,
+  "cruce": {
+   "patente": "LPZ703",
+   "visitasHuella": 6,
+   "visitas": 19,
+   "diasHuella": [
+    "2026-05-22",
+    "2026-06-03",
+    "2026-08-14",
+    "2026-09-08",
+    "2026-09-14",
+    "2026-09-29"
+   ],
+   "primera": "2026-05-14",
+   "ultima": "2026-11-02",
+   "estado": "en_sistema_otro_dia",
+   "noCamion": null,
+   "manual": null,
+   "backoffice": null,
+   "cartas": [],
+   "balanza": {
+    "cat": "varios",
+    "movs": 1,
+    "desde": "2026-09-15",
+    "hasta": "2026-09-15",
+    "productos": [
+     "9999 PRODUCTOS VARIOS"
+    ]
+   }
+  },
+  "huellas": [
+   {
+    "planta": "ric",
+    "dia": "2026-08-14",
+    "primera": "08:30",
+    "ultima": "12:27",
+    "min_b1_b2": "237",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-09-08",
+    "primera": "07:46",
+    "ultima": "09:13",
+    "min_b1_b2": "87",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-09-14",
+    "primera": "09:04",
+    "ultima": "13:11",
+    "min_b1_b2": "246",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-09-29",
+    "primera": "08:42",
+    "ultima": "13:07",
+    "min_b1_b2": "265",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "p": "AF831ID",
+  "h": 4,
+  "cruce": {
+   "patente": "AF831ID",
+   "visitasHuella": 4,
+   "visitas": 9,
+   "diasHuella": [
+    "2026-07-20",
+    "2026-08-12",
+    "2026-08-28",
+    "2026-09-17"
+   ],
+   "primera": "2026-05-22",
+   "ultima": "2026-10-14",
+   "estado": "nunca_en_sistema",
+   "noCamion": null,
+   "manual": null,
+   "backoffice": null,
+   "cartas": [],
+   "balanza": null
+  },
+  "huellas": [
+   {
+    "planta": "ric",
+    "dia": "2026-07-20",
+    "primera": "09:10",
+    "ultima": "09:47",
+    "min_b1_b2": "36",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-08-12",
+    "primera": "12:03",
+    "ultima": "12:29",
+    "min_b1_b2": "26",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-08-28",
+    "primera": "07:38",
+    "ultima": "08:23",
+    "min_b1_b2": "45",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-09-17",
+    "primera": "11:12",
+    "ultima": "11:41",
+    "min_b1_b2": "28",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "p": "AF241DX",
+  "h": 4,
+  "cruce": {
+   "patente": "AF241DX",
+   "visitasHuella": 3,
+   "visitas": 3,
+   "diasHuella": [
+    "2026-08-26",
+    "2026-09-04",
+    "2026-09-11"
+   ],
+   "primera": "2026-08-26",
+   "ultima": "2026-09-11",
+   "estado": "en_sistema_otro_dia",
+   "noCamion": null,
+   "manual": null,
+   "backoffice": null,
+   "cartas": [],
+   "balanza": {
+    "cat": "varios",
+    "movs": 2,
+    "desde": "2026-07-17",
+    "hasta": "2026-07-24",
+    "productos": [
+     "9999 PRODUCTOS VARIOS",
+     "0872 RESIDUOS ORG."
+    ]
+   }
+  },
+  "huellas": [
+   {
+    "planta": "sl",
+    "dia": "2026-08-19",
+    "primera": "11:44",
+    "ultima": "15:37",
+    "min_b1_b2": "190",
+    "camaras": "SLZIngCamFrente SLZBalIngFte SLZTK400 SLZSalidaC1Fte",
+    "salida": "egreso 15:37"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-08-26",
+    "primera": "10:07",
+    "ultima": "12:16",
+    "min_b1_b2": "129",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-09-04",
+    "primera": "10:30",
+    "ultima": "12:30",
+    "min_b1_b2": "121",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-09-11",
+    "primera": "07:41",
+    "ultima": "08:50",
+    "min_b1_b2": "69",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "p": "RSW086",
+  "h": 3,
+  "cruce": {
+   "patente": "RSW086",
+   "visitasHuella": 3,
+   "visitas": 31,
+   "diasHuella": [
+    "2026-08-27",
+    "2026-09-04",
+    "2026-09-11"
+   ],
+   "primera": "2026-08-03",
+   "ultima": "2026-11-04",
+   "estado": "en_sistema_otro_dia",
+   "noCamion": null,
+   "manual": null,
+   "backoffice": null,
+   "cartas": [],
+   "balanza": {
+    "cat": "varios",
+    "movs": 2,
+    "desde": "2026-09-10",
+    "hasta": "2026-10-16",
+    "productos": [
+     "9999 PRODUCTOS VARIOS"
+    ]
+   }
+  },
+  "huellas": [
+   {
+    "planta": "ric",
+    "dia": "2026-08-27",
+    "primera": "12:24",
+    "ultima": "15:31",
+    "min_b1_b2": "186",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-09-04",
+    "primera": "09:53",
+    "ultima": "14:41",
+    "min_b1_b2": "287",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-09-11",
+    "primera": "07:30",
+    "ultima": "14:25",
+    "min_b1_b2": "415",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "p": "CXV575",
+  "h": 3,
+  "cruce": {
+   "patente": "CXV575",
+   "visitasHuella": 3,
+   "visitas": 4,
+   "diasHuella": [
+    "2026-07-15",
+    "2026-07-16",
+    "2026-11-02"
+   ],
+   "primera": "2026-07-13",
+   "ultima": "2026-11-02",
+   "estado": "en_sistema_otro_dia",
+   "noCamion": null,
+   "manual": null,
+   "backoffice": null,
+   "cartas": [],
+   "balanza": {
+    "cat": "varios",
+    "movs": 1,
+    "desde": "2026-09-11",
+    "hasta": "2026-09-11",
+    "productos": [
+     "9999 PRODUCTOS VARIOS"
+    ]
+   }
+  },
+  "huellas": [
+   {
+    "planta": "ric",
+    "dia": "2026-07-15",
+    "primera": "12:16",
+    "ultima": "12:47",
+    "min_b1_b2": "31",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-07-16",
+    "primera": "09:01",
+    "ultima": "11:24",
+    "min_b1_b2": "143",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-11-02",
+    "primera": "10:22",
+    "ultima": "15:08",
+    "min_b1_b2": "286",
+    "camaras": "RicB1Ingreso RicB2Egreso RicIngCamFrente RicEgrCamFrente"
+   }
+  ]
+ },
+ {
+  "p": "AB531CT",
+  "h": 3,
+  "cruce": {
+   "patente": "AB531CT",
+   "visitasHuella": 3,
+   "visitas": 4,
+   "diasHuella": [
+    "2026-10-19",
+    "2026-10-23",
+    "2026-11-03"
+   ],
+   "primera": "2026-08-12",
+   "ultima": "2026-11-03",
+   "estado": "en_sistema_otro_dia",
+   "noCamion": null,
+   "manual": null,
+   "backoffice": null,
+   "cartas": [],
+   "balanza": {
+    "cat": "varios",
+    "movs": 1,
+    "desde": "2026-10-05",
+    "hasta": "2026-10-05",
+    "productos": [
+     "9999 PRODUCTOS VARIOS"
+    ]
+   }
+  },
+  "huellas": [
+   {
+    "planta": "sl",
+    "dia": "2026-10-19",
+    "primera": "09:23",
+    "ultima": "12:35",
+    "min_b1_b2": "185",
+    "camaras": "SLZIngCamFrente SLZBalIngFte SLZTK400 SLZBalSC1Fte SLZBalSC2Fte SLZSalidaC2Fte SLZSalidaC1Fte",
+    "salida": "balanza 12:33"
+   },
+   {
+    "planta": "sl",
+    "dia": "2026-10-23",
+    "primera": "08:29",
+    "ultima": "12:16",
+    "min_b1_b2": "222",
+    "camaras": "SLZIngCamFrente SLZBalIngFte SLZTK400 SLZBalSC1Fte SLZBalSC2Fte SLZSalidaC1Fte",
+    "salida": "balanza 12:14"
+   },
+   {
+    "planta": "sl",
+    "dia": "2026-11-03",
+    "primera": "08:44",
+    "ultima": "09:45",
+    "min_b1_b2": "26",
+    "camaras": "SLZIngCamFrente SLZBalIngFte SLZTK400 SLZBalSC1Fte SLZBalSC2Fte SLZSalidaC1Fte",
+    "salida": "balanza 09:43"
+   }
+  ]
+ },
+ {
+  "p": "NAD656",
+  "h": 3,
+  "cruce": {
+   "patente": "NAD656",
+   "visitasHuella": 2,
+   "visitas": 2,
+   "diasHuella": [
+    "2026-10-23",
+    "2026-11-04"
+   ],
+   "primera": "2026-10-23",
+   "ultima": "2026-11-04",
+   "estado": "en_sistema_otro_dia",
+   "noCamion": null,
+   "manual": null,
+   "backoffice": null,
+   "cartas": [],
+   "balanza": {
+    "cat": "varios",
+    "movs": 1,
+    "desde": "2026-09-07",
+    "hasta": "2026-09-07",
+    "productos": [
+     "9999 PRODUCTOS VARIOS"
+    ]
+   }
+  },
+  "huellas": [
+   {
+    "planta": "ric",
+    "dia": "2026-08-14",
+    "primera": "11:50",
+    "ultima": "13:47",
+    "min_b1_b2": "117",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "sl",
+    "dia": "2026-10-23",
+    "primera": "13:51",
+    "ultima": "15:20",
+    "min_b1_b2": "67",
+    "camaras": "SLZIngCamFrente SLZBalIngFte SLZTK400 SLZBalSC1Fte SLZBalSC2Fte SLZSalidaC1Fte",
+    "salida": "balanza 15:16"
+   },
+   {
+    "planta": "sl",
+    "dia": "2026-11-04",
+    "primera": "08:50",
+    "ultima": "11:15",
+    "min_b1_b2": "28",
+    "camaras": "SLZIngCamFrente SLZBalIngFte SLZBalSC2Fte SLZSalidaC1Fte",
+    "salida": "balanza 11:11"
+   }
+  ]
+ },
+ {
+  "p": "OAA734",
+  "h": 2,
+  "cruce": {
+   "patente": "OAA734",
+   "visitasHuella": 2,
+   "visitas": 2,
+   "diasHuella": [
+    "2026-07-06",
+    "2026-07-20"
+   ],
+   "primera": "2026-07-06",
+   "ultima": "2026-07-20",
+   "estado": "en_sistema_otro_dia",
+   "noCamion": null,
+   "manual": null,
+   "backoffice": null,
+   "cartas": [],
+   "balanza": {
+    "cat": "varios",
+    "movs": 2,
+    "desde": "2026-05-29",
+    "hasta": "2026-09-22",
+    "productos": [
+     "9999 PRODUCTOS VARIOS"
+    ]
+   }
+  },
+  "huellas": [
+   {
+    "planta": "ric",
+    "dia": "2026-07-06",
+    "primera": "09:57",
+    "ultima": "10:25",
+    "min_b1_b2": "28",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "ric",
+    "dia": "2026-07-20",
+    "primera": "14:05",
+    "ultima": "15:04",
+    "min_b1_b2": "58",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   }
+  ]
+ },
+ {
+  "p": "AB127BY",
+  "h": 2,
+  "cruce": {
+   "patente": "AB127BY",
+   "visitasHuella": 1,
+   "visitas": 3,
+   "diasHuella": [
+    "2026-10-21"
+   ],
+   "primera": "2026-07-29",
+   "ultima": "2026-10-29",
+   "estado": "en_sistema_otro_dia",
+   "noCamion": null,
+   "manual": null,
+   "backoffice": null,
+   "cartas": [],
+   "balanza": {
+    "cat": "varios",
+    "movs": 1,
+    "desde": "2026-10-13",
+    "hasta": "2026-10-13",
+    "productos": [
+     "9999 PRODUCTOS VARIOS"
+    ]
+   }
+  },
+  "huellas": [
+   {
+    "planta": "ric",
+    "dia": "2026-07-08",
+    "primera": "09:56",
+    "ultima": "10:30",
+    "min_b1_b2": "34",
+    "camaras": "RicB1Ingreso RicB2Egreso"
+   },
+   {
+    "planta": "sl",
+    "dia": "2026-10-21",
+    "primera": "08:14",
+    "ultima": "09:12",
+    "min_b1_b2": "51",
+    "camaras": "SLZIngCamFrente SLZBalIngFte SLZTK400 SLZSalidaC1Fte SLZSalidaC2Fte",
+    "salida": "egreso 09:12"
+   }
+  ]
+ }
+]
